@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-import type { Problem } from "@/integrations/supabase/types";
+import type { Problem, ProblemCategory } from "@/integrations/supabase/types";
 
 export const PROBLEMS_KEY = ["problems"] as const;
 
@@ -31,10 +31,18 @@ export async function getProblem(id: string): Promise<Problem | null> {
   return (data as Problem) ?? null;
 }
 
-export async function createProblem(userId: string): Promise<Problem> {
+export async function createProblem(
+  userId: string,
+  opts?: { category?: ProblemCategory; folderId?: string | null }
+): Promise<Problem> {
   const { data, error } = await supabase
     .from("problems")
-    .insert({ title: "새 문제", created_by: userId })
+    .insert({
+      title: "새 문제",
+      created_by: userId,
+      ...(opts?.category ? { category: opts.category } : {}),
+      ...(opts?.folderId !== undefined ? { folder_id: opts.folderId } : {}),
+    })
     .select()
     .single();
   if (error) throw error;
@@ -42,7 +50,7 @@ export async function createProblem(userId: string): Promise<Problem> {
 }
 
 export type ProblemUpdate = Partial<
-  Pick<Problem, "title" | "description" | "flowchart" | "starter_code" | "grading_tests" | "is_published" | "folder_id">
+  Pick<Problem, "title" | "description" | "flowchart" | "starter_code" | "grading_tests" | "is_published" | "folder_id" | "category">
 >;
 
 export async function updateProblem(id: string, patch: ProblemUpdate): Promise<Problem> {

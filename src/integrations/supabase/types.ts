@@ -28,6 +28,14 @@ export interface GradingTest {
   points: number;
 }
 
+export type ProblemCategory = "flowchart" | "general" | "block";
+
+export const PROBLEM_CATEGORY_LABEL: Record<ProblemCategory, string> = {
+  flowchart: "순서도",
+  general: "파이썬 일반",
+  block: "블럭코딩",
+};
+
 export interface Problem {
   id: string;
   title: string;
@@ -38,6 +46,7 @@ export interface Problem {
   is_published: boolean;
   created_by: string;
   folder_id: string | null;
+  category: ProblemCategory;
   created_at: string;
   updated_at: string;
 }

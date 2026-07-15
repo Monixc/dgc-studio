@@ -9,6 +9,7 @@ import {
   deleteProblem,
   type ProblemUpdate,
 } from "@/lib/problems";
+import type { ProblemCategory } from "@/integrations/supabase/types";
 
 export function useMyProblems(userId: string | undefined) {
   return useQuery({
@@ -37,7 +38,8 @@ export function useProblem(id: string | undefined) {
 export function useCreateProblem() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (userId: string) => createProblem(userId),
+    mutationFn: (args: { userId: string; category?: ProblemCategory; folderId?: string | null }) =>
+      createProblem(args.userId, args),
     onSuccess: () => qc.invalidateQueries({ queryKey: PROBLEMS_KEY }),
   });
 }

@@ -20,7 +20,7 @@ export default function ProblemPanel({ userId, selectedId, onSelect }: Props) {
 
   async function handleCreate() {
     try {
-      const p = await createMut.mutateAsync(userId);
+      const p = await createMut.mutateAsync({ userId });
       onSelect(p.id);
     } catch (e: any) {
       toast.error(e?.message ?? "생성 실패");

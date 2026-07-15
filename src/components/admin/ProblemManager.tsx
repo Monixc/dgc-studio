@@ -7,10 +7,13 @@ import { useProblemsRealtime } from "@/hooks/useProblemsRealtime";
 import { useFolders, useCreateFolder, useDeleteFolder } from "@/hooks/useProblemFolders";
 import ProblemEditor from "@/components/teacher/ProblemEditor";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import { PROBLEM_CATEGORY_LABEL, type ProblemCategory } from "@/integrations/supabase/types";
 
 const ALL = "__all__";
 const NO_FOLDER = "__none__";
+const CATEGORIES = Object.keys(PROBLEM_CATEGORY_LABEL) as ProblemCategory[];
 
 export default function ProblemManager() {
   const { user } = useAuth();
@@ -24,15 +27,17 @@ export default function ProblemManager() {
   const deleteProblemMut = useDeleteProblem();
   const updateProblemMut = useUpdateProblem();
 
+  const [activeCategory, setActiveCategory] = useState<ProblemCategory>("flowchart");
   const [activeFolder, setActiveFolder] = useState<string>(ALL);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
+  const inCategory = problems.filter((p) => p.category === activeCategory);
   const filtered =
     activeFolder === ALL
-      ? problems
+      ? inCategory
       : activeFolder === NO_FOLDER
-        ? problems.filter((p) => !p.folder_id)
-        : problems.filter((p) => p.folder_id === activeFolder);
+        ? inCategory.filter((p) => !p.folder_id)
+        : inCategory.filter((p) => p.folder_id === activeFolder);
 
   async function handleNewFolder() {
     const name = prompt("새 폴더 이름");
@@ -57,10 +62,8 @@ export default function ProblemManager() {
 
   async function handleCreateProblem() {
     try {
-      const p = await createProblemMut.mutateAsync(userId);
-      if (activeFolder !== ALL && activeFolder !== NO_FOLDER) {
-        await updateProblemMut.mutateAsync({ id: p.id, patch: { folder_id: activeFolder } });
-      }
+      const folderId = activeFolder !== ALL && activeFolder !== NO_FOLDER ? activeFolder : null;
+      const p = await createProblemMut.mutateAsync({ userId, category: activeCategory, folderId });
       setSelectedId(p.id);
     } catch (e: any) {
       toast.error(e?.message ?? "생성 실패");
@@ -89,7 +92,17 @@ export default function ProblemManager() {
   }
 
   return (
-    <div className="flex h-full overflow-hidden">
+    <div className="flex h-full flex-col overflow-hidden">
+      <div className="border-b px-3 py-2">
+        <Tabs value={activeCategory} onValueChange={(v) => { setActiveCategory(v as ProblemCategory); setActiveFolder(ALL); }}>
+          <TabsList>
+            {CATEGORIES.map((c) => (
+              <TabsTrigger key={c} value={c}>{PROBLEM_CATEGORY_LABEL[c]}</TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      </div>
+      <div className="flex flex-1 overflow-hidden">
       <div className="flex h-full w-48 flex-col border-r bg-muted/20">
         <div className="flex items-center justify-between border-b p-2">
           <span className="text-sm font-semibold">폴더</span>
@@ -156,6 +169,7 @@ export default function ProblemManager() {
             왼쪽에서 문제를 선택하거나 “문제 추가”를 누르세요.
           </div>
         )}
+      </div>
       </div>
     </div>
   );
