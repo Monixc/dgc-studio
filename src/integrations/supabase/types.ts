@@ -37,8 +37,29 @@ export interface Problem {
   grading_tests: GradingTest[];
   is_published: boolean;
   created_by: string;
+  folder_id: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface ProblemFolder {
+  id: string;
+  name: string;
+  created_by: string;
+  created_at: string;
+}
+
+export interface ClassRow {
+  id: string;
+  name: string;
+  created_by: string;
+  created_at: string;
+}
+
+export interface ClassProblem {
+  class_id: string;
+  problem_id: string;
+  created_at: string;
 }
 
 export interface GradingDetail {

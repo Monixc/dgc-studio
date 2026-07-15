@@ -109,6 +109,12 @@ export default function Dashboard() {
               >
                 문제 관리
               </button>
+              <button
+                onClick={() => nav("/classes")}
+                className="rounded-lg border px-4 py-2 text-sm hover:bg-accent"
+              >
+                반 관리
+              </button>
             </div>
           </Bento>
 
