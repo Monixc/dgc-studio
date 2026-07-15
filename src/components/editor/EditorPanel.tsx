@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from "react";
+import { toast } from "sonner";
 import Editor from "@monaco-editor/react";
 import { Play, Square } from "lucide-react";
 import type { RunOptions, RunResult } from "@/hooks/usePyodide";
@@ -26,6 +27,12 @@ export default function EditorPanel({ code, onCodeChange, readOnly, running, run
   const [lines, setLines] = useState<ConsoleLine[]>([]);
 
   async function handleRun() {
+    // input() 호출이 있는데 stdin 이 비면 파이썬 오류 대신 안내
+    if (/\binput\s*\(/.test(code) && stdin.trim() === "") {
+      toast.warning("입력값을 먼저 넣고 실행해주세요.");
+      setLines([{ kind: "err", text: '입력값이 필요합니다. 왼쪽 "입력 (stdin)" 칸에 값을 넣고 실행하세요.' }]);
+      return;
+    }
     setLines([]);
     const append = (kind: ConsoleLine["kind"], text: string) => setLines((l) => [...l, { kind, text }]);
     const res = await run(code, {
