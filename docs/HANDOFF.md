@@ -80,6 +80,7 @@ bunx tsc -p tsconfig.app.json --noEmit   # 타입체크
 - 노드 선택 시 우상단 색상 패널(배경/테두리/글자). 기본 흰배경·검정테두리·검정글자.
 - **간선 재연결**: 끝점 떼서 다른 핸들에 붙임, 빈 곳에 놓으면 삭제(onReconnectStart/End).
 - `panActivationKeyCode={null}` — Space 팬 끔(Monaco 띄어쓰기 삼킴 방지). **지우지 말 것.**
+- **읽기전용 모드**: `editable` prop 안 주면(또는 `false`) 팬/줌/드래그/연결/삭제 전부 잠김(`nodesDraggable/nodesConnectable/elementsSelectable/panOnDrag/zoomOnScroll/zoomOnPinch/zoomOnDoubleClick/preventScrolling` 모두 `editable` 연동, Controls도 숨김). **주의**: `editable`은 반드시 `editable = false`로 기본값 지정돼 있어야 함(`CanvasInner` 함수 시그니처) — `undefined`를 react-flow prop에 그대로 넘기면 react-flow 자체 기본값(`true`, 즉 편집 가능)이 살아나서 읽기전용이 깨지는 버그가 있었음(학생 풀이 화면·수업하기 라이브 뷰에서 순서도가 움직이던 원인). 이 prop 관련 코드 만질 때 `?? false`/기본 파라미터 유지할 것.
 
 ### 실행/채점 (Pyodide)
 - `src/workers/pyodide-runner.worker.ts` (CDN ESM 로드, stdout/stderr 스트리밍, stdin은 미리 준 문자열 큐 — 블로킹 input 없음).
@@ -100,6 +101,14 @@ bunx tsc -p tsconfig.app.json --noEmit   # 타입체크
 - `classes`(선생 소유) / `class_students`(등록 명단, 다대다) / `class_problems`(배정 문제, 다대다 — 같은 문제를 여러 반에 재사용 배정 가능).
 - `/classes`(`ClassManager.tsx`): 반 CRUD + 학생 등록(`EnrollStudentsDialog`) + 문제 할당(`AssignProblemsDialog`, 폴더 단위 일괄 체크 가능) + **학생별 포인트 수동 부여**(`AwardPointsDialog`, 아래 참고). **문제 관리 기능은 여기 없음** — `/problems`로 분리됨(사용자 지시).
 - 학생 쪽 "내 수업"(`/myclass`)은 `listAssignedProblems(studentId)`로 본인이 속한 반들의 배정 문제를 합쳐서 보여줌(class 이름 자체는 안 씀, 문제 목록만).
+
+### 수업하기(실시간 라이브 뷰)
+- `ClassManager.tsx` "할당된 문제" 섹션 아래 "수업하기" 버튼 → `/classes/:classId/live`(`src/pages/LiveClass.tsx`, 모달 아님, 별도 페이지). teacher 전용 라우트(`App.tsx`).
+- 좌측: 반에 등록된 학생 목록, `useOnlineUsers()`(presence)로 접속 중인 학생만 클릭 가능(회색 아웃 X). 최대 4명(`MAX_WATCH`) 동시 선택 → 1/2/4분할 그리드.
+- **코드 전달은 DB 저장 없이 순수 Supabase Realtime broadcast**(`src/hooks/useLiveCode.ts`, topic `live-code:{studentId}`). `Solve.tsx`가 코드/문제 변경 시 400ms 디바운스로 `{code, problemId, problemTitle, problemDescription, category, flowchart}` 를 자신의 topic에 broadcast. 학생이 `/solve/:id`를 안 열어놨으면 teacher 쪽엔 그냥 "아직 문제를 풀고 있지 않습니다" — 이력 조회 아님, 순간의 상태만.
+- 각 타일: 학생 이름 라벨 항상 표시 + 문제 제목. 문제 설명/순서도 패널은 접기·펼치기 토글(`PanelBottomOpen/Close` 아이콘, 4분할일 때 기본 접힘). `category === "flowchart"`면 이 패널에 `FlowchartCanvas`(읽기전용, 바로 위 항목 참고)를 그대로 렌더 — Solve.tsx 학생 화면과 같은 컴포넌트 재사용.
+- 코드 표시는 Monaco `readOnly` 인라인(EditorPanel 재사용 안 함 — run/stop 등 채점 UI 불필요해서 `<Editor>` 직접 사용).
+- 마이그레이션 없음(순수 Realtime, 새 테이블 없음). 학생 계정이 로그인 안 하고 있으면 애초에 presence에 안 잡혀서 선택 자체가 안 됨.
 
 ### 포인트 시스템
 - `points_ledger(student_id, amount, reason, problem_id?, awarded_by?)` — 지급 이력 테이블. 랭킹은 이 테이블을 학생별로 합산해서 계산(`listPointsRanking`, 클라이언트에서 reduce — DB뷰 없음, 학생 수 많아지면 나중에 뷰/집계 쿼리로 바꿀 것).
@@ -153,6 +162,8 @@ bunx tsc -p tsconfig.app.json --noEmit   # 타입체크
 - **points_ledger는 로그인 유저 전체가 읽을 수 있음**(랭킹 집계 위해 select RLS `true`) — 개인 지급 사유까지 남에게 보이는 구조. 프라이버시 강화 필요하면 지시 있을 때 RLS 재설계.
 - 사이드바 "타자 연습"·"포인트 상점"은 선생/학생 공통 미구현 stub(토스트).
 - 학생 대시보드 UI는 tsc/lint만 통과 확인했고 **브라우저 실클릭 테스트는 아직 안 함** — 로그인해서 골든패스(문제 생성→포인트 지정→학생 만점 제출→랭킹 반영, 쪽지 왕복, 공지/일정 등록→학생 화면 노출) 확인 필요.
+- 수업하기 라이브 뷰도 **실제 2계정(선생+학생) 동시 브라우저 테스트 안 함** — Realtime broadcast 구독/송신 흐름은 코드 리뷰로만 검증.
+- **⚠️ 보안: `dlabgc`(teacher 승격 코드)가 public GitHub 저장소에 평문 노출**(`supabase/seed.sql:3`, 이 문서 위 Supabase 절). `claim_teacher(code)` RPC(`0001_init.sql`)는 횟수 제한·1회성 제한 없이 코드만 맞으면 아무 로그인 유저나 teacher role 획득 가능 + 회원가입 이메일 확인 off라 진입장벽 없음. RLS상 피해 범위는 본인이 만든 반/문제로 한정되지만, announcements/academic_events는 전체 학생 공개라 가짜 선생이 스팸 공지 가능. **고칠 때까지는**: 코드를 seed.sql/문서에서 빼고 대시보드 secret으로만 관리 + 코드 rotate 필요(지시 있을 때). `scripts/create-test-students.ts`의 하드코딩된 테스트 비번(`student1234!`)도 같은 공개저장소 노출 — 로컬 전용이면 무해하지만 클라우드에도 해당 계정이 실존하면 로그인 가능하니 확인 필요.
 
 ## 진행 중이던 흐름
 
@@ -169,3 +180,11 @@ bunx tsc -p tsconfig.app.json --noEmit   # 타입체크
 8. **학생 대시보드 신설** + 학생 사이드 메뉴(내 수업/순서도·파이썬·블럭 연습) + `Solve.tsx` 카테고리 분기 수정(빈 캔버스 버그) + `AppShell` role-agnostic화.
 
 전부 커밋+배포 완료(`git log --oneline` 참고, 최신 두 커밋이 7·8단계). DB 마이그레이션은 `0001`~`0007`, 로컬+클라우드 둘 다 적용됨.
+
+이번 세션은 **수업하기(실시간 라이브 뷰)** 기능 추가:
+- `ClassManager.tsx`에 "수업하기" 버튼 → `/classes/:classId/live`(페이지, 모달 아님) 라우트 신설.
+- `src/hooks/useLiveCode.ts`(신규) — Supabase Realtime broadcast로 학생 코드/문제 상태 송수신, DB 저장 없음.
+- `Solve.tsx`에 브로드캐스트 훅 연결, `src/pages/LiveClass.tsx`(신규) — 학생 선택(최대 4명, 접속 중인 학생만) + 분할 그리드 + 순서도/설명 접기·펼치기.
+- `FlowchartCanvas.tsx` 버그 수정: `editable` prop 기본값 누락으로 읽기전용이 안 먹히던 문제(위 "순서도 = 캔버스 원본 > 편집 상호작용" 절 참고) — `editable = false` 기본 파라미터로 고침.
+- **위 보안 절의 `dlabgc`/테스트 비번 노출은 이번 세션에 발견만 하고 미조치**(사용자 지시 대기).
+- **아직 커밋 안 함** — `git status`에 `App.tsx`/`ClassManager.tsx`/`FlowchartCanvas.tsx`/`Solve.tsx` 수정 + `useLiveCode.ts`/`LiveClass.tsx` 신규 파일이 그대로 unstaged/staged 상태로 남아있음. 다음 세션 시작 시 `git status`로 확인하고, 사용자가 커밋 지시하면 진행.
