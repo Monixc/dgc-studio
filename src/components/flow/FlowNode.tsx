@@ -127,7 +127,7 @@ function FlowNodeInner({ id, data, selected }: NodeProps) {
       <div className="group relative h-full w-full" onDoubleClick={editable ? () => setEditing(true) : undefined}>
         {editable && <NodeResizer minWidth={180} minHeight={110} isVisible={!!selected} lineClassName="!border-primary" handleClassName="!bg-primary" />}
         <div
-          className="absolute inset-0 rounded-lg border-2 border-dashed"
+          className="absolute inset-0 rounded-lg border-2 border-solid"
           style={{ borderColor: border, background: d.style?.bg || "rgba(139,92,246,0.06)" }}
         />
         <div className="absolute left-2 top-1 flex items-center gap-1 text-xs font-semibold" style={{ color: text }}>
