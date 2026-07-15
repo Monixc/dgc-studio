@@ -30,7 +30,6 @@ export async function signUp(username: string, password: string, teacherCode?: s
 
 export async function signIn(username: string, password: string) {
   const { data, error } = await supabase.auth.signInWithPassword({
-    email: usernameToEmail(username),
     password,
   });
   if (error) throw error;
