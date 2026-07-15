@@ -312,6 +312,7 @@ function CanvasInner({ graph, editable, resetKey, onChange }: Props) {
         edges={edges}
         nodeTypes={nodeTypes}
         connectionMode={ConnectionMode.Loose}
+        panActivationKeyCode={null}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={editable ? onConnect : undefined}
