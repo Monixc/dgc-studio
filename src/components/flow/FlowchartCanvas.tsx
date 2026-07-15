@@ -157,11 +157,33 @@ function CanvasInner({ graph, editable, resetKey, onChange }: Props) {
         let next: Node[] | null = null;
         if (target && target.id !== dragged.parentId) {
           const tAbs = absPos(target.id);
-          next = ns.map((n) =>
-            n.id === dragged.id
-              ? { ...n, parentId: target.id, extent: "parent" as const, position: { x: abs.x - tAbs.x, y: abs.y - tAbs.y } }
-              : n
-          );
+          const draggedIsFor = (dragged.data as FlowNodeData).nodeType === "for";
+          // 중첩되는 for 는 부모 안에 맞게 축소, 부모는 필요 시 확대
+          let childPos = { x: abs.x - tAbs.x, y: abs.y - tAbs.y };
+          let childStyle: { width: number; height: number } | null = null;
+          let parentStyle: { width: number; height: number } | null = null;
+          if (draggedIsFor) {
+            const PAD = 16;
+            const HEADER = 24;
+            const tNode = byId.get(target.id)!;
+            const pW = (tNode.style?.width as number) ?? 260;
+            const pH = (tNode.style?.height as number) ?? 160;
+            const dW = (dragged.style?.width as number) ?? 260;
+            const dH = (dragged.style?.height as number) ?? 160;
+            const innerW = Math.max(160, Math.min(dW, pW - 2 * PAD));
+            const innerH = Math.max(100, Math.min(dH, pH - PAD - HEADER));
+            childStyle = { width: innerW, height: innerH };
+            childPos = { x: PAD, y: HEADER };
+            const needW = innerW + 2 * PAD;
+            const needH = innerH + PAD + HEADER;
+            if (needW > pW || needH > pH) parentStyle = { width: Math.max(pW, needW), height: Math.max(pH, needH) };
+          }
+          next = ns.map((n) => {
+            if (n.id === dragged.id)
+              return { ...n, parentId: target.id, extent: undefined, position: childPos, ...(childStyle ? { style: { ...n.style, ...childStyle } } : {}) };
+            if (parentStyle && n.id === target.id) return { ...n, style: { ...n.style, ...parentStyle } };
+            return n;
+          });
         } else if (!target && dragged.parentId) {
           next = ns.map((n) => (n.id === dragged.id ? { ...n, parentId: undefined, extent: undefined, position: abs } : n));
         }

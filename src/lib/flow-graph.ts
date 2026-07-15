@@ -105,10 +105,8 @@ export function toRFNodes(
       data: { label: n.label, nodeType: n.type, style: n.style, onLabelChange: opts?.onLabelChange } satisfies FlowNodeData,
     };
     if (n.type === "for") node.style = { width: n.width ?? 260, height: n.height ?? 160 };
-    if (n.parentId) {
-      node.parentId = n.parentId;
-      node.extent = "parent";
-    }
+    // parentId 로 그룹 소속만 지정(extent 미지정 → 밖으로 드래그해 분리 가능)
+    if (n.parentId) node.parentId = n.parentId;
     return node;
   });
 }
