@@ -6,6 +6,8 @@ import type { XYPosition } from "@xyflow/react";
 import { ArrowLeft, Save, Globe, EyeOff } from "lucide-react";
 import { useProblem, useUpdateProblem } from "@/hooks/useProblems";
 import FlowchartPanel from "@/components/flow/FlowchartPanel";
+import GradingTestsEditor from "@/components/GradingTestsEditor";
+import type { GradingTest } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,6 +29,7 @@ export default function TeacherEditor() {
   const [description, setDescription] = useState("");
   const [dsl, setDsl] = useState("");
   const [starter, setStarter] = useState("");
+  const [tests, setTests] = useState<GradingTest[]>([]);
   const [positions, setPositions] = useState<Record<string, XYPosition>>({});
 
   useEffect(() => {
@@ -35,6 +38,7 @@ export default function TeacherEditor() {
     setDescription(problem.description);
     setDsl(problem.flowchart?.dsl ?? "");
     setStarter(problem.starter_code);
+    setTests(problem.grading_tests ?? []);
     setPositions(problem.flowchart?.positions ?? {});
   }, [problem]);
 
@@ -47,6 +51,7 @@ export default function TeacherEditor() {
           title,
           description,
           starter_code: starter,
+          grading_tests: tests,
           flowchart: { dsl, positions },
           ...extra,
         },
@@ -90,6 +95,7 @@ export default function TeacherEditor() {
               <TabsTrigger value="dsl">순서도 DSL</TabsTrigger>
               <TabsTrigger value="starter">시작 코드</TabsTrigger>
               <TabsTrigger value="desc">문제 설명</TabsTrigger>
+              <TabsTrigger value="grading">채점 ({tests.length})</TabsTrigger>
             </TabsList>
             <TabsContent value="dsl" className="flex-1 overflow-hidden data-[state=inactive]:hidden">
               <div className="flex h-full flex-col">
@@ -104,6 +110,9 @@ export default function TeacherEditor() {
             </TabsContent>
             <TabsContent value="desc" className="flex-1 overflow-auto p-3 data-[state=inactive]:hidden">
               <Textarea value={description} onChange={(e) => setDescription(e.target.value)} className="h-full resize-none" placeholder="문제 설명을 학생에게 보여줍니다." />
+            </TabsContent>
+            <TabsContent value="grading" className="flex-1 overflow-auto data-[state=inactive]:hidden">
+              <GradingTestsEditor tests={tests} onChange={setTests} />
             </TabsContent>
           </Tabs>
         </div>
