@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import Editor from "@monaco-editor/react";
 import { Save, Globe, EyeOff } from "lucide-react";
 import { useProblem, useUpdateProblem } from "@/hooks/useProblems";
+import { usePyodide } from "@/hooks/usePyodide";
 import FlowchartCanvas from "@/components/flow/FlowchartCanvas";
+import EditorPanel from "@/components/editor/EditorPanel";
 import GradingTestsEditor from "@/components/GradingTestsEditor";
 import TeacherSubmissions from "@/components/TeacherSubmissions";
 import type { GradingTest } from "@/integrations/supabase/types";
@@ -17,6 +18,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 export default function ProblemEditor({ problemId }: { problemId: string }) {
   const { data: problem, isLoading } = useProblem(problemId);
   const updateMut = useUpdateProblem();
+  const { run, running, stop } = usePyodide();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -83,12 +85,12 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
         <div className="flex flex-col overflow-hidden">
           <Tabs defaultValue="starter" className="flex flex-1 flex-col overflow-hidden">
             <TabsList className="m-2 self-start">
-              <TabsTrigger value="starter">시작 코드</TabsTrigger>
+              <TabsTrigger value="starter">코드 · 실행</TabsTrigger>
               <TabsTrigger value="desc">문제 설명</TabsTrigger>
               <TabsTrigger value="grading">채점 ({tests.length})</TabsTrigger>
             </TabsList>
             <TabsContent value="starter" className="flex-1 overflow-hidden data-[state=inactive]:hidden">
-              <Editor language="python" value={starter} onChange={(v) => setStarter(v ?? "")} options={{ minimap: { enabled: false }, fontSize: 13 }} />
+              <EditorPanel code={starter} onCodeChange={setStarter} running={running} run={run} stop={stop} />
             </TabsContent>
             <TabsContent value="desc" className="flex-1 overflow-auto p-3 data-[state=inactive]:hidden">
               <Textarea value={description} onChange={(e) => setDescription(e.target.value)} className="h-full resize-none" placeholder="문제 설명을 학생에게 보여줍니다." />
