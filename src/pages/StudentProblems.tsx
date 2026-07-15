@@ -3,6 +3,7 @@ import { LogOut, ChevronRight } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { signOut } from "@/lib/auth";
 import { usePublishedProblems } from "@/hooks/useProblems";
+import { useProblemsRealtime } from "@/hooks/useProblemsRealtime";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -10,6 +11,7 @@ export default function StudentProblems() {
   const navigate = useNavigate();
   const { profile } = useAuth();
   const { data: problems = [], isLoading } = usePublishedProblems();
+  useProblemsRealtime();
 
   return (
     <div className="mx-auto max-w-3xl p-6">

@@ -4,6 +4,7 @@ import { Plus, Pencil, Trash2, LogOut, Globe, EyeOff } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { signOut } from "@/lib/auth";
 import { useMyProblems, useCreateProblem, useDeleteProblem, useUpdateProblem } from "@/hooks/useProblems";
+import { useProblemsRealtime } from "@/hooks/useProblemsRealtime";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -11,6 +12,7 @@ export default function TeacherProblems() {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
   const { data: problems = [], isLoading } = useMyProblems(user?.id);
+  useProblemsRealtime();
   const createMut = useCreateProblem();
   const deleteMut = useDeleteProblem();
   const updateMut = useUpdateProblem();

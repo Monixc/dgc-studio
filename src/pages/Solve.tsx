@@ -7,6 +7,7 @@ import { useProblem } from "@/hooks/useProblems";
 import { usePyodide } from "@/hooks/usePyodide";
 import { buildGradingSummary, type GradingSummary } from "@/lib/grading";
 import { submitSolution } from "@/lib/submissions";
+import { loadDraft, saveDraft } from "@/lib/draft";
 import FlowchartPanel from "@/components/flow/FlowchartPanel";
 import EditorPanel from "@/components/editor/EditorPanel";
 import { Button } from "@/components/ui/button";
@@ -23,9 +24,18 @@ export default function Solve() {
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<GradingSummary | null>(null);
 
+  // 임시저장 복원 (없으면 시작 코드)
   useEffect(() => {
-    if (problem) setCode(problem.starter_code ?? "");
-  }, [problem]);
+    if (!problem || !user) return;
+    setCode(loadDraft(user.id, problem.id) ?? problem.starter_code ?? "");
+  }, [problem, user]);
+
+  // 코드 변경 시 디바운스 임시저장
+  useEffect(() => {
+    if (!problem || !user) return;
+    const t = setTimeout(() => saveDraft(user.id, problem.id, code), 500);
+    return () => clearTimeout(t);
+  }, [code, problem, user]);
 
   async function handleSubmit() {
     if (!problem || !user) return;
