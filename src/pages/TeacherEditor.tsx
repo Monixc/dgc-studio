@@ -7,6 +7,7 @@ import { ArrowLeft, Save, Globe, EyeOff } from "lucide-react";
 import { useProblem, useUpdateProblem } from "@/hooks/useProblems";
 import FlowchartPanel from "@/components/flow/FlowchartPanel";
 import GradingTestsEditor from "@/components/GradingTestsEditor";
+import TeacherSubmissions from "@/components/TeacherSubmissions";
 import type { GradingTest } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -73,6 +74,7 @@ export default function TeacherEditor() {
         </Button>
         <Input value={title} onChange={(e) => setTitle(e.target.value)} className="max-w-xs" placeholder="문제 제목" />
         <div className="ml-auto flex gap-2">
+          {problemId && <TeacherSubmissions problemId={problemId} />}
           <Button
             variant="outline"
             onClick={() => save({ is_published: !problem.is_published })}
