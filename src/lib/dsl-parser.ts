@@ -171,7 +171,7 @@ function generate(stmts: Stmt[]): FlowchartData {
         return [{ from: id }];
       }
       case "for": {
-        const id = addNode("for", s.header || "for", scope);
+        const id = addNode("for", s.header ? `for ${s.header}` : "for", scope);
         connect(pending, id);
         // 본문 노드에 scope=for id 표시 → 캔버스에서 컨테이너로 중첩
         const bodyExit = emitSeq(s.body, [{ from: id, label: "반복" }], id);
