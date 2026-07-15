@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Plus, Trash2, Pencil, Check, Users, UserPlus, X, Coins } from "lucide-react";
+import { Plus, Trash2, Pencil, Check, Users, UserPlus, X, Coins, MonitorPlay } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import {
   useClasses, useCreateClass, useRenameClass, useDeleteClass,
@@ -17,6 +18,7 @@ import EnrollStudentsDialog from "@/components/admin/EnrollStudentsDialog";
 import AwardPointsDialog from "@/components/admin/AwardPointsDialog";
 
 export default function ClassManager() {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const userId = user!.id;
   const { data: classes = [], isLoading } = useClasses(userId);
@@ -217,6 +219,12 @@ export default function ClassManager() {
                 ))}
               </div>
             )}
+
+            <div className="mt-6">
+              <Button onClick={() => navigate(`/classes/${selected.id}/live`)}>
+                <MonitorPlay /> 수업하기
+              </Button>
+            </div>
 
             <AssignProblemsDialog
               open={assignOpen}

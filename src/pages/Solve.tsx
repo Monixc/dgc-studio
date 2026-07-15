@@ -8,6 +8,7 @@ import { usePyodide } from "@/hooks/usePyodide";
 import { buildGradingSummary, type GradingSummary } from "@/lib/grading";
 import { submitSolution } from "@/lib/submissions";
 import { loadDraft, saveDraft } from "@/lib/draft";
+import { useBroadcastLiveCode } from "@/hooks/useLiveCode";
 import FlowchartCanvas from "@/components/flow/FlowchartCanvas";
 import { normalizeStored } from "@/lib/flow-graph";
 import EditorPanel from "@/components/editor/EditorPanel";
@@ -37,6 +38,21 @@ export default function Solve() {
     const t = setTimeout(() => saveDraft(user.id, problem.id, code), 500);
     return () => clearTimeout(t);
   }, [code, problem, user]);
+
+  // 선생님 "수업하기" 라이브 뷰용 실시간 브로드캐스트 (교사가 볼 때만 의미 있음, 저장 없음)
+  useBroadcastLiveCode(
+    user?.id,
+    problem
+      ? {
+          code,
+          problemId: problem.id,
+          problemTitle: problem.title,
+          problemDescription: problem.description ?? "",
+          category: problem.category,
+          flowchart: problem.flowchart,
+        }
+      : null
+  );
 
   async function handleSubmit() {
     if (!problem || !user) return;

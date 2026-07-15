@@ -48,7 +48,7 @@ interface Props {
   onChange?: (g: FlowGraph) => void;
 }
 
-function CanvasInner({ graph, editable, resetKey, onChange }: Props) {
+function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
   const rf = useReactFlow();
   const wrapRef = useRef<HTMLDivElement>(null);
   const setNodesRef = useRef<ReturnType<typeof useNodesState>[1] | null>(null);
@@ -328,12 +328,18 @@ function CanvasInner({ graph, editable, resetKey, onChange }: Props) {
         nodesConnectable={editable}
         elementsSelectable={editable}
         deleteKeyCode={editable ? ["Backspace", "Delete"] : null}
+        panOnDrag={editable}
+        panOnScroll={false}
+        zoomOnScroll={editable}
+        zoomOnPinch={editable}
+        zoomOnDoubleClick={editable}
+        preventScrolling={editable}
         fitView
         proOptions={{ hideAttribution: true }}
         minZoom={0.2}
       >
         <Background />
-        <Controls showInteractive={false} />
+        {editable && <Controls showInteractive={false} />}
       </ReactFlow>
       {editable && (
         <div className="absolute bottom-2 left-2 z-10 rounded bg-background/90 px-2 py-1 text-[11px] text-muted-foreground shadow-sm">
