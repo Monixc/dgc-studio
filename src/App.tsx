@@ -8,7 +8,11 @@ import Dashboard from "@/pages/Dashboard";
 import Classes from "@/pages/Classes";
 import Problems from "@/pages/Problems";
 import TeacherProblems from "@/pages/TeacherProblems";
-import StudentProblems from "@/pages/StudentProblems";
+import StudentDashboard from "@/pages/StudentDashboard";
+import MyClass from "@/pages/MyClass";
+import FlowchartPractice from "@/pages/FlowchartPractice";
+import PythonPractice from "@/pages/PythonPractice";
+import BlockPractice from "@/pages/BlockPractice";
 import Solve from "@/pages/Solve";
 import NotFound from "@/pages/NotFound";
 
@@ -66,7 +70,39 @@ export default function App() {
               path="/student"
               element={
                 <RequireRole role="student">
-                  <StudentProblems />
+                  <StudentDashboard />
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/myclass"
+              element={
+                <RequireRole role="student">
+                  <MyClass />
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/practice/flowchart"
+              element={
+                <RequireRole role="student">
+                  <FlowchartPractice />
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/practice/general"
+              element={
+                <RequireRole role="student">
+                  <PythonPractice />
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/practice/block"
+              element={
+                <RequireRole role="student">
+                  <BlockPractice />
                 </RequireRole>
               }
             />

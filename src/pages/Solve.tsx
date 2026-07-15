@@ -73,13 +73,21 @@ export default function Solve() {
       </header>
 
       <div className="grid flex-1 grid-cols-2 overflow-hidden">
-        {/* 좌: 순서도 + 설명 + 결과 */}
+        {/* 좌: (순서도일 때만 캔버스) + 설명 + 결과 */}
         <div className="flex flex-col overflow-hidden border-r">
-          <div className="min-h-0 flex-1">
-            <FlowchartCanvas graph={normalizeStored(problem.flowchart)} resetKey={problem.id} />
-          </div>
-          <div className="max-h-[45%] overflow-auto border-t p-3">
-            {problem.description && <p className="mb-3 whitespace-pre-wrap text-sm">{problem.description}</p>}
+          {problem.category === "flowchart" ? (
+            <div className="min-h-0 flex-1">
+              <FlowchartCanvas graph={normalizeStored(problem.flowchart)} resetKey={problem.id} />
+            </div>
+          ) : (
+            <div className="min-h-0 flex-1 overflow-auto p-4">
+              {problem.description && <p className="whitespace-pre-wrap text-sm">{problem.description}</p>}
+            </div>
+          )}
+          <div className={cn("overflow-auto border-t p-3", problem.category === "flowchart" ? "max-h-[45%]" : "max-h-[35%]")}>
+            {problem.category === "flowchart" && problem.description && (
+              <p className="mb-3 whitespace-pre-wrap text-sm">{problem.description}</p>
+            )}
             {result && (
               <div className="space-y-1">
                 <div className="text-sm font-semibold">

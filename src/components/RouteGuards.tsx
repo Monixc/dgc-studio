@@ -20,7 +20,7 @@ export function RequireRole({ role, children }: { role: Role; children: React.Re
   const { session, role: myRole, loading } = useAuth();
   if (loading) return <Loading />;
   if (!session) return <Navigate to="/" replace />;
-  if (myRole !== role) return <Navigate to={myRole === "teacher" ? "/teacher" : "/student"} replace />;
+  if (myRole !== role) return <Navigate to={myRole === "teacher" ? "/dashboard" : "/student"} replace />;
   return <>{children}</>;
 }
 

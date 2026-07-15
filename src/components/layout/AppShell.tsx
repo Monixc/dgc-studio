@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   GraduationCap, LayoutDashboard, Users, FileText, Keyboard,
-  ShoppingBag, PanelLeftClose, PanelLeftOpen,
+  ShoppingBag, PanelLeftClose, PanelLeftOpen, BookOpen, Workflow, Code2, Blocks,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -22,7 +22,22 @@ const MENU: Item[] = [
   { label: "포인트 상점", icon: ShoppingBag, soon: true },
 ];
 
-export default function AppShell({ children }: { children: React.ReactNode }) {
+export const STUDENT_MENU: Item[] = [
+  { label: "내 수업", icon: BookOpen, to: "/myclass" },
+  { label: "순서도 연습", icon: Workflow, to: "/practice/flowchart" },
+  { label: "파이썬 코딩", icon: Code2, to: "/practice/general" },
+  { label: "블럭 코딩", icon: Blocks, to: "/practice/block" },
+  { label: "타자 연습", icon: Keyboard, soon: true },
+  { label: "포인트 상점", icon: ShoppingBag, soon: true },
+];
+
+interface AppShellProps {
+  children: React.ReactNode;
+  menu?: Item[];
+  homePath?: string;
+}
+
+export default function AppShell({ children, menu = MENU, homePath = "/dashboard" }: AppShellProps) {
   const [collapsed, setCollapsed] = useState(false);
   const nav = useNavigate();
   const loc = useLocation();
@@ -49,13 +64,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
         <nav className="flex-1 space-y-1 p-2">
           <NavButton
-            item={{ label: "대시보드", icon: LayoutDashboard, to: "/dashboard" }}
-            active={loc.pathname === "/dashboard"}
+            item={{ label: "대시보드", icon: LayoutDashboard, to: homePath }}
+            active={loc.pathname === homePath}
             collapsed={collapsed}
-            onClick={() => nav("/dashboard")}
+            onClick={() => nav(homePath)}
           />
           <div className="my-2 border-t" />
-          {MENU.map((it) => (
+          {menu.map((it) => (
             <NavButton
               key={it.label}
               item={it}
