@@ -37,6 +37,24 @@ export async function listMySubmissions(userId: string, problemId?: string): Pro
   return (data ?? []) as Submission[];
 }
 
+/** 선생: 본인 문제에 달린 최근 제출(학생 이름 포함). RLS 로 접근 가능한 것만 반환. */
+export async function listRecentSubmissions(limit = 8): Promise<(Submission & { student_name: string })[]> {
+  const { data, error } = await supabase
+    .from("submissions")
+    .select("*")
+    .order("submitted_at", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  const rows = (data ?? []) as Submission[];
+  const ids = [...new Set(rows.map((r) => r.user_id))];
+  const names = new Map<string, string>();
+  if (ids.length) {
+    const { data: profs } = await supabase.from("profiles").select("id, display_name").in("id", ids);
+    (profs ?? []).forEach((p: any) => names.set(p.id, p.display_name));
+  }
+  return rows.map((r) => ({ ...r, student_name: names.get(r.user_id) ?? "학생" }));
+}
+
 /** 선생: 본인 문제에 달린 모든 제출(학생 이름 포함). RLS 로 본인 문제만 반환. */
 export async function listProblemSubmissions(problemId: string): Promise<(Submission & { student_name: string })[]> {
   const { data, error } = await supabase

@@ -29,5 +29,5 @@ export function Home() {
   const { session, role, loading } = useAuth();
   if (loading) return <Loading />;
   if (!session) return <Landing />;
-  return <Navigate to={role === "teacher" ? "/teacher" : "/student"} replace />;
+  return <Navigate to={role === "teacher" ? "/dashboard" : "/student"} replace />;
 }
