@@ -112,12 +112,14 @@ function FlowNodeInner({ id, data, selected }: NodeProps) {
     />
   );
 
+  // for 컨테이너는 핸들 항상 표시(연결점 찾기 쉽게)
+  const HANDLE_FOR = "!h-2.5 !w-2.5 !border !border-white !bg-gray-400";
   const handles = (
     <>
-      <Handle id="top" type="target" position={Position.Top} className={HANDLE_BASE} isConnectable={editable} />
-      <Handle id="left" type="target" position={Position.Left} className={HANDLE_BASE} isConnectable={editable} />
-      <Handle id="bottom" type="source" position={Position.Bottom} className={HANDLE_BASE} isConnectable={editable} />
-      <Handle id="right" type="source" position={Position.Right} className={HANDLE_BASE} isConnectable={editable} />
+      <Handle id="top" type="target" position={Position.Top} className={HANDLE_FOR} isConnectable={editable} />
+      <Handle id="left" type="target" position={Position.Left} className={HANDLE_FOR} isConnectable={editable} />
+      <Handle id="bottom" type="source" position={Position.Bottom} className={HANDLE_FOR} isConnectable={editable} />
+      <Handle id="right" type="source" position={Position.Right} className={HANDLE_FOR} isConnectable={editable} />
     </>
   );
 
