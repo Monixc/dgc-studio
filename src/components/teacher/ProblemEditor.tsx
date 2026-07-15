@@ -37,7 +37,7 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
     seeded.current = true;
     setTitle(problem.title);
     setDescription(problem.description);
-    setCategory(problem.category);
+    setCategory(problem.category ?? "flowchart");
     setGraph(normalizeStored(problem.flowchart));
     setStarter(problem.starter_code);
     setTests(problem.grading_tests ?? []);
