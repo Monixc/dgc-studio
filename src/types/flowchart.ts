@@ -26,6 +26,11 @@ export interface FlowNode {
   position?: { x: number; y: number };
   /** 배경/테두리/글자 색 (미지정 시 흰 배경·검정 테두리·검정 글자) */
   style?: NodeStyle;
+  /** for 컨테이너 등 그룹 노드의 크기(px). 없으면 타입 기본 크기. */
+  width?: number;
+  height?: number;
+  /** 이 노드를 감싸는 부모(for 컨테이너) id. position 은 부모 기준 상대좌표. */
+  parentId?: string;
   /** def 본문/루프 본문 등 소속 표시용(옵션). 레이아웃/그룹핑 힌트. */
   scope?: string;
 }

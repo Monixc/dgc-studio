@@ -79,12 +79,22 @@ export function toRFNodes(
   graph: FlowGraph,
   opts?: { onLabelChange?: (id: string, label: string) => void }
 ): Node[] {
-  return graph.nodes.map((n) => ({
-    id: n.id,
-    type: "flow",
-    position: n.position ?? { x: 0, y: 0 },
-    data: { label: n.label, nodeType: n.type, style: n.style, onLabelChange: opts?.onLabelChange } satisfies FlowNodeData,
-  }));
+  // 부모(for 컨테이너)가 자식보다 먼저 오도록 정렬 (React Flow 요구사항)
+  const ordered = [...graph.nodes].sort((a, b) => (a.type === "for" ? -1 : 0) - (b.type === "for" ? -1 : 0));
+  return ordered.map((n) => {
+    const node: Node = {
+      id: n.id,
+      type: "flow",
+      position: n.position ?? { x: 0, y: 0 },
+      data: { label: n.label, nodeType: n.type, style: n.style, onLabelChange: opts?.onLabelChange } satisfies FlowNodeData,
+    };
+    if (n.type === "for") node.style = { width: n.width ?? 260, height: n.height ?? 160 };
+    if (n.parentId) {
+      node.parentId = n.parentId;
+      node.extent = "parent";
+    }
+    return node;
+  });
 }
 
 export function toRFEdges(graph: FlowGraph): Edge[] {
@@ -105,13 +115,21 @@ export function toRFEdges(graph: FlowGraph): Edge[] {
 /** React Flow 상태 → 저장용 그래프. */
 export function fromRF(nodes: Node[], edges: Edge[]): FlowGraph {
   return {
-    nodes: nodes.map((n) => ({
-      id: n.id,
-      type: (n.data as FlowNodeData).nodeType,
-      label: (n.data as FlowNodeData).label,
-      style: (n.data as FlowNodeData).style,
-      position: n.position,
-    })),
+    nodes: nodes.map((n) => {
+      const d = n.data as FlowNodeData;
+      const anyN = n as unknown as { measured?: { width?: number; height?: number }; width?: number; height?: number };
+      const w = (n.style?.width as number) ?? anyN.width ?? anyN.measured?.width;
+      const h = (n.style?.height as number) ?? anyN.height ?? anyN.measured?.height;
+      return {
+        id: n.id,
+        type: d.nodeType,
+        label: d.label,
+        style: d.style,
+        position: n.position,
+        parentId: n.parentId,
+        ...(d.nodeType === "for" ? { width: w, height: h } : {}),
+      };
+    }),
     edges: edges.map((e) => ({
       id: e.id,
       source: e.source,

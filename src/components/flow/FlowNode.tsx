@@ -1,5 +1,5 @@
 import { memo, useState, useEffect, useRef } from "react";
-import { Handle, Position, type NodeProps } from "@xyflow/react";
+import { Handle, Position, NodeResizer, type NodeProps } from "@xyflow/react";
 import type { NodeType } from "@/types/flowchart";
 import type { FlowNodeData } from "@/lib/flow-layout";
 import { cn } from "@/lib/utils";
@@ -93,6 +93,51 @@ function FlowNodeInner({ id, data, selected }: NodeProps) {
     setEditing(false);
     if (draft !== d.label) d.onLabelChange?.(id, draft);
   };
+
+  const labelInput = (
+    <input
+      ref={inputRef}
+      value={draft}
+      onChange={(e) => setDraft(e.target.value)}
+      onBlur={commit}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") commit();
+        if (e.key === "Escape") {
+          setDraft(d.label);
+          setEditing(false);
+        }
+      }}
+      className="nodrag rounded bg-white/90 px-1 text-center text-xs outline-none"
+      style={{ color: text }}
+    />
+  );
+
+  const handles = (
+    <>
+      <Handle id="top" type="target" position={Position.Top} className={HANDLE_BASE} isConnectable={editable} />
+      <Handle id="left" type="target" position={Position.Left} className={HANDLE_BASE} isConnectable={editable} />
+      <Handle id="bottom" type="source" position={Position.Bottom} className={HANDLE_BASE} isConnectable={editable} />
+      <Handle id="right" type="source" position={Position.Right} className={HANDLE_BASE} isConnectable={editable} />
+    </>
+  );
+
+  // for 컨테이너: 큰 사각형 안에 자식 노드를 감싼다 (v1 스타일)
+  if (type === "for") {
+    return (
+      <div className="group relative h-full w-full" onDoubleClick={editable ? () => setEditing(true) : undefined}>
+        {editable && <NodeResizer minWidth={180} minHeight={110} isVisible={!!selected} lineClassName="!border-primary" handleClassName="!bg-primary" />}
+        <div
+          className="absolute inset-0 rounded-lg border-2 border-dashed"
+          style={{ borderColor: border, background: d.style?.bg || "rgba(139,92,246,0.06)" }}
+        />
+        <div className="absolute left-2 top-1 flex items-center gap-1 text-xs font-semibold" style={{ color: text }}>
+          <span className="rounded bg-background/70 px-1">🔁</span>
+          {editing ? labelInput : <span>{d.label}</span>}
+        </div>
+        {handles}
+      </div>
+    );
+  }
 
   return (
     <div
