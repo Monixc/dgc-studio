@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   PROBLEM_FOLDERS_KEY,
   listFolders,
+  ensureDefaultFolders,
   createFolder,
   renameFolder,
   deleteFolder,
@@ -10,7 +11,7 @@ import {
 export function useFolders(userId: string | undefined) {
   return useQuery({
     queryKey: [...PROBLEM_FOLDERS_KEY, userId],
-    queryFn: () => listFolders(userId!),
+    queryFn: async () => ensureDefaultFolders(userId!, await listFolders(userId!)),
     enabled: !!userId,
   });
 }
@@ -18,7 +19,8 @@ export function useFolders(userId: string | undefined) {
 export function useCreateFolder() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ userId, name }: { userId: string; name: string }) => createFolder(userId, name),
+    mutationFn: ({ userId, name, parentId }: { userId: string; name: string; parentId?: string | null }) =>
+      createFolder(userId, name, parentId ?? null),
     onSuccess: () => qc.invalidateQueries({ queryKey: PROBLEM_FOLDERS_KEY }),
   });
 }

@@ -55,6 +55,9 @@ export interface ProblemFolder {
   id: string;
   name: string;
   created_by: string;
+  parent_id: string | null;
+  /** 대분류(자동생성 3개 폴더)만 값이 있음. 하위 폴더는 null(부모에서 상속). */
+  category: ProblemCategory | null;
   created_at: string;
 }
 
@@ -68,6 +71,12 @@ export interface ClassRow {
 export interface ClassProblem {
   class_id: string;
   problem_id: string;
+  created_at: string;
+}
+
+export interface ClassStudent {
+  class_id: string;
+  student_id: string;
   created_at: string;
 }
 

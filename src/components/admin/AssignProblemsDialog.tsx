@@ -42,6 +42,18 @@ export default function AssignProblemsDialog({ open, onOpenChange, problems, ass
     });
   }
 
+  function toggleGroup(items: Problem[]) {
+    const allChecked = items.every((p) => checked.has(p.id));
+    setChecked((prev) => {
+      const next = new Set(prev);
+      for (const p of items) {
+        if (allChecked) next.delete(p.id);
+        else next.add(p.id);
+      }
+      return next;
+    });
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -54,7 +66,15 @@ export default function AssignProblemsDialog({ open, onOpenChange, problems, ass
           ) : (
             Array.from(groups.entries()).map(([folderId, items]) => (
               <div key={folderId}>
-                <div className="mb-1 text-xs font-semibold text-muted-foreground">{folderName(folderId)}</div>
+                <label className="mb-1 flex cursor-pointer items-center gap-2 text-xs font-semibold text-muted-foreground">
+                  <input
+                    type="checkbox"
+                    checked={items.every((p) => checked.has(p.id))}
+                    onChange={() => toggleGroup(items)}
+                    className="size-3.5"
+                  />
+                  {folderName(folderId)} 폴더 전체
+                </label>
                 <div className="space-y-1">
                   {items.map((p) => (
                     <label key={p.id} className="flex cursor-pointer items-center gap-2 rounded-md p-1.5 text-sm hover:bg-accent">

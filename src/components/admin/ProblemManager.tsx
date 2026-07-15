@@ -1,19 +1,19 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, Trash2, Folder, FolderPlus, Circle, Globe, EyeOff } from "lucide-react";
+import { Plus, Trash2, Folder, FolderPlus, ChevronRight, ChevronDown, Circle, Globe, EyeOff } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyProblems, useCreateProblem, useDeleteProblem, useUpdateProblem } from "@/hooks/useProblems";
 import { useProblemsRealtime } from "@/hooks/useProblemsRealtime";
 import { useFolders, useCreateFolder, useDeleteFolder } from "@/hooks/useProblemFolders";
+import { resolveFolderCategory } from "@/lib/problemFolders";
 import ProblemEditor from "@/components/teacher/ProblemEditor";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { PROBLEM_CATEGORY_LABEL, type ProblemCategory } from "@/integrations/supabase/types";
+import type { ProblemFolder } from "@/integrations/supabase/types";
 
 const ALL = "__all__";
 const NO_FOLDER = "__none__";
-const CATEGORIES = Object.keys(PROBLEM_CATEGORY_LABEL) as ProblemCategory[];
+const PROBLEM_DND_TYPE = "text/flowpy-problem-id";
 
 export default function ProblemManager() {
   const { user } = useAuth();
@@ -27,31 +27,42 @@ export default function ProblemManager() {
   const deleteProblemMut = useDeleteProblem();
   const updateProblemMut = useUpdateProblem();
 
-  const [activeCategory, setActiveCategory] = useState<ProblemCategory>("flowchart");
   const [activeFolder, setActiveFolder] = useState<string>(ALL);
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
 
-  const inCategory = problems.filter((p) => p.category === activeCategory);
   const filtered =
     activeFolder === ALL
-      ? inCategory
+      ? problems
       : activeFolder === NO_FOLDER
-        ? inCategory.filter((p) => !p.folder_id)
-        : inCategory.filter((p) => p.folder_id === activeFolder);
+        ? problems.filter((p) => !p.folder_id)
+        : problems.filter((p) => p.folder_id === activeFolder);
 
-  async function handleNewFolder() {
-    const name = prompt("새 폴더 이름");
+  const childrenOf = (parentId: string | null) => folders.filter((f) => f.parent_id === parentId);
+
+  function toggleExpand(id: string) {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  async function handleAddChild(parentId: string) {
+    const name = prompt("새 하위 폴더 이름");
     if (!name?.trim()) return;
     try {
-      await createFolderMut.mutateAsync({ userId, name: name.trim() });
+      await createFolderMut.mutateAsync({ userId, name: name.trim(), parentId });
+      setExpanded((prev) => new Set(prev).add(parentId));
     } catch (e: any) {
       toast.error(e?.message ?? "생성 실패");
     }
   }
 
-  async function handleDeleteFolder(id: string, e: React.MouseEvent) {
-    e.stopPropagation();
-    if (!confirm("이 폴더를 삭제할까요? 안의 문제는 미분류로 이동합니다.")) return;
+  async function handleDeleteFolder(id: string) {
+    if (!confirm("이 폴더를 삭제할까요? 안의 문제는 미분류로, 하위 폴더도 함께 삭제됩니다.")) return;
     try {
       await deleteFolderMut.mutateAsync(id);
       if (activeFolder === id) setActiveFolder(ALL);
@@ -63,7 +74,8 @@ export default function ProblemManager() {
   async function handleCreateProblem() {
     try {
       const folderId = activeFolder !== ALL && activeFolder !== NO_FOLDER ? activeFolder : null;
-      const p = await createProblemMut.mutateAsync({ userId, category: activeCategory, folderId });
+      const category = resolveFolderCategory(folderId, folders);
+      const p = await createProblemMut.mutateAsync({ userId, category, folderId });
       setSelectedId(p.id);
     } catch (e: any) {
       toast.error(e?.message ?? "생성 실패");
@@ -91,35 +103,58 @@ export default function ProblemManager() {
     }
   }
 
+  async function handleDropOnFolder(folderId: string | null, e: React.DragEvent) {
+    e.preventDefault();
+    setDragOverId(null);
+    const problemId = e.dataTransfer.getData(PROBLEM_DND_TYPE);
+    if (!problemId) return;
+    try {
+      const patch = folderId
+        ? { folder_id: folderId, category: resolveFolderCategory(folderId, folders) }
+        : { folder_id: null };
+      await updateProblemMut.mutateAsync({ id: problemId, patch });
+    } catch (e: any) {
+      toast.error(e?.message ?? "이동 실패");
+    }
+  }
+
   return (
-    <div className="flex h-full flex-col overflow-hidden">
-      <div className="border-b px-3 py-2">
-        <Tabs value={activeCategory} onValueChange={(v) => { setActiveCategory(v as ProblemCategory); setActiveFolder(ALL); }}>
-          <TabsList>
-            {CATEGORIES.map((c) => (
-              <TabsTrigger key={c} value={c}>{PROBLEM_CATEGORY_LABEL[c]}</TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
-      </div>
-      <div className="flex flex-1 overflow-hidden">
-      <div className="flex h-full w-48 flex-col border-r bg-muted/20">
+    <div className="flex h-full overflow-hidden">
+      <div className="flex h-full w-56 flex-col border-r bg-muted/20">
         <div className="flex items-center justify-between border-b p-2">
           <span className="text-sm font-semibold">폴더</span>
-          <button className="rounded p-1 hover:bg-accent" onClick={handleNewFolder} title="새 폴더">
-            <FolderPlus className="size-4" />
-          </button>
         </div>
         <div className="flex-1 overflow-auto p-1">
-          <FolderItem label="전체" active={activeFolder === ALL} onClick={() => setActiveFolder(ALL)} />
-          <FolderItem label="미분류" active={activeFolder === NO_FOLDER} onClick={() => setActiveFolder(NO_FOLDER)} />
-          {folders.map((f) => (
-            <FolderItem
+          <FolderItem
+            label="전체"
+            active={activeFolder === ALL}
+            onClick={() => setActiveFolder(ALL)}
+            onDragOver={(e) => e.preventDefault()}
+          />
+          <FolderItem
+            label="미분류"
+            active={activeFolder === NO_FOLDER}
+            onClick={() => setActiveFolder(NO_FOLDER)}
+            dragOver={dragOverId === NO_FOLDER}
+            onDragOver={(e) => { e.preventDefault(); setDragOverId(NO_FOLDER); }}
+            onDragLeave={() => setDragOverId((id) => (id === NO_FOLDER ? null : id))}
+            onDrop={(e) => handleDropOnFolder(null, e)}
+          />
+          {childrenOf(null).map((f) => (
+            <FolderTreeNode
               key={f.id}
-              label={f.name}
-              active={activeFolder === f.id}
-              onClick={() => setActiveFolder(f.id)}
-              onDelete={(e) => handleDeleteFolder(f.id, e)}
+              folder={f}
+              depth={0}
+              childrenOf={childrenOf}
+              expanded={expanded}
+              onToggleExpand={toggleExpand}
+              activeFolder={activeFolder}
+              onSelect={setActiveFolder}
+              onAddChild={handleAddChild}
+              onDelete={handleDeleteFolder}
+              dragOverId={dragOverId}
+              setDragOverId={setDragOverId}
+              onDrop={handleDropOnFolder}
             />
           ))}
         </div>
@@ -141,9 +176,11 @@ export default function ProblemManager() {
             filtered.map((p) => (
               <div
                 key={p.id}
+                draggable
+                onDragStart={(e) => e.dataTransfer.setData(PROBLEM_DND_TYPE, p.id)}
                 onClick={() => setSelectedId(p.id)}
                 className={cn(
-                  "group flex cursor-pointer items-center gap-2 rounded-md p-2 text-sm hover:bg-accent",
+                  "group flex cursor-grab items-center gap-2 rounded-md p-2 text-sm hover:bg-accent active:cursor-grabbing",
                   selectedId === p.id && "bg-accent"
                 )}
               >
@@ -170,29 +207,132 @@ export default function ProblemManager() {
           </div>
         )}
       </div>
-      </div>
     </div>
   );
 }
 
 function FolderItem({
-  label, active, onClick, onDelete,
-}: { label: string; active: boolean; onClick: () => void; onDelete?: (e: React.MouseEvent) => void }) {
+  label, active, onClick, onDelete, onAddChild, dragOver, onDragOver, onDragLeave, onDrop, depth = 0,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+  onDelete?: () => void;
+  onAddChild?: () => void;
+  dragOver?: boolean;
+  onDragOver?: (e: React.DragEvent) => void;
+  onDragLeave?: () => void;
+  onDrop?: (e: React.DragEvent) => void;
+  depth?: number;
+  expandControl?: React.ReactNode;
+}) {
   return (
     <div
       onClick={onClick}
+      onDragOver={onDragOver}
+      onDragLeave={onDragLeave}
+      onDrop={onDrop}
+      style={{ paddingLeft: depth * 14 }}
       className={cn(
-        "group flex cursor-pointer items-center gap-2 rounded-md p-2 text-sm hover:bg-accent",
-        active && "bg-accent"
+        "group flex cursor-pointer items-center gap-1 rounded-md p-2 text-sm hover:bg-accent",
+        active && "bg-accent",
+        dragOver && "ring-2 ring-primary"
       )}
     >
       <Folder className="size-4 shrink-0 text-muted-foreground" />
       <span className="flex-1 truncate">{label}</span>
-      {onDelete && (
-        <button className="opacity-0 group-hover:opacity-100" onClick={onDelete} title="폴더 삭제">
-          <Trash2 className="size-4" />
+      {onAddChild && (
+        <button className="opacity-0 group-hover:opacity-100" onClick={(e) => { e.stopPropagation(); onAddChild(); }} title="하위 폴더 추가">
+          <FolderPlus className="size-3.5" />
         </button>
       )}
+      {onDelete && (
+        <button className="opacity-0 group-hover:opacity-100" onClick={(e) => { e.stopPropagation(); onDelete(); }} title="폴더 삭제">
+          <Trash2 className="size-3.5" />
+        </button>
+      )}
+    </div>
+  );
+}
+
+function FolderTreeNode({
+  folder, depth, childrenOf, expanded, onToggleExpand, activeFolder, onSelect, onAddChild, onDelete,
+  dragOverId, setDragOverId, onDrop,
+}: {
+  folder: ProblemFolder;
+  depth: number;
+  childrenOf: (parentId: string | null) => ProblemFolder[];
+  expanded: Set<string>;
+  onToggleExpand: (id: string) => void;
+  activeFolder: string;
+  onSelect: (id: string) => void;
+  onAddChild: (parentId: string) => void;
+  onDelete: (id: string) => void;
+  dragOverId: string | null;
+  setDragOverId: (v: string | null | ((prev: string | null) => string | null)) => void;
+  onDrop: (folderId: string, e: React.DragEvent) => void;
+}) {
+  const kids = childrenOf(folder.id);
+  const isExpanded = expanded.has(folder.id);
+  const isDefault = !!folder.category;
+
+  return (
+    <div>
+      <div
+        onClick={() => onSelect(folder.id)}
+        onDragOver={(e) => { e.preventDefault(); setDragOverId(folder.id); }}
+        onDragLeave={() => setDragOverId((id) => (id === folder.id ? null : id))}
+        onDrop={(e) => onDrop(folder.id, e)}
+        style={{ paddingLeft: depth * 14 }}
+        className={cn(
+          "group flex cursor-pointer items-center gap-1 rounded-md p-2 text-sm hover:bg-accent",
+          activeFolder === folder.id && "bg-accent",
+          dragOverId === folder.id && "ring-2 ring-primary"
+        )}
+      >
+        {kids.length > 0 ? (
+          <button onClick={(e) => { e.stopPropagation(); onToggleExpand(folder.id); }} className="shrink-0 text-muted-foreground">
+            {isExpanded ? <ChevronDown className="size-3.5" /> : <ChevronRight className="size-3.5" />}
+          </button>
+        ) : (
+          <span className="w-3.5 shrink-0" />
+        )}
+        <Folder className="size-4 shrink-0 text-muted-foreground" />
+        <span className={cn("flex-1 truncate", isDefault && "font-medium")}>{folder.name}</span>
+        <button
+          className="opacity-0 group-hover:opacity-100"
+          onClick={(e) => { e.stopPropagation(); onAddChild(folder.id); }}
+          title="하위 폴더 추가"
+        >
+          <FolderPlus className="size-3.5" />
+        </button>
+        {!isDefault && (
+          <button
+            className="opacity-0 group-hover:opacity-100"
+            onClick={(e) => { e.stopPropagation(); onDelete(folder.id); }}
+            title="폴더 삭제"
+          >
+            <Trash2 className="size-3.5" />
+          </button>
+        )}
+      </div>
+      {isExpanded && kids.map((k) => (
+        <FolderTreeNode
+          key={k.id}
+          folder={k}
+          depth={depth + 1}
+          childrenOf={childrenOf}
+          expanded={expanded}
+          onToggleExpand={onToggleExpand}
+          activeFolder={activeFolder}
+          onSelect={onSelect}
+          onAddChild={onAddChild}
+          onDelete={onDelete}
+          dragOverId={dragOverId}
+          setDragOverId={setDragOverId}
+          onDrop={onDrop}
+        />
+      ))}
     </div>
   );
 }

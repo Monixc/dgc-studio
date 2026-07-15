@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, Trash2, Pencil, Check, Users } from "lucide-react";
+import { Plus, Trash2, Pencil, Check, Users, UserPlus, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import {
   useClasses, useCreateClass, useRenameClass, useDeleteClass,
   useClassProblemIds, useSetClassProblems,
 } from "@/hooks/useClasses";
+import { useAllStudents, useClassStudentIds, useSetClassStudents } from "@/hooks/useClassStudents";
 import { useMyProblems } from "@/hooks/useProblems";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import AssignProblemsDialog from "@/components/admin/AssignProblemsDialog";
+import EnrollStudentsDialog from "@/components/admin/EnrollStudentsDialog";
 
 export default function ClassManager() {
   const { user } = useAuth();
@@ -29,6 +31,11 @@ export default function ClassManager() {
   const selected = classes.find((c) => c.id === selectedId) ?? null;
   const { data: assignedIds = [] } = useClassProblemIds(selected?.id);
   const setProblemsMut = useSetClassProblems();
+
+  const { data: students = [] } = useAllStudents();
+  const { data: enrolledIds = [] } = useClassStudentIds(selected?.id);
+  const setStudentsMut = useSetClassStudents();
+  const [enrollOpen, setEnrollOpen] = useState(false);
 
   async function handleCreate() {
     try {
@@ -66,6 +73,19 @@ export default function ClassManager() {
   }
 
   const assignedProblems = problems.filter((p) => assignedIds.includes(p.id));
+  const enrolledStudents = students.filter((s) => enrolledIds.includes(s.id));
+
+  async function removeStudent(studentId: string) {
+    if (!selected) return;
+    try {
+      await setStudentsMut.mutateAsync({
+        classId: selected.id,
+        studentIds: enrolledIds.filter((id) => id !== studentId),
+      });
+    } catch (e: any) {
+      toast.error(e?.message ?? "실패");
+    }
+  }
 
   return (
     <div className="flex h-full overflow-hidden">
@@ -137,9 +157,38 @@ export default function ClassManager() {
           </div>
         ) : (
           <>
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-bold">{selected.name}</h2>
-              <Button onClick={() => setAssignOpen(true)}>
+            <h2 className="mb-4 text-lg font-bold">{selected.name}</h2>
+
+            <div className="mb-6">
+              <div className="mb-2 flex items-center justify-between">
+                <h3 className="text-sm font-semibold">등록 학생 ({enrolledStudents.length})</h3>
+                <Button size="sm" onClick={() => setEnrollOpen(true)}>
+                  <UserPlus /> 학생 등록
+                </Button>
+              </div>
+              {enrolledStudents.length === 0 ? (
+                <p className="text-sm text-muted-foreground">아직 등록된 학생이 없습니다.</p>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {enrolledStudents.map((s) => (
+                    <span key={s.id} className="flex items-center gap-1.5 rounded-full border bg-background px-3 py-1 text-sm">
+                      {s.display_name || "(이름 없음)"}
+                      <button
+                        onClick={() => removeStudent(s.id)}
+                        title="등록 해제"
+                        className="text-muted-foreground hover:text-foreground"
+                      >
+                        <X className="size-3.5" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="mb-2 flex items-center justify-between">
+              <h3 className="text-sm font-semibold">할당된 문제 ({assignedProblems.length})</h3>
+              <Button size="sm" onClick={() => setAssignOpen(true)}>
                 <Plus /> 문제 할당
               </Button>
             </div>
@@ -168,6 +217,20 @@ export default function ClassManager() {
                   await setProblemsMut.mutateAsync({ classId: selected.id, problemIds: ids });
                   toast.success("배정 저장됨");
                   setAssignOpen(false);
+                } catch (e: any) {
+                  toast.error(e?.message ?? "저장 실패");
+                }
+              }}
+            />
+            <EnrollStudentsDialog
+              open={enrollOpen}
+              onOpenChange={setEnrollOpen}
+              enrolledIds={enrolledIds}
+              onSave={async (ids) => {
+                try {
+                  await setStudentsMut.mutateAsync({ classId: selected.id, studentIds: ids });
+                  toast.success("등록 저장됨");
+                  setEnrollOpen(false);
                 } catch (e: any) {
                   toast.error(e?.message ?? "저장 실패");
                 }
