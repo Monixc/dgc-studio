@@ -36,7 +36,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex h-screen overflow-hidden bg-muted/30">
       <aside className={cn("flex flex-col border-r bg-background transition-all", collapsed ? "w-16" : "w-56")}>
-        <div className="flex items-center gap-2 border-b px-3 py-3">
+        <div className="flex h-14 items-center gap-2 border-b px-3">
           <GraduationCap className="shrink-0 text-primary" />
           {!collapsed && <span className="font-bold">Flow-Py</span>}
           <button

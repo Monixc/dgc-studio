@@ -33,7 +33,7 @@ export default function Header({ title }: { title?: string }) {
   };
 
   return (
-    <header className="flex items-center border-b bg-background px-6 py-3">
+    <header className="flex h-14 items-center border-b bg-background px-6">
       {title && <h2 className="text-sm font-semibold text-muted-foreground">{title}</h2>}
       <div className="relative ml-auto">
         <button
