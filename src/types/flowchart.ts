@@ -16,6 +16,8 @@ export interface FlowNode {
   id: string;
   type: NodeType;
   label: string;
+  /** 캔버스 좌표(캔버스 원본 저장 시 필수). DSL 파싱 직후엔 없을 수 있음(dagre 로 채움). */
+  position?: { x: number; y: number };
   /** def 본문/루프 본문 등 소속 표시용(옵션). 레이아웃/그룹핑 힌트. */
   scope?: string;
 }
@@ -26,12 +28,17 @@ export interface FlowEdge {
   target: string;
   /** 'true' | 'false' | 'loop' | 'done' 등 분기 라벨 */
   label?: string;
+  sourceHandle?: string;
+  targetHandle?: string;
 }
 
 export interface FlowchartData {
   nodes: FlowNode[];
   edges: FlowEdge[];
 }
+
+/** 캔버스 원본 저장 그래프(모든 노드에 position 존재). */
+export type FlowGraph = FlowchartData;
 
 /** 파싱 실패 시 반환 정보 */
 export interface ParseError {

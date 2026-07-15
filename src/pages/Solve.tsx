@@ -8,7 +8,8 @@ import { usePyodide } from "@/hooks/usePyodide";
 import { buildGradingSummary, type GradingSummary } from "@/lib/grading";
 import { submitSolution } from "@/lib/submissions";
 import { loadDraft, saveDraft } from "@/lib/draft";
-import FlowchartPanel from "@/components/flow/FlowchartPanel";
+import FlowchartCanvas from "@/components/flow/FlowchartCanvas";
+import { normalizeStored } from "@/lib/flow-graph";
 import EditorPanel from "@/components/editor/EditorPanel";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -75,7 +76,7 @@ export default function Solve() {
         {/* 좌: 순서도 + 설명 + 결과 */}
         <div className="flex flex-col overflow-hidden border-r">
           <div className="min-h-0 flex-1">
-            <FlowchartPanel dsl={problem.flowchart?.dsl ?? ""} positions={problem.flowchart?.positions} readOnly />
+            <FlowchartCanvas graph={normalizeStored(problem.flowchart)} resetKey={problem.id} />
           </div>
           <div className="max-h-[45%] overflow-auto border-t p-3">
             {problem.description && <p className="mb-3 whitespace-pre-wrap text-sm">{problem.description}</p>}

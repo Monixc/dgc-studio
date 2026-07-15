@@ -1,6 +1,7 @@
-import { memo } from "react";
+import { memo, useState, useEffect, useRef } from "react";
 import { Handle, Position, type NodeProps } from "@xyflow/react";
 import type { NodeType } from "@/types/flowchart";
+import type { FlowNodeData } from "@/lib/flow-layout";
 import { cn } from "@/lib/utils";
 
 const COLORS: Record<NodeType, string> = {
@@ -16,7 +17,6 @@ const COLORS: Record<NodeType, string> = {
   call: "bg-teal-100 border-teal-400 text-teal-900",
 };
 
-/** 타입별 도형 컨테이너 클래스 (배경/테두리 형태) */
 function shapeClass(type: NodeType): string {
   switch (type) {
     case "start":
@@ -39,12 +39,27 @@ function shapeClass(type: NodeType): string {
   }
 }
 
-const handleStyle = { width: 8, height: 8, background: "hsl(var(--muted-foreground))", border: "none" };
+const handleStyle = { width: 9, height: 9, background: "hsl(var(--primary))", border: "1px solid white" };
 
-function FlowNodeInner({ data, selected }: NodeProps) {
-  const type = data.nodeType as NodeType;
-  const label = data.label as string;
+function FlowNodeInner({ id, data, selected }: NodeProps) {
+  const d = data as FlowNodeData;
+  const type = d.nodeType;
   const diamond = type === "if" || type === "while";
+  const editable = !!d.onLabelChange;
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(d.label);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => setDraft(d.label), [d.label]);
+  useEffect(() => {
+    if (editing) inputRef.current?.select();
+  }, [editing]);
+
+  const commit = () => {
+    setEditing(false);
+    if (draft !== d.label) d.onLabelChange?.(id, draft);
+  };
+
   return (
     <div
       className={cn(
@@ -57,13 +72,31 @@ function FlowNodeInner({ data, selected }: NodeProps) {
         width: diamond ? 150 : type === "for" ? 190 : type === "start" || type === "end" ? 110 : 180,
         height: diamond ? 90 : 56,
       }}
-      title={label}
+      title={d.label}
+      onDoubleClick={editable ? () => setEditing(true) : undefined}
     >
-      <span className={cn("line-clamp-2 break-words", diamond && "px-6")}>{label}</span>
-      <Handle id="t" type="target" position={Position.Top} style={handleStyle} />
-      <Handle id="b" type="source" position={Position.Bottom} style={handleStyle} />
-      <Handle id="rs" type="source" position={Position.Right} style={{ ...handleStyle, top: "60%" }} />
-      <Handle id="rt" type="target" position={Position.Right} style={{ ...handleStyle, top: "40%" }} />
+      {editing ? (
+        <input
+          ref={inputRef}
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onBlur={commit}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") commit();
+            if (e.key === "Escape") {
+              setDraft(d.label);
+              setEditing(false);
+            }
+          }}
+          className="nodrag w-full rounded bg-white/90 px-1 text-center text-xs outline-none"
+        />
+      ) : (
+        <span className={cn("line-clamp-2 break-words", diamond && "px-6")}>{d.label}</span>
+      )}
+      <Handle id="top" type="target" position={Position.Top} style={handleStyle} isConnectable={editable} />
+      <Handle id="left" type="target" position={Position.Left} style={handleStyle} isConnectable={editable} />
+      <Handle id="bottom" type="source" position={Position.Bottom} style={handleStyle} isConnectable={editable} />
+      <Handle id="right" type="source" position={Position.Right} style={handleStyle} isConnectable={editable} />
     </div>
   );
 }

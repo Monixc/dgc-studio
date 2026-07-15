@@ -9,8 +9,14 @@ export interface Profile {
   created_at: string;
 }
 
+import type { FlowNode, FlowEdge } from "@/types/flowchart";
+
+// 캔버스 원본: nodes/edges 저장. 구버전 {dsl, positions} 도 로더에서 수용.
 export interface FlowchartPayload {
-  dsl: string;
+  nodes?: FlowNode[];
+  edges?: FlowEdge[];
+  /** 구버전/DSL 임포트용 (선택) */
+  dsl?: string;
   positions?: Record<string, { x: number; y: number }>;
 }
 
