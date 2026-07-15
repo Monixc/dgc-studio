@@ -12,7 +12,6 @@ import { cn } from "@/lib/utils";
 import type { ProblemFolder } from "@/integrations/supabase/types";
 
 const ALL = "__all__";
-const NO_FOLDER = "__none__";
 const PROBLEM_DND_TYPE = "text/flowpy-problem-id";
 
 export default function ProblemManager() {
@@ -32,12 +31,7 @@ export default function ProblemManager() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
 
-  const filtered =
-    activeFolder === ALL
-      ? problems
-      : activeFolder === NO_FOLDER
-        ? problems.filter((p) => !p.folder_id)
-        : problems.filter((p) => p.folder_id === activeFolder);
+  const filtered = activeFolder === ALL ? problems : problems.filter((p) => p.folder_id === activeFolder);
 
   const childrenOf = (parentId: string | null) => folders.filter((f) => f.parent_id === parentId);
 
@@ -62,7 +56,7 @@ export default function ProblemManager() {
   }
 
   async function handleDeleteFolder(id: string) {
-    if (!confirm("이 폴더를 삭제할까요? 안의 문제는 미분류로, 하위 폴더도 함께 삭제됩니다.")) return;
+    if (!confirm("이 폴더를 삭제할까요? 하위 폴더도 함께 삭제됩니다.")) return;
     try {
       await deleteFolderMut.mutateAsync(id);
       if (activeFolder === id) setActiveFolder(ALL);
@@ -73,7 +67,9 @@ export default function ProblemManager() {
 
   async function handleCreateProblem() {
     try {
-      const folderId = activeFolder !== ALL && activeFolder !== NO_FOLDER ? activeFolder : null;
+      // "전체"에서 추가하면 기본 대분류(순서도)로 들어감 — 미분류 상태를 만들지 않음.
+      const defaultFolder = folders.find((f) => f.category === "flowchart" && f.parent_id === null);
+      const folderId = activeFolder !== ALL ? activeFolder : defaultFolder?.id ?? null;
       const category = resolveFolderCategory(folderId, folders);
       const p = await createProblemMut.mutateAsync({ userId, category, folderId });
       setSelectedId(p.id);
@@ -103,16 +99,16 @@ export default function ProblemManager() {
     }
   }
 
-  async function handleDropOnFolder(folderId: string | null, e: React.DragEvent) {
+  async function handleDropOnFolder(folderId: string, e: React.DragEvent) {
     e.preventDefault();
     setDragOverId(null);
     const problemId = e.dataTransfer.getData(PROBLEM_DND_TYPE);
     if (!problemId) return;
     try {
-      const patch = folderId
-        ? { folder_id: folderId, category: resolveFolderCategory(folderId, folders) }
-        : { folder_id: null };
-      await updateProblemMut.mutateAsync({ id: problemId, patch });
+      await updateProblemMut.mutateAsync({
+        id: problemId,
+        patch: { folder_id: folderId, category: resolveFolderCategory(folderId, folders) },
+      });
     } catch (e: any) {
       toast.error(e?.message ?? "이동 실패");
     }
@@ -129,16 +125,6 @@ export default function ProblemManager() {
             label="전체"
             active={activeFolder === ALL}
             onClick={() => setActiveFolder(ALL)}
-            onDragOver={(e) => e.preventDefault()}
-          />
-          <FolderItem
-            label="미분류"
-            active={activeFolder === NO_FOLDER}
-            onClick={() => setActiveFolder(NO_FOLDER)}
-            dragOver={dragOverId === NO_FOLDER}
-            onDragOver={(e) => { e.preventDefault(); setDragOverId(NO_FOLDER); }}
-            onDragLeave={() => setDragOverId((id) => (id === NO_FOLDER ? null : id))}
-            onDrop={(e) => handleDropOnFolder(null, e)}
           />
           {childrenOf(null).map((f) => (
             <FolderTreeNode
@@ -211,46 +197,17 @@ export default function ProblemManager() {
   );
 }
 
-function FolderItem({
-  label, active, onClick, onDelete, onAddChild, dragOver, onDragOver, onDragLeave, onDrop, depth = 0,
-}: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-  onDelete?: () => void;
-  onAddChild?: () => void;
-  dragOver?: boolean;
-  onDragOver?: (e: React.DragEvent) => void;
-  onDragLeave?: () => void;
-  onDrop?: (e: React.DragEvent) => void;
-  depth?: number;
-  expandControl?: React.ReactNode;
-}) {
+function FolderItem({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
   return (
     <div
       onClick={onClick}
-      onDragOver={onDragOver}
-      onDragLeave={onDragLeave}
-      onDrop={onDrop}
-      style={{ paddingLeft: depth * 14 }}
       className={cn(
-        "group flex cursor-pointer items-center gap-1 rounded-md p-2 text-sm hover:bg-accent",
-        active && "bg-accent",
-        dragOver && "ring-2 ring-primary"
+        "flex cursor-pointer items-center gap-1 rounded-md p-2 text-sm hover:bg-accent",
+        active && "bg-accent"
       )}
     >
       <Folder className="size-4 shrink-0 text-muted-foreground" />
       <span className="flex-1 truncate">{label}</span>
-      {onAddChild && (
-        <button className="opacity-0 group-hover:opacity-100" onClick={(e) => { e.stopPropagation(); onAddChild(); }} title="하위 폴더 추가">
-          <FolderPlus className="size-3.5" />
-        </button>
-      )}
-      {onDelete && (
-        <button className="opacity-0 group-hover:opacity-100" onClick={(e) => { e.stopPropagation(); onDelete(); }} title="폴더 삭제">
-          <Trash2 className="size-3.5" />
-        </button>
-      )}
     </div>
   );
 }

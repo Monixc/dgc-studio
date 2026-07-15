@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
-  GraduationCap, LayoutDashboard, Users, Workflow, Blocks, Code2, Keyboard,
+  GraduationCap, LayoutDashboard, Users, FileText, Keyboard,
   ShoppingBag, PanelLeftClose, PanelLeftOpen,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -17,9 +17,7 @@ interface Item {
 
 const MENU: Item[] = [
   { label: "반 관리", icon: Users, to: "/classes" },
-  { label: "순서도 연습", icon: Workflow, to: "/teacher" },
-  { label: "블럭 코딩", icon: Blocks, soon: true },
-  { label: "파이썬 문제 풀이", icon: Code2, to: "/teacher" },
+  { label: "문제 관리", icon: FileText, to: "/problems" },
   { label: "타자 연습", icon: Keyboard, soon: true },
   { label: "포인트 상점", icon: ShoppingBag, soon: true },
 ];

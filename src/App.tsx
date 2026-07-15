@@ -6,6 +6,7 @@ import { RequireAuth, RequireRole, Home } from "@/components/RouteGuards";
 import { usePresenceTracker } from "@/hooks/usePresence";
 import Dashboard from "@/pages/Dashboard";
 import Classes from "@/pages/Classes";
+import Problems from "@/pages/Problems";
 import TeacherProblems from "@/pages/TeacherProblems";
 import StudentProblems from "@/pages/StudentProblems";
 import Solve from "@/pages/Solve";
@@ -42,6 +43,14 @@ export default function App() {
               element={
                 <RequireRole role="teacher">
                   <Classes />
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/problems"
+              element={
+                <RequireRole role="teacher">
+                  <Problems />
                 </RequireRole>
               }
             />

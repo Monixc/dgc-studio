@@ -98,13 +98,13 @@ export default function Dashboard() {
           <Bento className="md:col-span-2" icon={Plus} title="빠른 실행">
             <div className="flex flex-wrap gap-2">
               <button
-                onClick={() => nav("/teacher")}
+                onClick={() => nav("/problems")}
                 className="rounded-lg bg-primary px-4 py-2 text-sm text-primary-foreground hover:opacity-90"
               >
                 문제 만들기
               </button>
               <button
-                onClick={() => nav("/teacher")}
+                onClick={() => nav("/problems")}
                 className="rounded-lg border px-4 py-2 text-sm hover:bg-accent"
               >
                 문제 관리
