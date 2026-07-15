@@ -131,8 +131,7 @@ function FlowNodeInner({ id, data, selected }: NodeProps) {
           style={{ borderColor: border, background: d.style?.bg || "rgba(139,92,246,0.06)" }}
         />
         <div className="absolute left-2 top-1 flex items-center gap-1 text-xs font-semibold" style={{ color: text }}>
-          <span className="rounded bg-background/70 px-1">🔁</span>
-          {editing ? labelInput : <span>{d.label}</span>}
+          {editing ? labelInput : <span className="rounded bg-background/70 px-1">{d.label}</span>}
         </div>
         {handles}
       </div>

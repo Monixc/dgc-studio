@@ -14,7 +14,7 @@ import {
   type Edge,
   type Node,
 } from "@xyflow/react";
-import { nodeTypes, NODE_SIZE } from "./FlowNode";
+import { nodeTypes } from "./FlowNode";
 import type { FlowGraph, NodeType } from "@/types/flowchart";
 import type { FlowNodeData } from "@/lib/flow-layout";
 import { toRFNodes, toRFEdges, fromRF, autoLayout, dslToGraph, newNodeId, newEdgeId, orderParentsFirst } from "@/lib/flow-graph";
@@ -108,64 +108,55 @@ function CanvasInner({ graph, editable, resetKey, onChange }: Props) {
     setNodes((ns) => (type === "for" ? [node, ...ns] : [...ns, node]));
   };
 
-  // 드래그 종료: for 컨테이너 위에 놓이면 자식으로, 밖으로 나가면 분리 (for 중첩 지원)
+  // 드래그 종료: for 컨테이너와 겹치면 자식으로, 밖으로 나가면 분리 (for 중첩 지원)
   const onNodeDragStop = useCallback(
     (_: unknown, dragged: Node) => {
       if (!editable) return;
-      const dd = dragged.data as FlowNodeData;
+      const cur = rf.getNodes();
+      const byId = new Map(cur.map((n) => [n.id, n]));
+      const absPos = (id: string): { x: number; y: number } => {
+        let n = byId.get(id);
+        let x = 0;
+        let y = 0;
+        while (n) {
+          x += n.position.x;
+          y += n.position.y;
+          n = n.parentId ? byId.get(n.parentId) : undefined;
+        }
+        return { x, y };
+      };
+      const isDescendantOf = (nodeId: string, ancestorId: string): boolean => {
+        let p = byId.get(nodeId)?.parentId;
+        while (p) {
+          if (p === ancestorId) return true;
+          p = byId.get(p)?.parentId;
+        }
+        return false;
+      };
+      const depth = (id: string): number => {
+        let d = 0;
+        let p = byId.get(id)?.parentId;
+        while (p) {
+          d++;
+          p = byId.get(p)?.parentId;
+        }
+        return d;
+      };
+
+      // 겹치는 for 컨테이너 중 가장 안쪽. 자기 자신·자손 제외(순환 방지).
+      const overlap = rf
+        .getIntersectingNodes(dragged)
+        .filter(
+          (n) =>
+            (n.data as FlowNodeData).nodeType === "for" && n.id !== dragged.id && !isDescendantOf(n.id, dragged.id)
+        );
+      const target = overlap.sort((a, b) => depth(b.id) - depth(a.id))[0] ?? null;
+      const abs = absPos(dragged.id);
+
       setNodes((ns) => {
-        const byId = new Map(ns.map((n) => [n.id, n]));
-        const absPos = (n: Node): { x: number; y: number } => {
-          let x = n.position.x;
-          let y = n.position.y;
-          let p = n.parentId;
-          while (p) {
-            const par = byId.get(p);
-            if (!par) break;
-            x += par.position.x;
-            y += par.position.y;
-            p = par.parentId;
-          }
-          return { x, y };
-        };
-        const isDescendantOf = (nodeId: string, ancestorId: string): boolean => {
-          let p: string | undefined = byId.get(nodeId)?.parentId;
-          while (p) {
-            if (p === ancestorId) return true;
-            p = byId.get(p)?.parentId;
-          }
-          return false;
-        };
-        const depth = (n: Node): number => {
-          let dpt = 0;
-          let p = n.parentId;
-          while (p) {
-            dpt++;
-            p = byId.get(p)?.parentId;
-          }
-          return dpt;
-        };
-
-        const dw = dd.nodeType === "for" ? (dragged.style?.width as number) ?? 260 : NODE_SIZE[dd.nodeType].w;
-        const dh = dd.nodeType === "for" ? (dragged.style?.height as number) ?? 160 : NODE_SIZE[dd.nodeType].h;
-        const abs = absPos(dragged);
-        const cx = abs.x + dw / 2;
-        const cy = abs.y + dh / 2;
-
-        // 포함하는 for 컨테이너들 중 가장 안쪽(depth 최대) 선택. 자기 자신·자손은 제외(순환 방지).
-        const candidates = ns.filter((n) => {
-          if ((n.data as FlowNodeData).nodeType !== "for") return false;
-          if (n.id === dragged.id || isDescendantOf(n.id, dragged.id)) return false;
-          const gAbs = absPos(n);
-          const gw = (n.style?.width as number) ?? 260;
-          const gh = (n.style?.height as number) ?? 160;
-          return cx >= gAbs.x && cx <= gAbs.x + gw && cy >= gAbs.y && cy <= gAbs.y + gh;
-        });
-        const target = candidates.sort((a, b) => depth(b) - depth(a))[0];
-
-        let next = ns;
+        let next: Node[] | null = null;
         if (target && target.id !== dragged.parentId) {
-          const tAbs = absPos(target);
+          const tAbs = absPos(target.id);
           next = ns.map((n) =>
             n.id === dragged.id
               ? { ...n, parentId: target.id, extent: "parent" as const, position: { x: abs.x - tAbs.x, y: abs.y - tAbs.y } }
@@ -173,13 +164,11 @@ function CanvasInner({ graph, editable, resetKey, onChange }: Props) {
           );
         } else if (!target && dragged.parentId) {
           next = ns.map((n) => (n.id === dragged.id ? { ...n, parentId: undefined, extent: undefined, position: abs } : n));
-        } else {
-          return ns;
         }
-        return orderParentsFirst(next);
+        return next ? orderParentsFirst(next) : ns;
       });
     },
-    [editable, setNodes]
+    [editable, setNodes, rf]
   );
 
   // for 컨테이너 삭제 시 직속 자식을 절대좌표로 분리(고아 parentId 방지, 중첩 대응)
