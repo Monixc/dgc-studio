@@ -94,8 +94,23 @@ function CanvasInner({ graph, editable, resetKey, onChange }: Props) {
   );
 
   // 이미 그은 선의 끝점을 떼서 다른 핸들로 재연결
+  // 선 끝점을 떼서 다른 핸들에 재연결. 빈 곳에 놓으면 삭제.
+  const reconnectDone = useRef(true);
+  const onReconnectStart = useCallback(() => {
+    reconnectDone.current = false;
+  }, []);
   const onReconnect = useCallback(
-    (oldEdge: Edge, newConn: Connection) => setEdges((eds) => reconnectEdge(oldEdge, newConn, eds)),
+    (oldEdge: Edge, newConn: Connection) => {
+      reconnectDone.current = true;
+      setEdges((eds) => reconnectEdge(oldEdge, newConn, eds));
+    },
+    [setEdges]
+  );
+  const onReconnectEnd = useCallback(
+    (_: unknown, edge: Edge) => {
+      if (!reconnectDone.current) setEdges((eds) => eds.filter((e) => e.id !== edge.id));
+      reconnectDone.current = true;
+    },
     [setEdges]
   );
 
@@ -300,7 +315,9 @@ function CanvasInner({ graph, editable, resetKey, onChange }: Props) {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={editable ? onConnect : undefined}
+        onReconnectStart={editable ? onReconnectStart : undefined}
         onReconnect={editable ? onReconnect : undefined}
+        onReconnectEnd={editable ? onReconnectEnd : undefined}
         edgesReconnectable={editable}
         onSelectionChange={onSelectionChange}
         onNodeDragStop={editable ? onNodeDragStop : undefined}
