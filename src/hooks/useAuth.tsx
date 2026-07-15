@@ -8,6 +8,7 @@ interface AuthState {
   user: User | null;
   profile: Profile | null;
   role: Role | null;
+  /** 초기 세션 확인 중이거나, 세션은 있으나 프로필 조회가 아직 끝나지 않음 */
   loading: boolean;
   refreshProfile: () => Promise<void>;
 }
@@ -22,14 +23,20 @@ async function fetchProfile(userId: string): Promise<Profile | null> {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [ready, setReady] = useState(false); // 초기 getSession 완료
+  const [profilePending, setProfilePending] = useState(false); // 프로필 조회 진행 중
 
   const loadProfile = useCallback(async (userId: string | undefined) => {
     if (!userId) {
       setProfile(null);
       return;
     }
-    setProfile(await fetchProfile(userId));
+    setProfilePending(true);
+    try {
+      setProfile(await fetchProfile(userId));
+    } finally {
+      setProfilePending(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -38,12 +45,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!active) return;
       setSession(data.session);
       await loadProfile(data.session?.user.id);
-      setLoading(false);
+      setReady(true);
     });
 
-    const { data: sub } = supabase.auth.onAuthStateChange(async (_event, next) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, next) => {
       setSession(next);
-      await loadProfile(next?.user.id);
+      void loadProfile(next?.user.id);
     });
     return () => {
       active = false;
@@ -51,9 +58,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [loadProfile]);
 
+  // 로그인/승격 직후 stale state 대신 live 세션으로 프로필 재조회
   const refreshProfile = useCallback(async () => {
-    await loadProfile(session?.user.id);
-  }, [session, loadProfile]);
+    const { data } = await supabase.auth.getSession();
+    await loadProfile(data.session?.user.id);
+  }, [loadProfile]);
+
+  const loading = !ready || (!!session && profilePending);
 
   return (
     <AuthContext.Provider
