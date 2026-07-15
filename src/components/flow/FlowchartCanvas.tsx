@@ -6,6 +6,7 @@ import {
   Controls,
   ConnectionMode,
   addEdge,
+  reconnectEdge,
   useNodesState,
   useEdgesState,
   useReactFlow,
@@ -89,6 +90,12 @@ function CanvasInner({ graph, editable, resetKey, onChange }: Props) {
           eds
         )
       ),
+    [setEdges]
+  );
+
+  // 이미 그은 선의 끝점을 떼서 다른 핸들로 재연결
+  const onReconnect = useCallback(
+    (oldEdge: Edge, newConn: Connection) => setEdges((eds) => reconnectEdge(oldEdge, newConn, eds)),
     [setEdges]
   );
 
@@ -293,6 +300,8 @@ function CanvasInner({ graph, editable, resetKey, onChange }: Props) {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={editable ? onConnect : undefined}
+        onReconnect={editable ? onReconnect : undefined}
+        edgesReconnectable={editable}
         onSelectionChange={onSelectionChange}
         onNodeDragStop={editable ? onNodeDragStop : undefined}
         onNodesDelete={editable ? onNodesDelete : undefined}

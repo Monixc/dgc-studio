@@ -68,7 +68,7 @@ function Shape({ type, w, h, fill, stroke }: { type: NodeType; w: number; h: num
 }
 
 const HANDLE_BASE =
-  "!h-2.5 !w-2.5 !border !border-white !bg-primary opacity-0 transition-opacity duration-150 group-hover:opacity-100";
+  "!h-2.5 !w-2.5 !border !border-white !bg-[#ff4500] opacity-0 transition-opacity duration-150 group-hover:opacity-100";
 
 function FlowNodeInner({ id, data, selected }: NodeProps) {
   const d = data as FlowNodeData;
