@@ -85,7 +85,10 @@ export default function Solve() {
         <Button size="icon" variant="ghost" onClick={() => navigate("/student")}>
           <ArrowLeft />
         </Button>
-        <h1 className="font-semibold">{problem.title}</h1>
+        <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold uppercase text-primary-foreground">
+          {problem.category}
+        </span>
+        <h1 className="text-lg font-semibold">{problem.title}</h1>
       </header>
 
       <div className="grid flex-1 grid-cols-2 overflow-hidden">

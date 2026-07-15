@@ -21,6 +21,16 @@ export default function Landing() {
           브라우저에서 바로 파이썬이 돌아갑니다.
         </p>
 
+        <div className="mt-8">
+          <AuthDropdown
+            trigger={
+              <button className="rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90">
+                학습 시작하기 →
+              </button>
+            }
+          />
+        </div>
+
         <div className="mt-12 grid max-w-3xl gap-6 sm:grid-cols-3">
           <Feature icon={<Workflow />} title="드래그드롭 순서도" desc="draw.io처럼 노드를 끌어 놓고 연결. DSL 가져오기도 지원." />
           <Feature icon={<Code2 />} title="웹 IDE + 실행" desc="Monaco 에디터에서 파이썬 작성, Pyodide로 즉시 실행." />
@@ -35,8 +45,10 @@ export default function Landing() {
 
 function Feature({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
   return (
-    <div className="rounded-xl border p-5 text-left">
-      <div className="mb-2 text-primary">{icon}</div>
+    <div className="rounded-2xl border p-5 text-left">
+      <div className="mb-3 flex size-10 items-center justify-center rounded-full border bg-background text-foreground">
+        {icon}
+      </div>
       <div className="font-semibold">{title}</div>
       <p className="mt-1 text-sm text-muted-foreground">{desc}</p>
     </div>

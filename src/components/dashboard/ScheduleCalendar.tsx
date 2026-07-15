@@ -35,6 +35,11 @@ function load(uid: string): CalEvent[] {
   return [];
 }
 
+/** 오늘 등록된 수업 개수. 대시보드 인사말 카드에서 재사용. */
+export function todayEventCount(uid: string): number {
+  return load(uid).filter((e) => e.date === TODAY).length;
+}
+
 export default function ScheduleCalendar({ className }: { className?: string }) {
   const { user } = useAuth();
   const uid = user!.id;

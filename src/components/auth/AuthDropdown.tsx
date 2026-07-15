@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import AuthForm from "./AuthForm";
 import { Button } from "@/components/ui/button";
 
-/** 헤더에서 여는 드롭다운 인증 팝업(로그인/회원가입 탭). */
-export default function AuthDropdown() {
+/** 헤더에서 여는 드롭다운 인증 팝업(로그인/회원가입 탭). trigger 를 주면 기본 버튼 대신 그걸로 연다. */
+export default function AuthDropdown({ trigger }: { trigger?: React.ReactNode }) {
   const [open, setOpen] = useState<null | "login" | "signup">(null);
   const navigate = useNavigate();
 
@@ -16,12 +16,16 @@ export default function AuthDropdown() {
 
   return (
     <div className="relative">
-      <div className="flex gap-2">
-        <Button variant="ghost" onClick={() => setOpen("login")}>
-          로그인
-        </Button>
-        <Button onClick={() => setOpen("signup")}>회원가입</Button>
-      </div>
+      {trigger ? (
+        <div onClick={() => setOpen("signup")}>{trigger}</div>
+      ) : (
+        <div className="flex gap-2">
+          <Button variant="ghost" onClick={() => setOpen("login")}>
+            로그인
+          </Button>
+          <Button onClick={() => setOpen("signup")}>회원가입</Button>
+        </div>
+      )}
 
       {open && (
         <>

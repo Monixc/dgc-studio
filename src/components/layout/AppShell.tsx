@@ -60,7 +60,7 @@ export default function AppShell({ children, menu = MENU, homePath = "/dashboard
       <aside className={cn("hidden md:flex flex-col border-r bg-background transition-all", collapsed ? "w-16" : "w-56")}>
         <div className="flex h-14 items-center gap-2 border-b px-3">
           <GraduationCap className="shrink-0 text-primary" />
-          {!collapsed && <span className="font-bold">Flow-Py</span>}
+          {!collapsed && <span className="text-lg font-bold">Flow-Py</span>}
           <button
             className="ml-auto rounded p-1 text-muted-foreground hover:bg-accent"
             onClick={() => setCollapsed((c) => !c)}
@@ -118,7 +118,7 @@ function NavButton({
       onClick={onClick}
       title={collapsed ? item.label : undefined}
       className={cn(
-        "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition",
+        "flex w-full items-center gap-3 rounded-full px-3 py-2 text-sm transition",
         active ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-accent",
         collapsed && "justify-center px-0",
       )}

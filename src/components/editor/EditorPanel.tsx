@@ -48,6 +48,11 @@ export default function EditorPanel({ code, onCodeChange, readOnly, running, run
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-2 border-b p-2">
+        <div className="mr-1 flex gap-1.5">
+          <span className="size-2.5 rounded-full bg-red-400" />
+          <span className="size-2.5 rounded-full bg-yellow-400" />
+          <span className="size-2.5 rounded-full bg-green-400" />
+        </div>
         <Button size="sm" onClick={handleRun} disabled={running}>
           <Play /> 실행
         </Button>
