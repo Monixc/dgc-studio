@@ -83,14 +83,14 @@ function CanvasInner({ graph, editable, resetKey, onChange }: Props) {
   }, [nodes, edges, onChange]);
 
   const onConnect = useCallback(
-    (c: Connection) =>
-      setEdges((eds) =>
-        addEdge(
-          { ...c, id: newEdgeId(), type: "smoothstep", markerEnd: { type: MarkerType.ArrowClosed } },
-          eds
-        )
-      ),
-    [setEdges]
+    (c: Connection) => {
+      // for 컨테이너가 끼면 직선(꺾임 없이), 아니면 smoothstep
+      const isFor = (id: string | null) =>
+        (nodes.find((n) => n.id === id)?.data as FlowNodeData | undefined)?.nodeType === "for";
+      const type = isFor(c.source) || isFor(c.target) ? "straight" : "smoothstep";
+      setEdges((eds) => addEdge({ ...c, id: newEdgeId(), type, markerEnd: { type: MarkerType.ArrowClosed } }, eds));
+    },
+    [setEdges, nodes]
   );
 
   // 이미 그은 선의 끝점을 떼서 다른 핸들로 재연결

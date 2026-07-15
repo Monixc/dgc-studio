@@ -119,7 +119,7 @@ export function toRFEdges(graph: FlowGraph): Edge[] {
     sourceHandle: e.sourceHandle ?? "bottom",
     targetHandle: e.targetHandle ?? "top",
     label: e.label,
-    type: "smoothstep",
+    type: e.pathType ?? "smoothstep",
     markerEnd: { type: MarkerType.ArrowClosed },
     labelStyle: { fontSize: 11, fontWeight: 600 },
     labelBgStyle: { fill: "hsl(var(--background))" },
@@ -151,6 +151,7 @@ export function fromRF(nodes: Node[], edges: Edge[]): FlowGraph {
       label: typeof e.label === "string" ? e.label : undefined,
       sourceHandle: e.sourceHandle ?? undefined,
       targetHandle: e.targetHandle ?? undefined,
+      pathType: (e.type as "smoothstep" | "straight" | "bezier" | undefined) ?? undefined,
     })),
   };
 }
