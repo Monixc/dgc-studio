@@ -1,0 +1,12 @@
+# supabase CLI 로컬 스택 최소 설정. `supabase start` 후 `supabase db reset` 로 마이그레이션+seed 적용.
+project_id = "flow-py-v2"
+
+[db]
+port = 54322
+major_version = 15
+
+[auth]
+enable_signup = true
+# 로컬 개발 편의: 이메일 확인 없이 즉시 로그인
+[auth.email]
+enable_confirmations = false
