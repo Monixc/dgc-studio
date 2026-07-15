@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import Editor from "@monaco-editor/react";
 import { Save, Globe, EyeOff } from "lucide-react";
@@ -23,14 +23,19 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
   const [graph, setGraph] = useState<FlowGraph>(emptyGraph());
   const [starter, setStarter] = useState("");
   const [tests, setTests] = useState<GradingTest[]>([]);
+  const [loaded, setLoaded] = useState(false);
+  const seeded = useRef(false);
 
+  // 마운트당 1회만 시드(문제 refetch 가 편집 중 그래프를 덮어쓰지 않게)
   useEffect(() => {
-    if (!problem) return;
+    if (!problem || seeded.current) return;
+    seeded.current = true;
     setTitle(problem.title);
     setDescription(problem.description);
     setGraph(normalizeStored(problem.flowchart));
     setStarter(problem.starter_code);
     setTests(problem.grading_tests ?? []);
+    setLoaded(true);
   }, [problem]);
 
   async function save(extra?: { is_published?: boolean }) {
@@ -73,7 +78,7 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
 
       <div className="grid flex-1 grid-cols-2 overflow-hidden">
         <div className="h-full border-r">
-          <FlowchartCanvas graph={graph} editable resetKey={problemId} onChange={setGraph} />
+          {loaded && <FlowchartCanvas graph={graph} editable resetKey={problemId} onChange={setGraph} />}
         </div>
         <div className="flex flex-col overflow-hidden">
           <Tabs defaultValue="starter" className="flex flex-1 flex-col overflow-hidden">
