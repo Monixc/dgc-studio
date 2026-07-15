@@ -1,0 +1,90 @@
+import { useState, type ReactNode } from "react";
+import Editor from "@monaco-editor/react";
+import { Play, Square } from "lucide-react";
+import type { RunOptions, RunResult } from "@/hooks/usePyodide";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+export interface ConsoleLine {
+  kind: "out" | "err";
+  text: string;
+}
+
+interface Props {
+  code: string;
+  onCodeChange: (v: string) => void;
+  readOnly?: boolean;
+  running: boolean;
+  run: (code: string, opts?: RunOptions) => Promise<RunResult>;
+  stop: () => void;
+  /** 하단 액션 영역(제출 버튼 등) */
+  footer?: ReactNode;
+}
+
+export default function EditorPanel({ code, onCodeChange, readOnly, running, run, stop, footer }: Props) {
+  const [stdin, setStdin] = useState("");
+  const [lines, setLines] = useState<ConsoleLine[]>([]);
+
+  async function handleRun() {
+    setLines([]);
+    const append = (kind: ConsoleLine["kind"], text: string) => setLines((l) => [...l, { kind, text }]);
+    const res = await run(code, {
+      stdin,
+      timeoutMs: 5000,
+      onStdout: (t) => append("out", t),
+      onStderr: (t) => append("err", t),
+    });
+    // 일반 에러는 워커가 stderr 로 이미 스트리밍함. 타임아웃/중단만 별도 표기.
+    if (res.timedOut) append("err", res.error ?? "");
+  }
+
+  return (
+    <div className="flex h-full flex-col">
+      <div className="flex items-center gap-2 border-b p-2">
+        <Button size="sm" onClick={handleRun} disabled={running}>
+          <Play /> 실행
+        </Button>
+        <Button size="sm" variant="outline" onClick={stop} disabled={!running}>
+          <Square /> 중단
+        </Button>
+        {running && <span className="text-xs text-muted-foreground">실행 중…</span>}
+        <div className="ml-auto flex gap-2">{footer}</div>
+      </div>
+
+      <div className="min-h-0 flex-1">
+        <Editor
+          language="python"
+          value={code}
+          onChange={(v) => onCodeChange(v ?? "")}
+          options={{ readOnly, minimap: { enabled: false }, fontSize: 14, scrollBeyondLastLine: false }}
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-px border-t bg-border" style={{ height: 180 }}>
+        <div className="flex flex-col bg-background">
+          <div className="border-b px-2 py-1 text-xs font-semibold text-muted-foreground">입력 (stdin)</div>
+          <textarea
+            value={stdin}
+            onChange={(e) => setStdin(e.target.value)}
+            placeholder="input() 이 읽을 값을 줄 단위로 입력"
+            className="flex-1 resize-none bg-background p-2 font-mono text-xs outline-none"
+          />
+        </div>
+        <div className="flex flex-col bg-background">
+          <div className="border-b px-2 py-1 text-xs font-semibold text-muted-foreground">출력</div>
+          <pre className="flex-1 overflow-auto p-2 font-mono text-xs">
+            {lines.length === 0 ? (
+              <span className="text-muted-foreground">실행 결과가 여기에 표시됩니다.</span>
+            ) : (
+              lines.map((l, i) => (
+                <span key={i} className={cn(l.kind === "err" && "text-destructive")}>
+                  {l.text}
+                </span>
+              ))
+            )}
+          </pre>
+        </div>
+      </div>
+    </div>
+  );
+}
