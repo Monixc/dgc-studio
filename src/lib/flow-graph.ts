@@ -10,6 +10,22 @@ export function emptyGraph(): FlowGraph {
   return { nodes: [], edges: [] };
 }
 
+/** 부모가 자식보다 먼저 오도록 위상 정렬(중첩 깊이 무관). React Flow parent 노드 요구사항. */
+export function orderParentsFirst<T extends { id: string; parentId?: string }>(nodes: T[]): T[] {
+  const byId = new Map(nodes.map((n) => [n.id, n]));
+  const done = new Set<string>();
+  const out: T[] = [];
+  const visit = (n: T) => {
+    if (done.has(n.id)) return;
+    const parent = n.parentId ? byId.get(n.parentId) : undefined;
+    if (parent) visit(parent);
+    done.add(n.id);
+    out.push(n);
+  };
+  nodes.forEach(visit);
+  return out;
+}
+
 export function sizeFor(type: NodeType): { w: number; h: number } {
   return NODE_SIZE[type];
 }
@@ -79,8 +95,8 @@ export function toRFNodes(
   graph: FlowGraph,
   opts?: { onLabelChange?: (id: string, label: string) => void }
 ): Node[] {
-  // 부모(for 컨테이너)가 자식보다 먼저 오도록 정렬 (React Flow 요구사항)
-  const ordered = [...graph.nodes].sort((a, b) => (a.type === "for" ? -1 : 0) - (b.type === "for" ? -1 : 0));
+  // 부모(for 컨테이너)가 자식보다 먼저 오도록 위상 정렬 (React Flow 요구사항, 중첩 지원)
+  const ordered = orderParentsFirst(graph.nodes);
   return ordered.map((n) => {
     const node: Node = {
       id: n.id,

@@ -16,7 +16,7 @@ import {
 import { nodeTypes, NODE_SIZE } from "./FlowNode";
 import type { FlowGraph, NodeType } from "@/types/flowchart";
 import type { FlowNodeData } from "@/lib/flow-layout";
-import { toRFNodes, toRFEdges, fromRF, autoLayout, dslToGraph, newNodeId, newEdgeId } from "@/lib/flow-graph";
+import { toRFNodes, toRFEdges, fromRF, autoLayout, dslToGraph, newNodeId, newEdgeId, orderParentsFirst } from "@/lib/flow-graph";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
@@ -107,31 +107,67 @@ function CanvasInner({ graph, editable, resetKey, onChange }: Props) {
     setNodes((ns) => (type === "for" ? [node, ...ns] : [...ns, node]));
   };
 
-  // 드래그 종료: for 컨테이너 위에 놓이면 자식으로, 밖으로 나가면 분리
+  // 드래그 종료: for 컨테이너 위에 놓이면 자식으로, 밖으로 나가면 분리 (for 중첩 지원)
   const onNodeDragStop = useCallback(
     (_: unknown, dragged: Node) => {
       if (!editable) return;
       const dd = dragged.data as FlowNodeData;
-      if (dd.nodeType === "for") return; // 컨테이너 중첩 안 함
-      const size = NODE_SIZE[dd.nodeType];
       setNodes((ns) => {
-        const parent = dragged.parentId ? ns.find((n) => n.id === dragged.parentId) : undefined;
-        const abs = parent
-          ? { x: parent.position.x + dragged.position.x, y: parent.position.y + dragged.position.y }
-          : { ...dragged.position };
-        const cx = abs.x + size.w / 2;
-        const cy = abs.y + size.h / 2;
-        const target = ns.find((n) => {
-          if ((n.data as FlowNodeData).nodeType !== "for" || n.id === dragged.id) return false;
+        const byId = new Map(ns.map((n) => [n.id, n]));
+        const absPos = (n: Node): { x: number; y: number } => {
+          let x = n.position.x;
+          let y = n.position.y;
+          let p = n.parentId;
+          while (p) {
+            const par = byId.get(p);
+            if (!par) break;
+            x += par.position.x;
+            y += par.position.y;
+            p = par.parentId;
+          }
+          return { x, y };
+        };
+        const isDescendantOf = (nodeId: string, ancestorId: string): boolean => {
+          let p: string | undefined = byId.get(nodeId)?.parentId;
+          while (p) {
+            if (p === ancestorId) return true;
+            p = byId.get(p)?.parentId;
+          }
+          return false;
+        };
+        const depth = (n: Node): number => {
+          let dpt = 0;
+          let p = n.parentId;
+          while (p) {
+            dpt++;
+            p = byId.get(p)?.parentId;
+          }
+          return dpt;
+        };
+
+        const dw = dd.nodeType === "for" ? (dragged.style?.width as number) ?? 260 : NODE_SIZE[dd.nodeType].w;
+        const dh = dd.nodeType === "for" ? (dragged.style?.height as number) ?? 160 : NODE_SIZE[dd.nodeType].h;
+        const abs = absPos(dragged);
+        const cx = abs.x + dw / 2;
+        const cy = abs.y + dh / 2;
+
+        // 포함하는 for 컨테이너들 중 가장 안쪽(depth 최대) 선택. 자기 자신·자손은 제외(순환 방지).
+        const candidates = ns.filter((n) => {
+          if ((n.data as FlowNodeData).nodeType !== "for") return false;
+          if (n.id === dragged.id || isDescendantOf(n.id, dragged.id)) return false;
+          const gAbs = absPos(n);
           const gw = (n.style?.width as number) ?? 260;
           const gh = (n.style?.height as number) ?? 160;
-          return cx >= n.position.x && cx <= n.position.x + gw && cy >= n.position.y && cy <= n.position.y + gh;
+          return cx >= gAbs.x && cx <= gAbs.x + gw && cy >= gAbs.y && cy <= gAbs.y + gh;
         });
+        const target = candidates.sort((a, b) => depth(b) - depth(a))[0];
+
         let next = ns;
         if (target && target.id !== dragged.parentId) {
+          const tAbs = absPos(target);
           next = ns.map((n) =>
             n.id === dragged.id
-              ? { ...n, parentId: target.id, extent: "parent" as const, position: { x: abs.x - target.position.x, y: abs.y - target.position.y } }
+              ? { ...n, parentId: target.id, extent: "parent" as const, position: { x: abs.x - tAbs.x, y: abs.y - tAbs.y } }
               : n
           );
         } else if (!target && dragged.parentId) {
@@ -139,27 +175,38 @@ function CanvasInner({ graph, editable, resetKey, onChange }: Props) {
         } else {
           return ns;
         }
-        // 부모(for) 먼저 오도록 정렬
-        return [...next].sort((a, b) => ((a.data as FlowNodeData).nodeType === "for" ? -1 : 0) - ((b.data as FlowNodeData).nodeType === "for" ? -1 : 0));
+        return orderParentsFirst(next);
       });
     },
     [editable, setNodes]
   );
 
-  // for 컨테이너 삭제 시 자식들을 절대좌표로 분리(고아 parentId 방지)
+  // for 컨테이너 삭제 시 직속 자식을 절대좌표로 분리(고아 parentId 방지, 중첩 대응)
   const onNodesDelete = useCallback(
     (deleted: Node[]) => {
-      const deletedForIds = new Set(deleted.filter((n) => (n.data as FlowNodeData).nodeType === "for").map((n) => n.id));
-      if (deletedForIds.size === 0) return;
-      setNodes((ns) =>
-        ns.map((n) => {
-          if (n.parentId && deletedForIds.has(n.parentId)) {
-            const parent = deleted.find((p) => p.id === n.parentId)!;
-            return { ...n, parentId: undefined, extent: undefined, position: { x: parent.position.x + n.position.x, y: parent.position.y + n.position.y } };
+      const deletedIds = new Set(deleted.map((n) => n.id));
+      if (!deleted.some((n) => (n.data as FlowNodeData).nodeType === "for")) return;
+      setNodes((prev) => {
+        const byId = new Map(prev.map((n) => [n.id, n]));
+        const absPos = (n: Node) => {
+          let x = n.position.x;
+          let y = n.position.y;
+          let p = n.parentId;
+          while (p) {
+            const par = byId.get(p);
+            if (!par) break;
+            x += par.position.x;
+            y += par.position.y;
+            p = par.parentId;
           }
-          return n;
-        })
-      );
+          return { x, y };
+        };
+        return prev.map((n) =>
+          n.parentId && deletedIds.has(n.parentId)
+            ? { ...n, parentId: undefined, extent: undefined, position: absPos(n) }
+            : n
+        );
+      });
     },
     [setNodes]
   );
