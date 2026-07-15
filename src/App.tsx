@@ -17,6 +17,8 @@ import BlockPractice from "@/pages/BlockPractice";
 import Solve from "@/pages/Solve";
 import TeacherShop from "@/pages/TeacherShop";
 import StudentShop from "@/pages/StudentShop";
+import TeacherNotifications from "@/pages/TeacherNotifications";
+import StudentNotifications from "@/pages/StudentNotifications";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -130,6 +132,22 @@ export default function App() {
               element={
                 <RequireRole role="student">
                   <StudentShop />
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/notifications"
+              element={
+                <RequireRole role="teacher">
+                  <TeacherNotifications />
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/student/notifications"
+              element={
+                <RequireRole role="student">
+                  <StudentNotifications />
                 </RequireRole>
               }
             />

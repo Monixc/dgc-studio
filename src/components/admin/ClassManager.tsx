@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Plus, Trash2, Pencil, Check, Users, UserPlus, X, Coins, MonitorPlay } from "lucide-react";
+import { Plus, Trash2, Pencil, Check, Users, UserPlus, X, Coins, MonitorPlay, Bell } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import {
-  useClasses, useCreateClass, useRenameClass, useDeleteClass,
+  useClasses, useCreateClass, useRenameClass, useDeleteClass, useUpdateClassSchedule,
   useClassProblemIds, useSetClassProblems,
 } from "@/hooks/useClasses";
 import { useAllStudents, useClassStudentIds, useSetClassStudents } from "@/hooks/useClassStudents";
@@ -17,6 +17,8 @@ import AssignProblemsDialog from "@/components/admin/AssignProblemsDialog";
 import EnrollStudentsDialog from "@/components/admin/EnrollStudentsDialog";
 import AwardPointsDialog from "@/components/admin/AwardPointsDialog";
 
+const DAY_LABELS = ["일", "월", "화", "수", "목", "금", "토"];
+
 export default function ClassManager() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -26,6 +28,7 @@ export default function ClassManager() {
   const createMut = useCreateClass();
   const renameMut = useRenameClass();
   const deleteMut = useDeleteClass();
+  const scheduleMut = useUpdateClassSchedule();
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -80,6 +83,15 @@ export default function ClassManager() {
 
   const assignedProblems = problems.filter((p) => assignedIds.includes(p.id));
   const enrolledStudents = students.filter((s) => enrolledIds.includes(s.id));
+
+  async function setSchedule(dayOfWeek: number | null, time: string | null) {
+    if (!selected) return;
+    try {
+      await scheduleMut.mutateAsync({ id: selected.id, schedule_day_of_week: dayOfWeek, schedule_time: time });
+    } catch (e: any) {
+      toast.error(e?.message ?? "저장 실패");
+    }
+  }
 
   async function removeStudent(studentId: string) {
     if (!selected) return;
@@ -164,6 +176,28 @@ export default function ClassManager() {
         ) : (
           <>
             <h2 className="mb-4 text-lg font-bold">{selected.name}</h2>
+
+            <div className="mb-6 flex items-center gap-2 rounded-lg border p-3">
+              <Bell className="size-4 shrink-0 text-muted-foreground" />
+              <span className="text-sm font-medium">수업 시간</span>
+              <select
+                className="rounded-md border bg-background px-2 py-1 text-sm"
+                value={selected.schedule_day_of_week ?? ""}
+                onChange={(e) => setSchedule(e.target.value === "" ? null : Number(e.target.value), selected.schedule_time)}
+              >
+                <option value="">요일 선택</option>
+                {DAY_LABELS.map((d, i) => (
+                  <option key={i} value={i}>{d}요일</option>
+                ))}
+              </select>
+              <input
+                type="time"
+                className="rounded-md border bg-background px-2 py-1 text-sm"
+                value={selected.schedule_time?.slice(0, 5) ?? ""}
+                onChange={(e) => setSchedule(selected.schedule_day_of_week, e.target.value || null)}
+              />
+              <span className="text-xs text-muted-foreground">설정 시 시작 30분 전 학생에게 알림이 갑니다.</span>
+            </div>
 
             <div className="mb-6">
               <div className="mb-2 flex items-center justify-between">

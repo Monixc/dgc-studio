@@ -34,7 +34,12 @@ export async function listMyMessages(userId: string): Promise<(MessageRow & { co
   }));
 }
 
-export async function sendMessage(senderId: string, recipientId: string, body: string): Promise<void> {
-  const { error } = await supabase.from("messages").insert({ sender_id: senderId, recipient_id: recipientId, body });
+export async function sendMessage(senderId: string, recipientId: string, body: string): Promise<MessageRow> {
+  const { data, error } = await supabase
+    .from("messages")
+    .insert({ sender_id: senderId, recipient_id: recipientId, body })
+    .select()
+    .single();
   if (error) throw error;
+  return data as MessageRow;
 }

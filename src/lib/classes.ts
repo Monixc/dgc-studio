@@ -33,6 +33,14 @@ export async function deleteClass(id: string): Promise<void> {
   if (error) throw error;
 }
 
+export async function updateClassSchedule(
+  id: string,
+  schedule: { schedule_day_of_week: number | null; schedule_time: string | null },
+): Promise<void> {
+  const { error } = await supabase.from("classes").update(schedule).eq("id", id);
+  if (error) throw error;
+}
+
 export async function listClassProblemIds(classId: string): Promise<string[]> {
   const { data, error } = await supabase
     .from("class_problems")

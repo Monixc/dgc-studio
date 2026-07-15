@@ -67,6 +67,9 @@ export interface ClassRow {
   name: string;
   created_by: string;
   created_at: string;
+  /** 0=일요일 ~ 6=토요일. 매주 반복되는 수업 시간(30분 전 알림용), 미설정 시 null. */
+  schedule_day_of_week: number | null;
+  schedule_time: string | null;
 }
 
 export interface ClassProblem {

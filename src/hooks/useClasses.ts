@@ -5,6 +5,7 @@ import {
   createClass,
   renameClass,
   deleteClass,
+  updateClassSchedule,
   listClassProblemIds,
   setClassProblems,
   listAssignedProblems,
@@ -38,6 +39,15 @@ export function useDeleteClass() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => deleteClass(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: CLASSES_KEY }),
+  });
+}
+
+export function useUpdateClassSchedule() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, schedule_day_of_week, schedule_time }: { id: string; schedule_day_of_week: number | null; schedule_time: string | null }) =>
+      updateClassSchedule(id, { schedule_day_of_week, schedule_time }),
     onSuccess: () => qc.invalidateQueries({ queryKey: CLASSES_KEY }),
   });
 }

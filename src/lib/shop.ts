@@ -62,9 +62,14 @@ export async function listMyShopOrders(studentId: string): Promise<ShopOrder[]> 
   return (data ?? []) as ShopOrder[];
 }
 
-export async function requestPurchase(studentId: string, itemId: string): Promise<void> {
-  const { error } = await supabase.from("shop_orders").insert({ student_id: studentId, item_id: itemId });
+export async function requestPurchase(studentId: string, itemId: string): Promise<ShopOrder> {
+  const { data, error } = await supabase
+    .from("shop_orders")
+    .insert({ student_id: studentId, item_id: itemId })
+    .select()
+    .single();
   if (error) throw error;
+  return data as ShopOrder;
 }
 
 export async function decideShopOrder(

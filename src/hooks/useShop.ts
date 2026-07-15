@@ -5,6 +5,7 @@ import {
   listShopOrders, listMyShopOrders, requestPurchase, decideShopOrder,
 } from "@/lib/shop";
 import { POINTS_KEY } from "@/lib/points";
+import { notifyPush } from "@/lib/push";
 
 export function useShopItems() {
   return useQuery({ queryKey: SHOP_ITEMS_KEY, queryFn: listShopItems });
@@ -52,7 +53,10 @@ export function useRequestPurchase() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (args: { studentId: string; itemId: string }) => requestPurchase(args.studentId, args.itemId),
-    onSuccess: () => qc.invalidateQueries({ queryKey: SHOP_ORDERS_KEY }),
+    onSuccess: (row) => {
+      qc.invalidateQueries({ queryKey: SHOP_ORDERS_KEY });
+      void notifyPush("shop_order_request", row.id);
+    },
   });
 }
 
@@ -61,10 +65,11 @@ export function useDecideShopOrder() {
   return useMutation({
     mutationFn: (args: { orderId: string; teacherId: string; status: "approved" | "rejected" }) =>
       decideShopOrder(args.orderId, args.teacherId, args.status),
-    onSuccess: () => {
+    onSuccess: (_, { orderId }) => {
       qc.invalidateQueries({ queryKey: SHOP_ORDERS_KEY });
       qc.invalidateQueries({ queryKey: SHOP_ITEMS_KEY });
       qc.invalidateQueries({ queryKey: POINTS_KEY });
+      void notifyPush("shop_order_decided", orderId);
     },
   });
 }
