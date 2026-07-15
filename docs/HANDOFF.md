@@ -88,9 +88,20 @@ bunx tsc -p tsconfig.app.json --noEmit   # 타입체크
 
 ### 라우팅/화면
 - `/`=랜딩(로그아웃) or role 리다이렉트. 로그인/회원가입=헤더 드롭다운 팝업(`AuthDropdown`/`AuthForm`).
+- **선생 로그인 후 진입점 = `/dashboard`** (`Home` 가 teacher→/dashboard, student→/student).
+- `/dashboard`=대시보드 겸 메인 허브(`src/pages/Dashboard.tsx`). 좌측 접이식 메뉴 + 우측 벤토그리드.
 - `/teacher`=워크스페이스(좌측 문제 패널 인라인 생성/선택/삭제/발행 `ProblemPanel` + 우측 `ProblemEditor`, 라우트 이동 없음).
 - `/student`=발행 문제 목록, `/solve/:id`=풀이(순서도 읽기전용 + EditorPanel + 제출).
 - Realtime: `useProblemsRealtime` 로 problems 변경 즉시 반영. 학생 코드 로컬 드래프트(`src/lib/draft.ts`).
+
+### 대시보드/셸 (`/dashboard`)
+- `src/components/layout/AppShell.tsx`: 좌측 접이식 사이드바(`collapsed` w-56/w-16) + 우측 상단 헤더 + 콘텐츠. AppShell 은 현재 Dashboard 만 감쌈.
+  - 메뉴: 대시보드 / 순서도 연습(→/teacher) / 블럭 코딩(준비 중) / 파이썬 문제 풀이(→/teacher) / 타자 연습(준비 중) / 포인트 상점(준비 중). **미구현은 `soon:true` → 토스트만.** 통합 예정 기능들 자리.
+- `src/components/layout/Header.tsx`: 우측 이름 + 색상 아바타(이니셜). 클릭→드롭다운(이름 편집, 색상 8종, 로그아웃). 프로필 설정 = **localStorage**(`src/lib/profile-prefs.ts`, 키 `flowpy:profile:<uid>`) — profiles RLS 가 자기수정 막아 DB 미저장.
+- 벤토 카드(`Dashboard.tsx`): 수업 시간표 캘린더 / 접속 중인 학생 / 내 문제·등록 학생 통계 / 최근 제출 현황 / 빠른 실행 / 공지(placeholder).
+- **접속 중인 학생 = Supabase Realtime presence**(`src/hooks/usePresence.ts`). 단일 채널 싱글턴 + 모듈 스토어(`useSyncExternalStore`). `usePresenceTracker` 는 `App` 의 `PresenceGate` 로 전역 1회 마운트(학생 포함 모든 로그인 유저 등록), `useOnlineUsers` 로 조회. **같은 topic 두 번 subscribe 금지**(StrictMode 이중 마운트 시 throw→빈 화면). topic `online-users`.
+- **수업 시간표 = 편집형 캘린더**(`src/components/dashboard/ScheduleCalendar.tsx`): 1주일/30일 뷰 토글, ‹오늘› 네비, 날짜 셀 클릭=추가, 이벤트 클릭=편집/삭제(이름·날짜·시간·색상). 저장 = **localStorage**(`flowpy:calendar:<uid>`). 주간뷰는 시간축 그리드 아님(날짜별 칩 리스트).
+- 최근 제출: `listRecentSubmissions`(`src/lib/submissions.ts`), RLS 로 본인 문제 제출만. 등록 학생 수 = `profiles` count(read 정책 허용).
 
 ## 알려진 한계 / 미결 (수정은 지시 있을 때만)
 
@@ -99,7 +110,9 @@ bunx tsc -p tsconfig.app.json --noEmit   # 타입체크
 - DSL 임포트는 현재 그래프를 **대체**(병합 아님).
 - ProblemEditor 저장은 수동(자동저장 아님). 발행해야 학생에게 보임.
 - 번들 500KB 경고(무시 가능).
+- **프로필 설정·캘린더 = localStorage(기기별, 동기화 안 됨)**. DB 이관 경로: profiles 에 `avatar_color` 컬럼 + self-update RLS 정책(role 변경 금지 WITH CHECK), `classes`/`calendar_events` 테이블. 지시 있을 때만.
+- 사이드바 메뉴 중 블럭 코딩·타자 연습·포인트 상점은 미구현 stub(토스트). 학생용 대시보드/허브 없음(관리 대시보드는 선생 전용).
 
 ## 진행 중이던 흐름
 
-최근 세션은 순서도 편집기(캔버스 원본 전환, for 컨테이너, 중첩 for, 간선 직선화/재연결, 핸들 규칙, 색상, Space 버그, input 경고 등)를 사용자 피드백에 따라 반복 개선. 전부 커밋+배포 완료. `git log --oneline` 참고.
+최근 세션은 순서도 편집기(캔버스 원본 전환, for 컨테이너, 중첩 for, 간선 직선화/재연결, 핸들 규칙, 색상, Space 버그, input 경고 등)를 사용자 피드백에 따라 반복 개선. 이후 통합 허브를 위한 **대시보드/셸**(접이식 메뉴 + 벤토그리드 + presence 접속 학생 + 헤더 아바타 드롭다운 + 편집형 캘린더) 추가. 블럭 코딩·타자 연습·포인트 상점 등 다른 기능 통합 예정 — 메뉴 자리만 잡아둠(stub). 전부 커밋+배포 완료. `git log --oneline` 참고.
