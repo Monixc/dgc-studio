@@ -4,7 +4,6 @@ import { Toaster } from "sonner";
 import { AuthProvider } from "@/hooks/useAuth";
 import { RequireAuth, RequireRole, RoleLanding } from "@/components/RouteGuards";
 import TeacherProblems from "@/pages/TeacherProblems";
-import TeacherEditor from "@/pages/TeacherEditor";
 import StudentProblems from "@/pages/StudentProblems";
 import Solve from "@/pages/Solve";
 import Login from "@/pages/Login";
@@ -29,14 +28,6 @@ export default function App() {
               element={
                 <RequireRole role="teacher">
                   <TeacherProblems />
-                </RequireRole>
-              }
-            />
-            <Route
-              path="/teacher/:problemId"
-              element={
-                <RequireRole role="teacher">
-                  <TeacherEditor />
                 </RequireRole>
               }
             />

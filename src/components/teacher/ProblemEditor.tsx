@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import Editor from "@monaco-editor/react";
-import { ArrowLeft, Save, Globe, EyeOff } from "lucide-react";
+import { Save, Globe, EyeOff } from "lucide-react";
 import { useProblem, useUpdateProblem } from "@/hooks/useProblems";
 import FlowchartCanvas from "@/components/flow/FlowchartCanvas";
 import GradingTestsEditor from "@/components/GradingTestsEditor";
@@ -15,9 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
-export default function TeacherEditor() {
-  const { problemId } = useParams();
-  const navigate = useNavigate();
+export default function ProblemEditor({ problemId }: { problemId: string }) {
   const { data: problem, isLoading } = useProblem(problemId);
   const updateMut = useUpdateProblem();
 
@@ -37,7 +34,6 @@ export default function TeacherEditor() {
   }, [problem]);
 
   async function save(extra?: { is_published?: boolean }) {
-    if (!problemId) return;
     try {
       await updateMut.mutateAsync({
         id: problemId,
@@ -56,18 +52,15 @@ export default function TeacherEditor() {
     }
   }
 
-  if (isLoading) return <div className="flex min-h-screen items-center justify-center text-muted-foreground">불러오는 중…</div>;
-  if (!problem) return <div className="flex min-h-screen items-center justify-center text-muted-foreground">문제를 찾을 수 없습니다.</div>;
+  if (isLoading) return <div className="flex h-full items-center justify-center text-muted-foreground">불러오는 중…</div>;
+  if (!problem) return <div className="flex h-full items-center justify-center text-muted-foreground">문제를 찾을 수 없습니다.</div>;
 
   return (
-    <div className="flex h-screen flex-col">
-      <header className="flex items-center gap-2 border-b p-3">
-        <Button size="icon" variant="ghost" onClick={() => navigate("/teacher")}>
-          <ArrowLeft />
-        </Button>
+    <div className="flex h-full flex-col">
+      <div className="flex items-center gap-2 border-b p-3">
         <Input value={title} onChange={(e) => setTitle(e.target.value)} className="max-w-xs" placeholder="문제 제목" />
         <div className="ml-auto flex gap-2">
-          {problemId && <TeacherSubmissions problemId={problemId} />}
+          <TeacherSubmissions problemId={problemId} />
           <Button variant="outline" onClick={() => save({ is_published: !problem.is_published })} disabled={updateMut.isPending}>
             {problem.is_published ? <EyeOff /> : <Globe />}
             {problem.is_published ? "발행 취소" : "발행"}
@@ -76,15 +69,12 @@ export default function TeacherEditor() {
             <Save /> 저장
           </Button>
         </div>
-      </header>
+      </div>
 
       <div className="grid flex-1 grid-cols-2 overflow-hidden">
-        {/* 좌: 순서도 편집 (캔버스 원본) */}
         <div className="h-full border-r">
           <FlowchartCanvas graph={graph} editable resetKey={problemId} onChange={setGraph} />
         </div>
-
-        {/* 우: 코드/설명/채점 */}
         <div className="flex flex-col overflow-hidden">
           <Tabs defaultValue="starter" className="flex flex-1 flex-col overflow-hidden">
             <TabsList className="m-2 self-start">
