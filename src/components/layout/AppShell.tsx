@@ -19,7 +19,7 @@ const MENU: Item[] = [
   { label: "반 관리", icon: Users, to: "/classes" },
   { label: "문제 관리", icon: FileText, to: "/problems" },
   { label: "타자 연습", icon: Keyboard, soon: true },
-  { label: "포인트 상점", icon: ShoppingBag, soon: true },
+  { label: "포인트 상점", icon: ShoppingBag, to: "/shop" },
 ];
 
 export const STUDENT_MENU: Item[] = [
@@ -28,7 +28,7 @@ export const STUDENT_MENU: Item[] = [
   { label: "파이썬 코딩", icon: Code2, to: "/practice/general" },
   { label: "블럭 코딩", icon: Blocks, to: "/practice/block" },
   { label: "타자 연습", icon: Keyboard, soon: true },
-  { label: "포인트 상점", icon: ShoppingBag, soon: true },
+  { label: "포인트 상점", icon: ShoppingBag, to: "/student/shop" },
 ];
 
 interface AppShellProps {

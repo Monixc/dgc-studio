@@ -127,6 +127,28 @@ export interface Announcement {
   created_at: string;
 }
 
+export interface ShopItem {
+  id: string;
+  name: string;
+  image_url: string;
+  cost: number;
+  stock: number;
+  created_by: string;
+  created_at: string;
+}
+
+export type ShopOrderStatus = "pending" | "approved" | "rejected";
+
+export interface ShopOrder {
+  id: string;
+  item_id: string;
+  student_id: string;
+  status: ShopOrderStatus;
+  decided_by: string | null;
+  decided_at: string | null;
+  created_at: string;
+}
+
 export interface Submission {
   id: string;
   problem_id: string;

@@ -15,6 +15,8 @@ import FlowchartPractice from "@/pages/FlowchartPractice";
 import PythonPractice from "@/pages/PythonPractice";
 import BlockPractice from "@/pages/BlockPractice";
 import Solve from "@/pages/Solve";
+import TeacherShop from "@/pages/TeacherShop";
+import StudentShop from "@/pages/StudentShop";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -112,6 +114,22 @@ export default function App() {
               element={
                 <RequireRole role="student">
                   <BlockPractice />
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/shop"
+              element={
+                <RequireRole role="teacher">
+                  <TeacherShop />
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/student/shop"
+              element={
+                <RequireRole role="student">
+                  <StudentShop />
                 </RequireRole>
               }
             />
