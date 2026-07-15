@@ -47,6 +47,7 @@ export interface Problem {
   created_by: string;
   folder_id: string | null;
   category: ProblemCategory;
+  points: number;
   created_at: string;
   updated_at: string;
 }
@@ -88,6 +89,42 @@ export interface GradingDetail {
   actualOutput: string;
   passed: boolean;
   points: number;
+}
+
+export interface PointsLedgerEntry {
+  id: string;
+  student_id: string;
+  amount: number;
+  reason: string;
+  problem_id: string | null;
+  awarded_by: string | null;
+  created_at: string;
+}
+
+export interface MessageRow {
+  id: string;
+  sender_id: string;
+  recipient_id: string;
+  body: string;
+  read_at: string | null;
+  created_at: string;
+}
+
+export interface AcademicEvent {
+  id: string;
+  date: string;
+  title: string;
+  description: string;
+  created_by: string;
+  created_at: string;
+}
+
+export interface Announcement {
+  id: string;
+  title: string;
+  body: string;
+  created_by: string;
+  created_at: string;
 }
 
 export interface Submission {

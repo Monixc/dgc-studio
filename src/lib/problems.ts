@@ -50,7 +50,7 @@ export async function createProblem(
 }
 
 export type ProblemUpdate = Partial<
-  Pick<Problem, "title" | "description" | "flowchart" | "starter_code" | "grading_tests" | "is_published" | "folder_id" | "category">
+  Pick<Problem, "title" | "description" | "flowchart" | "starter_code" | "grading_tests" | "is_published" | "folder_id" | "category" | "points">
 >;
 
 export async function updateProblem(id: string, patch: ProblemUpdate): Promise<Problem> {

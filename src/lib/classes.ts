@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-import type { ClassRow } from "@/integrations/supabase/types";
+import type { ClassRow, Problem } from "@/integrations/supabase/types";
 
 export const CLASSES_KEY = ["classes"] as const;
 
@@ -65,4 +65,27 @@ export async function setClassProblems(classId: string, problemIds: string[]): P
       .in("problem_id", toRemove);
     if (error) throw error;
   }
+}
+
+/** 학생: 본인이 속한 반에 배정된 문제 전체(중복 제거). */
+export async function listAssignedProblems(studentId: string): Promise<Problem[]> {
+  const { data: cs, error: csErr } = await supabase
+    .from("class_students")
+    .select("class_id")
+    .eq("student_id", studentId);
+  if (csErr) throw csErr;
+  const classIds = [...new Set((cs ?? []).map((r) => r.class_id as string))];
+  if (classIds.length === 0) return [];
+
+  const { data: cp, error: cpErr } = await supabase
+    .from("class_problems")
+    .select("problem_id")
+    .in("class_id", classIds);
+  if (cpErr) throw cpErr;
+  const problemIds = [...new Set((cp ?? []).map((r) => r.problem_id as string))];
+  if (problemIds.length === 0) return [];
+
+  const { data: probs, error: pErr } = await supabase.from("problems").select("*").in("id", problemIds);
+  if (pErr) throw pErr;
+  return (probs ?? []) as Problem[];
 }

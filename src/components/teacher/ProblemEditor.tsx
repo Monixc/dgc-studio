@@ -25,6 +25,7 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState<ProblemCategory>("flowchart");
+  const [points, setPoints] = useState(0);
   const [graph, setGraph] = useState<FlowGraph>(emptyGraph());
   const [starter, setStarter] = useState("");
   const [tests, setTests] = useState<GradingTest[]>([]);
@@ -38,6 +39,7 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
     setTitle(problem.title);
     setDescription(problem.description);
     setCategory(problem.category ?? "flowchart");
+    setPoints(problem.points ?? 0);
     setGraph(normalizeStored(problem.flowchart));
     setStarter(problem.starter_code);
     setTests(problem.grading_tests ?? []);
@@ -52,6 +54,7 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
           title,
           description,
           category,
+          points,
           starter_code: starter,
           grading_tests: tests,
           flowchart: { nodes: graph.nodes, edges: graph.edges },
@@ -80,6 +83,15 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
             <option key={c} value={c}>{PROBLEM_CATEGORY_LABEL[c]}</option>
           ))}
         </select>
+        <Input
+          type="number"
+          min={0}
+          value={points}
+          onChange={(e) => setPoints(Number(e.target.value) || 0)}
+          className="w-24"
+          placeholder="포인트"
+          title="만점 시 지급 포인트"
+        />
         <div className="ml-auto flex gap-2">
           <TeacherSubmissions problemId={problemId} />
           <Button variant="outline" onClick={() => save({ is_published: !problem.is_published })} disabled={updateMut.isPending}>

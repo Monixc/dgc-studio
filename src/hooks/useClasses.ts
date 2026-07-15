@@ -7,6 +7,7 @@ import {
   deleteClass,
   listClassProblemIds,
   setClassProblems,
+  listAssignedProblems,
 } from "@/lib/classes";
 
 export function useClasses(userId: string | undefined) {
@@ -56,5 +57,13 @@ export function useSetClassProblems() {
       setClassProblems(classId, problemIds),
     onSuccess: (_, { classId }) =>
       qc.invalidateQueries({ queryKey: [...CLASSES_KEY, "problems", classId] }),
+  });
+}
+
+export function useAssignedProblems(studentId: string | undefined) {
+  return useQuery({
+    queryKey: [...CLASSES_KEY, "assigned", studentId],
+    queryFn: () => listAssignedProblems(studentId!),
+    enabled: !!studentId,
   });
 }

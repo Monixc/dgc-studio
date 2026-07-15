@@ -1,16 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import {
-  Users, FileText, ClipboardList, Plus, Megaphone, Circle, CheckCircle2, XCircle,
+  Users, FileText, ClipboardList, Plus, Megaphone, Circle, CheckCircle2, XCircle, CalendarDays, MessageSquare,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyProblems } from "@/hooks/useProblems";
 import { useOnlineUsers } from "@/hooks/usePresence";
+import { useAllStudents } from "@/hooks/useClassStudents";
 import { listRecentSubmissions } from "@/lib/submissions";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import AppShell from "@/components/layout/AppShell";
 import ScheduleCalendar from "@/components/dashboard/ScheduleCalendar";
+import AnnouncementsPanel from "@/components/dashboard/AnnouncementsPanel";
+import AcademicEventsPanel from "@/components/dashboard/AcademicEventsPanel";
+import MessageCenter from "@/components/dashboard/MessageCenter";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -23,6 +27,7 @@ export default function Dashboard() {
     queryKey: ["recent-submissions"],
     queryFn: () => listRecentSubmissions(8),
   });
+  const { data: allStudents = [] } = useAllStudents();
   const { data: studentCount = 0 } = useQuery({
     queryKey: ["student-count"],
     queryFn: async () => {
@@ -120,7 +125,17 @@ export default function Dashboard() {
 
           {/* 공지 */}
           <Bento className="md:col-span-2" icon={Megaphone} title="공지사항">
-            <p className="text-sm text-muted-foreground">등록된 공지가 없습니다.</p>
+            <AnnouncementsPanel />
+          </Bento>
+
+          {/* 학사 일정 */}
+          <Bento className="md:col-span-2" icon={CalendarDays} title="학사 일정">
+            <AcademicEventsPanel />
+          </Bento>
+
+          {/* 쪽지함 */}
+          <Bento className="md:col-span-2" icon={MessageSquare} title="쪽지함">
+            <MessageCenter recipients={allStudents} />
           </Bento>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, Trash2, Pencil, Check, Users, UserPlus, X } from "lucide-react";
+import { Plus, Trash2, Pencil, Check, Users, UserPlus, X, Coins } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import {
   useClasses, useCreateClass, useRenameClass, useDeleteClass,
@@ -8,11 +8,13 @@ import {
 } from "@/hooks/useClasses";
 import { useAllStudents, useClassStudentIds, useSetClassStudents } from "@/hooks/useClassStudents";
 import { useMyProblems } from "@/hooks/useProblems";
+import { useAwardPoints } from "@/hooks/usePoints";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import AssignProblemsDialog from "@/components/admin/AssignProblemsDialog";
 import EnrollStudentsDialog from "@/components/admin/EnrollStudentsDialog";
+import AwardPointsDialog from "@/components/admin/AwardPointsDialog";
 
 export default function ClassManager() {
   const { user } = useAuth();
@@ -36,6 +38,8 @@ export default function ClassManager() {
   const { data: enrolledIds = [] } = useClassStudentIds(selected?.id);
   const setStudentsMut = useSetClassStudents();
   const [enrollOpen, setEnrollOpen] = useState(false);
+  const awardMut = useAwardPoints();
+  const [awardTarget, setAwardTarget] = useState<{ id: string; name: string } | null>(null);
 
   async function handleCreate() {
     try {
@@ -174,6 +178,13 @@ export default function ClassManager() {
                     <span key={s.id} className="flex items-center gap-1.5 rounded-full border bg-background px-3 py-1 text-sm">
                       {s.display_name || "(이름 없음)"}
                       <button
+                        onClick={() => setAwardTarget({ id: s.id, name: s.display_name || "(이름 없음)" })}
+                        title="포인트 부여"
+                        className="text-muted-foreground hover:text-foreground"
+                      >
+                        <Coins className="size-3.5" />
+                      </button>
+                      <button
                         onClick={() => removeStudent(s.id)}
                         title="등록 해제"
                         className="text-muted-foreground hover:text-foreground"
@@ -233,6 +244,21 @@ export default function ClassManager() {
                   setEnrollOpen(false);
                 } catch (e: any) {
                   toast.error(e?.message ?? "저장 실패");
+                }
+              }}
+            />
+            <AwardPointsDialog
+              open={!!awardTarget}
+              onOpenChange={(o) => !o && setAwardTarget(null)}
+              studentName={awardTarget?.name ?? ""}
+              onSave={async (amount, reason) => {
+                if (!awardTarget) return;
+                try {
+                  await awardMut.mutateAsync({ teacherId: userId, studentId: awardTarget.id, amount, reason });
+                  toast.success("포인트 부여됨");
+                  setAwardTarget(null);
+                } catch (e: any) {
+                  toast.error(e?.message ?? "실패");
                 }
               }}
             />
