@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import {
-  CalendarDays, Users, FileText, ClipboardList, Plus, Megaphone, Circle, CheckCircle2, XCircle,
+  Users, FileText, ClipboardList, Plus, Megaphone, Circle, CheckCircle2, XCircle,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyProblems } from "@/hooks/useProblems";
@@ -10,16 +10,7 @@ import { listRecentSubmissions } from "@/lib/submissions";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import AppShell from "@/components/layout/AppShell";
-
-// ponytail: 시간표는 아직 DB 스키마 없음 → 정적 샘플. classes 테이블 생기면 여기만 교체.
-const DAYS = ["월", "화", "수", "목", "금"];
-const SCHEDULE: Record<string, { time: string; name: string }[]> = {
-  월: [{ time: "16:00", name: "파이썬 기초 A" }],
-  화: [{ time: "17:00", name: "순서도반" }],
-  수: [{ time: "16:00", name: "파이썬 기초 B" }],
-  목: [{ time: "17:00", name: "블럭코딩 입문" }],
-  금: [{ time: "18:00", name: "심화반" }],
-};
+import ScheduleCalendar from "@/components/dashboard/ScheduleCalendar";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -51,24 +42,8 @@ export default function Dashboard() {
         <p className="mb-6 text-sm text-muted-foreground">학원 및 수업 현황 한눈에 보기</p>
 
         <div className="grid auto-rows-[minmax(0,auto)] grid-cols-1 gap-4 md:grid-cols-4">
-          {/* 수업 시간표 — 큰 카드 */}
-          <Bento className="md:col-span-2 md:row-span-2" icon={CalendarDays} title="수업 시간표">
-            <div className="grid grid-cols-5 gap-2">
-              {DAYS.map((d) => (
-                <div key={d} className="rounded-lg border p-2">
-                  <div className="mb-2 text-center text-sm font-semibold">{d}</div>
-                  <div className="space-y-1">
-                    {(SCHEDULE[d] ?? []).map((c, i) => (
-                      <div key={i} className="rounded bg-primary/10 p-1.5 text-xs">
-                        <div className="font-medium">{c.time}</div>
-                        <div className="text-muted-foreground">{c.name}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Bento>
+          {/* 수업 시간표 — 편집 가능 캘린더 */}
+          <ScheduleCalendar className="md:col-span-2 md:row-span-2" />
 
           {/* 접속 중인 학생 */}
           <Bento className="md:col-span-2" icon={Users} title={`접속 중인 학생 (${onlineStudents.length})`}>

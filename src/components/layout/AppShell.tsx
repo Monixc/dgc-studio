@@ -2,12 +2,11 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   GraduationCap, LayoutDashboard, Workflow, Blocks, Code2, Keyboard,
-  ShoppingBag, PanelLeftClose, PanelLeftOpen, LogOut,
+  ShoppingBag, PanelLeftClose, PanelLeftOpen,
 } from "lucide-react";
 import { toast } from "sonner";
-import { useAuth } from "@/hooks/useAuth";
-import { signOut } from "@/lib/auth";
 import { cn } from "@/lib/utils";
+import Header from "@/components/layout/Header";
 
 interface Item {
   label: string;
@@ -26,7 +25,6 @@ const MENU: Item[] = [
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
-  const { profile } = useAuth();
   const nav = useNavigate();
   const loc = useLocation();
 
@@ -68,20 +66,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             />
           ))}
         </nav>
-
-        <div className="border-t p-2">
-          <NavButton
-            item={{ label: "로그아웃", icon: LogOut }}
-            collapsed={collapsed}
-            onClick={() => signOut()}
-          />
-          {!collapsed && (
-            <p className="px-2 pt-2 text-xs text-muted-foreground">{profile?.display_name} 선생님</p>
-          )}
-        </div>
       </aside>
 
-      <main className="flex-1 overflow-auto">{children}</main>
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <Header />
+        <main className="flex-1 overflow-auto">{children}</main>
+      </div>
     </div>
   );
 }
