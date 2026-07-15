@@ -4,6 +4,7 @@ import {
   ReactFlowProvider,
   Background,
   Controls,
+  ConnectionMode,
   addEdge,
   useNodesState,
   useEdgesState,
@@ -277,6 +278,7 @@ function CanvasInner({ graph, editable, resetKey, onChange }: Props) {
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
+        connectionMode={ConnectionMode.Loose}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={editable ? onConnect : undefined}
