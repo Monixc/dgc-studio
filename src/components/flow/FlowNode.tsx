@@ -4,48 +4,82 @@ import type { NodeType } from "@/types/flowchart";
 import type { FlowNodeData } from "@/lib/flow-layout";
 import { cn } from "@/lib/utils";
 
-const COLORS: Record<NodeType, string> = {
-  start: "bg-emerald-100 border-emerald-400 text-emerald-900",
-  end: "bg-rose-100 border-rose-400 text-rose-900",
-  input: "bg-sky-100 border-sky-400 text-sky-900",
-  output: "bg-sky-100 border-sky-400 text-sky-900",
-  process: "bg-slate-100 border-slate-400 text-slate-900",
-  if: "bg-amber-100 border-amber-400 text-amber-900",
-  while: "bg-amber-100 border-amber-400 text-amber-900",
-  for: "bg-violet-100 border-violet-400 text-violet-900",
-  def: "bg-indigo-100 border-indigo-500 text-indigo-900",
-  call: "bg-teal-100 border-teal-400 text-teal-900",
+export const NODE_SIZE: Record<NodeType, { w: number; h: number }> = {
+  start: { w: 120, h: 48 },
+  end: { w: 120, h: 48 },
+  input: { w: 180, h: 56 },
+  output: { w: 180, h: 56 },
+  process: { w: 180, h: 56 },
+  if: { w: 160, h: 90 },
+  while: { w: 160, h: 90 },
+  for: { w: 200, h: 60 },
+  def: { w: 180, h: 56 },
+  call: { w: 180, h: 56 },
 };
 
-function shapeClass(type: NodeType): string {
+const DEFAULT_BG = "#ffffff";
+const DEFAULT_BORDER = "#111827";
+const DEFAULT_TEXT = "#111827";
+
+/** 타입별 SVG 도형. 컨테이너를 클립하지 않으므로 핸들이 잘리지 않는다. */
+function Shape({ type, w, h, fill, stroke }: { type: NodeType; w: number; h: number; fill: string; stroke: string }) {
+  const sw = 1.5;
+  const p = sw;
+  const common = { fill, stroke, strokeWidth: sw, strokeLinejoin: "round" as const };
   switch (type) {
     case "start":
     case "end":
-      return "rounded-full";
+      return <rect x={p} y={p} width={w - 2 * p} height={h - 2 * p} rx={(h - 2 * p) / 2} ry={(h - 2 * p) / 2} {...common} />;
     case "if":
     case "while":
-      return "[clip-path:polygon(50%_0,100%_50%,50%_100%,0_50%)]";
-    case "for":
-      return "[clip-path:polygon(14px_0,calc(100%-14px)_0,100%_50%,calc(100%-14px)_100%,14px_100%,0_50%)]";
+      return <polygon points={`${w / 2},${p} ${w - p},${h / 2} ${w / 2},${h - p} ${p},${h / 2}`} {...common} />;
     case "input":
-    case "output":
-      return "[clip-path:polygon(12px_0,100%_0,calc(100%-12px)_100%,0_100%)]";
+    case "output": {
+      const s = 16;
+      return <polygon points={`${s},${p} ${w - p},${p} ${w - s},${h - p} ${p},${h - p}`} {...common} />;
+    }
+    case "for": {
+      const s = 16;
+      return (
+        <polygon
+          points={`${s},${p} ${w - s},${p} ${w - p},${h / 2} ${w - s},${h - p} ${s},${h - p} ${p},${h / 2}`}
+          {...common}
+        />
+      );
+    }
     case "def":
-      return "rounded-md border-double border-4";
+      return (
+        <>
+          <rect x={p} y={p} width={w - 2 * p} height={h - 2 * p} rx={4} {...common} />
+          <rect x={p + 5} y={p + 5} width={w - 2 * p - 10} height={h - 2 * p - 10} rx={2} fill="none" stroke={stroke} strokeWidth={sw} />
+        </>
+      );
     case "call":
-      return "rounded-md border-l-4 border-r-4";
+      return (
+        <>
+          <rect x={p} y={p} width={w - 2 * p} height={h - 2 * p} rx={4} {...common} />
+          <line x1={12} y1={p} x2={12} y2={h - p} stroke={stroke} strokeWidth={sw} />
+          <line x1={w - 12} y1={p} x2={w - 12} y2={h - p} stroke={stroke} strokeWidth={sw} />
+        </>
+      );
     default:
-      return "rounded-md";
+      return <rect x={p} y={p} width={w - 2 * p} height={h - 2 * p} rx={4} {...common} />;
   }
 }
 
-const handleStyle = { width: 9, height: 9, background: "hsl(var(--primary))", border: "1px solid white" };
+const HANDLE_BASE =
+  "!h-2.5 !w-2.5 !border !border-white !bg-primary opacity-0 transition-opacity duration-150 group-hover:opacity-100";
 
 function FlowNodeInner({ id, data, selected }: NodeProps) {
   const d = data as FlowNodeData;
   const type = d.nodeType;
+  const { w, h } = NODE_SIZE[type];
   const diamond = type === "if" || type === "while";
   const editable = !!d.onLabelChange;
+  const bg = d.style?.bg || DEFAULT_BG;
+  const border = d.style?.border || DEFAULT_BORDER;
+  const text = d.style?.text || DEFAULT_TEXT;
+
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(d.label);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -62,41 +96,44 @@ function FlowNodeInner({ id, data, selected }: NodeProps) {
 
   return (
     <div
-      className={cn(
-        "relative flex items-center justify-center border px-4 text-center text-xs font-medium shadow-sm",
-        COLORS[type],
-        shapeClass(type),
-        selected && "ring-2 ring-primary ring-offset-1"
-      )}
-      style={{
-        width: diamond ? 150 : type === "for" ? 190 : type === "start" || type === "end" ? 110 : 180,
-        height: diamond ? 90 : 56,
-      }}
+      className="group relative"
+      style={{ width: w, height: h }}
       title={d.label}
       onDoubleClick={editable ? () => setEditing(true) : undefined}
     >
-      {editing ? (
-        <input
-          ref={inputRef}
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          onBlur={commit}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") commit();
-            if (e.key === "Escape") {
-              setDraft(d.label);
-              setEditing(false);
-            }
-          }}
-          className="nodrag w-full rounded bg-white/90 px-1 text-center text-xs outline-none"
-        />
-      ) : (
-        <span className={cn("line-clamp-2 break-words", diamond && "px-6")}>{d.label}</span>
+      <svg width={w} height={h} className="absolute inset-0 block overflow-visible">
+        <Shape type={type} w={w} h={h} fill={bg} stroke={border} />
+      </svg>
+      {selected && (
+        <div className="pointer-events-none absolute -inset-1 rounded-md ring-2 ring-primary/60" />
       )}
-      <Handle id="top" type="target" position={Position.Top} style={handleStyle} isConnectable={editable} />
-      <Handle id="left" type="target" position={Position.Left} style={handleStyle} isConnectable={editable} />
-      <Handle id="bottom" type="source" position={Position.Bottom} style={handleStyle} isConnectable={editable} />
-      <Handle id="right" type="source" position={Position.Right} style={handleStyle} isConnectable={editable} />
+      <div className={cn("absolute inset-0 flex items-center justify-center px-4 text-center", diamond && "px-6")}>
+        {editing ? (
+          <input
+            ref={inputRef}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onBlur={commit}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") commit();
+              if (e.key === "Escape") {
+                setDraft(d.label);
+                setEditing(false);
+              }
+            }}
+            className="nodrag w-full rounded bg-white/90 px-1 text-center text-xs outline-none"
+            style={{ color: text }}
+          />
+        ) : (
+          <span className="line-clamp-2 break-words text-xs font-medium" style={{ color: text }}>
+            {d.label}
+          </span>
+        )}
+      </div>
+      <Handle id="top" type="target" position={Position.Top} className={HANDLE_BASE} isConnectable={editable} />
+      <Handle id="left" type="target" position={Position.Left} className={HANDLE_BASE} isConnectable={editable} />
+      <Handle id="bottom" type="source" position={Position.Bottom} className={HANDLE_BASE} isConnectable={editable} />
+      <Handle id="right" type="source" position={Position.Right} className={HANDLE_BASE} isConnectable={editable} />
     </div>
   );
 }

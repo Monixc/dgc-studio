@@ -105,6 +105,21 @@ function CanvasInner({ graph, editable, resetKey, onChange }: Props) {
     setNodes((ns) => [...ns, node]);
   };
 
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const onSelectionChange = useCallback(
+    ({ nodes: sel }: { nodes: Node[] }) => setSelectedId(sel.length === 1 ? sel[0].id : null),
+    []
+  );
+  const updateStyle = (patch: { bg?: string; border?: string; text?: string }) => {
+    if (!selectedId) return;
+    setNodes((ns) =>
+      ns.map((n) =>
+        n.id === selectedId ? { ...n, data: { ...n.data, style: { ...(n.data as FlowNodeData).style, ...patch } } } : n
+      )
+    );
+  };
+  const selectedStyle = (nodes.find((n) => n.id === selectedId)?.data as FlowNodeData | undefined)?.style;
+
   const onEdgeDoubleClick = useCallback(
     (_: unknown, edge: Edge) => {
       if (!editable) return;
@@ -142,6 +157,16 @@ function CanvasInner({ graph, editable, resetKey, onChange }: Props) {
           <DslImportDialog onImport={importDsl} />
         </div>
       )}
+      {editable && selectedId && (
+        <div className="absolute right-2 top-2 z-10 flex items-center gap-3 rounded-lg border bg-background/95 px-3 py-2 shadow-sm">
+          <ColorField label="배경" value={selectedStyle?.bg || "#ffffff"} onChange={(v) => updateStyle({ bg: v })} />
+          <ColorField label="테두리" value={selectedStyle?.border || "#111827"} onChange={(v) => updateStyle({ border: v })} />
+          <ColorField label="글자" value={selectedStyle?.text || "#111827"} onChange={(v) => updateStyle({ text: v })} />
+          <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={() => updateStyle({ bg: undefined, border: undefined, text: undefined })}>
+            기본값
+          </Button>
+        </div>
+      )}
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -149,6 +174,7 @@ function CanvasInner({ graph, editable, resetKey, onChange }: Props) {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={editable ? onConnect : undefined}
+        onSelectionChange={onSelectionChange}
         onEdgeDoubleClick={onEdgeDoubleClick}
         nodesDraggable={editable}
         nodesConnectable={editable}
@@ -167,6 +193,15 @@ function CanvasInner({ graph, editable, resetKey, onChange }: Props) {
         </div>
       )}
     </div>
+  );
+}
+
+function ColorField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  return (
+    <label className="flex items-center gap-1 text-xs text-muted-foreground">
+      {label}
+      <input type="color" value={value} onChange={(e) => onChange(e.target.value)} className="h-6 w-6 cursor-pointer rounded border" />
+    </label>
   );
 }
 

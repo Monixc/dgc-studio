@@ -12,12 +12,20 @@ export type NodeType =
   | "def" // 함수 정의 시작
   | "call"; // 함수 호출
 
+export interface NodeStyle {
+  bg?: string;
+  border?: string;
+  text?: string;
+}
+
 export interface FlowNode {
   id: string;
   type: NodeType;
   label: string;
   /** 캔버스 좌표(캔버스 원본 저장 시 필수). DSL 파싱 직후엔 없을 수 있음(dagre 로 채움). */
   position?: { x: number; y: number };
+  /** 배경/테두리/글자 색 (미지정 시 흰 배경·검정 테두리·검정 글자) */
+  style?: NodeStyle;
   /** def 본문/루프 본문 등 소속 표시용(옵션). 레이아웃/그룹핑 힌트. */
   scope?: string;
 }

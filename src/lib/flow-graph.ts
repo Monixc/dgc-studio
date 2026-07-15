@@ -1,33 +1,33 @@
 import dagre from "@dagrejs/dagre";
 import { MarkerType, type Edge, type Node } from "@xyflow/react";
-import type { FlowGraph, FlowNode, NodeType } from "@/types/flowchart";
+import type { FlowGraph, NodeType } from "@/types/flowchart";
 import type { FlowchartPayload } from "@/integrations/supabase/types";
 import { parseDsl } from "@/lib/dsl-parser";
 import type { FlowNodeData } from "@/lib/flow-layout";
+import { NODE_SIZE } from "@/components/flow/FlowNode";
 
 export function emptyGraph(): FlowGraph {
   return { nodes: [], edges: [] };
 }
 
 export function sizeFor(type: NodeType): { w: number; h: number } {
-  switch (type) {
-    case "if":
-    case "while":
-      return { w: 150, h: 90 };
-    case "start":
-    case "end":
-      return { w: 110, h: 48 };
-    case "for":
-      return { w: 190, h: 56 };
-    default:
-      return { w: 180, h: 56 };
-  }
+  return NODE_SIZE[type];
 }
 
-const HANDLES = { source: ["bottom", "right"], target: ["top", "left"] };
-
-/** dagre 로 좌표를 (재)계산한 새 그래프 반환. */
+/** dagre 로 좌표를 (재)계산한 새 그래프 반환. 간선이 없으면 세로로 나란히 쌓는다. */
 export function autoLayout(graph: FlowGraph): FlowGraph {
+  if (graph.edges.length === 0) {
+    let y = 20;
+    return {
+      nodes: graph.nodes.map((n) => {
+        const s = sizeFor(n.type);
+        const node = { ...n, position: { x: 40, y } };
+        y += s.h + 40;
+        return node;
+      }),
+      edges: [],
+    };
+  }
   const g = new dagre.graphlib.Graph();
   g.setGraph({ rankdir: "TB", nodesep: 44, ranksep: 60, marginx: 20, marginy: 20 });
   g.setDefaultEdgeLabel(() => ({}));
@@ -83,7 +83,7 @@ export function toRFNodes(
     id: n.id,
     type: "flow",
     position: n.position ?? { x: 0, y: 0 },
-    data: { label: n.label, nodeType: n.type, onLabelChange: opts?.onLabelChange } satisfies FlowNodeData,
+    data: { label: n.label, nodeType: n.type, style: n.style, onLabelChange: opts?.onLabelChange } satisfies FlowNodeData,
   }));
 }
 
@@ -109,6 +109,7 @@ export function fromRF(nodes: Node[], edges: Edge[]): FlowGraph {
       id: n.id,
       type: (n.data as FlowNodeData).nodeType,
       label: (n.data as FlowNodeData).label,
+      style: (n.data as FlowNodeData).style,
       position: n.position,
     })),
     edges: edges.map((e) => ({
