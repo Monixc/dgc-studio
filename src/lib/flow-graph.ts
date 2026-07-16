@@ -54,13 +54,22 @@ export function autoLayout(graph: FlowGraph): FlowGraph {
   for (const e of graph.edges) g.setEdge(e.source, e.target);
   dagre.layout(g);
   const order = new Map(graph.nodes.map((n, i) => [n.id, i]));
+  const nodes = graph.nodes.map((n) => {
+    const p = g.node(n.id);
+    const s = sizeFor(n.type);
+    return { ...n, position: { x: (p?.x ?? 0) - s.w / 2, y: (p?.y ?? 0) - s.h / 2 } };
+  });
+  const nodesById = new Map(nodes.map((n) => [n.id, n]));
+
   return {
-    nodes: graph.nodes.map((n) => {
-      const p = g.node(n.id);
-      const s = sizeFor(n.type);
-      return { ...n, position: { x: (p?.x ?? 0) - s.w / 2, y: (p?.y ?? 0) - s.h / 2 } };
-    }),
+    nodes,
     edges: graph.edges.map((e) => {
+      const s = nodesById.get(e.source);
+      const t = nodesById.get(e.target);
+      if (s && t && (s.type === "if" || s.type === "while")) {
+        const sourceHandle = (s.position && t.position) ? (t.position.x < s.position.x ? "left" : "right") : (e.label === "참" || e.label === "반복" ? "left" : "right");
+        return { ...e, sourceHandle, targetHandle: "top" };
+      }
       const back = (order.get(e.source) ?? 0) > (order.get(e.target) ?? 0);
       return { ...e, sourceHandle: back ? "right" : "bottom", targetHandle: back ? "left" : "top" };
     }),
@@ -92,29 +101,90 @@ export function dslToGraph(dsl: string): FlowGraph {
     }
   }
 
-  // 컨테이너 재귀 크기/배치(자식 세로 스택)
+  // 컨테이너 재귀 크기/배치(자식 dagre 배치)
   const sizeContainer = (forId: string): { w: number; h: number } => {
     const kids = (childrenOf.get(forId) ?? []).sort((a, b) => (order.get(a.id)! - order.get(b.id)!));
-    let y = HEADER;
-    let maxW = 160;
-    for (const k of kids) {
-      let kw: number;
-      let kh: number;
-      if (k.type === "for") {
-        const s = sizeContainer(k.id);
-        kw = s.w;
-        kh = s.h;
-      } else {
-        const s = NODE_SIZE[k.type];
-        kw = s.w;
-        kh = s.h;
-      }
-      k.position = { x: PAD, y };
-      y += kh + GAP;
-      maxW = Math.max(maxW, kw);
+    if (kids.length === 0) {
+      const w = 180;
+      const h = 120;
+      const f = byId.get(forId)!;
+      f.width = w;
+      f.height = h;
+      return { w, h };
     }
-    const w = maxW + 2 * PAD;
-    const h = Math.max(120, y - GAP + PAD);
+
+    // 1. 자식 중 'for' 컨테이너가 있으면 먼저 재귀적으로 크기를 계산
+    for (const k of kids) {
+      if (k.type === "for") {
+        sizeContainer(k.id);
+      }
+    }
+
+    // 2. dagre 그래프 구성
+    const g = new dagre.graphlib.Graph();
+    g.setGraph({ rankdir: "TB", nodesep: 44, ranksep: 40, marginx: PAD, marginy: PAD });
+    g.setDefaultEdgeLabel(() => ({}));
+
+    // 자식 노드 추가
+    const kidsSet = new Set(kids.map((k) => k.id));
+    for (const k of kids) {
+      const w = k.type === "for" ? (k.width ?? 200) : NODE_SIZE[k.type].w;
+      const h = k.type === "for" ? (k.height ?? 60) : NODE_SIZE[k.type].h;
+      g.setNode(k.id, { width: w, height: h });
+    }
+
+    // 자식 간의 간선 추가
+    for (const e of data.edges) {
+      if (kidsSet.has(e.source) && kidsSet.has(e.target)) {
+        g.setEdge(e.source, e.target);
+      }
+    }
+
+    // dagre 레이아웃 실행
+    dagre.layout(g);
+
+    // 3. 배치 좌표를 바탕으로 노드 위치 설정 및 컨테이너 크기 결정
+    let minX = Infinity;
+    let maxX = -Infinity;
+    let minY = Infinity;
+    let maxY = -Infinity;
+
+    for (const k of kids) {
+      const p = g.node(k.id);
+      if (!p) continue;
+      const w = k.type === "for" ? (k.width ?? 200) : NODE_SIZE[k.type].w;
+      const h = k.type === "for" ? (k.height ?? 60) : NODE_SIZE[k.type].h;
+      const x = p.x - w / 2;
+      const y = p.y - h / 2;
+
+      minX = Math.min(minX, x);
+      maxX = Math.max(maxX, x + w);
+      minY = Math.min(minY, y);
+      maxY = Math.max(maxY, y + h);
+    }
+
+    const contentW = maxX - minX;
+    const contentH = maxY - minY;
+
+    const offsetX = PAD - minX;
+    const offsetY = HEADER + PAD - minY;
+
+    for (const k of kids) {
+      const p = g.node(k.id);
+      if (p) {
+        const w = k.type === "for" ? (k.width ?? 200) : NODE_SIZE[k.type].w;
+        const h = k.type === "for" ? (k.height ?? 60) : NODE_SIZE[k.type].h;
+        k.position = {
+          x: p.x - w / 2 + offsetX,
+          y: p.y - h / 2 + offsetY,
+        };
+      } else {
+        k.position = { x: PAD, y: HEADER + PAD };
+      }
+    }
+
+    const w = Math.max(180, contentW + 2 * PAD);
+    const h = Math.max(110, contentH + HEADER + 2 * PAD);
     const f = byId.get(forId)!;
     f.width = w;
     f.height = h;
@@ -161,6 +231,12 @@ export function dslToGraph(dsl: string): FlowGraph {
       return { ...base, pathType: "straight" as const, sourceHandle: "bottom", targetHandle: "top" };
     // 밖 → 컨테이너 진입: 하단→상단 직선
     if (t.type === "for") return { ...base, pathType: "straight" as const, sourceHandle: "bottom", targetHandle: "top" };
+    // if 또는 while 분기 처리: 좌우로 분기하도록 설정
+    if (s.type === "if" || s.type === "while") {
+      const sourceHandle = (s.position && t.position) ? (t.position.x < s.position.x ? "left" : "right") : (e.label === "참" || e.label === "반복" ? "left" : "right");
+      return { ...base, label: e.label, sourceHandle, targetHandle: "top" };
+    }
+
     // 일반: 되돌아가기면 우측, 아니면 하단→상단
     const back = (order.get(e.source) ?? 0) > (order.get(e.target) ?? 0);
     return { ...base, label: e.label, sourceHandle: back ? "right" : "bottom", targetHandle: back ? "left" : "top" };

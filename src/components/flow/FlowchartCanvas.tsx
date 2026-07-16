@@ -331,18 +331,18 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
         nodesConnectable={editable}
         elementsSelectable={editable}
         deleteKeyCode={editable ? ["Backspace", "Delete"] : null}
-        panOnDrag={editable}
+        panOnDrag={true}
         panOnScroll={false}
-        zoomOnScroll={editable}
-        zoomOnPinch={editable}
-        zoomOnDoubleClick={editable}
-        preventScrolling={editable}
+        zoomOnScroll={true}
+        zoomOnPinch={true}
+        zoomOnDoubleClick={true}
+        preventScrolling={false}
         fitView
         proOptions={{ hideAttribution: true }}
         minZoom={0.2}
       >
         <Background />
-        {editable && <Controls showInteractive={false} />}
+        <Controls showInteractive={false} />
       </ReactFlow>
       {editable && (
         <div className="absolute bottom-2 left-2 z-10 rounded bg-background/90 px-2 py-1 text-[11px] text-muted-foreground shadow-sm">
