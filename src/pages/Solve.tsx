@@ -11,7 +11,7 @@ import { loadDraft, saveDraft } from "@/lib/draft";
 import { useBroadcastLiveCode } from "@/hooks/useLiveCode";
 import FlowchartCanvas from "@/components/flow/FlowchartCanvas";
 import { normalizeStored } from "@/lib/flow-graph";
-import EditorPanel from "@/components/editor/EditorPanel";
+import EditorPanel, { type ConsoleLine } from "@/components/editor/EditorPanel";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +25,7 @@ export default function Solve() {
   const [code, setCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<GradingSummary | null>(null);
+  const [runResult, setRunResult] = useState<ConsoleLine[] | undefined>(undefined);
 
   // 임시저장 복원 (없으면 시작 코드)
   useEffect(() => {
@@ -50,6 +51,7 @@ export default function Solve() {
           problemDescription: problem.description ?? "",
           category: problem.category,
           flowchart: problem.flowchart,
+          executionResult: runResult,
         }
       : null
   );
@@ -131,10 +133,11 @@ export default function Solve() {
         <div className="h-full">
           <EditorPanel
             code={code}
-            onCodeChange={setCode}
+            onCodeChange={(v) => { setCode(v); setRunResult(undefined); }}
             running={running}
             run={run}
             stop={stop}
+            onResult={setRunResult}
             footer={
               <Button size="sm" onClick={handleSubmit} disabled={submitting || running}>
                 <Send /> {submitting ? "채점 중…" : "제출"}

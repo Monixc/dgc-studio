@@ -20,9 +20,11 @@ interface Props {
   stop: () => void;
   /** 하단 액션 영역(제출 버튼 등) */
   footer?: ReactNode;
+  /** 실행 완료 시 콘솔 라인 전달(라이브 뷰 브로드캐스트 등) */
+  onResult?: (lines: ConsoleLine[]) => void;
 }
 
-export default function EditorPanel({ code, onCodeChange, readOnly, running, run, stop, footer }: Props) {
+export default function EditorPanel({ code, onCodeChange, readOnly, running, run, stop, footer, onResult }: Props) {
   const [stdin, setStdin] = useState("");
   const [lines, setLines] = useState<ConsoleLine[]>([]);
 
@@ -30,11 +32,16 @@ export default function EditorPanel({ code, onCodeChange, readOnly, running, run
     // input() 호출이 있는데 stdin 이 비면 파이썬 오류 대신 안내
     if (/\binput\s*\(/.test(code) && stdin.trim() === "") {
       toast.warning("입력값을 먼저 넣고 실행해주세요.");
-      setLines([{ kind: "err", text: '입력값이 필요합니다. 왼쪽 "입력 (stdin)" 칸에 값을 넣고 실행하세요.' }]);
+      const warn: ConsoleLine[] = [{ kind: "err", text: '입력값이 필요합니다. 왼쪽 "입력 (stdin)" 칸에 값을 넣고 실행하세요.' }];
+      setLines(warn);
       return;
     }
     setLines([]);
-    const append = (kind: ConsoleLine["kind"], text: string) => setLines((l) => [...l, { kind, text }]);
+    const collected: ConsoleLine[] = [];
+    const append = (kind: ConsoleLine["kind"], text: string) => {
+      collected.push({ kind, text });
+      setLines((l) => [...l, { kind, text }]);
+    };
     const res = await run(code, {
       stdin,
       timeoutMs: 5000,
@@ -43,6 +50,7 @@ export default function EditorPanel({ code, onCodeChange, readOnly, running, run
     });
     // 일반 에러는 워커가 stderr 로 이미 스트리밍함. 타임아웃/중단만 별도 표기.
     if (res.timedOut) append("err", res.error ?? "");
+    onResult?.(collected);
   }
 
   return (

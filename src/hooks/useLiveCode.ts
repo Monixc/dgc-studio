@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import type { ConsoleLine } from "@/components/editor/EditorPanel";
 
 export interface LiveCodePayload {
   code: string;
@@ -9,6 +10,8 @@ export interface LiveCodePayload {
   problemDescription: string;
   category: string;
   flowchart: unknown;
+  /** 학생이 직접 실행한 결과(있으면). 코드만 바뀌고 실행 안 했으면 없음. */
+  executionResult?: ConsoleLine[];
 }
 
 const topic = (studentId: string) => `live-code:${studentId}`;
