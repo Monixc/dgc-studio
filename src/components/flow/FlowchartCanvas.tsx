@@ -23,6 +23,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
 import { LayoutGrid, FileCode } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
 const PALETTE: { type: NodeType; label: string; defaultLabel: string }[] = [
   { type: "start", label: "시작", defaultLabel: "시작" },
@@ -363,7 +365,18 @@ function ColorField({ label, value, onChange }: { label: string; value: string; 
 }
 
 function DslImportDialog({ onImport }: { onImport: (text: string) => void }) {
+  const { user } = useAuth();
   const [text, setText] = useState("");
+
+  function handleImport() {
+    onImport(text);
+    if (user) {
+      supabase.from("dsl_import_logs").insert({ user_id: user.id, dsl_text: text }).then(({ error }) => {
+        if (error) console.error("dsl_import_logs insert failed", error);
+      });
+    }
+  }
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -378,7 +391,7 @@ function DslImportDialog({ onImport }: { onImport: (text: string) => void }) {
         <p className="whitespace-pre-wrap text-xs text-muted-foreground">{DSL_HELP}</p>
         <Textarea value={text} onChange={(e) => setText(e.target.value)} className="h-64 font-mono text-xs" placeholder={"start\ninput n\nfor i in range(1, n+1)\n    process total += i\noutput total\nend"} />
         <DialogClose asChild>
-          <Button onClick={() => onImport(text)} disabled={!text.trim()}>
+          <Button onClick={handleImport} disabled={!text.trim()}>
             현재 순서도로 가져오기
           </Button>
         </DialogClose>

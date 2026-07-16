@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
-import { Plus, Trash2, Folder, FolderPlus, ChevronRight, ChevronDown, Circle, Globe, EyeOff } from "lucide-react";
+import { Plus, Trash2, Folder, FolderPlus, ChevronRight, ChevronDown, Circle, Globe, EyeOff, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import type { ImperativePanelHandle } from "react-resizable-panels";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyProblems, useCreateProblem, useDeleteProblem, useUpdateProblem } from "@/hooks/useProblems";
 import { useProblemsRealtime } from "@/hooks/useProblemsRealtime";
@@ -8,6 +9,7 @@ import { useFolders, useCreateFolder, useDeleteFolder } from "@/hooks/useProblem
 import { resolveFolderCategory } from "@/lib/problemFolders";
 import ProblemEditor from "@/components/teacher/ProblemEditor";
 import { Button } from "@/components/ui/button";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { cn } from "@/lib/utils";
 import type { ProblemFolder } from "@/integrations/supabase/types";
 
@@ -30,6 +32,11 @@ export default function ProblemManager() {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
+
+  const folderPanelRef = useRef<ImperativePanelHandle>(null);
+  const listPanelRef = useRef<ImperativePanelHandle>(null);
+  const [folderCollapsed, setFolderCollapsed] = useState(false);
+  const [listCollapsed, setListCollapsed] = useState(false);
 
   const filtered = activeFolder === ALL ? problems : problems.filter((p) => p.folder_id === activeFolder);
 
@@ -115,76 +122,122 @@ export default function ProblemManager() {
   }
 
   return (
-    <div className="flex h-full overflow-hidden">
-      <div className="flex h-full w-56 flex-col border-r bg-muted/20">
-        <div className="flex items-center justify-between border-b p-2">
-          <span className="text-sm font-semibold">폴더</span>
+    <ResizablePanelGroup direction="horizontal" className="h-full overflow-hidden">
+      <ResizablePanel
+        ref={folderPanelRef}
+        defaultSize={18}
+        minSize={12}
+        maxSize={35}
+        collapsible
+        collapsedSize={5}
+        onCollapse={() => setFolderCollapsed(true)}
+        onExpand={() => setFolderCollapsed(false)}
+        className="flex h-full flex-col bg-muted/20"
+      >
+        <div className={cn("flex items-center border-b p-2", folderCollapsed ? "justify-center" : "justify-between")}>
+          {!folderCollapsed && <span className="whitespace-nowrap text-sm font-semibold">폴더</span>}
+          <button
+            className={cn("shrink-0 text-muted-foreground hover:text-foreground", !folderCollapsed && "ml-auto")}
+            onClick={() => (folderCollapsed ? folderPanelRef.current?.expand() : folderPanelRef.current?.collapse())}
+            title={folderCollapsed ? "폴더 패널 펼치기" : "폴더 패널 접기"}
+          >
+            {folderCollapsed ? <PanelLeftOpen className="size-4" /> : <PanelLeftClose className="size-4" />}
+          </button>
         </div>
-        <div className="flex-1 overflow-auto p-1">
-          <FolderItem
-            label="전체"
-            active={activeFolder === ALL}
-            onClick={() => setActiveFolder(ALL)}
-          />
-          {childrenOf(null).map((f) => (
-            <FolderTreeNode
-              key={f.id}
-              folder={f}
-              depth={0}
-              childrenOf={childrenOf}
-              expanded={expanded}
-              onToggleExpand={toggleExpand}
-              activeFolder={activeFolder}
-              onSelect={setActiveFolder}
-              onAddChild={handleAddChild}
-              onDelete={handleDeleteFolder}
-              dragOverId={dragOverId}
-              setDragOverId={setDragOverId}
-              onDrop={handleDropOnFolder}
+        {!folderCollapsed && (
+          <div className="flex-1 overflow-auto p-1">
+            <FolderItem
+              label="전체"
+              active={activeFolder === ALL}
+              onClick={() => setActiveFolder(ALL)}
             />
-          ))}
-        </div>
-      </div>
+            {childrenOf(null).map((f) => (
+              <FolderTreeNode
+                key={f.id}
+                folder={f}
+                depth={0}
+                childrenOf={childrenOf}
+                expanded={expanded}
+                onToggleExpand={toggleExpand}
+                activeFolder={activeFolder}
+                onSelect={setActiveFolder}
+                onAddChild={handleAddChild}
+                onDelete={handleDeleteFolder}
+                dragOverId={dragOverId}
+                setDragOverId={setDragOverId}
+                onDrop={handleDropOnFolder}
+              />
+            ))}
+          </div>
+        )}
+      </ResizablePanel>
 
-      <div className="flex h-full w-64 flex-col border-r bg-muted/20">
-        <div className="flex items-center justify-between border-b p-2">
-          <span className="text-sm font-semibold">문제 목록</span>
-          <Button size="sm" onClick={handleCreateProblem} disabled={createProblemMut.isPending}>
-            <Plus /> 문제 추가
-          </Button>
-        </div>
-        <div className="flex-1 overflow-auto p-1">
-          {isLoading ? (
-            <p className="p-2 text-sm text-muted-foreground">불러오는 중…</p>
-          ) : filtered.length === 0 ? (
-            <p className="p-2 text-sm text-muted-foreground">“문제 추가”로 시작하세요.</p>
-          ) : (
-            filtered.map((p) => (
-              <div
-                key={p.id}
-                draggable
-                onDragStart={(e) => e.dataTransfer.setData(PROBLEM_DND_TYPE, p.id)}
-                onClick={() => setSelectedId(p.id)}
-                className={cn(
-                  "group flex cursor-grab items-center gap-2 rounded-md p-2 text-sm hover:bg-accent active:cursor-grabbing",
-                  selectedId === p.id && "bg-accent"
-                )}
-              >
-                <Circle className={cn("size-2 shrink-0", p.is_published ? "fill-emerald-500 text-emerald-500" : "fill-muted-foreground/40 text-muted-foreground/40")} />
-                <span className="flex-1 truncate">{p.title || "(제목 없음)"}</span>
-                <button className="opacity-0 group-hover:opacity-100" onClick={(e) => togglePublish(p.id, !p.is_published, e)} title="발행 전환">
-                  {p.is_published ? <EyeOff className="size-4" /> : <Globe className="size-4" />}
-                </button>
-                <button className="opacity-0 group-hover:opacity-100" onClick={(e) => handleDeleteProblem(p.id, e)} title="삭제">
-                  <Trash2 className="size-4" />
-                </button>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
+      <ResizableHandle withHandle />
 
-      <div className="flex-1 overflow-hidden">
+      <ResizablePanel
+        ref={listPanelRef}
+        defaultSize={22}
+        minSize={14}
+        maxSize={40}
+        collapsible
+        collapsedSize={5}
+        onCollapse={() => setListCollapsed(true)}
+        onExpand={() => setListCollapsed(false)}
+        className="flex h-full flex-col bg-muted/20"
+      >
+        <div className={cn("flex items-center border-b p-2", listCollapsed ? "justify-center" : "justify-between")}>
+          {!listCollapsed && <span className="whitespace-nowrap text-sm font-semibold">문제 목록</span>}
+          <div className={cn("flex items-center gap-1", !listCollapsed && "ml-auto")}>
+            {!listCollapsed && (
+              <Button size="sm" onClick={handleCreateProblem} disabled={createProblemMut.isPending}>
+                <Plus /> 문제 추가
+              </Button>
+            )}
+            <button
+              className="shrink-0 text-muted-foreground hover:text-foreground"
+              onClick={() => (listCollapsed ? listPanelRef.current?.expand() : listPanelRef.current?.collapse())}
+              title={listCollapsed ? "문제 목록 패널 펼치기" : "문제 목록 패널 접기"}
+            >
+              {listCollapsed ? <PanelLeftOpen className="size-4" /> : <PanelLeftClose className="size-4" />}
+            </button>
+          </div>
+        </div>
+        {!listCollapsed && (
+          <div className="flex-1 overflow-auto p-1">
+            {isLoading ? (
+              <p className="p-2 text-sm text-muted-foreground">불러오는 중…</p>
+            ) : filtered.length === 0 ? (
+              <p className="p-2 text-sm text-muted-foreground">“문제 추가”로 시작하세요.</p>
+            ) : (
+              filtered.map((p) => (
+                <div
+                  key={p.id}
+                  draggable
+                  onDragStart={(e) => e.dataTransfer.setData(PROBLEM_DND_TYPE, p.id)}
+                  onClick={() => setSelectedId(p.id)}
+                  className={cn(
+                    "group flex cursor-grab items-center gap-2 rounded-md p-2 text-sm hover:bg-accent active:cursor-grabbing",
+                    selectedId === p.id && "bg-accent"
+                  )}
+                >
+                  <Circle className={cn("size-2 shrink-0", p.is_published ? "fill-emerald-500 text-emerald-500" : "fill-muted-foreground/40 text-muted-foreground/40")} />
+                  <span className="flex-1 truncate">{p.title || "(제목 없음)"}</span>
+                  <button className="opacity-0 group-hover:opacity-100" onClick={(e) => togglePublish(p.id, !p.is_published, e)} title="발행 전환">
+                    {p.is_published ? <EyeOff className="size-4" /> : <Globe className="size-4" />}
+                  </button>
+                  <button className="opacity-0 group-hover:opacity-100" onClick={(e) => handleDeleteProblem(p.id, e)} title="삭제">
+                    <Trash2 className="size-4" />
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+      </ResizablePanel>
+
+      <ResizableHandle withHandle />
+
+      <ResizablePanel defaultSize={60} className="overflow-hidden">
         {selectedId ? (
           <ProblemEditor key={selectedId} problemId={selectedId} />
         ) : (
@@ -192,8 +245,8 @@ export default function ProblemManager() {
             왼쪽에서 문제를 선택하거나 “문제 추가”를 누르세요.
           </div>
         )}
-      </div>
-    </div>
+      </ResizablePanel>
+    </ResizablePanelGroup>
   );
 }
 

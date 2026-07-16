@@ -58,11 +58,11 @@ export default function AppShell({ children, menu = MENU, homePath = "/dashboard
   return (
     <div className="flex h-screen overflow-hidden bg-muted/30">
       <aside className={cn("hidden md:flex flex-col border-r bg-background transition-all", collapsed ? "w-16" : "w-56")}>
-        <div className="flex h-14 items-center gap-2 border-b px-3">
-          <GraduationCap className="shrink-0 text-primary" />
+        <div className={cn("flex h-14 items-center gap-2 border-b px-3", collapsed && "justify-center px-0")}>
+          {!collapsed && <GraduationCap className="shrink-0 text-primary" />}
           {!collapsed && <span className="text-lg font-bold">Flow-Py</span>}
           <button
-            className="ml-auto rounded p-1 text-muted-foreground hover:bg-accent"
+            className={cn("rounded p-1 text-muted-foreground hover:bg-accent", !collapsed && "ml-auto")}
             onClick={() => setCollapsed((c) => !c)}
             title={collapsed ? "메뉴 펼치기" : "메뉴 접기"}
           >
