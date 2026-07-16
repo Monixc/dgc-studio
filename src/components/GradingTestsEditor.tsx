@@ -39,8 +39,9 @@ export default function GradingTestsEditor({ tests, onChange }: Props) {
               <Input
                 type="number"
                 min={1}
-                value={t.points}
-                onChange={(e) => update(t.id, { points: toPositivePoints(e.target.value) })}
+                value={t.points || ""}
+                onChange={(e) => update(t.id, { points: e.target.value === "" ? 0 : Number(e.target.value) })}
+                onBlur={(e) => update(t.id, { points: toPositivePoints(e.target.value) })}
                 className="w-16"
               />
             </div>

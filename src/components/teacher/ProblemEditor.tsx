@@ -86,7 +86,7 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
         <Input
           type="number"
           min={0}
-          value={points}
+          value={points || ""}
           onChange={(e) => setPoints(Number(e.target.value) || 0)}
           className="w-24"
           placeholder="포인트"

@@ -32,7 +32,7 @@ export default function AwardPointsDialog({ open, onOpenChange, studentName, onS
             <Label>포인트</Label>
             <Input
               type="number"
-              value={amount}
+              value={amount || ""}
               onChange={(e) => setAmount(Number(e.target.value) || 0)}
               className="mt-1"
               autoFocus

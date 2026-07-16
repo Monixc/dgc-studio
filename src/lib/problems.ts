@@ -40,6 +40,7 @@ export async function createProblem(
     .insert({
       title: "새 문제",
       created_by: userId,
+      points: 20,
       ...(opts?.category ? { category: opts.category } : {}),
       ...(opts?.folderId !== undefined ? { folder_id: opts.folderId } : {}),
     })

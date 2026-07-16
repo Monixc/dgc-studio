@@ -16,7 +16,7 @@ export function makeEmptyTest(): GradingTest {
     title: "새 테스트",
     input: "",
     expectedOutput: "",
-    points: 1,
+    points: 100,
   };
 }
 

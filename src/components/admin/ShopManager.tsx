@@ -182,7 +182,7 @@ export default function ShopManager() {
                 <Input
                   type="number"
                   className="mt-1"
-                  value={form.cost}
+                  value={form.cost || ""}
                   onChange={(e) => setForm({ ...form, cost: Number(e.target.value) || 0 })}
                 />
               </div>
@@ -191,7 +191,7 @@ export default function ShopManager() {
                 <Input
                   type="number"
                   className="mt-1"
-                  value={form.stock}
+                  value={form.stock || ""}
                   onChange={(e) => setForm({ ...form, stock: Number(e.target.value) || 0 })}
                 />
               </div>
