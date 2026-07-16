@@ -41,7 +41,7 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
     setCategory(problem.category ?? "flowchart");
     setPoints(problem.points ?? 0);
     setGraph(normalizeStored(problem.flowchart));
-    setStarter(problem.starter_code);
+    setStarter(problem.teacher_code);
     setTests(problem.grading_tests ?? []);
     setLoaded(true);
   }, [problem]);
@@ -55,7 +55,7 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
           description,
           category,
           points,
-          starter_code: starter,
+          teacher_code: starter,
           grading_tests: tests,
           flowchart: { nodes: graph.nodes, edges: graph.edges },
           ...extra,

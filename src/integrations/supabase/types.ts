@@ -42,6 +42,7 @@ export interface Problem {
   description: string;
   flowchart: FlowchartPayload;
   starter_code: string;
+  teacher_code: string;
   grading_tests: GradingTest[];
   is_published: boolean;
   created_by: string;
