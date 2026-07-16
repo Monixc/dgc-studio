@@ -59,6 +59,7 @@ export interface ProblemFolder {
   parent_id: string | null;
   /** 대분류(자동생성 3개 폴더)만 값이 있음. 하위 폴더는 null(부모에서 상속). */
   category: ProblemCategory | null;
+  color: string | null;
   created_at: string;
 }
 

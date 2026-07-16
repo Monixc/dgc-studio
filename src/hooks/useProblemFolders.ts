@@ -5,6 +5,7 @@ import {
   ensureDefaultFolders,
   createFolder,
   renameFolder,
+  updateFolderColor,
   deleteFolder,
 } from "@/lib/problemFolders";
 
@@ -29,6 +30,14 @@ export function useRenameFolder() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, name }: { id: string; name: string }) => renameFolder(id, name),
+    onSuccess: () => qc.invalidateQueries({ queryKey: PROBLEM_FOLDERS_KEY }),
+  });
+}
+
+export function useUpdateFolderColor() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, color }: { id: string; color: string }) => updateFolderColor(id, color),
     onSuccess: () => qc.invalidateQueries({ queryKey: PROBLEM_FOLDERS_KEY }),
   });
 }

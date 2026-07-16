@@ -48,6 +48,11 @@ export async function renameFolder(id: string, name: string): Promise<void> {
   if (error) throw error;
 }
 
+export async function updateFolderColor(id: string, color: string): Promise<void> {
+  const { error } = await supabase.from("problem_folders").update({ color }).eq("id", id);
+  if (error) throw error;
+}
+
 export async function deleteFolder(id: string): Promise<void> {
   const { error } = await supabase.from("problem_folders").delete().eq("id", id);
   if (error) throw error;

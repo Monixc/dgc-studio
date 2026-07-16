@@ -188,3 +188,16 @@ bunx tsc -p tsconfig.app.json --noEmit   # 타입체크
 - `FlowchartCanvas.tsx` 버그 수정: `editable` prop 기본값 누락으로 읽기전용이 안 먹히던 문제(위 "순서도 = 캔버스 원본 > 편집 상호작용" 절 참고) — `editable = false` 기본 파라미터로 고침.
 - **위 보안 절의 `dlabgc`/테스트 비번 노출은 이번 세션에 발견만 하고 미조치**(사용자 지시 대기).
 - **아직 커밋 안 함** — `git status`에 `App.tsx`/`ClassManager.tsx`/`FlowchartCanvas.tsx`/`Solve.tsx` 수정 + `useLiveCode.ts`/`LiveClass.tsx` 신규 파일이 그대로 unstaged/staged 상태로 남아있음. 다음 세션 시작 시 `git status`로 확인하고, 사용자가 커밋 지시하면 진행.
+
+이번 세션은 **문제 관리 화면(`/problems`, `ProblemManager.tsx`) 패널 UX** 작업:
+1. 폴더/문제 목록/에디터 3패널을 고정폭 `flex`에서 `react-resizable-panels`(`ResizablePanelGroup`/`Panel`/`Handle`, `src/components/ui/resizable.tsx` 신규)로 교체 — 드래그로 폭 조정 + 패널별 접기/펼치기 버튼(`PanelLeftClose/Open`).
+   - **주의**: `npm install react-resizable-panels`가 기본으로 잡는 최신 메이저(v4)는 export가 `Group/Panel/Separator`로 바뀌어 shadcn 표준 wrapper(`PanelGroup/Panel/PanelResizeHandle` 기대)와 안 맞아 빈 화면(`ResizablePanelGroup` undefined) 크래시남. **`react-resizable-panels@2.1.9`로 고정 설치할 것** — package.json에 버전 고정 확인 없이 업그레이드하면 재발.
+   - 패널을 접힌 순서에 따라 서로 간섭해 풀리는 버그 있었음(예: 문제 목록 먼저 접고 폴더 접으면 문제 목록이 도로 펼쳐짐) — 원인은 react-resizable-panels가 한 패널 collapse 시 남는 공간을 형제 패널에 재분배하면서 이미 접힌 패널의 `collapsedSize`보다 `minSize`가 커서 도로 확장되는 현상. `toggleFolderPanel`/`toggleListPanel`에서 상대 패널이 접힌 상태면 `requestAnimationFrame`으로 재-`collapse()` 호출해 고정.
+   - 패널 접힘 상태(`folderCollapsed`/`listCollapsed`)에서는 빈 화면 대신 컴팩트 아이콘 목록으로 대체: 폴더 패널은 폴더 색 아이콘 세로 목록(클릭시 필터 전환), 문제 목록 패널은 발행여부 점(`Circle`) 세로 목록(클릭시 문제 선택).
+   - "문제 추가" 버튼을 아이콘 전용(`Button size="icon"`)으로 줄이고 접기 버튼과 구분선(`border-l`)으로 분리 — 원래 텍스트버튼+접기아이콘이 좁은 헤더에서 겹쳐 보이던 디자인 피드백 반영.
+2. `AppShell.tsx` 좌측 메뉴 접힘 상태도 같은 이유(로고+토글 버튼이 `w-16`에서 겹침)로 접힘 시 로고 숨기고 토글 버튼만 중앙 정렬하도록 수정.
+3. **DSL 가져오기 모달**(`FlowchartCanvas.tsx`의 `DslImportDialog`) 제출값을 `dsl_import_logs` 테이블(신규, `user_id/dsl_text/created_at`, RLS 본인만)에 기록.
+4. **폴더 색상**: `problem_folders.color`(text, nullable) 컬럼 추가. 폴더 행 hover 시 원형 `<input type="color">` 스와치로 지정, 트리/접힘 아이콘 색에 반영.
+5. 새 마이그레이션 `0014_dsl_import_logs.sql`, `0015_folder_color.sql` — **로컬 Docker DB에 반영이 또 한 번 누락됐었음**(`supabase db push`는 클라우드만 반영, 로컬은 `supabase migration up`을 따로 돌려야 함 — 위 Supabase 절에 이미 적어놨던 바로 그 사고가 재발함). 로컬에서 색상 저장 시 `Could not find the 'color' column ... in the schema cache` 에러로 발견, `supabase migration up`으로 로컬도 0014/0015 적용 완료. **DB 마이그레이션 새로 만들면 반드시 로컬+클라우드 둘 다 적용 확인할 것**(이 문서 최상단 규칙, 세 번째 발생).
+6. 검증은 Playwright(`npx playwright install chromium`, 프로젝트에 devDependency로는 없어서 `npx` 캐시 경로에서 CJS로 실행)로 회원가입→선생 승격→`/problems` 진입→콘솔 에러/스크린샷 확인 방식으로 진행. `npm test`/`tsc --noEmit`는 보조 확인일 뿐, 실제 렌더 크래시(react-resizable-panels 버전 문제)는 tsc로는 안 잡히고 브라우저 콘솔에서만 드러남.
+- **아직 커밋 안 함** — 위 변경 전부(`ProblemManager.tsx`/`AppShell.tsx`/`FlowchartCanvas.tsx`/`resizable.tsx`/`useProblemFolders.ts`/`problemFolders.ts`/`types.ts` + 마이그레이션 0014/0015) unstaged 상태. 사용자가 커밋 지시하면 진행.
