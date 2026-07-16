@@ -1,17 +1,26 @@
 import { useNavigate } from "react-router-dom";
-import { LogOut, ChevronRight } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { LogOut, ChevronRight, CheckCircle2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { signOut } from "@/lib/auth";
 import { usePublishedProblems } from "@/hooks/useProblems";
 import { useProblemsRealtime } from "@/hooks/useProblemsRealtime";
+import { listMySubmissions } from "@/lib/submissions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function StudentProblems() {
   const navigate = useNavigate();
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
   const { data: problems = [], isLoading } = usePublishedProblems();
   useProblemsRealtime();
+
+  const { data: submissions = [] } = useQuery({
+    queryKey: ["my-submissions", user?.id],
+    queryFn: () => listMySubmissions(user!.id),
+    enabled: !!user,
+  });
+  const solvedIds = new Set(submissions.map((s) => s.problem_id));
 
   return (
     <div className="mx-auto max-w-3xl p-6">
@@ -34,9 +43,12 @@ export default function StudentProblems() {
           {problems.map((p) => (
             <Card key={p.id} className="cursor-pointer hover:bg-accent" onClick={() => navigate(`/solve/${p.id}`)}>
               <CardContent className="flex items-center justify-between p-4">
-                <div>
-                  <div className="font-medium">{p.title || "(제목 없음)"}</div>
-                  {p.description && <div className="line-clamp-1 text-xs text-muted-foreground">{p.description}</div>}
+                <div className="flex items-center gap-2">
+                  {solvedIds.has(p.id) && <CheckCircle2 className="size-4 shrink-0 text-emerald-600" />}
+                  <div>
+                    <div className="font-medium">{p.title || "(제목 없음)"}</div>
+                    {p.description && <div className="line-clamp-1 text-xs text-muted-foreground">{p.description}</div>}
+                  </div>
                 </div>
                 <ChevronRight className="text-muted-foreground" />
               </CardContent>

@@ -10,6 +10,7 @@ import LiveClass from "@/pages/LiveClass";
 import Problems from "@/pages/Problems";
 import TeacherProblems from "@/pages/TeacherProblems";
 import StudentDashboard from "@/pages/StudentDashboard";
+import StudentProblems from "@/pages/StudentProblems";
 import MyClass from "@/pages/MyClass";
 import FlowchartPractice from "@/pages/FlowchartPractice";
 import PythonPractice from "@/pages/PythonPractice";
@@ -90,6 +91,14 @@ export default function App() {
               element={
                 <RequireRole role="student">
                   <StudentDashboard />
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/student/problems"
+              element={
+                <RequireRole role="student">
+                  <StudentProblems />
                 </RequireRole>
               }
             />

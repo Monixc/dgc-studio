@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ArrowLeft, Send, CheckCircle2, XCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useProblem } from "@/hooks/useProblems";
+import { useProblem, usePublishedProblems } from "@/hooks/useProblems";
 import { usePyodide } from "@/hooks/usePyodide";
 import { buildGradingSummary, type GradingSummary } from "@/lib/grading";
-import { submitSolution } from "@/lib/submissions";
+import { submitSolution, listMySubmissions } from "@/lib/submissions";
 import { loadDraft, saveDraft } from "@/lib/draft";
 import { useBroadcastLiveCode } from "@/hooks/useLiveCode";
 import FlowchartCanvas from "@/components/flow/FlowchartCanvas";
@@ -20,7 +21,15 @@ export default function Solve() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { data: problem, isLoading } = useProblem(problemId);
+  const { data: problems = [] } = usePublishedProblems();
   const { run, running, stop } = usePyodide();
+
+  const { data: submissions = [] } = useQuery({
+    queryKey: ["my-submissions", user?.id],
+    queryFn: () => listMySubmissions(user!.id),
+    enabled: !!user,
+  });
+  const solvedIds = new Set(submissions.map((s) => s.problem_id));
 
   const [code, setCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -84,7 +93,7 @@ export default function Solve() {
   return (
     <div className="flex h-screen flex-col">
       <header className="flex items-center gap-2 border-b p-3">
-        <Button size="icon" variant="ghost" onClick={() => navigate("/student")}>
+        <Button size="icon" variant="ghost" onClick={() => navigate("/student/problems")}>
           <ArrowLeft />
         </Button>
         <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold uppercase text-primary-foreground">
@@ -93,7 +102,29 @@ export default function Solve() {
         <h1 className="text-lg font-semibold">{problem.title}</h1>
       </header>
 
-      <div className="grid flex-1 grid-cols-2 overflow-hidden">
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        {/* 문제 목록 사이드 패널 */}
+        <aside className="w-56 shrink-0 overflow-auto border-r">
+          {problems.map((p) => (
+            <button
+              key={p.id}
+              onClick={() => navigate(`/solve/${p.id}`)}
+              className={cn(
+                "flex w-full items-center gap-2 border-b p-2.5 text-left text-sm hover:bg-accent",
+                p.id === problem.id && "bg-accent"
+              )}
+            >
+              {solvedIds.has(p.id) ? (
+                <CheckCircle2 className="size-4 shrink-0 text-emerald-600" />
+              ) : (
+                <span className="size-4 shrink-0" />
+              )}
+              <span className="truncate">{p.title || "(제목 없음)"}</span>
+            </button>
+          ))}
+        </aside>
+
+        <div className="grid flex-1 grid-cols-2 overflow-hidden">
         {/* 좌: (순서도일 때만 캔버스) + 설명 + 결과 */}
         <div className="flex flex-col overflow-hidden border-r">
           {problem.category === "flowchart" ? (
@@ -129,8 +160,8 @@ export default function Solve() {
           </div>
         </div>
 
-        {/* 우: 코드 편집 + 실행 + 제출 */}
-        <div className="h-full">
+          {/* 우: 코드 편집 + 실행 + 제출 */}
+          <div className="h-full">
           <EditorPanel
             code={code}
             onCodeChange={(v) => { setCode(v); setRunResult(undefined); }}
@@ -144,6 +175,7 @@ export default function Solve() {
               </Button>
             }
           />
+        </div>
         </div>
       </div>
     </div>
