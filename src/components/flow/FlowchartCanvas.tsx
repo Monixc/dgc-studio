@@ -78,7 +78,10 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
       firstRun.current = false;
       return;
     }
-    const t = setTimeout(() => onChange(fromRF(nodes, edges)), 300);
+    // 드래그 중인 노드가 있으면 500ms 디바운스, 완료되었거나 일반 변경이면 50ms로 빠르게 전파
+    const isDragging = nodes.some((n) => n.dragging);
+    const delay = isDragging ? 500 : 50;
+    const t = setTimeout(() => onChange(fromRF(nodes, edges)), delay);
     return () => clearTimeout(t);
   }, [nodes, edges, onChange]);
 

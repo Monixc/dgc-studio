@@ -31,6 +31,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setProfile(null);
       return;
     }
+    // 다른 유저의 프로필인 경우에만 즉시 null로 초기화하여 loading=true가 되게 함
+    setProfile((prev) => (prev && prev.id === userId ? prev : null));
     setProfilePending(true);
     try {
       setProfile(await fetchProfile(userId));
@@ -64,7 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await loadProfile(data.session?.user.id);
   }, [loadProfile]);
 
-  const loading = !ready || (!!session && profilePending);
+  const loading = !ready || (!!session && !profile && profilePending);
 
   return (
     <AuthContext.Provider

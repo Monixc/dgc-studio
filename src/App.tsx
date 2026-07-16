@@ -22,7 +22,13 @@ import StudentNotifications from "@/pages/StudentNotifications";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient({
-  defaultOptions: { queries: { staleTime: 20_000, retry: 1 } },
+  defaultOptions: {
+    queries: {
+      staleTime: 20_000,
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
 });
 
 /** 로그인 상태면 전역 presence 채널에 자신을 등록(접속 학생 조회용). */
