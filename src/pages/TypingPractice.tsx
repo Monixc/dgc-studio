@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  ArrowLeft, CheckCircle2, ChevronRight, Flag, Gauge, Ghost, Keyboard, Radio,
+  ArrowLeft, CheckCircle2, ChevronRight, Flag, FlaskConical, Gauge, Ghost, Keyboard, Radio,
   RotateCcw, Target, Timer, Trophy, Zap,
 } from "lucide-react";
 import AppShell, { STUDENT_MENU } from "@/components/layout/AppShell";
 import { Button } from "@/components/ui/button";
+import TypingAILab from "@/features/typing-ai-lab/TypingAILab";
 import { useAuth } from "@/hooks/useAuth";
 import {
   calculateTypingResult,
@@ -32,7 +33,7 @@ import { createLocalStorageAdapter, type TypingRecord } from "@tajarace/storage"
 import { F1Track } from "@tajarace/ui";
 import { defaultTrackId, trackRegistry } from "@/vendor/tajarace/tracks";
 
-type Mode = "home" | "racing" | "practice";
+type Mode = "home" | "racing" | "practice" | "ai-lab";
 type RaceType = "live" | "ghost";
 type Category = "english" | "python" | "lua" | "javascript" | "html";
 
@@ -216,6 +217,16 @@ export default function TypingPractice() {
     );
   }
 
+  if (mode === "ai-lab") {
+    return (
+      <TypingAILab
+        userId={myId}
+        displayName={myName}
+        onExit={() => setMode("home")}
+      />
+    );
+  }
+
   return (
     <AppShell menu={menu} homePath={homePath}>
       <div className="mx-auto max-w-5xl space-y-5 p-4 md:p-6">
@@ -268,16 +279,12 @@ function TypingModeHome({
           </div>
         </button>
 
-        <div
-          className="flex min-h-44 flex-col justify-between rounded-2xl border border-dashed bg-muted/40 p-5 text-left opacity-70"
-          aria-disabled
-        >
-          <span className="rounded-xl bg-muted p-3 text-muted-foreground"><Trophy className="size-5" /></span>
-          <div>
-            <h2 className="font-bold text-muted-foreground">다른 모드</h2>
-            <p className="mt-1 text-sm text-muted-foreground">곧 추가됩니다</p>
-          </div>
-        </div>
+        <ModeCard
+          icon={FlaskConical}
+          title="AI 타이핑 연구소"
+          description="단어 Dataset으로 Graph·문장 추론 연구"
+          onClick={() => onSelect("ai-lab")}
+        />
         <ModeCard
           icon={Keyboard}
           title="일반 연습"

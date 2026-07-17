@@ -184,3 +184,31 @@ export interface Submission {
   grading_details: GradingDetail[];
   submitted_at: string;
 }
+
+export type TypingAiLabGrade = "SSS" | "SS" | "S" | "A" | "B" | "C" | "D";
+
+export interface TypingAiLabResult {
+  id: string;
+  user_id: string;
+  mode: "sprint" | "standard" | "research" | "learning" | "competition";
+  elapsed_ms: number;
+  accuracy: number;
+  dataset_score: number;
+  density_score: number;
+  coverage_score: number;
+  inference_score: number;
+  total_score: number;
+  grade: TypingAiLabGrade;
+  dataset_size: number;
+  dataset: string[];
+  sentences: string[];
+  created_at: string;
+}
+
+export interface TypingAiLabWordStat {
+  user_id: string;
+  word_id: string;
+  correct_count: number;
+  mastered_at: string | null;
+  updated_at: string;
+}

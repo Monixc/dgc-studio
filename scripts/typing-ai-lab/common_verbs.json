@@ -1,0 +1,6556 @@
+{
+  "verbs": [
+    {
+      "word": "be",
+      "meaningKo": "이다"
+    },
+    {
+      "word": "have",
+      "meaningKo": "가지다"
+    },
+    {
+      "word": "do",
+      "meaningKo": "하다"
+    },
+    {
+      "word": "say",
+      "meaningKo": "말하다"
+    },
+    {
+      "word": "go",
+      "meaningKo": "가다"
+    },
+    {
+      "word": "get",
+      "meaningKo": "얻다"
+    },
+    {
+      "word": "make",
+      "meaningKo": "만들다"
+    },
+    {
+      "word": "know",
+      "meaningKo": "알다"
+    },
+    {
+      "word": "think",
+      "meaningKo": "생각하다"
+    },
+    {
+      "word": "take",
+      "meaningKo": "가져가다"
+    },
+    {
+      "word": "see",
+      "meaningKo": "보다"
+    },
+    {
+      "word": "come",
+      "meaningKo": "오다"
+    },
+    {
+      "word": "want",
+      "meaningKo": "원하다"
+    },
+    {
+      "word": "look",
+      "meaningKo": "보다"
+    },
+    {
+      "word": "use",
+      "meaningKo": "사용하다"
+    },
+    {
+      "word": "find",
+      "meaningKo": "찾다"
+    },
+    {
+      "word": "give",
+      "meaningKo": "주다"
+    },
+    {
+      "word": "tell",
+      "meaningKo": "말하다"
+    },
+    {
+      "word": "work",
+      "meaningKo": "일하다"
+    },
+    {
+      "word": "call",
+      "meaningKo": "부르다"
+    },
+    {
+      "word": "try",
+      "meaningKo": "시도하다"
+    },
+    {
+      "word": "ask",
+      "meaningKo": "묻다"
+    },
+    {
+      "word": "need",
+      "meaningKo": "필요로 하다"
+    },
+    {
+      "word": "feel",
+      "meaningKo": "느끼다"
+    },
+    {
+      "word": "become",
+      "meaningKo": "되다"
+    },
+    {
+      "word": "leave",
+      "meaningKo": "떠나다"
+    },
+    {
+      "word": "put",
+      "meaningKo": "놓다"
+    },
+    {
+      "word": "mean",
+      "meaningKo": "의미하다"
+    },
+    {
+      "word": "keep",
+      "meaningKo": "유지하다"
+    },
+    {
+      "word": "let",
+      "meaningKo": "허락하다"
+    },
+    {
+      "word": "begin",
+      "meaningKo": "시작하다"
+    },
+    {
+      "word": "seem",
+      "meaningKo": "보이다"
+    },
+    {
+      "word": "help",
+      "meaningKo": "돕다"
+    },
+    {
+      "word": "talk",
+      "meaningKo": "이야기하다"
+    },
+    {
+      "word": "turn",
+      "meaningKo": "돌다"
+    },
+    {
+      "word": "start",
+      "meaningKo": "시작하다"
+    },
+    {
+      "word": "show",
+      "meaningKo": "보여 주다"
+    },
+    {
+      "word": "hear",
+      "meaningKo": "듣다"
+    },
+    {
+      "word": "play",
+      "meaningKo": "놀다"
+    },
+    {
+      "word": "run",
+      "meaningKo": "달리다"
+    },
+    {
+      "word": "move",
+      "meaningKo": "움직이다"
+    },
+    {
+      "word": "like",
+      "meaningKo": "좋아하다"
+    },
+    {
+      "word": "live",
+      "meaningKo": "살다"
+    },
+    {
+      "word": "believe",
+      "meaningKo": "믿다"
+    },
+    {
+      "word": "hold",
+      "meaningKo": "잡다"
+    },
+    {
+      "word": "bring",
+      "meaningKo": "가져오다"
+    },
+    {
+      "word": "happen",
+      "meaningKo": "일어나다"
+    },
+    {
+      "word": "write",
+      "meaningKo": "쓰다"
+    },
+    {
+      "word": "provide",
+      "meaningKo": "제공하다"
+    },
+    {
+      "word": "sit",
+      "meaningKo": "앉다"
+    },
+    {
+      "word": "stand",
+      "meaningKo": "서다"
+    },
+    {
+      "word": "lose",
+      "meaningKo": "잃다"
+    },
+    {
+      "word": "pay",
+      "meaningKo": "지불하다"
+    },
+    {
+      "word": "meet",
+      "meaningKo": "만나다"
+    },
+    {
+      "word": "include",
+      "meaningKo": "포함하다"
+    },
+    {
+      "word": "continue",
+      "meaningKo": "계속하다"
+    },
+    {
+      "word": "set",
+      "meaningKo": "놓다"
+    },
+    {
+      "word": "learn",
+      "meaningKo": "배우다"
+    },
+    {
+      "word": "change",
+      "meaningKo": "바꾸다"
+    },
+    {
+      "word": "lead",
+      "meaningKo": "이끌다"
+    },
+    {
+      "word": "understand",
+      "meaningKo": "이해하다"
+    },
+    {
+      "word": "watch",
+      "meaningKo": "지켜보다"
+    },
+    {
+      "word": "follow",
+      "meaningKo": "따르다"
+    },
+    {
+      "word": "stop",
+      "meaningKo": "멈추다"
+    },
+    {
+      "word": "create",
+      "meaningKo": "만들다"
+    },
+    {
+      "word": "speak",
+      "meaningKo": "말하다"
+    },
+    {
+      "word": "read",
+      "meaningKo": "읽다"
+    },
+    {
+      "word": "allow",
+      "meaningKo": "허용하다"
+    },
+    {
+      "word": "add",
+      "meaningKo": "더하다"
+    },
+    {
+      "word": "spend",
+      "meaningKo": "쓰다"
+    },
+    {
+      "word": "grow",
+      "meaningKo": "자라다"
+    },
+    {
+      "word": "open",
+      "meaningKo": "열다"
+    },
+    {
+      "word": "walk",
+      "meaningKo": "걷다"
+    },
+    {
+      "word": "win",
+      "meaningKo": "이기다"
+    },
+    {
+      "word": "offer",
+      "meaningKo": "제안하다"
+    },
+    {
+      "word": "remember",
+      "meaningKo": "기억하다"
+    },
+    {
+      "word": "love",
+      "meaningKo": "사랑하다"
+    },
+    {
+      "word": "consider",
+      "meaningKo": "고려하다"
+    },
+    {
+      "word": "appear",
+      "meaningKo": "나타나다"
+    },
+    {
+      "word": "buy",
+      "meaningKo": "사다"
+    },
+    {
+      "word": "wait",
+      "meaningKo": "기다리다"
+    },
+    {
+      "word": "serve",
+      "meaningKo": "봉사하다"
+    },
+    {
+      "word": "die",
+      "meaningKo": "죽다"
+    },
+    {
+      "word": "send",
+      "meaningKo": "보내다"
+    },
+    {
+      "word": "expect",
+      "meaningKo": "기대하다"
+    },
+    {
+      "word": "build",
+      "meaningKo": "짓다"
+    },
+    {
+      "word": "stay",
+      "meaningKo": "머무르다"
+    },
+    {
+      "word": "fall",
+      "meaningKo": "떨어지다"
+    },
+    {
+      "word": "cut",
+      "meaningKo": "자르다"
+    },
+    {
+      "word": "reach",
+      "meaningKo": "도달하다"
+    },
+    {
+      "word": "kill",
+      "meaningKo": "죽이다"
+    },
+    {
+      "word": "remain",
+      "meaningKo": "남다"
+    },
+    {
+      "word": "suggest",
+      "meaningKo": "제안하다"
+    },
+    {
+      "word": "raise",
+      "meaningKo": "올리다"
+    },
+    {
+      "word": "pass",
+      "meaningKo": "지나가다"
+    },
+    {
+      "word": "sell",
+      "meaningKo": "팔다"
+    },
+    {
+      "word": "require",
+      "meaningKo": "요구하다"
+    },
+    {
+      "word": "report",
+      "meaningKo": "보고하다"
+    },
+    {
+      "word": "decide",
+      "meaningKo": "결정하다"
+    },
+    {
+      "word": "pull",
+      "meaningKo": "당기다"
+    },
+    {
+      "word": "study",
+      "meaningKo": "공부하다"
+    },
+    {
+      "word": "teach",
+      "meaningKo": "가르치다"
+    },
+    {
+      "word": "listen",
+      "meaningKo": "듣다"
+    },
+    {
+      "word": "cook",
+      "meaningKo": "요리하다"
+    },
+    {
+      "word": "eat",
+      "meaningKo": "먹다"
+    },
+    {
+      "word": "drink",
+      "meaningKo": "마시다"
+    },
+    {
+      "word": "sleep",
+      "meaningKo": "자다"
+    },
+    {
+      "word": "wake",
+      "meaningKo": "깨다"
+    },
+    {
+      "word": "wash",
+      "meaningKo": "씻다"
+    },
+    {
+      "word": "clean",
+      "meaningKo": "청소하다"
+    },
+    {
+      "word": "drive",
+      "meaningKo": "운전하다"
+    },
+    {
+      "word": "ride",
+      "meaningKo": "타다"
+    },
+    {
+      "word": "fly",
+      "meaningKo": "날다"
+    },
+    {
+      "word": "swim",
+      "meaningKo": "수영하다"
+    },
+    {
+      "word": "sing",
+      "meaningKo": "노래하다"
+    },
+    {
+      "word": "dance",
+      "meaningKo": "춤추다"
+    },
+    {
+      "word": "draw",
+      "meaningKo": "그리다"
+    },
+    {
+      "word": "paint",
+      "meaningKo": "칠하다"
+    },
+    {
+      "word": "wear",
+      "meaningKo": "입다"
+    },
+    {
+      "word": "carry",
+      "meaningKo": "나르다"
+    },
+    {
+      "word": "push",
+      "meaningKo": "밀다"
+    },
+    {
+      "word": "throw",
+      "meaningKo": "던지다"
+    },
+    {
+      "word": "catch",
+      "meaningKo": "잡다"
+    },
+    {
+      "word": "break",
+      "meaningKo": "부수다"
+    },
+    {
+      "word": "fix",
+      "meaningKo": "고치다"
+    },
+    {
+      "word": "repair",
+      "meaningKo": "수리하다"
+    },
+    {
+      "word": "choose",
+      "meaningKo": "고르다"
+    },
+    {
+      "word": "pick",
+      "meaningKo": "고르다"
+    },
+    {
+      "word": "share",
+      "meaningKo": "나누다"
+    },
+    {
+      "word": "save",
+      "meaningKo": "저장하다"
+    },
+    {
+      "word": "check",
+      "meaningKo": "확인하다"
+    },
+    {
+      "word": "count",
+      "meaningKo": "세다"
+    },
+    {
+      "word": "measure",
+      "meaningKo": "측정하다"
+    },
+    {
+      "word": "weigh",
+      "meaningKo": "무게를 달다"
+    },
+    {
+      "word": "pour",
+      "meaningKo": "붓다"
+    },
+    {
+      "word": "mix",
+      "meaningKo": "섞다"
+    },
+    {
+      "word": "stir",
+      "meaningKo": "젓다"
+    },
+    {
+      "word": "boil",
+      "meaningKo": "끓이다"
+    },
+    {
+      "word": "bake",
+      "meaningKo": "굽다"
+    },
+    {
+      "word": "fry",
+      "meaningKo": "튀기다"
+    },
+    {
+      "word": "taste",
+      "meaningKo": "맛보다"
+    },
+    {
+      "word": "smell",
+      "meaningKo": "냄새를 맡다"
+    },
+    {
+      "word": "touch",
+      "meaningKo": "만지다"
+    },
+    {
+      "word": "point",
+      "meaningKo": "가리키다"
+    },
+    {
+      "word": "wave",
+      "meaningKo": "흔들다"
+    },
+    {
+      "word": "smile",
+      "meaningKo": "미소 짓다"
+    },
+    {
+      "word": "laugh",
+      "meaningKo": "웃다"
+    },
+    {
+      "word": "cry",
+      "meaningKo": "울다"
+    },
+    {
+      "word": "shout",
+      "meaningKo": "외치다"
+    },
+    {
+      "word": "whisper",
+      "meaningKo": "속삭이다"
+    },
+    {
+      "word": "answer",
+      "meaningKo": "대답하다"
+    },
+    {
+      "word": "reply",
+      "meaningKo": "답하다"
+    },
+    {
+      "word": "explain",
+      "meaningKo": "설명하다"
+    },
+    {
+      "word": "describe",
+      "meaningKo": "묘사하다"
+    },
+    {
+      "word": "discuss",
+      "meaningKo": "토론하다"
+    },
+    {
+      "word": "argue",
+      "meaningKo": "논쟁하다"
+    },
+    {
+      "word": "agree",
+      "meaningKo": "동의하다"
+    },
+    {
+      "word": "disagree",
+      "meaningKo": "반대하다"
+    },
+    {
+      "word": "promise",
+      "meaningKo": "약속하다"
+    },
+    {
+      "word": "refuse",
+      "meaningKo": "거절하다"
+    },
+    {
+      "word": "accept",
+      "meaningKo": "받아들이다"
+    },
+    {
+      "word": "invite",
+      "meaningKo": "초대하다"
+    },
+    {
+      "word": "visit",
+      "meaningKo": "방문하다"
+    },
+    {
+      "word": "travel",
+      "meaningKo": "여행하다"
+    },
+    {
+      "word": "arrive",
+      "meaningKo": "도착하다"
+    },
+    {
+      "word": "return",
+      "meaningKo": "돌아오다"
+    },
+    {
+      "word": "enter",
+      "meaningKo": "들어가다"
+    },
+    {
+      "word": "exit",
+      "meaningKo": "나가다"
+    },
+    {
+      "word": "climb",
+      "meaningKo": "오르다"
+    },
+    {
+      "word": "jump",
+      "meaningKo": "점프하다"
+    },
+    {
+      "word": "kick",
+      "meaningKo": "차다"
+    },
+    {
+      "word": "hit",
+      "meaningKo": "치다"
+    },
+    {
+      "word": "beat",
+      "meaningKo": "이기다"
+    },
+    {
+      "word": "fight",
+      "meaningKo": "싸우다"
+    },
+    {
+      "word": "protect",
+      "meaningKo": "보호하다"
+    },
+    {
+      "word": "hide",
+      "meaningKo": "숨다"
+    },
+    {
+      "word": "seek",
+      "meaningKo": "찾다"
+    },
+    {
+      "word": "search",
+      "meaningKo": "검색하다"
+    },
+    {
+      "word": "discover",
+      "meaningKo": "발견하다"
+    },
+    {
+      "word": "explore",
+      "meaningKo": "탐험하다"
+    },
+    {
+      "word": "invent",
+      "meaningKo": "발명하다"
+    },
+    {
+      "word": "design",
+      "meaningKo": "설계하다"
+    },
+    {
+      "word": "develop",
+      "meaningKo": "개발하다"
+    },
+    {
+      "word": "improve",
+      "meaningKo": "개선하다"
+    },
+    {
+      "word": "increase",
+      "meaningKo": "증가하다"
+    },
+    {
+      "word": "decrease",
+      "meaningKo": "감소하다"
+    },
+    {
+      "word": "reduce",
+      "meaningKo": "줄이다"
+    },
+    {
+      "word": "expand",
+      "meaningKo": "확장하다"
+    },
+    {
+      "word": "extend",
+      "meaningKo": "연장하다"
+    },
+    {
+      "word": "connect",
+      "meaningKo": "연결하다"
+    },
+    {
+      "word": "join",
+      "meaningKo": "가입하다"
+    },
+    {
+      "word": "belong",
+      "meaningKo": "속하다"
+    },
+    {
+      "word": "own",
+      "meaningKo": "소유하다"
+    },
+    {
+      "word": "borrow",
+      "meaningKo": "빌리다"
+    },
+    {
+      "word": "lend",
+      "meaningKo": "빌려 주다"
+    },
+    {
+      "word": "rent",
+      "meaningKo": "임대하다"
+    },
+    {
+      "word": "owe",
+      "meaningKo": "빚지다"
+    },
+    {
+      "word": "earn",
+      "meaningKo": "벌다"
+    },
+    {
+      "word": "cost",
+      "meaningKo": "비용이 들다"
+    },
+    {
+      "word": "afford",
+      "meaningKo": "여유가 되다"
+    },
+    {
+      "word": "waste",
+      "meaningKo": "낭비하다"
+    },
+    {
+      "word": "invest",
+      "meaningKo": "투자하다"
+    },
+    {
+      "word": "trade",
+      "meaningKo": "거래하다"
+    },
+    {
+      "word": "order",
+      "meaningKo": "주문하다"
+    },
+    {
+      "word": "deliver",
+      "meaningKo": "배달하다"
+    },
+    {
+      "word": "pack",
+      "meaningKo": "포장하다"
+    },
+    {
+      "word": "ship",
+      "meaningKo": "배송하다"
+    },
+    {
+      "word": "receive",
+      "meaningKo": "받다"
+    },
+    {
+      "word": "collect",
+      "meaningKo": "모으다"
+    },
+    {
+      "word": "gather",
+      "meaningKo": "모이다"
+    },
+    {
+      "word": "prepare",
+      "meaningKo": "준비하다"
+    },
+    {
+      "word": "organize",
+      "meaningKo": "정리하다"
+    },
+    {
+      "word": "arrange",
+      "meaningKo": "배열하다"
+    },
+    {
+      "word": "plan",
+      "meaningKo": "계획하다"
+    },
+    {
+      "word": "schedule",
+      "meaningKo": "일정을 잡다"
+    },
+    {
+      "word": "manage",
+      "meaningKo": "관리하다"
+    },
+    {
+      "word": "control",
+      "meaningKo": "통제하다"
+    },
+    {
+      "word": "guide",
+      "meaningKo": "안내하다"
+    },
+    {
+      "word": "support",
+      "meaningKo": "지원하다"
+    },
+    {
+      "word": "assist",
+      "meaningKo": "돕다"
+    },
+    {
+      "word": "encourage",
+      "meaningKo": "격려하다"
+    },
+    {
+      "word": "motivate",
+      "meaningKo": "동기를 부여하다"
+    },
+    {
+      "word": "inspire",
+      "meaningKo": "영감을 주다"
+    },
+    {
+      "word": "advise",
+      "meaningKo": "조언하다"
+    },
+    {
+      "word": "warn",
+      "meaningKo": "경고하다"
+    },
+    {
+      "word": "remind",
+      "meaningKo": "상기시키다"
+    },
+    {
+      "word": "inform",
+      "meaningKo": "알리다"
+    },
+    {
+      "word": "announce",
+      "meaningKo": "발표하다"
+    },
+    {
+      "word": "publish",
+      "meaningKo": "출판하다"
+    },
+    {
+      "word": "print",
+      "meaningKo": "인쇄하다"
+    },
+    {
+      "word": "copy",
+      "meaningKo": "복사하다"
+    },
+    {
+      "word": "type",
+      "meaningKo": "타이핑하다"
+    },
+    {
+      "word": "click",
+      "meaningKo": "클릭하다"
+    },
+    {
+      "word": "scroll",
+      "meaningKo": "스크롤하다"
+    },
+    {
+      "word": "download",
+      "meaningKo": "다운로드하다"
+    },
+    {
+      "word": "upload",
+      "meaningKo": "업로드하다"
+    },
+    {
+      "word": "install",
+      "meaningKo": "설치하다"
+    },
+    {
+      "word": "update",
+      "meaningKo": "업데이트하다"
+    },
+    {
+      "word": "delete",
+      "meaningKo": "삭제하다"
+    },
+    {
+      "word": "remove",
+      "meaningKo": "제거하다"
+    },
+    {
+      "word": "replace",
+      "meaningKo": "교체하다"
+    },
+    {
+      "word": "attach",
+      "meaningKo": "첨부하다"
+    },
+    {
+      "word": "detach",
+      "meaningKo": "분리하다"
+    },
+    {
+      "word": "lock",
+      "meaningKo": "잠그다"
+    },
+    {
+      "word": "unlock",
+      "meaningKo": "잠금 해제하다"
+    },
+    {
+      "word": "close",
+      "meaningKo": "닫다"
+    },
+    {
+      "word": "shut",
+      "meaningKo": "닫다"
+    },
+    {
+      "word": "cover",
+      "meaningKo": "덮다"
+    },
+    {
+      "word": "uncover",
+      "meaningKo": "덮개를 벗기다"
+    },
+    {
+      "word": "fill",
+      "meaningKo": "채우다"
+    },
+    {
+      "word": "empty",
+      "meaningKo": "비우다"
+    },
+    {
+      "word": "load",
+      "meaningKo": "싣다"
+    },
+    {
+      "word": "unload",
+      "meaningKo": "내리다"
+    },
+    {
+      "word": "lift",
+      "meaningKo": "들어 올리다"
+    },
+    {
+      "word": "drop",
+      "meaningKo": "떨어뜨리다"
+    },
+    {
+      "word": "place",
+      "meaningKo": "놓다"
+    },
+    {
+      "word": "hang",
+      "meaningKo": "걸다"
+    },
+    {
+      "word": "lay",
+      "meaningKo": "놓다"
+    },
+    {
+      "word": "lean",
+      "meaningKo": "기대다"
+    },
+    {
+      "word": "bend",
+      "meaningKo": "구부리다"
+    },
+    {
+      "word": "stretch",
+      "meaningKo": "늘이다"
+    },
+    {
+      "word": "fold",
+      "meaningKo": "접다"
+    },
+    {
+      "word": "tie",
+      "meaningKo": "묶다"
+    },
+    {
+      "word": "untie",
+      "meaningKo": "풀다"
+    },
+    {
+      "word": "wrap",
+      "meaningKo": "싸다"
+    },
+    {
+      "word": "unwrap",
+      "meaningKo": "풀다"
+    },
+    {
+      "word": "seal",
+      "meaningKo": "봉하다"
+    },
+    {
+      "word": "stamp",
+      "meaningKo": "도장을 찍다"
+    },
+    {
+      "word": "sign",
+      "meaningKo": "서명하다"
+    },
+    {
+      "word": "mark",
+      "meaningKo": "표시하다"
+    },
+    {
+      "word": "label",
+      "meaningKo": "라벨을 붙이다"
+    },
+    {
+      "word": "name",
+      "meaningKo": "이름을 짓다"
+    },
+    {
+      "word": "mention",
+      "meaningKo": "언급하다"
+    },
+    {
+      "word": "refer",
+      "meaningKo": "언급하다"
+    },
+    {
+      "word": "quote",
+      "meaningKo": "인용하다"
+    },
+    {
+      "word": "translate",
+      "meaningKo": "번역하다"
+    },
+    {
+      "word": "interpret",
+      "meaningKo": "해석하다"
+    },
+    {
+      "word": "define",
+      "meaningKo": "정의하다"
+    },
+    {
+      "word": "identify",
+      "meaningKo": "확인하다"
+    },
+    {
+      "word": "recognize",
+      "meaningKo": "알아보다"
+    },
+    {
+      "word": "notice",
+      "meaningKo": "알아차리다"
+    },
+    {
+      "word": "observe",
+      "meaningKo": "관찰하다"
+    },
+    {
+      "word": "examine",
+      "meaningKo": "조사하다"
+    },
+    {
+      "word": "inspect",
+      "meaningKo": "점검하다"
+    },
+    {
+      "word": "analyze",
+      "meaningKo": "분석하다"
+    },
+    {
+      "word": "compare",
+      "meaningKo": "비교하다"
+    },
+    {
+      "word": "contrast",
+      "meaningKo": "대조하다"
+    },
+    {
+      "word": "calculate",
+      "meaningKo": "계산하다"
+    },
+    {
+      "word": "estimate",
+      "meaningKo": "추정하다"
+    },
+    {
+      "word": "guess",
+      "meaningKo": "추측하다"
+    },
+    {
+      "word": "assume",
+      "meaningKo": "가정하다"
+    },
+    {
+      "word": "suppose",
+      "meaningKo": "가정하다"
+    },
+    {
+      "word": "conclude",
+      "meaningKo": "결론 내리다"
+    },
+    {
+      "word": "prove",
+      "meaningKo": "증명하다"
+    },
+    {
+      "word": "confirm",
+      "meaningKo": "확인하다"
+    },
+    {
+      "word": "deny",
+      "meaningKo": "부인하다"
+    },
+    {
+      "word": "admit",
+      "meaningKo": "인정하다"
+    },
+    {
+      "word": "claim",
+      "meaningKo": "주장하다"
+    },
+    {
+      "word": "insist",
+      "meaningKo": "주장하다"
+    },
+    {
+      "word": "demand",
+      "meaningKo": "요구하다"
+    },
+    {
+      "word": "request",
+      "meaningKo": "요청하다"
+    },
+    {
+      "word": "recommend",
+      "meaningKo": "추천하다"
+    },
+    {
+      "word": "propose",
+      "meaningKo": "제안하다"
+    },
+    {
+      "word": "prefer",
+      "meaningKo": "선호하다"
+    },
+    {
+      "word": "favor",
+      "meaningKo": "편들다"
+    },
+    {
+      "word": "select",
+      "meaningKo": "선택하다"
+    },
+    {
+      "word": "reject",
+      "meaningKo": "거절하다"
+    },
+    {
+      "word": "approve",
+      "meaningKo": "승인하다"
+    },
+    {
+      "word": "permit",
+      "meaningKo": "허가하다"
+    },
+    {
+      "word": "forbid",
+      "meaningKo": "금지하다"
+    },
+    {
+      "word": "ban",
+      "meaningKo": "금지하다"
+    },
+    {
+      "word": "restrict",
+      "meaningKo": "제한하다"
+    },
+    {
+      "word": "limit",
+      "meaningKo": "제한하다"
+    },
+    {
+      "word": "enable",
+      "meaningKo": "가능하게 하다"
+    },
+    {
+      "word": "disable",
+      "meaningKo": "비활성화하다"
+    },
+    {
+      "word": "activate",
+      "meaningKo": "활성화하다"
+    },
+    {
+      "word": "apply",
+      "meaningKo": "신청하다"
+    },
+    {
+      "word": "submit",
+      "meaningKo": "제출하다"
+    },
+    {
+      "word": "register",
+      "meaningKo": "등록하다"
+    },
+    {
+      "word": "enroll",
+      "meaningKo": "등록하다"
+    },
+    {
+      "word": "graduate",
+      "meaningKo": "졸업하다"
+    },
+    {
+      "word": "hire",
+      "meaningKo": "고용하다"
+    },
+    {
+      "word": "fire",
+      "meaningKo": "해고하다"
+    },
+    {
+      "word": "employ",
+      "meaningKo": "고용하다"
+    },
+    {
+      "word": "resign",
+      "meaningKo": "사임하다"
+    },
+    {
+      "word": "retire",
+      "meaningKo": "은퇴하다"
+    },
+    {
+      "word": "promote",
+      "meaningKo": "승진시키다"
+    },
+    {
+      "word": "train",
+      "meaningKo": "훈련하다"
+    },
+    {
+      "word": "practice",
+      "meaningKo": "연습하다"
+    },
+    {
+      "word": "rehearse",
+      "meaningKo": "리허설하다"
+    },
+    {
+      "word": "perform",
+      "meaningKo": "공연하다"
+    },
+    {
+      "word": "present",
+      "meaningKo": "발표하다"
+    },
+    {
+      "word": "introduce",
+      "meaningKo": "소개하다"
+    },
+    {
+      "word": "welcome",
+      "meaningKo": "환영하다"
+    },
+    {
+      "word": "greet",
+      "meaningKo": "인사하다"
+    },
+    {
+      "word": "thank",
+      "meaningKo": "감사하다"
+    },
+    {
+      "word": "apologize",
+      "meaningKo": "사과하다"
+    },
+    {
+      "word": "forgive",
+      "meaningKo": "용서하다"
+    },
+    {
+      "word": "blame",
+      "meaningKo": "탓하다"
+    },
+    {
+      "word": "accuse",
+      "meaningKo": "고발하다"
+    },
+    {
+      "word": "complain",
+      "meaningKo": "불평하다"
+    },
+    {
+      "word": "praise",
+      "meaningKo": "칭찬하다"
+    },
+    {
+      "word": "criticize",
+      "meaningKo": "비판하다"
+    },
+    {
+      "word": "judge",
+      "meaningKo": "판단하다"
+    },
+    {
+      "word": "evaluate",
+      "meaningKo": "평가하다"
+    },
+    {
+      "word": "rate",
+      "meaningKo": "평가하다"
+    },
+    {
+      "word": "review",
+      "meaningKo": "검토하다"
+    },
+    {
+      "word": "assess",
+      "meaningKo": "평가하다"
+    },
+    {
+      "word": "score",
+      "meaningKo": "득점하다"
+    },
+    {
+      "word": "compete",
+      "meaningKo": "경쟁하다"
+    },
+    {
+      "word": "challenge",
+      "meaningKo": "도전하다"
+    },
+    {
+      "word": "defeat",
+      "meaningKo": "패배시키다"
+    },
+    {
+      "word": "succeed",
+      "meaningKo": "성공하다"
+    },
+    {
+      "word": "fail",
+      "meaningKo": "실패하다"
+    },
+    {
+      "word": "achieve",
+      "meaningKo": "성취하다"
+    },
+    {
+      "word": "accomplish",
+      "meaningKo": "달성하다"
+    },
+    {
+      "word": "complete",
+      "meaningKo": "완료하다"
+    },
+    {
+      "word": "finish",
+      "meaningKo": "끝내다"
+    },
+    {
+      "word": "quit",
+      "meaningKo": "그만두다"
+    },
+    {
+      "word": "cancel",
+      "meaningKo": "취소하다"
+    },
+    {
+      "word": "postpone",
+      "meaningKo": "연기하다"
+    },
+    {
+      "word": "delay",
+      "meaningKo": "지연하다"
+    },
+    {
+      "word": "hurry",
+      "meaningKo": "서두르다"
+    },
+    {
+      "word": "rush",
+      "meaningKo": "서두르다"
+    },
+    {
+      "word": "slow",
+      "meaningKo": "느리게 하다"
+    },
+    {
+      "word": "accelerate",
+      "meaningKo": "가속하다"
+    },
+    {
+      "word": "pause",
+      "meaningKo": "일시 정지하다"
+    },
+    {
+      "word": "resume",
+      "meaningKo": "재개하다"
+    },
+    {
+      "word": "restart",
+      "meaningKo": "다시 시작하다"
+    },
+    {
+      "word": "repeat",
+      "meaningKo": "반복하다"
+    },
+    {
+      "word": "reuse",
+      "meaningKo": "재사용하다"
+    },
+    {
+      "word": "recycle",
+      "meaningKo": "재활용하다"
+    },
+    {
+      "word": "renew",
+      "meaningKo": "갱신하다"
+    },
+    {
+      "word": "restore",
+      "meaningKo": "복원하다"
+    },
+    {
+      "word": "recover",
+      "meaningKo": "회복하다"
+    },
+    {
+      "word": "heal",
+      "meaningKo": "낫다"
+    },
+    {
+      "word": "cure",
+      "meaningKo": "치료하다"
+    },
+    {
+      "word": "treat",
+      "meaningKo": "치료하다"
+    },
+    {
+      "word": "injure",
+      "meaningKo": "다치게 하다"
+    },
+    {
+      "word": "hurt",
+      "meaningKo": "다치게 하다"
+    },
+    {
+      "word": "harm",
+      "meaningKo": "해치다"
+    },
+    {
+      "word": "damage",
+      "meaningKo": "손상시키다"
+    },
+    {
+      "word": "destroy",
+      "meaningKo": "파괴하다"
+    },
+    {
+      "word": "ruin",
+      "meaningKo": "망치다"
+    },
+    {
+      "word": "spoil",
+      "meaningKo": "망치다"
+    },
+    {
+      "word": "consume",
+      "meaningKo": "소비하다"
+    },
+    {
+      "word": "produce",
+      "meaningKo": "생산하다"
+    },
+    {
+      "word": "manufacture",
+      "meaningKo": "제조하다"
+    },
+    {
+      "word": "assemble",
+      "meaningKo": "조립하다"
+    },
+    {
+      "word": "construct",
+      "meaningKo": "건설하다"
+    },
+    {
+      "word": "establish",
+      "meaningKo": "설립하다"
+    },
+    {
+      "word": "found",
+      "meaningKo": "설립하다"
+    },
+    {
+      "word": "form",
+      "meaningKo": "형성하다"
+    },
+    {
+      "word": "shape",
+      "meaningKo": "형성하다"
+    },
+    {
+      "word": "mold",
+      "meaningKo": "틀에 넣다"
+    },
+    {
+      "word": "carve",
+      "meaningKo": "조각하다"
+    },
+    {
+      "word": "sculpt",
+      "meaningKo": "조각하다"
+    },
+    {
+      "word": "knit",
+      "meaningKo": "뜨다"
+    },
+    {
+      "word": "sew",
+      "meaningKo": "꿰매다"
+    },
+    {
+      "word": "stitch",
+      "meaningKo": "바느질하다"
+    },
+    {
+      "word": "weave",
+      "meaningKo": "짜다"
+    },
+    {
+      "word": "spin",
+      "meaningKo": "돌리다"
+    },
+    {
+      "word": "twist",
+      "meaningKo": "비틀다"
+    },
+    {
+      "word": "squeeze",
+      "meaningKo": "짜다"
+    },
+    {
+      "word": "press",
+      "meaningKo": "누르다"
+    },
+    {
+      "word": "crush",
+      "meaningKo": "으깨다"
+    },
+    {
+      "word": "grind",
+      "meaningKo": "갈다"
+    },
+    {
+      "word": "chop",
+      "meaningKo": "다지다"
+    },
+    {
+      "word": "slice",
+      "meaningKo": "얇게 썰다"
+    },
+    {
+      "word": "peel",
+      "meaningKo": "껍질을 벗기다"
+    },
+    {
+      "word": "grate",
+      "meaningKo": "갈다"
+    },
+    {
+      "word": "melt",
+      "meaningKo": "녹다"
+    },
+    {
+      "word": "freeze",
+      "meaningKo": "얼리다"
+    },
+    {
+      "word": "thaw",
+      "meaningKo": "녹이다"
+    },
+    {
+      "word": "cool",
+      "meaningKo": "식히다"
+    },
+    {
+      "word": "heat",
+      "meaningKo": "가열하다"
+    },
+    {
+      "word": "warm",
+      "meaningKo": "데우다"
+    },
+    {
+      "word": "burn",
+      "meaningKo": "타다"
+    },
+    {
+      "word": "light",
+      "meaningKo": "불을 켜다"
+    },
+    {
+      "word": "ignite",
+      "meaningKo": "점화하다"
+    },
+    {
+      "word": "extinguish",
+      "meaningKo": "끄다"
+    },
+    {
+      "word": "shine",
+      "meaningKo": "빛나다"
+    },
+    {
+      "word": "glow",
+      "meaningKo": "빛나다"
+    },
+    {
+      "word": "flash",
+      "meaningKo": "번쩍이다"
+    },
+    {
+      "word": "sparkle",
+      "meaningKo": "반짝이다"
+    },
+    {
+      "word": "reflect",
+      "meaningKo": "반사하다"
+    },
+    {
+      "word": "absorb",
+      "meaningKo": "흡수하다"
+    },
+    {
+      "word": "attract",
+      "meaningKo": "끌어당기다"
+    },
+    {
+      "word": "repel",
+      "meaningKo": "밀어내다"
+    },
+    {
+      "word": "stick",
+      "meaningKo": "붙다"
+    },
+    {
+      "word": "glue",
+      "meaningKo": "붙이다"
+    },
+    {
+      "word": "tape",
+      "meaningKo": "테이프로 붙이다"
+    },
+    {
+      "word": "nail",
+      "meaningKo": "못으로 박다"
+    },
+    {
+      "word": "screw",
+      "meaningKo": "나사로 조이다"
+    },
+    {
+      "word": "drill",
+      "meaningKo": "드릴로 뚫다"
+    },
+    {
+      "word": "dig",
+      "meaningKo": "파다"
+    },
+    {
+      "word": "bury",
+      "meaningKo": "묻다"
+    },
+    {
+      "word": "plant",
+      "meaningKo": "심다"
+    },
+    {
+      "word": "sow",
+      "meaningKo": "씨를 뿌리다"
+    },
+    {
+      "word": "harvest",
+      "meaningKo": "수확하다"
+    },
+    {
+      "word": "water",
+      "meaningKo": "물을 주다"
+    },
+    {
+      "word": "feed",
+      "meaningKo": "먹이다"
+    },
+    {
+      "word": "breed",
+      "meaningKo": "번식시키다"
+    },
+    {
+      "word": "bloom",
+      "meaningKo": "피다"
+    },
+    {
+      "word": "wilt",
+      "meaningKo": "시들다"
+    },
+    {
+      "word": "fade",
+      "meaningKo": "바래다"
+    },
+    {
+      "word": "rot",
+      "meaningKo": "썩다"
+    },
+    {
+      "word": "decay",
+      "meaningKo": "부패하다"
+    },
+    {
+      "word": "rust",
+      "meaningKo": "녹슬다"
+    },
+    {
+      "word": "crack",
+      "meaningKo": "금이 가다"
+    },
+    {
+      "word": "leak",
+      "meaningKo": "새다"
+    },
+    {
+      "word": "spill",
+      "meaningKo": "쏟다"
+    },
+    {
+      "word": "flow",
+      "meaningKo": "흐르다"
+    },
+    {
+      "word": "drip",
+      "meaningKo": "떨어지다"
+    },
+    {
+      "word": "flood",
+      "meaningKo": "범람하다"
+    },
+    {
+      "word": "soak",
+      "meaningKo": "담그다"
+    },
+    {
+      "word": "rinse",
+      "meaningKo": "헹구다"
+    },
+    {
+      "word": "wipe",
+      "meaningKo": "닦다"
+    },
+    {
+      "word": "scrub",
+      "meaningKo": "문지르다"
+    },
+    {
+      "word": "polish",
+      "meaningKo": "닦다"
+    },
+    {
+      "word": "sweep",
+      "meaningKo": "쓸다"
+    },
+    {
+      "word": "vacuum",
+      "meaningKo": "진공청소하다"
+    },
+    {
+      "word": "dust",
+      "meaningKo": "먼지를 털다"
+    },
+    {
+      "word": "mop",
+      "meaningKo": "걸레질하다"
+    },
+    {
+      "word": "iron",
+      "meaningKo": "다림질하다"
+    },
+    {
+      "word": "dry",
+      "meaningKo": "말리다"
+    },
+    {
+      "word": "wet",
+      "meaningKo": "적시다"
+    },
+    {
+      "word": "dampen",
+      "meaningKo": "축축하게 하다"
+    },
+    {
+      "word": "moisten",
+      "meaningKo": "적시다"
+    },
+    {
+      "word": "sweat",
+      "meaningKo": "땀을 흘리다"
+    },
+    {
+      "word": "bleed",
+      "meaningKo": "피를 흘리다"
+    },
+    {
+      "word": "breathe",
+      "meaningKo": "숨쉬다"
+    },
+    {
+      "word": "cough",
+      "meaningKo": "기침하다"
+    },
+    {
+      "word": "sneeze",
+      "meaningKo": "재채기하다"
+    },
+    {
+      "word": "yawn",
+      "meaningKo": "하품하다"
+    },
+    {
+      "word": "sigh",
+      "meaningKo": "한숨 쉬다"
+    },
+    {
+      "word": "snore",
+      "meaningKo": "코 골다"
+    },
+    {
+      "word": "blink",
+      "meaningKo": "깜빡이다"
+    },
+    {
+      "word": "wink",
+      "meaningKo": "윙크하다"
+    },
+    {
+      "word": "stare",
+      "meaningKo": "응시하다"
+    },
+    {
+      "word": "glance",
+      "meaningKo": "흘긋 보다"
+    },
+    {
+      "word": "gaze",
+      "meaningKo": "바라보다"
+    },
+    {
+      "word": "peek",
+      "meaningKo": "훔쳐보다"
+    },
+    {
+      "word": "peer",
+      "meaningKo": "들여다보다"
+    },
+    {
+      "word": "scan",
+      "meaningKo": "훑어보다"
+    },
+    {
+      "word": "skim",
+      "meaningKo": "대충 읽다"
+    },
+    {
+      "word": "browse",
+      "meaningKo": "둘러보다"
+    },
+    {
+      "word": "surf",
+      "meaningKo": "서핑하다"
+    },
+    {
+      "word": "navigate",
+      "meaningKo": "항해하다"
+    },
+    {
+      "word": "steer",
+      "meaningKo": "조종하다"
+    },
+    {
+      "word": "park",
+      "meaningKo": "주차하다"
+    },
+    {
+      "word": "brake",
+      "meaningKo": "브레이크를 밟다"
+    },
+    {
+      "word": "reverse",
+      "meaningKo": "후진하다"
+    },
+    {
+      "word": "overtake",
+      "meaningKo": "추월하다"
+    },
+    {
+      "word": "crash",
+      "meaningKo": "충돌하다"
+    },
+    {
+      "word": "collide",
+      "meaningKo": "충돌하다"
+    },
+    {
+      "word": "bump",
+      "meaningKo": "부딪히다"
+    },
+    {
+      "word": "scratch",
+      "meaningKo": "긁다"
+    },
+    {
+      "word": "scrape",
+      "meaningKo": "긁다"
+    },
+    {
+      "word": "rub",
+      "meaningKo": "문지르다"
+    },
+    {
+      "word": "pat",
+      "meaningKo": "토닥이다"
+    },
+    {
+      "word": "stroke",
+      "meaningKo": "쓰다듬다"
+    },
+    {
+      "word": "tickle",
+      "meaningKo": "간지럽히다"
+    },
+    {
+      "word": "pinch",
+      "meaningKo": "꼬집다"
+    },
+    {
+      "word": "slap",
+      "meaningKo": "때리다"
+    },
+    {
+      "word": "punch",
+      "meaningKo": "주먹으로 치다"
+    },
+    {
+      "word": "knock",
+      "meaningKo": "두드리다"
+    },
+    {
+      "word": "tap",
+      "meaningKo": "톡톡 치다"
+    },
+    {
+      "word": "bang",
+      "meaningKo": "쾅 치다"
+    },
+    {
+      "word": "slam",
+      "meaningKo": "쾅 닫다"
+    },
+    {
+      "word": "smash",
+      "meaningKo": "부수다"
+    },
+    {
+      "word": "shatter",
+      "meaningKo": "산산이 부서지다"
+    },
+    {
+      "word": "burst",
+      "meaningKo": "터지다"
+    },
+    {
+      "word": "explode",
+      "meaningKo": "폭발하다"
+    },
+    {
+      "word": "blow",
+      "meaningKo": "불다"
+    },
+    {
+      "word": "suck",
+      "meaningKo": "빨다"
+    },
+    {
+      "word": "sip",
+      "meaningKo": "홀짝이다"
+    },
+    {
+      "word": "gulp",
+      "meaningKo": "벌컥 마시다"
+    },
+    {
+      "word": "chew",
+      "meaningKo": "씹다"
+    },
+    {
+      "word": "swallow",
+      "meaningKo": "삼키다"
+    },
+    {
+      "word": "bite",
+      "meaningKo": "물다"
+    },
+    {
+      "word": "lick",
+      "meaningKo": "핥다"
+    },
+    {
+      "word": "spit",
+      "meaningKo": "뱉다"
+    },
+    {
+      "word": "vomit",
+      "meaningKo": "토하다"
+    },
+    {
+      "word": "digest",
+      "meaningKo": "소화하다"
+    },
+    {
+      "word": "starve",
+      "meaningKo": "굶주리다"
+    },
+    {
+      "word": "diet",
+      "meaningKo": "다이어트하다"
+    },
+    {
+      "word": "exercise",
+      "meaningKo": "운동하다"
+    },
+    {
+      "word": "relax",
+      "meaningKo": "휴식하다"
+    },
+    {
+      "word": "rest",
+      "meaningKo": "쉬다"
+    },
+    {
+      "word": "nap",
+      "meaningKo": "낮잠 자다"
+    },
+    {
+      "word": "dream",
+      "meaningKo": "꿈꾸다"
+    },
+    {
+      "word": "imagine",
+      "meaningKo": "상상하다"
+    },
+    {
+      "word": "visualize",
+      "meaningKo": "시각화하다"
+    },
+    {
+      "word": "fantasize",
+      "meaningKo": "공상하다"
+    },
+    {
+      "word": "wonder",
+      "meaningKo": "궁금해하다"
+    },
+    {
+      "word": "doubt",
+      "meaningKo": "의심하다"
+    },
+    {
+      "word": "suspect",
+      "meaningKo": "의심하다"
+    },
+    {
+      "word": "trust",
+      "meaningKo": "신뢰하다"
+    },
+    {
+      "word": "rely",
+      "meaningKo": "의지하다"
+    },
+    {
+      "word": "depend",
+      "meaningKo": "의존하다"
+    },
+    {
+      "word": "hope",
+      "meaningKo": "희망하다"
+    },
+    {
+      "word": "wish",
+      "meaningKo": "바라다"
+    },
+    {
+      "word": "desire",
+      "meaningKo": "원하다"
+    },
+    {
+      "word": "crave",
+      "meaningKo": "갈망하다"
+    },
+    {
+      "word": "miss",
+      "meaningKo": "그리워하다"
+    },
+    {
+      "word": "regret",
+      "meaningKo": "후회하다"
+    },
+    {
+      "word": "worry",
+      "meaningKo": "걱정하다"
+    },
+    {
+      "word": "fear",
+      "meaningKo": "두려워하다"
+    },
+    {
+      "word": "scare",
+      "meaningKo": "겁주다"
+    },
+    {
+      "word": "frighten",
+      "meaningKo": "놀라게 하다"
+    },
+    {
+      "word": "terrify",
+      "meaningKo": "무섭게 하다"
+    },
+    {
+      "word": "shock",
+      "meaningKo": "충격 주다"
+    },
+    {
+      "word": "amaze",
+      "meaningKo": "놀라게 하다"
+    },
+    {
+      "word": "astonish",
+      "meaningKo": "깜짝 놀라게 하다"
+    },
+    {
+      "word": "surprise",
+      "meaningKo": "놀라게 하다"
+    },
+    {
+      "word": "impress",
+      "meaningKo": "감명을 주다"
+    },
+    {
+      "word": "disappoint",
+      "meaningKo": "실망시키다"
+    },
+    {
+      "word": "frustrate",
+      "meaningKo": "좌절시키다"
+    },
+    {
+      "word": "annoy",
+      "meaningKo": "짜증나게 하다"
+    },
+    {
+      "word": "irritate",
+      "meaningKo": "자극하다"
+    },
+    {
+      "word": "bother",
+      "meaningKo": "귀찮게 하다"
+    },
+    {
+      "word": "disturb",
+      "meaningKo": "방해하다"
+    },
+    {
+      "word": "interrupt",
+      "meaningKo": "방해하다"
+    },
+    {
+      "word": "distract",
+      "meaningKo": "주의를 흩뜨리다"
+    },
+    {
+      "word": "confuse",
+      "meaningKo": "혼란시키다"
+    },
+    {
+      "word": "puzzle",
+      "meaningKo": "당황하게 하다"
+    },
+    {
+      "word": "bewilder",
+      "meaningKo": "어리둥절하게 하다"
+    },
+    {
+      "word": "embarrass",
+      "meaningKo": "당황하게 하다"
+    },
+    {
+      "word": "shame",
+      "meaningKo": "창피하게 하다"
+    },
+    {
+      "word": "humiliate",
+      "meaningKo": "모욕하다"
+    },
+    {
+      "word": "insult",
+      "meaningKo": "모욕하다"
+    },
+    {
+      "word": "offend",
+      "meaningKo": "기분 상하게 하다"
+    },
+    {
+      "word": "respect",
+      "meaningKo": "존중하다"
+    },
+    {
+      "word": "admire",
+      "meaningKo": "감탄하다"
+    },
+    {
+      "word": "appreciate",
+      "meaningKo": "감사하다"
+    },
+    {
+      "word": "value",
+      "meaningKo": "소중히 하다"
+    },
+    {
+      "word": "cherish",
+      "meaningKo": "아끼다"
+    },
+    {
+      "word": "treasure",
+      "meaningKo": "소중히 여기다"
+    },
+    {
+      "word": "adore",
+      "meaningKo": "매우 좋아하다"
+    },
+    {
+      "word": "hate",
+      "meaningKo": "ненави다"
+    },
+    {
+      "word": "dislike",
+      "meaningKo": "싫어하다"
+    },
+    {
+      "word": "loathe",
+      "meaningKo": "혐오하다"
+    },
+    {
+      "word": "despise",
+      "meaningKo": "경멸하다"
+    },
+    {
+      "word": "envy",
+      "meaningKo": "부러워하다"
+    },
+    {
+      "word": "jealous",
+      "meaningKo": "질투하다"
+    },
+    {
+      "word": "cooperate",
+      "meaningKo": "협력하다"
+    },
+    {
+      "word": "collaborate",
+      "meaningKo": "협업하다"
+    },
+    {
+      "word": "participate",
+      "meaningKo": "참여하다"
+    },
+    {
+      "word": "contribute",
+      "meaningKo": "기여하다"
+    },
+    {
+      "word": "donate",
+      "meaningKo": "기부하다"
+    },
+    {
+      "word": "volunteer",
+      "meaningKo": "자원하다"
+    },
+    {
+      "word": "obey",
+      "meaningKo": "복종하다"
+    },
+    {
+      "word": "disobey",
+      "meaningKo": "불복종하다"
+    },
+    {
+      "word": "rule",
+      "meaningKo": "통치하다"
+    },
+    {
+      "word": "govern",
+      "meaningKo": "통치하다"
+    },
+    {
+      "word": "reign",
+      "meaningKo": "군림하다"
+    },
+    {
+      "word": "vote",
+      "meaningKo": "투표하다"
+    },
+    {
+      "word": "elect",
+      "meaningKo": "선출하다"
+    },
+    {
+      "word": "campaign",
+      "meaningKo": "캠페인하다"
+    },
+    {
+      "word": "protest",
+      "meaningKo": "항의하다"
+    },
+    {
+      "word": "demonstrate",
+      "meaningKo": "시위하다"
+    },
+    {
+      "word": "strike",
+      "meaningKo": "파업하다"
+    },
+    {
+      "word": "negotiate",
+      "meaningKo": "협상하다"
+    },
+    {
+      "word": "bargain",
+      "meaningKo": "흥정하다"
+    },
+    {
+      "word": "compromise",
+      "meaningKo": "타협하다"
+    },
+    {
+      "word": "settle",
+      "meaningKo": "해결하다"
+    },
+    {
+      "word": "resolve",
+      "meaningKo": "해결하다"
+    },
+    {
+      "word": "solve",
+      "meaningKo": "풀다"
+    },
+    {
+      "word": "handle",
+      "meaningKo": "처리하다"
+    },
+    {
+      "word": "deal",
+      "meaningKo": "다루다"
+    },
+    {
+      "word": "cope",
+      "meaningKo": "대처하다"
+    },
+    {
+      "word": "survive",
+      "meaningKo": "살아남다"
+    },
+    {
+      "word": "endure",
+      "meaningKo": "견디다"
+    },
+    {
+      "word": "tolerate",
+      "meaningKo": "참다"
+    },
+    {
+      "word": "suffer",
+      "meaningKo": "고통받다"
+    },
+    {
+      "word": "struggle",
+      "meaningKo": "고군분투하다"
+    },
+    {
+      "word": "overcome",
+      "meaningKo": "극복하다"
+    },
+    {
+      "word": "conquer",
+      "meaningKo": "정복하다"
+    },
+    {
+      "word": "surrender",
+      "meaningKo": "항복하다"
+    },
+    {
+      "word": "yield",
+      "meaningKo": "양보하다"
+    },
+    {
+      "word": "abandon",
+      "meaningKo": "포기하다"
+    },
+    {
+      "word": "desert",
+      "meaningKo": "버리다"
+    },
+    {
+      "word": "neglect",
+      "meaningKo": "방치하다"
+    },
+    {
+      "word": "ignore",
+      "meaningKo": "무시하다"
+    },
+    {
+      "word": "overlook",
+      "meaningKo": "간과하다"
+    },
+    {
+      "word": "skip",
+      "meaningKo": "건너뛰다"
+    },
+    {
+      "word": "omit",
+      "meaningKo": "생략하다"
+    },
+    {
+      "word": "exclude",
+      "meaningKo": "제외하다"
+    },
+    {
+      "word": "contain",
+      "meaningKo": "포함하다"
+    },
+    {
+      "word": "consist",
+      "meaningKo": "구성되다"
+    },
+    {
+      "word": "comprise",
+      "meaningKo": "구성하다"
+    },
+    {
+      "word": "compose",
+      "meaningKo": "작곡하다"
+    },
+    {
+      "word": "constitute",
+      "meaningKo": "구성하다"
+    },
+    {
+      "word": "represent",
+      "meaningKo": "대표하다"
+    },
+    {
+      "word": "symbolize",
+      "meaningKo": "상징하다"
+    },
+    {
+      "word": "express",
+      "meaningKo": "표현하다"
+    },
+    {
+      "word": "convey",
+      "meaningKo": "전달하다"
+    },
+    {
+      "word": "communicate",
+      "meaningKo": "소통하다"
+    },
+    {
+      "word": "chat",
+      "meaningKo": "수다 떨다"
+    },
+    {
+      "word": "converse",
+      "meaningKo": "대화하다"
+    },
+    {
+      "word": "gossip",
+      "meaningKo": "험담하다"
+    },
+    {
+      "word": "rumor",
+      "meaningKo": "소문을 내다"
+    },
+    {
+      "word": "spread",
+      "meaningKo": "퍼지다"
+    },
+    {
+      "word": "circulate",
+      "meaningKo": "순환하다"
+    },
+    {
+      "word": "transmit",
+      "meaningKo": "전송하다"
+    },
+    {
+      "word": "broadcast",
+      "meaningKo": "방송하다"
+    },
+    {
+      "word": "stream",
+      "meaningKo": "스트리밍하다"
+    },
+    {
+      "word": "record",
+      "meaningKo": "녹음하다"
+    },
+    {
+      "word": "replay",
+      "meaningKo": "다시 재생하다"
+    },
+    {
+      "word": "rewind",
+      "meaningKo": "되감다"
+    },
+    {
+      "word": "fast-forward",
+      "meaningKo": "빨리 감기하다"
+    },
+    {
+      "word": "mute",
+      "meaningKo": "음소거하다"
+    },
+    {
+      "word": "amplify",
+      "meaningKo": "증폭하다"
+    },
+    {
+      "word": "adjust",
+      "meaningKo": "조절하다"
+    },
+    {
+      "word": "tune",
+      "meaningKo": "맞추다"
+    },
+    {
+      "word": "calibrate",
+      "meaningKo": "교정하다"
+    },
+    {
+      "word": "align",
+      "meaningKo": "정렬하다"
+    },
+    {
+      "word": "balance",
+      "meaningKo": "균형 맞추다"
+    },
+    {
+      "word": "stabilize",
+      "meaningKo": "안정시키다"
+    },
+    {
+      "word": "strengthen",
+      "meaningKo": "강화하다"
+    },
+    {
+      "word": "weaken",
+      "meaningKo": "약화하다"
+    },
+    {
+      "word": "tighten",
+      "meaningKo": "조이다"
+    },
+    {
+      "word": "loosen",
+      "meaningKo": "느슨하게 하다"
+    },
+    {
+      "word": "sharpen",
+      "meaningKo": "날카롭게 하다"
+    },
+    {
+      "word": "dull",
+      "meaningKo": "무디게 하다"
+    },
+    {
+      "word": "smooth",
+      "meaningKo": "매끄럽게 하다"
+    },
+    {
+      "word": "roughen",
+      "meaningKo": "거칠게 하다"
+    },
+    {
+      "word": "soften",
+      "meaningKo": "부드럽게 하다"
+    },
+    {
+      "word": "harden",
+      "meaningKo": "단단하게 하다"
+    },
+    {
+      "word": "thicken",
+      "meaningKo": "진하게 하다"
+    },
+    {
+      "word": "thin",
+      "meaningKo": "묽게 하다"
+    },
+    {
+      "word": "widen",
+      "meaningKo": "넓히다"
+    },
+    {
+      "word": "narrow",
+      "meaningKo": "좁히다"
+    },
+    {
+      "word": "lengthen",
+      "meaningKo": "늘이다"
+    },
+    {
+      "word": "shorten",
+      "meaningKo": "짧게 하다"
+    },
+    {
+      "word": "enlarge",
+      "meaningKo": "확대하다"
+    },
+    {
+      "word": "shrink",
+      "meaningKo": "줄어들다"
+    },
+    {
+      "word": "compress",
+      "meaningKo": "압축하다"
+    },
+    {
+      "word": "inflate",
+      "meaningKo": "부풀리다"
+    },
+    {
+      "word": "deflate",
+      "meaningKo": "바람을 빼다"
+    },
+    {
+      "word": "contract",
+      "meaningKo": "수축하다"
+    },
+    {
+      "word": "multiply",
+      "meaningKo": "곱하다"
+    },
+    {
+      "word": "divide",
+      "meaningKo": "나누다"
+    },
+    {
+      "word": "subtract",
+      "meaningKo": "빼다"
+    },
+    {
+      "word": "sum",
+      "meaningKo": "합하다"
+    },
+    {
+      "word": "total",
+      "meaningKo": "합계하다"
+    },
+    {
+      "word": "average",
+      "meaningKo": "평균내다"
+    },
+    {
+      "word": "round",
+      "meaningKo": "반올림하다"
+    },
+    {
+      "word": "approximate",
+      "meaningKo": "대략 계산하다"
+    },
+    {
+      "word": "predict",
+      "meaningKo": "예측하다"
+    },
+    {
+      "word": "forecast",
+      "meaningKo": "예보하다"
+    },
+    {
+      "word": "project",
+      "meaningKo": "전망하다"
+    },
+    {
+      "word": "anticipate",
+      "meaningKo": "예상하다"
+    },
+    {
+      "word": "foresee",
+      "meaningKo": "예견하다"
+    },
+    {
+      "word": "prevent",
+      "meaningKo": "예방하다"
+    },
+    {
+      "word": "avoid",
+      "meaningKo": "피하다"
+    },
+    {
+      "word": "escape",
+      "meaningKo": "탈출하다"
+    },
+    {
+      "word": "flee",
+      "meaningKo": "도망치다"
+    },
+    {
+      "word": "chase",
+      "meaningKo": "쫓다"
+    },
+    {
+      "word": "pursue",
+      "meaningKo": "추구하다"
+    },
+    {
+      "word": "hunt",
+      "meaningKo": "사냥하다"
+    },
+    {
+      "word": "track",
+      "meaningKo": "추적하다"
+    },
+    {
+      "word": "trace",
+      "meaningKo": "추적하다"
+    },
+    {
+      "word": "locate",
+      "meaningKo": "위치를 찾다"
+    },
+    {
+      "word": "pinpoint",
+      "meaningKo": "정확히 짚다"
+    },
+    {
+      "word": "detect",
+      "meaningKo": "감지하다"
+    },
+    {
+      "word": "sense",
+      "meaningKo": "감지하다"
+    },
+    {
+      "word": "perceive",
+      "meaningKo": "지각하다"
+    },
+    {
+      "word": "realize",
+      "meaningKo": "깨닫다"
+    },
+    {
+      "word": "acknowledge",
+      "meaningKo": "인정하다"
+    },
+    {
+      "word": "confess",
+      "meaningKo": "고백하다"
+    },
+    {
+      "word": "reveal",
+      "meaningKo": "드러내다"
+    },
+    {
+      "word": "disclose",
+      "meaningKo": "공개하다"
+    },
+    {
+      "word": "expose",
+      "meaningKo": "폭로하다"
+    },
+    {
+      "word": "arrest",
+      "meaningKo": "체포하다"
+    },
+    {
+      "word": "imprison",
+      "meaningKo": "투옥하다"
+    },
+    {
+      "word": "release",
+      "meaningKo": "석방하다"
+    },
+    {
+      "word": "free",
+      "meaningKo": "풀어 주다"
+    },
+    {
+      "word": "rescue",
+      "meaningKo": "구하다"
+    },
+    {
+      "word": "defend",
+      "meaningKo": "방어하다"
+    },
+    {
+      "word": "guard",
+      "meaningKo": "지키다"
+    },
+    {
+      "word": "patrol",
+      "meaningKo": "순찰하다"
+    },
+    {
+      "word": "spy",
+      "meaningKo": "염탐하다"
+    },
+    {
+      "word": "investigate",
+      "meaningKo": "수사하다"
+    },
+    {
+      "word": "probe",
+      "meaningKo": "캐다"
+    },
+    {
+      "word": "interrogate",
+      "meaningKo": "심문하다"
+    },
+    {
+      "word": "question",
+      "meaningKo": "질문하다"
+    },
+    {
+      "word": "query",
+      "meaningKo": "문의하다"
+    },
+    {
+      "word": "inquire",
+      "meaningKo": "문의하다"
+    },
+    {
+      "word": "consult",
+      "meaningKo": "상담하다"
+    },
+    {
+      "word": "counsel",
+      "meaningKo": "상담하다"
+    },
+    {
+      "word": "coach",
+      "meaningKo": "지도하다"
+    },
+    {
+      "word": "mentor",
+      "meaningKo": "멘토링하다"
+    },
+    {
+      "word": "tutor",
+      "meaningKo": "개인 지도하다"
+    },
+    {
+      "word": "educate",
+      "meaningKo": "교육하다"
+    },
+    {
+      "word": "instruct",
+      "meaningKo": "지시하다"
+    },
+    {
+      "word": "direct",
+      "meaningKo": "지휘하다"
+    },
+    {
+      "word": "command",
+      "meaningKo": "명령하다"
+    },
+    {
+      "word": "mandate",
+      "meaningKo": "의무화하다"
+    },
+    {
+      "word": "enforce",
+      "meaningKo": "시행하다"
+    },
+    {
+      "word": "implement",
+      "meaningKo": "시행하다"
+    },
+    {
+      "word": "execute",
+      "meaningKo": "실행하다"
+    },
+    {
+      "word": "conduct",
+      "meaningKo": "수행하다"
+    },
+    {
+      "word": "undertake",
+      "meaningKo": "착수하다"
+    },
+    {
+      "word": "launch",
+      "meaningKo": "시작하다"
+    },
+    {
+      "word": "initiate",
+      "meaningKo": "개시하다"
+    },
+    {
+      "word": "commence",
+      "meaningKo": "시작하다"
+    },
+    {
+      "word": "proceed",
+      "meaningKo": "진행하다"
+    },
+    {
+      "word": "advance",
+      "meaningKo": "전진하다"
+    },
+    {
+      "word": "progress",
+      "meaningKo": "진전하다"
+    },
+    {
+      "word": "evolve",
+      "meaningKo": "진화하다"
+    },
+    {
+      "word": "adapt",
+      "meaningKo": "적응하다"
+    },
+    {
+      "word": "modify",
+      "meaningKo": "수정하다"
+    },
+    {
+      "word": "alter",
+      "meaningKo": "변경하다"
+    },
+    {
+      "word": "transform",
+      "meaningKo": "변형하다"
+    },
+    {
+      "word": "convert",
+      "meaningKo": "전환하다"
+    },
+    {
+      "word": "switch",
+      "meaningKo": "바꾸다"
+    },
+    {
+      "word": "shift",
+      "meaningKo": "옮기다"
+    },
+    {
+      "word": "transfer",
+      "meaningKo": "이전하다"
+    },
+    {
+      "word": "relocate",
+      "meaningKo": "이전하다"
+    },
+    {
+      "word": "migrate",
+      "meaningKo": "이주하다"
+    },
+    {
+      "word": "immigrate",
+      "meaningKo": "이민하다"
+    },
+    {
+      "word": "emigrate",
+      "meaningKo": "이주하다"
+    },
+    {
+      "word": "reside",
+      "meaningKo": "거주하다"
+    },
+    {
+      "word": "dwell",
+      "meaningKo": "살다"
+    },
+    {
+      "word": "inhabit",
+      "meaningKo": "거주하다"
+    },
+    {
+      "word": "occupy",
+      "meaningKo": "점유하다"
+    },
+    {
+      "word": "vacate",
+      "meaningKo": "비우다"
+    },
+    {
+      "word": "evacuate",
+      "meaningKo": "대피하다"
+    },
+    {
+      "word": "depart",
+      "meaningKo": "출발하다"
+    },
+    {
+      "word": "board",
+      "meaningKo": "탑승하다"
+    },
+    {
+      "word": "disembark",
+      "meaningKo": "내리다"
+    },
+    {
+      "word": "land",
+      "meaningKo": "착륙하다"
+    },
+    {
+      "word": "takeoff",
+      "meaningKo": "이륙하다"
+    },
+    {
+      "word": "cruise",
+      "meaningKo": "순항하다"
+    },
+    {
+      "word": "sail",
+      "meaningKo": "항해하다"
+    },
+    {
+      "word": "row",
+      "meaningKo": "노를 젓다"
+    },
+    {
+      "word": "paddle",
+      "meaningKo": "패들하다"
+    },
+    {
+      "word": "dive",
+      "meaningKo": "다이빙하다"
+    },
+    {
+      "word": "float",
+      "meaningKo": "뜨다"
+    },
+    {
+      "word": "sink",
+      "meaningKo": "가라앉다"
+    },
+    {
+      "word": "drown",
+      "meaningKo": "익사하다"
+    },
+    {
+      "word": "tow",
+      "meaningKo": "견인하다"
+    },
+    {
+      "word": "haul",
+      "meaningKo": "끌다"
+    },
+    {
+      "word": "drag",
+      "meaningKo": "질질 끌다"
+    },
+    {
+      "word": "code",
+      "meaningKo": "코딩하다"
+    },
+    {
+      "word": "program",
+      "meaningKo": "프로그래밍하다"
+    },
+    {
+      "word": "debug",
+      "meaningKo": "디버깅하다"
+    },
+    {
+      "word": "compile",
+      "meaningKo": "컴파일하다"
+    },
+    {
+      "word": "deploy",
+      "meaningKo": "배포하다"
+    },
+    {
+      "word": "host",
+      "meaningKo": "호스팅하다"
+    },
+    {
+      "word": "cache",
+      "meaningKo": "캐시하다"
+    },
+    {
+      "word": "sync",
+      "meaningKo": "동기화하다"
+    },
+    {
+      "word": "backup",
+      "meaningKo": "백업하다"
+    },
+    {
+      "word": "encrypt",
+      "meaningKo": "암호화하다"
+    },
+    {
+      "word": "decrypt",
+      "meaningKo": "복호화하다"
+    },
+    {
+      "word": "authenticate",
+      "meaningKo": "인증하다"
+    },
+    {
+      "word": "authorize",
+      "meaningKo": "인가하다"
+    },
+    {
+      "word": "login",
+      "meaningKo": "로그인하다"
+    },
+    {
+      "word": "logout",
+      "meaningKo": "로그아웃하다"
+    },
+    {
+      "word": "subscribe",
+      "meaningKo": "구독하다"
+    },
+    {
+      "word": "unsubscribe",
+      "meaningKo": "구독 취소하다"
+    },
+    {
+      "word": "comment",
+      "meaningKo": "댓글 달다"
+    },
+    {
+      "word": "post",
+      "meaningKo": "게시하다"
+    },
+    {
+      "word": "tag",
+      "meaningKo": "태그하다"
+    },
+    {
+      "word": "unfollow",
+      "meaningKo": "언팔로우하다"
+    },
+    {
+      "word": "block",
+      "meaningKo": "차단하다"
+    },
+    {
+      "word": "message",
+      "meaningKo": "메시지하다"
+    },
+    {
+      "word": "text",
+      "meaningKo": "문자하다"
+    },
+    {
+      "word": "email",
+      "meaningKo": "이메일하다"
+    },
+    {
+      "word": "dial",
+      "meaningKo": "전화를 걸다"
+    },
+    {
+      "word": "forward",
+      "meaningKo": "전달하다"
+    },
+    {
+      "word": "cc",
+      "meaningKo": "참조하다"
+    },
+    {
+      "word": "fax",
+      "meaningKo": "팩스하다"
+    },
+    {
+      "word": "paste",
+      "meaningKo": "붙여넣다"
+    },
+    {
+      "word": "undo",
+      "meaningKo": "실행 취소하다"
+    },
+    {
+      "word": "redo",
+      "meaningKo": "다시 실행하다"
+    },
+    {
+      "word": "export",
+      "meaningKo": "내보내다"
+    },
+    {
+      "word": "import",
+      "meaningKo": "가져오다"
+    },
+    {
+      "word": "filter",
+      "meaningKo": "필터하다"
+    },
+    {
+      "word": "sort",
+      "meaningKo": "정렬하다"
+    },
+    {
+      "word": "index",
+      "meaningKo": "색인하다"
+    },
+    {
+      "word": "map",
+      "meaningKo": "매핑하다"
+    },
+    {
+      "word": "merge",
+      "meaningKo": "병합하다"
+    },
+    {
+      "word": "split",
+      "meaningKo": "분할하다"
+    },
+    {
+      "word": "fork",
+      "meaningKo": "포크하다"
+    },
+    {
+      "word": "clone",
+      "meaningKo": "복제하다"
+    },
+    {
+      "word": "branch",
+      "meaningKo": "브랜치하다"
+    },
+    {
+      "word": "commit",
+      "meaningKo": "커밋하다"
+    },
+    {
+      "word": "fetch",
+      "meaningKo": "가져오다"
+    },
+    {
+      "word": "rebase",
+      "meaningKo": "리베이스하다"
+    },
+    {
+      "word": "assign",
+      "meaningKo": "할당하다"
+    },
+    {
+      "word": "unassign",
+      "meaningKo": "할당 해제하다"
+    },
+    {
+      "word": "book",
+      "meaningKo": "예약하다"
+    },
+    {
+      "word": "reserve",
+      "meaningKo": "예약하다"
+    },
+    {
+      "word": "refund",
+      "meaningKo": "환불하다"
+    },
+    {
+      "word": "charge",
+      "meaningKo": "청구하다"
+    },
+    {
+      "word": "invoice",
+      "meaningKo": "청구서를 보내다"
+    },
+    {
+      "word": "bill",
+      "meaningKo": "청구하다"
+    },
+    {
+      "word": "tip",
+      "meaningKo": "팁을 주다"
+    },
+    {
+      "word": "sponsor",
+      "meaningKo": "후원하다"
+    },
+    {
+      "word": "advertise",
+      "meaningKo": "광고하다"
+    },
+    {
+      "word": "market",
+      "meaningKo": "마케팅하다"
+    },
+    {
+      "word": "brand",
+      "meaningKo": "브랜딩하다"
+    },
+    {
+      "word": "unveil",
+      "meaningKo": "공개하다"
+    },
+    {
+      "word": "showcase",
+      "meaningKo": "선보이다"
+    },
+    {
+      "word": "demo",
+      "meaningKo": "시연하다"
+    },
+    {
+      "word": "pitch",
+      "meaningKo": "피치하다"
+    },
+    {
+      "word": "fulfill",
+      "meaningKo": "이행하다"
+    },
+    {
+      "word": "exchange",
+      "meaningKo": "교환하다"
+    },
+    {
+      "word": "warranty",
+      "meaningKo": "보증하다"
+    },
+    {
+      "word": "guarantee",
+      "meaningKo": "보장하다"
+    },
+    {
+      "word": "insure",
+      "meaningKo": "보험에 들다"
+    },
+    {
+      "word": "file",
+      "meaningKo": "제출하다"
+    },
+    {
+      "word": "appeal",
+      "meaningKo": "항소하다"
+    },
+    {
+      "word": "sue",
+      "meaningKo": "고소하다"
+    },
+    {
+      "word": "mediate",
+      "meaningKo": "중재하다"
+    },
+    {
+      "word": "arbitrate",
+      "meaningKo": "중재하다"
+    },
+    {
+      "word": "comfort",
+      "meaningKo": "위로하다"
+    },
+    {
+      "word": "console",
+      "meaningKo": "위로하다"
+    },
+    {
+      "word": "soothe",
+      "meaningKo": "달래다"
+    },
+    {
+      "word": "calm",
+      "meaningKo": "진정시키다"
+    },
+    {
+      "word": "reassure",
+      "meaningKo": "안심시키다"
+    },
+    {
+      "word": "cheer",
+      "meaningKo": "응원하다"
+    },
+    {
+      "word": "celebrate",
+      "meaningKo": "축하하다"
+    },
+    {
+      "word": "congratulate",
+      "meaningKo": "축하하다"
+    },
+    {
+      "word": "toast",
+      "meaningKo": "건배하다"
+    },
+    {
+      "word": "party",
+      "meaningKo": "파티하다"
+    },
+    {
+      "word": "attend",
+      "meaningKo": "참석하다"
+    },
+    {
+      "word": "rejoin",
+      "meaningKo": "다시 합류하다"
+    },
+    {
+      "word": "reunite",
+      "meaningKo": "재회하다"
+    },
+    {
+      "word": "reconcile",
+      "meaningKo": "화해하다"
+    },
+    {
+      "word": "date",
+      "meaningKo": "데이트하다"
+    },
+    {
+      "word": "marry",
+      "meaningKo": "결혼하다"
+    },
+    {
+      "word": "divorce",
+      "meaningKo": "이혼하다"
+    },
+    {
+      "word": "engage",
+      "meaningKo": "약혼하다"
+    },
+    {
+      "word": "elope",
+      "meaningKo": "도망가다"
+    },
+    {
+      "word": "adopt",
+      "meaningKo": "입양하다"
+    },
+    {
+      "word": "foster",
+      "meaningKo": "위탁하다"
+    },
+    {
+      "word": "nurse",
+      "meaningKo": "간호하다"
+    },
+    {
+      "word": "babysit",
+      "meaningKo": "아기 돌보다"
+    },
+    {
+      "word": "care",
+      "meaningKo": "돌보다"
+    },
+    {
+      "word": "tend",
+      "meaningKo": "돌보다"
+    },
+    {
+      "word": "mind",
+      "meaningKo": "돌보다"
+    },
+    {
+      "word": "rain",
+      "meaningKo": "비가 오다"
+    },
+    {
+      "word": "snow",
+      "meaningKo": "눈이 오다"
+    },
+    {
+      "word": "hail",
+      "meaningKo": "우박이 내리다"
+    },
+    {
+      "word": "thunder",
+      "meaningKo": "천둥이 치다"
+    },
+    {
+      "word": "lightning",
+      "meaningKo": "번개가 치다"
+    },
+    {
+      "word": "howl",
+      "meaningKo": "울부짖다"
+    },
+    {
+      "word": "roar",
+      "meaningKo": "포효하다"
+    },
+    {
+      "word": "bark",
+      "meaningKo": "짖다"
+    },
+    {
+      "word": "meow",
+      "meaningKo": "야옹하다"
+    },
+    {
+      "word": "chirp",
+      "meaningKo": "지저귀다"
+    },
+    {
+      "word": "tweet",
+      "meaningKo": "지저귀다"
+    },
+    {
+      "word": "buzz",
+      "meaningKo": "윙윙거리다"
+    },
+    {
+      "word": "hum",
+      "meaningKo": "윙윙거리다"
+    },
+    {
+      "word": "hiss",
+      "meaningKo": "쉿 소리를 내다"
+    },
+    {
+      "word": "growl",
+      "meaningKo": "으르렁거리다"
+    },
+    {
+      "word": "snarl",
+      "meaningKo": "으르렁거리다"
+    },
+    {
+      "word": "whine",
+      "meaningKo": "징징거리다"
+    },
+    {
+      "word": "yelp",
+      "meaningKo": "깽깽거리다"
+    },
+    {
+      "word": "purr",
+      "meaningKo": "그르렁거리다"
+    },
+    {
+      "word": "gallop",
+      "meaningKo": "질주하다"
+    },
+    {
+      "word": "trot",
+      "meaningKo": "트로트하다"
+    },
+    {
+      "word": "crawl",
+      "meaningKo": "기다"
+    },
+    {
+      "word": "creep",
+      "meaningKo": "살금살금 가다"
+    },
+    {
+      "word": "tiptoe",
+      "meaningKo": "발끝으로 걷다"
+    },
+    {
+      "word": "limp",
+      "meaningKo": "절뚝거리다"
+    },
+    {
+      "word": "stagger",
+      "meaningKo": "비틀거리다"
+    },
+    {
+      "word": "stumble",
+      "meaningKo": "비틀거리다"
+    },
+    {
+      "word": "trip",
+      "meaningKo": "걸려 넘어지다"
+    },
+    {
+      "word": "slip",
+      "meaningKo": "미끄러지다"
+    },
+    {
+      "word": "slide",
+      "meaningKo": "미끄러지다"
+    },
+    {
+      "word": "glide",
+      "meaningKo": "활공하다"
+    },
+    {
+      "word": "soar",
+      "meaningKo": "치솟다"
+    },
+    {
+      "word": "hover",
+      "meaningKo": "맴돌다"
+    },
+    {
+      "word": "flutter",
+      "meaningKo": "펄럭이다"
+    },
+    {
+      "word": "flap",
+      "meaningKo": "퍼덕이다"
+    },
+    {
+      "word": "wag",
+      "meaningKo": "흔들다"
+    },
+    {
+      "word": "sway",
+      "meaningKo": "흔들리다"
+    },
+    {
+      "word": "rock",
+      "meaningKo": "흔들다"
+    },
+    {
+      "word": "swing",
+      "meaningKo": "흔들다"
+    },
+    {
+      "word": "rotate",
+      "meaningKo": "회전하다"
+    },
+    {
+      "word": "revolve",
+      "meaningKo": "돌다"
+    },
+    {
+      "word": "orbit",
+      "meaningKo": "궤도를 돌다"
+    },
+    {
+      "word": "circle",
+      "meaningKo": "빙빙 돌다"
+    },
+    {
+      "word": "wander",
+      "meaningKo": "헤매다"
+    },
+    {
+      "word": "roam",
+      "meaningKo": "돌아다니다"
+    },
+    {
+      "word": "stray",
+      "meaningKo": "길을 잃다"
+    },
+    {
+      "word": "drift",
+      "meaningKo": "표류하다"
+    },
+    {
+      "word": "meander",
+      "meaningKo": "구불구불 가다"
+    },
+    {
+      "word": "march",
+      "meaningKo": "행진하다"
+    },
+    {
+      "word": "parade",
+      "meaningKo": "행진하다"
+    },
+    {
+      "word": "rally",
+      "meaningKo": "집회하다"
+    },
+    {
+      "word": "disperse",
+      "meaningKo": "흩어지다"
+    },
+    {
+      "word": "scatter",
+      "meaningKo": "흩뿌리다"
+    },
+    {
+      "word": "sprinkle",
+      "meaningKo": "뿌리다"
+    },
+    {
+      "word": "spray",
+      "meaningKo": "뿌리다"
+    },
+    {
+      "word": "splash",
+      "meaningKo": "튀기다"
+    },
+    {
+      "word": "spatter",
+      "meaningKo": "튀기다"
+    },
+    {
+      "word": "ooze",
+      "meaningKo": "스며 나오다"
+    },
+    {
+      "word": "seep",
+      "meaningKo": "스며들다"
+    },
+    {
+      "word": "percolate",
+      "meaningKo": "스며들다"
+    },
+    {
+      "word": "strain",
+      "meaningKo": "걸러내다"
+    },
+    {
+      "word": "sift",
+      "meaningKo": "체로 치다"
+    },
+    {
+      "word": "separate",
+      "meaningKo": "분리하다"
+    },
+    {
+      "word": "isolate",
+      "meaningKo": "격리하다"
+    },
+    {
+      "word": "quarantine",
+      "meaningKo": "격리하다"
+    },
+    {
+      "word": "confine",
+      "meaningKo": "가두다"
+    },
+    {
+      "word": "cage",
+      "meaningKo": "우리에 넣다"
+    },
+    {
+      "word": "chain",
+      "meaningKo": "사슬로 묶다"
+    },
+    {
+      "word": "bind",
+      "meaningKo": "묶다"
+    },
+    {
+      "word": "fasten",
+      "meaningKo": "고정하다"
+    },
+    {
+      "word": "secure",
+      "meaningKo": "고정하다"
+    },
+    {
+      "word": "anchor",
+      "meaningKo": "정박하다"
+    },
+    {
+      "word": "moor",
+      "meaningKo": "계류하다"
+    },
+    {
+      "word": "dock",
+      "meaningKo": "정박하다"
+    },
+    {
+      "word": "berth",
+      "meaningKo": "정박하다"
+    },
+    {
+      "word": "cast",
+      "meaningKo": "던지다"
+    },
+    {
+      "word": "fling",
+      "meaningKo": "내던지다"
+    },
+    {
+      "word": "hurl",
+      "meaningKo": "내던지다"
+    },
+    {
+      "word": "toss",
+      "meaningKo": "가볍게 던지다"
+    },
+    {
+      "word": "lob",
+      "meaningKo": "높이 던지다"
+    },
+    {
+      "word": "bowl",
+      "meaningKo": "볼링하다"
+    },
+    {
+      "word": "volley",
+      "meaningKo": "발리하다"
+    },
+    {
+      "word": "dribble",
+      "meaningKo": "드리블하다"
+    },
+    {
+      "word": "shoot",
+      "meaningKo": "슛하다"
+    },
+    {
+      "word": "tackle",
+      "meaningKo": "태클하다"
+    },
+    {
+      "word": "foul",
+      "meaningKo": "반칙하다"
+    },
+    {
+      "word": "referee",
+      "meaningKo": "심판보다"
+    },
+    {
+      "word": "hydrate",
+      "meaningKo": "수분을 보충하다"
+    },
+    {
+      "word": "theorize",
+      "meaningKo": "이론화하다"
+    },
+    {
+      "word": "hypothesize",
+      "meaningKo": "가설을 세우다"
+    },
+    {
+      "word": "experiment",
+      "meaningKo": "실험하다"
+    },
+    {
+      "word": "test",
+      "meaningKo": "시험하다"
+    },
+    {
+      "word": "verify",
+      "meaningKo": "검증하다"
+    },
+    {
+      "word": "validate",
+      "meaningKo": "검증하다"
+    },
+    {
+      "word": "falsify",
+      "meaningKo": "반증하다"
+    },
+    {
+      "word": "refute",
+      "meaningKo": "반박하다"
+    },
+    {
+      "word": "debate",
+      "meaningKo": "토론하다"
+    },
+    {
+      "word": "dispute",
+      "meaningKo": "이의를 제기하다"
+    },
+    {
+      "word": "contend",
+      "meaningKo": "주장하다"
+    },
+    {
+      "word": "assert",
+      "meaningKo": "단언하다"
+    },
+    {
+      "word": "allege",
+      "meaningKo": "주장하다"
+    },
+    {
+      "word": "maintain",
+      "meaningKo": "주장하다"
+    },
+    {
+      "word": "uphold",
+      "meaningKo": "지지하다"
+    },
+    {
+      "word": "advocate",
+      "meaningKo": "옹호하다"
+    },
+    {
+      "word": "endorse",
+      "meaningKo": "지지하다"
+    },
+    {
+      "word": "oppose",
+      "meaningKo": "반대하다"
+    },
+    {
+      "word": "resist",
+      "meaningKo": "저항하다"
+    },
+    {
+      "word": "defy",
+      "meaningKo": "거역하다"
+    },
+    {
+      "word": "rebel",
+      "meaningKo": "반란하다"
+    },
+    {
+      "word": "revolt",
+      "meaningKo": "반란하다"
+    },
+    {
+      "word": "overthrow",
+      "meaningKo": "전복하다"
+    },
+    {
+      "word": "seize",
+      "meaningKo": "장악하다"
+    },
+    {
+      "word": "capture",
+      "meaningKo": "포획하다"
+    },
+    {
+      "word": "invade",
+      "meaningKo": "침략하다"
+    },
+    {
+      "word": "attack",
+      "meaningKo": "공격하다"
+    },
+    {
+      "word": "assault",
+      "meaningKo": "폭행하다"
+    },
+    {
+      "word": "ambush",
+      "meaningKo": "매복하다"
+    },
+    {
+      "word": "raid",
+      "meaningKo": "습격하다"
+    },
+    {
+      "word": "bombard",
+      "meaningKo": "폭격하다"
+    },
+    {
+      "word": "bomb",
+      "meaningKo": "폭격하다"
+    },
+    {
+      "word": "aim",
+      "meaningKo": "조준하다"
+    },
+    {
+      "word": "target",
+      "meaningKo": "겨냥하다"
+    },
+    {
+      "word": "dodge",
+      "meaningKo": "피하다"
+    },
+    {
+      "word": "duck",
+      "meaningKo": "숙이다"
+    },
+    {
+      "word": "parry",
+      "meaningKo": "받아내다"
+    },
+    {
+      "word": "shield",
+      "meaningKo": "방패로 막다"
+    },
+    {
+      "word": "ward",
+      "meaningKo": "막아내다"
+    },
+    {
+      "word": "counter",
+      "meaningKo": "맞서다"
+    },
+    {
+      "word": "retaliate",
+      "meaningKo": "보복하다"
+    },
+    {
+      "word": "avenge",
+      "meaningKo": "복수하다"
+    },
+    {
+      "word": "revenge",
+      "meaningKo": "복수하다"
+    },
+    {
+      "word": "punish",
+      "meaningKo": "처벌하다"
+    },
+    {
+      "word": "penalty",
+      "meaningKo": "벌하다"
+    },
+    {
+      "word": "fine",
+      "meaningKo": "벌금을 부과하다"
+    },
+    {
+      "word": "sentence",
+      "meaningKo": "선고하다"
+    },
+    {
+      "word": "convict",
+      "meaningKo": "유죄 판결하다"
+    },
+    {
+      "word": "acquit",
+      "meaningKo": "무죄로 하다"
+    },
+    {
+      "word": "pardon",
+      "meaningKo": "사면하다"
+    },
+    {
+      "word": "amnesty",
+      "meaningKo": "사면하다"
+    },
+    {
+      "word": "exile",
+      "meaningKo": "추방하다"
+    },
+    {
+      "word": "banish",
+      "meaningKo": "추방하다"
+    },
+    {
+      "word": "deport",
+      "meaningKo": "추방하다"
+    },
+    {
+      "word": "expel",
+      "meaningKo": "퇴학시키다"
+    },
+    {
+      "word": "suspend",
+      "meaningKo": "정학시키다"
+    },
+    {
+      "word": "dismiss",
+      "meaningKo": "해고하다"
+    },
+    {
+      "word": "discharge",
+      "meaningKo": "방출하다"
+    },
+    {
+      "word": "emit",
+      "meaningKo": "방출하다"
+    },
+    {
+      "word": "radiate",
+      "meaningKo": "방사하다"
+    },
+    {
+      "word": "diffuse",
+      "meaningKo": "확산하다"
+    },
+    {
+      "word": "dilute",
+      "meaningKo": "희석하다"
+    },
+    {
+      "word": "concentrate",
+      "meaningKo": "집중하다"
+    },
+    {
+      "word": "focus",
+      "meaningKo": "집중하다"
+    },
+    {
+      "word": "center",
+      "meaningKo": "중심에 두다"
+    },
+    {
+      "word": "prioritize",
+      "meaningKo": "우선시하다"
+    },
+    {
+      "word": "emphasize",
+      "meaningKo": "강조하다"
+    },
+    {
+      "word": "highlight",
+      "meaningKo": "강조하다"
+    },
+    {
+      "word": "stress",
+      "meaningKo": "강조하다"
+    },
+    {
+      "word": "underline",
+      "meaningKo": "밑줄 긋다"
+    },
+    {
+      "word": "italicize",
+      "meaningKo": "이탤릭체로 하다"
+    },
+    {
+      "word": "bold",
+      "meaningKo": "굵게 하다"
+    },
+    {
+      "word": "capitalize",
+      "meaningKo": "대문자로 쓰다"
+    },
+    {
+      "word": "abbreviate",
+      "meaningKo": "줄여 쓰다"
+    },
+    {
+      "word": "summarize",
+      "meaningKo": "요약하다"
+    },
+    {
+      "word": "outline",
+      "meaningKo": "개요를 잡다"
+    },
+    {
+      "word": "draft",
+      "meaningKo": "초안을 쓰다"
+    },
+    {
+      "word": "edit",
+      "meaningKo": "편집하다"
+    },
+    {
+      "word": "revise",
+      "meaningKo": "개정하다"
+    },
+    {
+      "word": "proofread",
+      "meaningKo": "교정하다"
+    },
+    {
+      "word": "distribute",
+      "meaningKo": "배포하다"
+    },
+    {
+      "word": "allocate",
+      "meaningKo": "배분하다"
+    },
+    {
+      "word": "apportion",
+      "meaningKo": "할당하다"
+    },
+    {
+      "word": "ration",
+      "meaningKo": "배급하다"
+    },
+    {
+      "word": "portion",
+      "meaningKo": "나누어 주다"
+    },
+    {
+      "word": "dispense",
+      "meaningKo": "지급하다"
+    },
+    {
+      "word": "administer",
+      "meaningKo": "투여하다"
+    },
+    {
+      "word": "prescribe",
+      "meaningKo": "처방하다"
+    },
+    {
+      "word": "dose",
+      "meaningKo": "투여하다"
+    },
+    {
+      "word": "inject",
+      "meaningKo": "주사하다"
+    },
+    {
+      "word": "vaccinate",
+      "meaningKo": "예방접종하다"
+    },
+    {
+      "word": "immunize",
+      "meaningKo": "면역시키다"
+    },
+    {
+      "word": "infect",
+      "meaningKo": "감염시키다"
+    },
+    {
+      "word": "contaminate",
+      "meaningKo": "오염시키다"
+    },
+    {
+      "word": "pollute",
+      "meaningKo": "오염시키다"
+    },
+    {
+      "word": "purify",
+      "meaningKo": "정화하다"
+    },
+    {
+      "word": "sanitize",
+      "meaningKo": "소독하다"
+    },
+    {
+      "word": "disinfect",
+      "meaningKo": "소독하다"
+    },
+    {
+      "word": "sterilize",
+      "meaningKo": "살균하다"
+    },
+    {
+      "word": "cleanse",
+      "meaningKo": "깨끗이 하다"
+    },
+    {
+      "word": "flush",
+      "meaningKo": "물을 내리다"
+    },
+    {
+      "word": "drain",
+      "meaningKo": "배수하다"
+    },
+    {
+      "word": "pump",
+      "meaningKo": "펌프질하다"
+    },
+    {
+      "word": "siphon",
+      "meaningKo": "사이펀으로 뽑다"
+    },
+    {
+      "word": "funnel",
+      "meaningKo": "깔때기로 붓다"
+    },
+    {
+      "word": "channel",
+      "meaningKo": "전달하다"
+    },
+    {
+      "word": "route",
+      "meaningKo": "경로를 정하다"
+    },
+    {
+      "word": "reroute",
+      "meaningKo": "우회시키다"
+    },
+    {
+      "word": "redirect",
+      "meaningKo": "리다이렉트하다"
+    },
+    {
+      "word": "relay",
+      "meaningKo": "중계하다"
+    },
+    {
+      "word": "telecast",
+      "meaningKo": "방송하다"
+    },
+    {
+      "word": "air",
+      "meaningKo": "방송하다"
+    },
+    {
+      "word": "podcast",
+      "meaningKo": "팟캐스트하다"
+    },
+    {
+      "word": "blog",
+      "meaningKo": "블로그하다"
+    },
+    {
+      "word": "vlog",
+      "meaningKo": "브이로그하다"
+    },
+    {
+      "word": "livestream",
+      "meaningKo": "라이브하다"
+    },
+    {
+      "word": "film",
+      "meaningKo": "촬영하다"
+    },
+    {
+      "word": "photograph",
+      "meaningKo": "사진 찍다"
+    },
+    {
+      "word": "snapshot",
+      "meaningKo": "스냅샷하다"
+    },
+    {
+      "word": "screenshot",
+      "meaningKo": "스크린샷하다"
+    },
+    {
+      "word": "illustrate",
+      "meaningKo": "삽화를 넣다"
+    },
+    {
+      "word": "sketch",
+      "meaningKo": "스케치하다"
+    },
+    {
+      "word": "doodle",
+      "meaningKo": "낙서하다"
+    },
+    {
+      "word": "shade",
+      "meaningKo": "음영을 넣다"
+    },
+    {
+      "word": "color",
+      "meaningKo": "색칠하다"
+    },
+    {
+      "word": "stencil",
+      "meaningKo": "스텐실하다"
+    },
+    {
+      "word": "engrave",
+      "meaningKo": "새기다"
+    },
+    {
+      "word": "etch",
+      "meaningKo": "에칭하다"
+    },
+    {
+      "word": "inscribe",
+      "meaningKo": "새기다"
+    },
+    {
+      "word": "chisel",
+      "meaningKo": "끌로 파다"
+    },
+    {
+      "word": "forge",
+      "meaningKo": "단조하다"
+    },
+    {
+      "word": "weld",
+      "meaningKo": "용접하다"
+    },
+    {
+      "word": "solder",
+      "meaningKo": "납땜하다"
+    },
+    {
+      "word": "braze",
+      "meaningKo": "납땜하다"
+    },
+    {
+      "word": "rivet",
+      "meaningKo": "리벳으로 고정하다"
+    },
+    {
+      "word": "bolt",
+      "meaningKo": "볼트로 조이다"
+    },
+    {
+      "word": "clamp",
+      "meaningKo": "집게로 고정하다"
+    },
+    {
+      "word": "vise",
+      "meaningKo": "바이스로 고정하다"
+    },
+    {
+      "word": "abide",
+      "meaningKo": "지키다"
+    },
+    {
+      "word": "abolish",
+      "meaningKo": "폐지하다"
+    },
+    {
+      "word": "abuse",
+      "meaningKo": "학대하다"
+    },
+    {
+      "word": "accompany",
+      "meaningKo": "동행하다"
+    },
+    {
+      "word": "account",
+      "meaningKo": "설명하다"
+    },
+    {
+      "word": "accumulate",
+      "meaningKo": "축적하다"
+    },
+    {
+      "word": "acquire",
+      "meaningKo": "획득하다"
+    },
+    {
+      "word": "address",
+      "meaningKo": "다루다"
+    },
+    {
+      "word": "adhere",
+      "meaningKo": "고수하다"
+    },
+    {
+      "word": "affect",
+      "meaningKo": "영향을 미치다"
+    },
+    {
+      "word": "affirm",
+      "meaningKo": "단언하다"
+    },
+    {
+      "word": "age",
+      "meaningKo": "나이를 먹다"
+    },
+    {
+      "word": "aid",
+      "meaningKo": "돕다"
+    },
+    {
+      "word": "alarm",
+      "meaningKo": "경보하다"
+    },
+    {
+      "word": "alert",
+      "meaningKo": "알리다"
+    },
+    {
+      "word": "alienate",
+      "meaningKo": "소외시키다"
+    },
+    {
+      "word": "allot",
+      "meaningKo": "배당하다"
+    },
+    {
+      "word": "amend",
+      "meaningKo": "개정하다"
+    },
+    {
+      "word": "amuse",
+      "meaningKo": "즐겁게 하다"
+    },
+    {
+      "word": "anger",
+      "meaningKo": "화나게 하다"
+    },
+    {
+      "word": "animate",
+      "meaningKo": "움직이게 하다"
+    },
+    {
+      "word": "annex",
+      "meaningKo": "병합하다"
+    },
+    {
+      "word": "applaud",
+      "meaningKo": "박수하다"
+    },
+    {
+      "word": "appoint",
+      "meaningKo": "임명하다"
+    },
+    {
+      "word": "appraise",
+      "meaningKo": "평가하다"
+    },
+    {
+      "word": "approach",
+      "meaningKo": "다가가다"
+    },
+    {
+      "word": "arise",
+      "meaningKo": "생기다"
+    },
+    {
+      "word": "arm",
+      "meaningKo": "무장하다"
+    },
+    {
+      "word": "arouse",
+      "meaningKo": "불러일으키다"
+    },
+    {
+      "word": "articulate",
+      "meaningKo": "분명히 말하다"
+    },
+    {
+      "word": "ascend",
+      "meaningKo": "오르다"
+    },
+    {
+      "word": "associate",
+      "meaningKo": "연관짓다"
+    },
+    {
+      "word": "assure",
+      "meaningKo": "보장하다"
+    },
+    {
+      "word": "attain",
+      "meaningKo": "달성하다"
+    },
+    {
+      "word": "attempt",
+      "meaningKo": "시도하다"
+    },
+    {
+      "word": "attribute",
+      "meaningKo": "탓으로 돌리다"
+    },
+    {
+      "word": "audit",
+      "meaningKo": "감사하다"
+    },
+    {
+      "word": "automate",
+      "meaningKo": "자동화하다"
+    },
+    {
+      "word": "await",
+      "meaningKo": "기다리다"
+    },
+    {
+      "word": "awake",
+      "meaningKo": "깨우다"
+    },
+    {
+      "word": "award",
+      "meaningKo": "수여하다"
+    },
+    {
+      "word": "baffle",
+      "meaningKo": "당황하게 하다"
+    },
+    {
+      "word": "bandage",
+      "meaningKo": "붕대를 감다"
+    },
+    {
+      "word": "bar",
+      "meaningKo": "막다"
+    },
+    {
+      "word": "bare",
+      "meaningKo": "드러내다"
+    },
+    {
+      "word": "base",
+      "meaningKo": "기초하다"
+    },
+    {
+      "word": "bathe",
+      "meaningKo": "목욕하다"
+    },
+    {
+      "word": "batter",
+      "meaningKo": "세게 치다"
+    },
+    {
+      "word": "battle",
+      "meaningKo": "싸우다"
+    },
+    {
+      "word": "beam",
+      "meaningKo": "환하게 웃다"
+    },
+    {
+      "word": "bear",
+      "meaningKo": "견디다"
+    },
+    {
+      "word": "befriend",
+      "meaningKo": "친구가 되다"
+    },
+    {
+      "word": "beg",
+      "meaningKo": "부탁하다"
+    },
+    {
+      "word": "behave",
+      "meaningKo": "행동하다"
+    },
+    {
+      "word": "behold",
+      "meaningKo": "바라보다"
+    },
+    {
+      "word": "bet",
+      "meaningKo": "내기하다"
+    },
+    {
+      "word": "betray",
+      "meaningKo": "배신하다"
+    },
+    {
+      "word": "bias",
+      "meaningKo": "편향시키다"
+    },
+    {
+      "word": "bid",
+      "meaningKo": "입찰하다"
+    },
+    {
+      "word": "blast",
+      "meaningKo": "폭파하다"
+    },
+    {
+      "word": "blend",
+      "meaningKo": "섞다"
+    },
+    {
+      "word": "bless",
+      "meaningKo": "축복하다"
+    },
+    {
+      "word": "blossom",
+      "meaningKo": "꽃피다"
+    },
+    {
+      "word": "bluff",
+      "meaningKo": "허세부리다"
+    },
+    {
+      "word": "blur",
+      "meaningKo": "흐리게 하다"
+    },
+    {
+      "word": "boast",
+      "meaningKo": "자랑하다"
+    },
+    {
+      "word": "bond",
+      "meaningKo": "유대하다"
+    },
+    {
+      "word": "boost",
+      "meaningKo": "증진하다"
+    },
+    {
+      "word": "boot",
+      "meaningKo": "부팅하다"
+    },
+    {
+      "word": "border",
+      "meaningKo": "접하다"
+    },
+    {
+      "word": "bore",
+      "meaningKo": "따분하게 하다"
+    },
+    {
+      "word": "bounce",
+      "meaningKo": "튀다"
+    },
+    {
+      "word": "bow",
+      "meaningKo": "절하다"
+    },
+    {
+      "word": "box",
+      "meaningKo": "권투하다"
+    },
+    {
+      "word": "brace",
+      "meaningKo": "받치다"
+    },
+    {
+      "word": "breach",
+      "meaningKo": "위반하다"
+    },
+    {
+      "word": "bribe",
+      "meaningKo": "뇌물을 주다"
+    },
+    {
+      "word": "bridge",
+      "meaningKo": "연결하다"
+    },
+    {
+      "word": "brief",
+      "meaningKo": "브리핑하다"
+    },
+    {
+      "word": "brighten",
+      "meaningKo": "밝게 하다"
+    },
+    {
+      "word": "brush",
+      "meaningKo": "닦다"
+    },
+    {
+      "word": "bubble",
+      "meaningKo": "거품이 일다"
+    },
+    {
+      "word": "buckle",
+      "meaningKo": "버클을 채우다"
+    },
+    {
+      "word": "budget",
+      "meaningKo": "예산을 짜다"
+    },
+    {
+      "word": "buffer",
+      "meaningKo": "완충하다"
+    },
+    {
+      "word": "bunch",
+      "meaningKo": "모으다"
+    },
+    {
+      "word": "bundle",
+      "meaningKo": "묶다"
+    },
+    {
+      "word": "burden",
+      "meaningKo": "부담을 지우다"
+    },
+    {
+      "word": "butter",
+      "meaningKo": "버터를 바르다"
+    },
+    {
+      "word": "button",
+      "meaningKo": "단추를 채우다"
+    },
+    {
+      "word": "bypass",
+      "meaningKo": "우회하다"
+    },
+    {
+      "word": "caress",
+      "meaningKo": "쓰다듬다"
+    },
+    {
+      "word": "cater",
+      "meaningKo": "제공하다"
+    },
+    {
+      "word": "cause",
+      "meaningKo": "일으키다"
+    },
+    {
+      "word": "caution",
+      "meaningKo": "주의시키다"
+    },
+    {
+      "word": "cease",
+      "meaningKo": "멈추다"
+    },
+    {
+      "word": "certify",
+      "meaningKo": "증명하다"
+    },
+    {
+      "word": "chair",
+      "meaningKo": "사회를 보다"
+    },
+    {
+      "word": "charm",
+      "meaningKo": "매혹하다"
+    },
+    {
+      "word": "cheat",
+      "meaningKo": "속이다"
+    },
+    {
+      "word": "chill",
+      "meaningKo": "식히다"
+    },
+    {
+      "word": "choke",
+      "meaningKo": "질식하다"
+    },
+    {
+      "word": "chuckle",
+      "meaningKo": "킬킬 웃다"
+    },
+    {
+      "word": "cite",
+      "meaningKo": "인용하다"
+    },
+    {
+      "word": "clap",
+      "meaningKo": "박수하다"
+    },
+    {
+      "word": "clarify",
+      "meaningKo": "명확히 하다"
+    },
+    {
+      "word": "clash",
+      "meaningKo": "충돌하다"
+    },
+    {
+      "word": "clasp",
+      "meaningKo": "꽉 잡다"
+    },
+    {
+      "word": "classify",
+      "meaningKo": "분류하다"
+    },
+    {
+      "word": "clear",
+      "meaningKo": "치우다"
+    },
+    {
+      "word": "cling",
+      "meaningKo": "달라붙다"
+    },
+    {
+      "word": "clip",
+      "meaningKo": "자르다"
+    },
+    {
+      "word": "clothe",
+      "meaningKo": "옷을 입히다"
+    },
+    {
+      "word": "cloud",
+      "meaningKo": "흐리게 하다"
+    },
+    {
+      "word": "clutch",
+      "meaningKo": "움켜쥐다"
+    },
+    {
+      "word": "coat",
+      "meaningKo": "코팅하다"
+    },
+    {
+      "word": "coil",
+      "meaningKo": "감다"
+    },
+    {
+      "word": "collapse",
+      "meaningKo": "붕괴하다"
+    },
+    {
+      "word": "comb",
+      "meaningKo": "빗질하다"
+    },
+    {
+      "word": "combat",
+      "meaningKo": "싸우다"
+    },
+    {
+      "word": "combine",
+      "meaningKo": "결합하다"
+    },
+    {
+      "word": "commemorate",
+      "meaningKo": "기념하다"
+    },
+    {
+      "word": "commend",
+      "meaningKo": "칭찬하다"
+    },
+    {
+      "word": "commission",
+      "meaningKo": "위임하다"
+    },
+    {
+      "word": "compel",
+      "meaningKo": "강요하다"
+    },
+    {
+      "word": "compensate",
+      "meaningKo": "보상하다"
+    },
+    {
+      "word": "complement",
+      "meaningKo": "보완하다"
+    },
+    {
+      "word": "complicate",
+      "meaningKo": "복잡하게 하다"
+    },
+    {
+      "word": "comply",
+      "meaningKo": "따르다"
+    },
+    {
+      "word": "compound",
+      "meaningKo": "악화시키다"
+    },
+    {
+      "word": "comprehend",
+      "meaningKo": "이해하다"
+    },
+    {
+      "word": "compute",
+      "meaningKo": "계산하다"
+    },
+    {
+      "word": "conceal",
+      "meaningKo": "숨기다"
+    },
+    {
+      "word": "concede",
+      "meaningKo": "인정하다"
+    },
+    {
+      "word": "conceive",
+      "meaningKo": "생각하다"
+    },
+    {
+      "word": "condemn",
+      "meaningKo": "비난하다"
+    },
+    {
+      "word": "condense",
+      "meaningKo": "응축하다"
+    },
+    {
+      "word": "confer",
+      "meaningKo": "협의하다"
+    },
+    {
+      "word": "confide",
+      "meaningKo": "털어놓다"
+    },
+    {
+      "word": "configure",
+      "meaningKo": "구성하다"
+    },
+    {
+      "word": "conflict",
+      "meaningKo": "충돌하다"
+    },
+    {
+      "word": "conform",
+      "meaningKo": "순응하다"
+    },
+    {
+      "word": "confront",
+      "meaningKo": "맞서다"
+    },
+    {
+      "word": "consent",
+      "meaningKo": "동의하다"
+    },
+    {
+      "word": "conserve",
+      "meaningKo": "보존하다"
+    },
+    {
+      "word": "consolidate",
+      "meaningKo": "통합하다"
+    },
+    {
+      "word": "contact",
+      "meaningKo": "연락하다"
+    },
+    {
+      "word": "contemplate",
+      "meaningKo": "숙고하다"
+    },
+    {
+      "word": "contest",
+      "meaningKo": "다투다"
+    },
+    {
+      "word": "contradict",
+      "meaningKo": "모순되다"
+    },
+    {
+      "word": "convene",
+      "meaningKo": "소집하다"
+    },
+    {
+      "word": "converge",
+      "meaningKo": "수렴하다"
+    },
+    {
+      "word": "convince",
+      "meaningKo": "설득하다"
+    },
+    {
+      "word": "coordinate",
+      "meaningKo": "조정하다"
+    },
+    {
+      "word": "copyright",
+      "meaningKo": "저작권 등록하다"
+    },
+    {
+      "word": "corner",
+      "meaningKo": "궁지에 몰다"
+    },
+    {
+      "word": "correct",
+      "meaningKo": "고치다"
+    },
+    {
+      "word": "correlate",
+      "meaningKo": "상관하다"
+    },
+    {
+      "word": "correspond",
+      "meaningKo": "일치하다"
+    },
+    {
+      "word": "corrupt",
+      "meaningKo": "타락시키다"
+    },
+    {
+      "word": "couple",
+      "meaningKo": "결합하다"
+    },
+    {
+      "word": "craft",
+      "meaningKo": "만들다"
+    },
+    {
+      "word": "credit",
+      "meaningKo": "신용하다"
+    },
+    {
+      "word": "cross",
+      "meaningKo": "건너다"
+    },
+    {
+      "word": "crouch",
+      "meaningKo": "웅크리다"
+    },
+    {
+      "word": "crowd",
+      "meaningKo": "붐비다"
+    },
+    {
+      "word": "crown",
+      "meaningKo": "왕관을 씌우다"
+    },
+    {
+      "word": "cultivate",
+      "meaningKo": "경작하다"
+    },
+    {
+      "word": "curl",
+      "meaningKo": "말다"
+    },
+    {
+      "word": "curve",
+      "meaningKo": "구부러지다"
+    },
+    {
+      "word": "cycle",
+      "meaningKo": "순환하다"
+    },
+    {
+      "word": "dare",
+      "meaningKo": "감히 하다"
+    },
+    {
+      "word": "darken",
+      "meaningKo": "어둡게 하다"
+    },
+    {
+      "word": "dash",
+      "meaningKo": "돌진하다"
+    },
+    {
+      "word": "dawn",
+      "meaningKo": "동이 트다"
+    },
+    {
+      "word": "deceive",
+      "meaningKo": "속이다"
+    },
+    {
+      "word": "declare",
+      "meaningKo": "선언하다"
+    },
+    {
+      "word": "decline",
+      "meaningKo": "거절하다"
+    },
+    {
+      "word": "decorate",
+      "meaningKo": "장식하다"
+    },
+    {
+      "word": "dedicate",
+      "meaningKo": "헌정하다"
+    },
+    {
+      "word": "deduce",
+      "meaningKo": "추론하다"
+    },
+    {
+      "word": "deduct",
+      "meaningKo": "공제하다"
+    },
+    {
+      "word": "deem",
+      "meaningKo": "여기다"
+    },
+    {
+      "word": "deepen",
+      "meaningKo": "깊게 하다"
+    },
+    {
+      "word": "defer",
+      "meaningKo": "연기하다"
+    },
+    {
+      "word": "delight",
+      "meaningKo": "기쁘게 하다"
+    },
+    {
+      "word": "denounce",
+      "meaningKo": "비난하다"
+    },
+    {
+      "word": "depict",
+      "meaningKo": "묘사하다"
+    },
+    {
+      "word": "deposit",
+      "meaningKo": "예치하다"
+    },
+    {
+      "word": "depress",
+      "meaningKo": "우울하게 하다"
+    },
+    {
+      "word": "derive",
+      "meaningKo": "도출하다"
+    },
+    {
+      "word": "descend",
+      "meaningKo": "내려가다"
+    },
+    {
+      "word": "deserve",
+      "meaningKo": "받을 만하다"
+    },
+    {
+      "word": "designate",
+      "meaningKo": "지정하다"
+    },
+    {
+      "word": "despair",
+      "meaningKo": "절망하다"
+    },
+    {
+      "word": "detain",
+      "meaningKo": "억류하다"
+    },
+    {
+      "word": "deter",
+      "meaningKo": "단념시키다"
+    },
+    {
+      "word": "determine",
+      "meaningKo": "결정하다"
+    },
+    {
+      "word": "deviate",
+      "meaningKo": "벗어나다"
+    },
+    {
+      "word": "devise",
+      "meaningKo": "고안하다"
+    },
+    {
+      "word": "devote",
+      "meaningKo": "바치다"
+    },
+    {
+      "word": "diagnose",
+      "meaningKo": "진단하다"
+    },
+    {
+      "word": "dictate",
+      "meaningKo": "받아쓰게 하다"
+    },
+    {
+      "word": "differ",
+      "meaningKo": "다르다"
+    },
+    {
+      "word": "differentiate",
+      "meaningKo": "구별하다"
+    },
+    {
+      "word": "dim",
+      "meaningKo": "어둡게 하다"
+    },
+    {
+      "word": "diminish",
+      "meaningKo": "줄어들다"
+    },
+    {
+      "word": "dine",
+      "meaningKo": "식사하다"
+    },
+    {
+      "word": "dip",
+      "meaningKo": "담그다"
+    },
+    {
+      "word": "disappear",
+      "meaningKo": "사라지다"
+    },
+    {
+      "word": "disapprove",
+      "meaningKo": "반대하다"
+    },
+    {
+      "word": "discard",
+      "meaningKo": "버리다"
+    },
+    {
+      "word": "discipline",
+      "meaningKo": "훈육하다"
+    },
+    {
+      "word": "disconnect",
+      "meaningKo": "연결을 끊다"
+    },
+    {
+      "word": "discount",
+      "meaningKo": "할인하다"
+    },
+    {
+      "word": "discourage",
+      "meaningKo": "낙담시키다"
+    },
+    {
+      "word": "disguise",
+      "meaningKo": "변장하다"
+    },
+    {
+      "word": "dismantle",
+      "meaningKo": "해체하다"
+    },
+    {
+      "word": "dispatch",
+      "meaningKo": "파견하다"
+    },
+    {
+      "word": "dispel",
+      "meaningKo": "쫓다"
+    },
+    {
+      "word": "display",
+      "meaningKo": "보여 주다"
+    },
+    {
+      "word": "dispose",
+      "meaningKo": "처분하다"
+    },
+    {
+      "word": "disrupt",
+      "meaningKo": "방해하다"
+    },
+    {
+      "word": "dissolve",
+      "meaningKo": "녹이다"
+    },
+    {
+      "word": "distill",
+      "meaningKo": "증류하다"
+    },
+    {
+      "word": "distinguish",
+      "meaningKo": "구별하다"
+    },
+    {
+      "word": "distort",
+      "meaningKo": "왜곡하다"
+    },
+    {
+      "word": "diverge",
+      "meaningKo": "갈라지다"
+    },
+    {
+      "word": "diversify",
+      "meaningKo": "다양화하다"
+    },
+    {
+      "word": "divert",
+      "meaningKo": "돌리다"
+    },
+    {
+      "word": "document",
+      "meaningKo": "기록하다"
+    },
+    {
+      "word": "dominate",
+      "meaningKo": "지배하다"
+    },
+    {
+      "word": "double",
+      "meaningKo": "두 배로 하다"
+    },
+    {
+      "word": "dramatize",
+      "meaningKo": "극화하다"
+    },
+    {
+      "word": "dread",
+      "meaningKo": "두려워하다"
+    },
+    {
+      "word": "dress",
+      "meaningKo": "옷을 입다"
+    },
+    {
+      "word": "dump",
+      "meaningKo": "버리다"
+    },
+    {
+      "word": "duplicate",
+      "meaningKo": "복제하다"
+    },
+    {
+      "word": "dye",
+      "meaningKo": "염색하다"
+    },
+    {
+      "word": "ease",
+      "meaningKo": "완화하다"
+    },
+    {
+      "word": "echo",
+      "meaningKo": "메아리치다"
+    },
+    {
+      "word": "elevate",
+      "meaningKo": "높이다"
+    },
+    {
+      "word": "elicit",
+      "meaningKo": "이끌어 내다"
+    },
+    {
+      "word": "eliminate",
+      "meaningKo": "제거하다"
+    },
+    {
+      "word": "embark",
+      "meaningKo": "착수하다"
+    },
+    {
+      "word": "embed",
+      "meaningKo": "삽입하다"
+    },
+    {
+      "word": "embody",
+      "meaningKo": "구현하다"
+    },
+    {
+      "word": "embrace",
+      "meaningKo": "껴안다"
+    },
+    {
+      "word": "emerge",
+      "meaningKo": "나타나다"
+    },
+    {
+      "word": "empower",
+      "meaningKo": "권한을 주다"
+    },
+    {
+      "word": "enact",
+      "meaningKo": "제정하다"
+    },
+    {
+      "word": "encircle",
+      "meaningKo": "둘러싸다"
+    },
+    {
+      "word": "enclose",
+      "meaningKo": "동봉하다"
+    },
+    {
+      "word": "encounter",
+      "meaningKo": "마주치다"
+    },
+    {
+      "word": "end",
+      "meaningKo": "끝내다"
+    },
+    {
+      "word": "endanger",
+      "meaningKo": "위태롭게 하다"
+    },
+    {
+      "word": "enhance",
+      "meaningKo": "향상하다"
+    },
+    {
+      "word": "enjoy",
+      "meaningKo": "즐기다"
+    },
+    {
+      "word": "enlighten",
+      "meaningKo": "계몽하다"
+    },
+    {
+      "word": "enlist",
+      "meaningKo": "입대하다"
+    },
+    {
+      "word": "enrich",
+      "meaningKo": "풍부하게 하다"
+    },
+    {
+      "word": "ensure",
+      "meaningKo": "보장하다"
+    },
+    {
+      "word": "entail",
+      "meaningKo": "수반하다"
+    },
+    {
+      "word": "entertain",
+      "meaningKo": "즐겁게 하다"
+    },
+    {
+      "word": "entice",
+      "meaningKo": "유혹하다"
+    },
+    {
+      "word": "entitle",
+      "meaningKo": "자격을 주다"
+    },
+    {
+      "word": "entrust",
+      "meaningKo": "맡기다"
+    },
+    {
+      "word": "envelop",
+      "meaningKo": "감싸다"
+    },
+    {
+      "word": "equip",
+      "meaningKo": "장비하다"
+    },
+    {
+      "word": "erase",
+      "meaningKo": "지우다"
+    },
+    {
+      "word": "erect",
+      "meaningKo": "세우다"
+    },
+    {
+      "word": "erode",
+      "meaningKo": "침식하다"
+    },
+    {
+      "word": "erupt",
+      "meaningKo": "분출하다"
+    },
+    {
+      "word": "escalate",
+      "meaningKo": "확대하다"
+    },
+    {
+      "word": "escort",
+      "meaningKo": "호위하다"
+    },
+    {
+      "word": "evaporate",
+      "meaningKo": "증발하다"
+    },
+    {
+      "word": "evade",
+      "meaningKo": "피하다"
+    },
+    {
+      "word": "evoke",
+      "meaningKo": "불러일으키다"
+    },
+    {
+      "word": "exaggerate",
+      "meaningKo": "과장하다"
+    },
+    {
+      "word": "exceed",
+      "meaningKo": "초과하다"
+    },
+    {
+      "word": "excite",
+      "meaningKo": "흥분시키다"
+    },
+    {
+      "word": "exclaim",
+      "meaningKo": "외치다"
+    },
+    {
+      "word": "excuse",
+      "meaningKo": "용서하다"
+    },
+    {
+      "word": "exert",
+      "meaningKo": "발휘하다"
+    },
+    {
+      "word": "exhaust",
+      "meaningKo": "지치게 하다"
+    },
+    {
+      "word": "exhibit",
+      "meaningKo": "전시하다"
+    },
+    {
+      "word": "exist",
+      "meaningKo": "존재하다"
+    },
+    {
+      "word": "expend",
+      "meaningKo": "지출하다"
+    },
+    {
+      "word": "experience",
+      "meaningKo": "경험하다"
+    },
+    {
+      "word": "expire",
+      "meaningKo": "만료되다"
+    },
+    {
+      "word": "exploit",
+      "meaningKo": "이용하다"
+    },
+    {
+      "word": "extract",
+      "meaningKo": "추출하다"
+    },
+    {
+      "word": "fabricate",
+      "meaningKo": "조작하다"
+    },
+    {
+      "word": "facilitate",
+      "meaningKo": "용이하게 하다"
+    },
+    {
+      "word": "faint",
+      "meaningKo": "기절하다"
+    },
+    {
+      "word": "fake",
+      "meaningKo": "위조하다"
+    },
+    {
+      "word": "falter",
+      "meaningKo": "비틀거리다"
+    },
+    {
+      "word": "familiarize",
+      "meaningKo": "익숙해지다"
+    },
+    {
+      "word": "fan",
+      "meaningKo": "부채질하다"
+    },
+    {
+      "word": "fancy",
+      "meaningKo": "좋아하다"
+    },
+    {
+      "word": "farm",
+      "meaningKo": "경작하다"
+    },
+    {
+      "word": "fascinate",
+      "meaningKo": "매혹하다"
+    },
+    {
+      "word": "fashion",
+      "meaningKo": "만들다"
+    },
+    {
+      "word": "fathom",
+      "meaningKo": "헤아리다"
+    },
+    {
+      "word": "feature",
+      "meaningKo": "특징으로 하다"
+    },
+    {
+      "word": "feign",
+      "meaningKo": "가장하다"
+    },
+    {
+      "word": "fell",
+      "meaningKo": "쓰러뜨리다"
+    },
+    {
+      "word": "fence",
+      "meaningKo": "울타리를 치다"
+    },
+    {
+      "word": "fend",
+      "meaningKo": "막아내다"
+    },
+    {
+      "word": "ferment",
+      "meaningKo": "발효하다"
+    },
+    {
+      "word": "ferry",
+      "meaningKo": "나르다"
+    },
+    {
+      "word": "fertilize",
+      "meaningKo": "비료를 주다"
+    },
+    {
+      "word": "figure",
+      "meaningKo": "생각하다"
+    },
+    {
+      "word": "finance",
+      "meaningKo": "자금을 대다"
+    },
+    {
+      "word": "fish",
+      "meaningKo": "낚시하다"
+    },
+    {
+      "word": "fit",
+      "meaningKo": "맞다"
+    },
+    {
+      "word": "flag",
+      "meaningKo": "표시하다"
+    },
+    {
+      "word": "flame",
+      "meaningKo": "불타다"
+    },
+    {
+      "word": "flare",
+      "meaningKo": "번쩍이다"
+    },
+    {
+      "word": "flatten",
+      "meaningKo": "납작하게 하다"
+    },
+    {
+      "word": "flatter",
+      "meaningKo": "아첨하다"
+    },
+    {
+      "word": "flex",
+      "meaningKo": "구부리다"
+    },
+    {
+      "word": "flick",
+      "meaningKo": "튕기다"
+    },
+    {
+      "word": "flicker",
+      "meaningKo": "깜빡이다"
+    },
+    {
+      "word": "flinch",
+      "meaningKo": "움찔하다"
+    },
+    {
+      "word": "flip",
+      "meaningKo": "뒤집다"
+    },
+    {
+      "word": "flirt",
+      "meaningKo": "추파를 던지다"
+    },
+    {
+      "word": "flock",
+      "meaningKo": "모이다"
+    },
+    {
+      "word": "flop",
+      "meaningKo": "실패하다"
+    },
+    {
+      "word": "flourish",
+      "meaningKo": "번성하다"
+    },
+    {
+      "word": "flower",
+      "meaningKo": "꽃이 피다"
+    },
+    {
+      "word": "fluctuate",
+      "meaningKo": "변동하다"
+    },
+    {
+      "word": "foam",
+      "meaningKo": "거품이 일다"
+    },
+    {
+      "word": "fool",
+      "meaningKo": "속이다"
+    },
+    {
+      "word": "force",
+      "meaningKo": "강요하다"
+    },
+    {
+      "word": "forget",
+      "meaningKo": "잊다"
+    },
+    {
+      "word": "formalize",
+      "meaningKo": "공식화하다"
+    },
+    {
+      "word": "format",
+      "meaningKo": "형식화하다"
+    },
+    {
+      "word": "formulate",
+      "meaningKo": "공식화하다"
+    },
+    {
+      "word": "forsake",
+      "meaningKo": "버리다"
+    },
+    {
+      "word": "fortify",
+      "meaningKo": "강화하다"
+    },
+    {
+      "word": "fracture",
+      "meaningKo": "골절하다"
+    },
+    {
+      "word": "fragment",
+      "meaningKo": "조각내다"
+    },
+    {
+      "word": "frame",
+      "meaningKo": "액자에 넣다"
+    },
+    {
+      "word": "frequent",
+      "meaningKo": "자주 방문하다"
+    },
+    {
+      "word": "freshen",
+      "meaningKo": "상쾌하게 하다"
+    },
+    {
+      "word": "frown",
+      "meaningKo": "찌푸리다"
+    },
+    {
+      "word": "fuel",
+      "meaningKo": "연료를 공급하다"
+    },
+    {
+      "word": "fumble",
+      "meaningKo": "더듬다"
+    },
+    {
+      "word": "function",
+      "meaningKo": "기능하다"
+    },
+    {
+      "word": "fund",
+      "meaningKo": "자금을 대다"
+    },
+    {
+      "word": "furnish",
+      "meaningKo": "비치하다"
+    },
+    {
+      "word": "fuse",
+      "meaningKo": "융합하다"
+    },
+    {
+      "word": "fuss",
+      "meaningKo": "법석을 떨다"
+    },
+    {
+      "word": "gain",
+      "meaningKo": "얻다"
+    },
+    {
+      "word": "gamble",
+      "meaningKo": "도박하다"
+    },
+    {
+      "word": "gauge",
+      "meaningKo": "측정하다"
+    },
+    {
+      "word": "gear",
+      "meaningKo": "준비하다"
+    },
+    {
+      "word": "generalize",
+      "meaningKo": "일반화하다"
+    },
+    {
+      "word": "generate",
+      "meaningKo": "생성하다"
+    },
+    {
+      "word": "gesture",
+      "meaningKo": "몸짓하다"
+    },
+    {
+      "word": "giggle",
+      "meaningKo": "낄낄 웃다"
+    },
+    {
+      "word": "glare",
+      "meaningKo": "노려보다"
+    },
+    {
+      "word": "glimpse",
+      "meaningKo": "언뜻 보다"
+    },
+    {
+      "word": "glisten",
+      "meaningKo": "반짝이다"
+    },
+    {
+      "word": "glitter",
+      "meaningKo": "반짝이다"
+    },
+    {
+      "word": "glorify",
+      "meaningKo": "찬양하다"
+    },
+    {
+      "word": "grab",
+      "meaningKo": "움켜쥐다"
+    },
+    {
+      "word": "grade",
+      "meaningKo": "채점하다"
+    },
+    {
+      "word": "grant",
+      "meaningKo": "부여하다"
+    },
+    {
+      "word": "grasp",
+      "meaningKo": "움켜쥐다"
+    },
+    {
+      "word": "gratify",
+      "meaningKo": "만족시키다"
+    },
+    {
+      "word": "graze",
+      "meaningKo": "풀을 뜯다"
+    },
+    {
+      "word": "grease",
+      "meaningKo": "기름칠하다"
+    },
+    {
+      "word": "grieve",
+      "meaningKo": "슬퍼하다"
+    },
+    {
+      "word": "grill",
+      "meaningKo": "굽다"
+    },
+    {
+      "word": "grin",
+      "meaningKo": "씩 웃다"
+    },
+    {
+      "word": "grip",
+      "meaningKo": "움켜쥐다"
+    },
+    {
+      "word": "groan",
+      "meaningKo": "신음하다"
+    },
+    {
+      "word": "groom",
+      "meaningKo": "손질하다"
+    },
+    {
+      "word": "grope",
+      "meaningKo": "더듬다"
+    },
+    {
+      "word": "group",
+      "meaningKo": "묶다"
+    },
+    {
+      "word": "grumble",
+      "meaningKo": "투덜거리다"
+    },
+    {
+      "word": "gush",
+      "meaningKo": "분출하다"
+    },
+    {
+      "word": "halt",
+      "meaningKo": "멈추다"
+    },
+    {
+      "word": "halve",
+      "meaningKo": "반으로 줄이다"
+    },
+    {
+      "word": "hammer",
+      "meaningKo": "망치질하다"
+    },
+    {
+      "word": "hand",
+      "meaningKo": "건네다"
+    },
+    {
+      "word": "harass",
+      "meaningKo": "괴롭히다"
+    },
+    {
+      "word": "harbor",
+      "meaningKo": "품다"
+    },
+    {
+      "word": "harmonize",
+      "meaningKo": "조화시키다"
+    },
+    {
+      "word": "harness",
+      "meaningKo": "활용하다"
+    },
+    {
+      "word": "hassle",
+      "meaningKo": "귀찮게 하다"
+    },
+    {
+      "word": "hasten",
+      "meaningKo": "서두르다"
+    },
+    {
+      "word": "hatch",
+      "meaningKo": "부화하다"
+    },
+    {
+      "word": "haunt",
+      "meaningKo": "괴롭히다"
+    },
+    {
+      "word": "heap",
+      "meaningKo": "쌓다"
+    },
+    {
+      "word": "heave",
+      "meaningKo": "들어 올리다"
+    },
+    {
+      "word": "hedge",
+      "meaningKo": "울타리를 치다"
+    },
+    {
+      "word": "heed",
+      "meaningKo": "유의하다"
+    },
+    {
+      "word": "heighten",
+      "meaningKo": "높이다"
+    },
+    {
+      "word": "hesitate",
+      "meaningKo": "망설이다"
+    },
+    {
+      "word": "hibernate",
+      "meaningKo": "동면하다"
+    },
+    {
+      "word": "hike",
+      "meaningKo": "하이킹하다"
+    },
+    {
+      "word": "hinder",
+      "meaningKo": "방해하다"
+    },
+    {
+      "word": "hint",
+      "meaningKo": "암시하다"
+    },
+    {
+      "word": "hitch",
+      "meaningKo": "걸다"
+    },
+    {
+      "word": "hoard",
+      "meaningKo": "비축하다"
+    },
+    {
+      "word": "hobble",
+      "meaningKo": "절뚝거리다"
+    },
+    {
+      "word": "honor",
+      "meaningKo": "존경하다"
+    },
+    {
+      "word": "hook",
+      "meaningKo": "걸다"
+    },
+    {
+      "word": "hoot",
+      "meaningKo": "부엉거리다"
+    },
+    {
+      "word": "hop",
+      "meaningKo": "깡충 뛰다"
+    },
+    {
+      "word": "horrify",
+      "meaningKo": "겁주다"
+    },
+    {
+      "word": "house",
+      "meaningKo": "수용하다"
+    },
+    {
+      "word": "hug",
+      "meaningKo": "껴안다"
+    },
+    {
+      "word": "humble",
+      "meaningKo": "겸손하게 하다"
+    },
+    {
+      "word": "hush",
+      "meaningKo": "조용히 하다"
+    },
+    {
+      "word": "hustle",
+      "meaningKo": "서두르다"
+    },
+    {
+      "word": "idealize",
+      "meaningKo": "이상화하다"
+    },
+    {
+      "word": "idle",
+      "meaningKo": "게으름 피우다"
+    },
+    {
+      "word": "illuminate",
+      "meaningKo": "비추다"
+    },
+    {
+      "word": "imitate",
+      "meaningKo": "모방하다"
+    },
+    {
+      "word": "immerse",
+      "meaningKo": "담그다"
+    },
+    {
+      "word": "impair",
+      "meaningKo": "손상시키다"
+    },
+    {
+      "word": "impart",
+      "meaningKo": "전달하다"
+    },
+    {
+      "word": "impeach",
+      "meaningKo": "탄핵하다"
+    },
+    {
+      "word": "impede",
+      "meaningKo": "방해하다"
+    },
+    {
+      "word": "impel",
+      "meaningKo": "재촉하다"
+    },
+    {
+      "word": "implicate",
+      "meaningKo": "연루시키다"
+    },
+    {
+      "word": "implore",
+      "meaningKo": "간청하다"
+    },
+    {
+      "word": "imply",
+      "meaningKo": "암시하다"
+    },
+    {
+      "word": "impose",
+      "meaningKo": "부과하다"
+    },
+    {
+      "word": "imprint",
+      "meaningKo": "각인하다"
+    },
+    {
+      "word": "improvise",
+      "meaningKo": "즉흥으로 하다"
+    },
+    {
+      "word": "inaugurate",
+      "meaningKo": "취임시키다"
+    },
+    {
+      "word": "incite",
+      "meaningKo": "선동하다"
+    },
+    {
+      "word": "incline",
+      "meaningKo": "기울다"
+    },
+    {
+      "word": "incorporate",
+      "meaningKo": "포함하다"
+    },
+    {
+      "word": "incur",
+      "meaningKo": "초래하다"
+    },
+    {
+      "word": "indicate",
+      "meaningKo": "나타내다"
+    },
+    {
+      "word": "indict",
+      "meaningKo": "기소하다"
+    },
+    {
+      "word": "induce",
+      "meaningKo": "유도하다"
+    },
+    {
+      "word": "indulge",
+      "meaningKo": "탐닉하다"
+    },
+    {
+      "word": "infer",
+      "meaningKo": "추론하다"
+    },
+    {
+      "word": "inflict",
+      "meaningKo": "가하다"
+    },
+    {
+      "word": "influence",
+      "meaningKo": "영향을 미치다"
+    },
+    {
+      "word": "infringe",
+      "meaningKo": "침해하다"
+    },
+    {
+      "word": "infuriate",
+      "meaningKo": "격분시키다"
+    },
+    {
+      "word": "infuse",
+      "meaningKo": "주입하다"
+    },
+    {
+      "word": "ingest",
+      "meaningKo": "섭취하다"
+    },
+    {
+      "word": "inhale",
+      "meaningKo": "들이마시다"
+    },
+    {
+      "word": "inherit",
+      "meaningKo": "상속하다"
+    },
+    {
+      "word": "inhibit",
+      "meaningKo": "억제하다"
+    },
+    {
+      "word": "innovate",
+      "meaningKo": "혁신하다"
+    },
+    {
+      "word": "insert",
+      "meaningKo": "삽입하다"
+    },
+    {
+      "word": "institute",
+      "meaningKo": "제정하다"
+    },
+    {
+      "word": "insulate",
+      "meaningKo": "절연하다"
+    },
+    {
+      "word": "integrate",
+      "meaningKo": "통합하다"
+    },
+    {
+      "word": "intend",
+      "meaningKo": "의도하다"
+    },
+    {
+      "word": "intensify",
+      "meaningKo": "강화하다"
+    },
+    {
+      "word": "interact",
+      "meaningKo": "상호작용하다"
+    },
+    {
+      "word": "intercept",
+      "meaningKo": "가로채다"
+    },
+    {
+      "word": "interfere",
+      "meaningKo": "간섭하다"
+    },
+    {
+      "word": "intersect",
+      "meaningKo": "교차하다"
+    },
+    {
+      "word": "intervene",
+      "meaningKo": "개입하다"
+    },
+    {
+      "word": "interview",
+      "meaningKo": "면접하다"
+    },
+    {
+      "word": "intimidate",
+      "meaningKo": "위협하다"
+    },
+    {
+      "word": "invert",
+      "meaningKo": "뒤집다"
+    },
+    {
+      "word": "invoke",
+      "meaningKo": "발동하다"
+    },
+    {
+      "word": "involve",
+      "meaningKo": "포함하다"
+    },
+    {
+      "word": "issue",
+      "meaningKo": "발행하다"
+    },
+    {
+      "word": "itch",
+      "meaningKo": "가렵다"
+    },
+    {
+      "word": "jab",
+      "meaningKo": "쿡 찌르다"
+    },
+    {
+      "word": "jail",
+      "meaningKo": "투옥하다"
+    },
+    {
+      "word": "jam",
+      "meaningKo": "막히다"
+    },
+    {
+      "word": "jeer",
+      "meaningKo": "야유하다"
+    },
+    {
+      "word": "jerk",
+      "meaningKo": "갑자기 움직이다"
+    },
+    {
+      "word": "jest",
+      "meaningKo": "농담하다"
+    },
+    {
+      "word": "jog",
+      "meaningKo": "조깅하다"
+    },
+    {
+      "word": "joke",
+      "meaningKo": "농담하다"
+    },
+    {
+      "word": "jolt",
+      "meaningKo": "흔들다"
+    },
+    {
+      "word": "jostle",
+      "meaningKo": "밀치다"
+    },
+    {
+      "word": "journey",
+      "meaningKo": "여행하다"
+    },
+    {
+      "word": "juggle",
+      "meaningKo": "저글링하다"
+    },
+    {
+      "word": "justify",
+      "meaningKo": "정당화하다"
+    },
+    {
+      "word": "kneel",
+      "meaningKo": "무릎 꿇다"
+    },
+    {
+      "word": "knot",
+      "meaningKo": "매듭짓다"
+    },
+    {
+      "word": "lack",
+      "meaningKo": "부족하다"
+    },
+    {
+      "word": "ladder",
+      "meaningKo": "사다리를 오르다"
+    },
+    {
+      "word": "lag",
+      "meaningKo": "뒤처지다"
+    },
+    {
+      "word": "lament",
+      "meaningKo": "한탄하다"
+    },
+    {
+      "word": "landscape",
+      "meaningKo": "조경하다"
+    },
+    {
+      "word": "lapse",
+      "meaningKo": "만료되다"
+    },
+    {
+      "word": "lash",
+      "meaningKo": "채찍질하다"
+    },
+    {
+      "word": "last",
+      "meaningKo": "지속하다"
+    },
+    {
+      "word": "latch",
+      "meaningKo": "걸쇠를 걸다"
+    },
+    {
+      "word": "launder",
+      "meaningKo": "세탁하다"
+    },
+    {
+      "word": "layer",
+      "meaningKo": "겹겹이 쌓다"
+    },
+    {
+      "word": "leap",
+      "meaningKo": "뛰어오르다"
+    },
+    {
+      "word": "lease",
+      "meaningKo": "임대하다"
+    },
+    {
+      "word": "lecture",
+      "meaningKo": "강의하다"
+    },
+    {
+      "word": "lessen",
+      "meaningKo": "줄이다"
+    },
+    {
+      "word": "level",
+      "meaningKo": "평평하게 하다"
+    },
+    {
+      "word": "lever",
+      "meaningKo": "지레로 움직이다"
+    },
+    {
+      "word": "levy",
+      "meaningKo": "부과하다"
+    },
+    {
+      "word": "liberate",
+      "meaningKo": "해방하다"
+    },
+    {
+      "word": "license",
+      "meaningKo": "허가하다"
+    },
+    {
+      "word": "lie",
+      "meaningKo": "눕다"
+    },
+    {
+      "word": "lighten",
+      "meaningKo": "가볍게 하다"
+    },
+    {
+      "word": "line",
+      "meaningKo": "줄을 서다"
+    },
+    {
+      "word": "linger",
+      "meaningKo": "머무르다"
+    },
+    {
+      "word": "link",
+      "meaningKo": "연결하다"
+    },
+    {
+      "word": "liquefy",
+      "meaningKo": "액화하다"
+    },
+    {
+      "word": "list",
+      "meaningKo": "나열하다"
+    },
+    {
+      "word": "loan",
+      "meaningKo": "대출하다"
+    },
+    {
+      "word": "lobby",
+      "meaningKo": "로비하다"
+    },
+    {
+      "word": "lodge",
+      "meaningKo": "숙박하다"
+    },
+    {
+      "word": "log",
+      "meaningKo": "기록하다"
+    },
+    {
+      "word": "long",
+      "meaningKo": "갈망하다"
+    },
+    {
+      "word": "loop",
+      "meaningKo": "반복하다"
+    },
+    {
+      "word": "loot",
+      "meaningKo": "약탈하다"
+    },
+    {
+      "word": "lower",
+      "meaningKo": "낮추다"
+    },
+    {
+      "word": "lubricate",
+      "meaningKo": "윤활하다"
+    },
+    {
+      "word": "lull",
+      "meaningKo": "달래다"
+    },
+    {
+      "word": "lure",
+      "meaningKo": "유인하다"
+    },
+    {
+      "word": "lurk",
+      "meaningKo": "잠복하다"
+    }
+  ]
+}

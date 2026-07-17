@@ -1,0 +1,8720 @@
+{
+  "words": [
+    {
+      "id": "teacher",
+      "word": "teacher",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "선생님",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "teachers"
+      }
+    },
+    {
+      "id": "student",
+      "word": "student",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "학생",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "students"
+      }
+    },
+    {
+      "id": "scientist",
+      "word": "scientist",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "과학자",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "scientists"
+      }
+    },
+    {
+      "id": "doctor",
+      "word": "doctor",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "의사",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "doctors"
+      }
+    },
+    {
+      "id": "engineer",
+      "word": "engineer",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "엔지니어",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "engineers"
+      }
+    },
+    {
+      "id": "writer",
+      "word": "writer",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "작가",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "writers"
+      }
+    },
+    {
+      "id": "child",
+      "word": "child",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "아이",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "children"
+      }
+    },
+    {
+      "id": "farmer",
+      "word": "farmer",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "농부",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "farmers"
+      }
+    },
+    {
+      "id": "nurse",
+      "word": "nurse",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "간호사",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "nurses"
+      }
+    },
+    {
+      "id": "chef",
+      "word": "chef",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "요리사",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "chefs"
+      }
+    },
+    {
+      "id": "pilot",
+      "word": "pilot",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "조종사",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 3,
+      "frequency": 5,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "pilots"
+      }
+    },
+    {
+      "id": "artist",
+      "word": "artist",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "예술가",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "artists"
+      }
+    },
+    {
+      "id": "athlete",
+      "word": "athlete",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "운동선수",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "athletes"
+      }
+    },
+    {
+      "id": "programmer",
+      "word": "programmer",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "프로그래머",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 3,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "programmers"
+      }
+    },
+    {
+      "id": "researcher",
+      "word": "researcher",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "연구원",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 3,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "researchers"
+      }
+    },
+    {
+      "id": "parent",
+      "word": "parent",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "부모",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "parents"
+      }
+    },
+    {
+      "id": "friend",
+      "word": "friend",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "친구",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "friends"
+      }
+    },
+    {
+      "id": "baby",
+      "word": "baby",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "아기",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "babies"
+      }
+    },
+    {
+      "id": "musician",
+      "word": "musician",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "음악가",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "musicians"
+      }
+    },
+    {
+      "id": "driver",
+      "word": "driver",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "운전자",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "drivers"
+      }
+    },
+    {
+      "id": "judge",
+      "word": "judge",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "판사",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 3,
+      "frequency": 5,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "judges"
+      }
+    },
+    {
+      "id": "soldier",
+      "word": "soldier",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "군인",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "soldiers"
+      }
+    },
+    {
+      "id": "baker",
+      "word": "baker",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "제빵사",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "bakers"
+      }
+    },
+    {
+      "id": "gardener",
+      "word": "gardener",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "정원사",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 2,
+      "frequency": 5,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "gardeners"
+      }
+    },
+    {
+      "id": "librarian",
+      "word": "librarian",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "사서",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 3,
+      "frequency": 5,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "librarians"
+      }
+    },
+    {
+      "id": "manager",
+      "word": "manager",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "매니저",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "managers"
+      }
+    },
+    {
+      "id": "tourist",
+      "word": "tourist",
+      "pos": "noun",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "관광객",
+      "semanticTypes": [
+        "person",
+        "animate"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "tourists"
+      }
+    },
+    {
+      "id": "dog",
+      "word": "dog",
+      "pos": "noun",
+      "categories": [
+        "animal"
+      ],
+      "meaningKo": "개",
+      "semanticTypes": [
+        "animal",
+        "animate"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "dogs"
+      }
+    },
+    {
+      "id": "cat",
+      "word": "cat",
+      "pos": "noun",
+      "categories": [
+        "animal"
+      ],
+      "meaningKo": "고양이",
+      "semanticTypes": [
+        "animal",
+        "animate"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "cats"
+      }
+    },
+    {
+      "id": "bird",
+      "word": "bird",
+      "pos": "noun",
+      "categories": [
+        "animal"
+      ],
+      "meaningKo": "새",
+      "semanticTypes": [
+        "animal",
+        "animate"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "birds"
+      }
+    },
+    {
+      "id": "fish",
+      "word": "fish",
+      "pos": "noun",
+      "categories": [
+        "animal"
+      ],
+      "meaningKo": "물고기",
+      "semanticTypes": [
+        "animal",
+        "animate"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "plural": "fish"
+      }
+    },
+    {
+      "id": "horse",
+      "word": "horse",
+      "pos": "noun",
+      "categories": [
+        "animal"
+      ],
+      "meaningKo": "말",
+      "semanticTypes": [
+        "animal",
+        "animate"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "horses"
+      }
+    },
+    {
+      "id": "rabbit",
+      "word": "rabbit",
+      "pos": "noun",
+      "categories": [
+        "animal"
+      ],
+      "meaningKo": "토끼",
+      "semanticTypes": [
+        "animal",
+        "animate"
+      ],
+      "difficulty": 1,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "rabbits"
+      }
+    },
+    {
+      "id": "lion",
+      "word": "lion",
+      "pos": "noun",
+      "categories": [
+        "animal"
+      ],
+      "meaningKo": "사자",
+      "semanticTypes": [
+        "animal",
+        "animate"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "lions"
+      }
+    },
+    {
+      "id": "bear",
+      "word": "bear",
+      "pos": "noun",
+      "categories": [
+        "animal"
+      ],
+      "meaningKo": "곰",
+      "semanticTypes": [
+        "animal",
+        "animate"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "bears"
+      }
+    },
+    {
+      "id": "monkey",
+      "word": "monkey",
+      "pos": "noun",
+      "categories": [
+        "animal"
+      ],
+      "meaningKo": "원숭이",
+      "semanticTypes": [
+        "animal",
+        "animate"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "monkeys"
+      }
+    },
+    {
+      "id": "whale",
+      "word": "whale",
+      "pos": "noun",
+      "categories": [
+        "animal"
+      ],
+      "meaningKo": "고래",
+      "semanticTypes": [
+        "animal",
+        "animate"
+      ],
+      "difficulty": 3,
+      "frequency": 5,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "whales"
+      }
+    },
+    {
+      "id": "duck",
+      "word": "duck",
+      "pos": "noun",
+      "categories": [
+        "animal"
+      ],
+      "meaningKo": "오리",
+      "semanticTypes": [
+        "animal",
+        "animate"
+      ],
+      "difficulty": 1,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "ducks"
+      }
+    },
+    {
+      "id": "cow",
+      "word": "cow",
+      "pos": "noun",
+      "categories": [
+        "animal"
+      ],
+      "meaningKo": "소",
+      "semanticTypes": [
+        "animal",
+        "animate"
+      ],
+      "difficulty": 1,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "cows"
+      }
+    },
+    {
+      "id": "sheep",
+      "word": "sheep",
+      "pos": "noun",
+      "categories": [
+        "animal"
+      ],
+      "meaningKo": "양",
+      "semanticTypes": [
+        "animal",
+        "animate"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "plural": "sheep"
+      }
+    },
+    {
+      "id": "fox",
+      "word": "fox",
+      "pos": "noun",
+      "categories": [
+        "animal"
+      ],
+      "meaningKo": "여우",
+      "semanticTypes": [
+        "animal",
+        "animate"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "foxes"
+      }
+    },
+    {
+      "id": "wolf",
+      "word": "wolf",
+      "pos": "noun",
+      "categories": [
+        "animal"
+      ],
+      "meaningKo": "늑대",
+      "semanticTypes": [
+        "animal",
+        "animate"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "wolfs"
+      }
+    },
+    {
+      "id": "tiger",
+      "word": "tiger",
+      "pos": "noun",
+      "categories": [
+        "animal"
+      ],
+      "meaningKo": "호랑이",
+      "semanticTypes": [
+        "animal",
+        "animate"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "tigers"
+      }
+    },
+    {
+      "id": "frog",
+      "word": "frog",
+      "pos": "noun",
+      "categories": [
+        "animal"
+      ],
+      "meaningKo": "개구리",
+      "semanticTypes": [
+        "animal",
+        "animate"
+      ],
+      "difficulty": 1,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "frogs"
+      }
+    },
+    {
+      "id": "bee",
+      "word": "bee",
+      "pos": "noun",
+      "categories": [
+        "animal"
+      ],
+      "meaningKo": "벌",
+      "semanticTypes": [
+        "animal",
+        "animate"
+      ],
+      "difficulty": 1,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "bees"
+      }
+    },
+    {
+      "id": "ant",
+      "word": "ant",
+      "pos": "noun",
+      "categories": [
+        "animal"
+      ],
+      "meaningKo": "개미",
+      "semanticTypes": [
+        "animal",
+        "animate"
+      ],
+      "difficulty": 1,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "ants"
+      }
+    },
+    {
+      "id": "eagle",
+      "word": "eagle",
+      "pos": "noun",
+      "categories": [
+        "animal"
+      ],
+      "meaningKo": "독수리",
+      "semanticTypes": [
+        "animal",
+        "animate"
+      ],
+      "difficulty": 3,
+      "frequency": 5,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "eagles"
+      }
+    },
+    {
+      "id": "apple",
+      "word": "apple",
+      "pos": "noun",
+      "categories": [
+        "object",
+        "nature"
+      ],
+      "meaningKo": "사과",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "apples"
+      }
+    },
+    {
+      "id": "bread",
+      "word": "bread",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "빵",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "rice",
+      "word": "rice",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "쌀",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "soup",
+      "word": "soup",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "수프",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 1,
+      "frequency": 7,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "banana",
+      "word": "banana",
+      "pos": "noun",
+      "categories": [
+        "object",
+        "nature"
+      ],
+      "meaningKo": "바나나",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "bananas"
+      }
+    },
+    {
+      "id": "cheese",
+      "word": "cheese",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "치즈",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "egg",
+      "word": "egg",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "달걀",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "eggs"
+      }
+    },
+    {
+      "id": "milk",
+      "word": "milk",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "우유",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "cake",
+      "word": "cake",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "케이크",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "cakes"
+      }
+    },
+    {
+      "id": "pizza",
+      "word": "pizza",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "피자",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "pizzas"
+      }
+    },
+    {
+      "id": "salad",
+      "word": "salad",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "샐러드",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "salads"
+      }
+    },
+    {
+      "id": "orange",
+      "word": "orange",
+      "pos": "noun",
+      "categories": [
+        "object",
+        "nature"
+      ],
+      "meaningKo": "오렌지",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "oranges"
+      }
+    },
+    {
+      "id": "carrot",
+      "word": "carrot",
+      "pos": "noun",
+      "categories": [
+        "object",
+        "nature"
+      ],
+      "meaningKo": "당근",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 1,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "carrots"
+      }
+    },
+    {
+      "id": "meat",
+      "word": "meat",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "고기",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "water",
+      "word": "water",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "물",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "coffee",
+      "word": "coffee",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "커피",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "tea",
+      "word": "tea",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "차",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "sandwich",
+      "word": "sandwich",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "샌드위치",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "sandwiches"
+      }
+    },
+    {
+      "id": "cookie",
+      "word": "cookie",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "쿠키",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "cookies"
+      }
+    },
+    {
+      "id": "noodle",
+      "word": "noodle",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "국수",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "noodles"
+      }
+    },
+    {
+      "id": "grape",
+      "word": "grape",
+      "pos": "noun",
+      "categories": [
+        "object",
+        "nature"
+      ],
+      "meaningKo": "포도",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 1,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "grapes"
+      }
+    },
+    {
+      "id": "tomato",
+      "word": "tomato",
+      "pos": "noun",
+      "categories": [
+        "object",
+        "nature"
+      ],
+      "meaningKo": "토마토",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 1,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "tomatos"
+      }
+    },
+    {
+      "id": "butter",
+      "word": "butter",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "버터",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "honey",
+      "word": "honey",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "꿀",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "juice",
+      "word": "juice",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "주스",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "yogurt",
+      "word": "yogurt",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "요거트",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "steak",
+      "word": "steak",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "스테이크",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "steaks"
+      }
+    },
+    {
+      "id": "burger",
+      "word": "burger",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "버거",
+      "semanticTypes": [
+        "food"
+      ],
+      "difficulty": 1,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "burgers"
+      }
+    },
+    {
+      "id": "book",
+      "word": "book",
+      "pos": "noun",
+      "categories": [
+        "education",
+        "object"
+      ],
+      "meaningKo": "책",
+      "semanticTypes": [
+        "readable",
+        "writable",
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 10,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "books"
+      }
+    },
+    {
+      "id": "newspaper",
+      "word": "newspaper",
+      "pos": "noun",
+      "categories": [
+        "education",
+        "object"
+      ],
+      "meaningKo": "신문",
+      "semanticTypes": [
+        "readable",
+        "writable",
+        "artifact"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "newspapers"
+      }
+    },
+    {
+      "id": "magazine",
+      "word": "magazine",
+      "pos": "noun",
+      "categories": [
+        "education",
+        "object"
+      ],
+      "meaningKo": "잡지",
+      "semanticTypes": [
+        "readable",
+        "writable",
+        "artifact"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "magazines"
+      }
+    },
+    {
+      "id": "letter",
+      "word": "letter",
+      "pos": "noun",
+      "categories": [
+        "education",
+        "object"
+      ],
+      "meaningKo": "편지",
+      "semanticTypes": [
+        "readable",
+        "writable",
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "letters"
+      }
+    },
+    {
+      "id": "story",
+      "word": "story",
+      "pos": "noun",
+      "categories": [
+        "education",
+        "object"
+      ],
+      "meaningKo": "이야기",
+      "semanticTypes": [
+        "readable",
+        "writable",
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "stories"
+      }
+    },
+    {
+      "id": "poem",
+      "word": "poem",
+      "pos": "noun",
+      "categories": [
+        "education",
+        "object"
+      ],
+      "meaningKo": "시",
+      "semanticTypes": [
+        "readable",
+        "writable",
+        "artifact"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "poems"
+      }
+    },
+    {
+      "id": "report",
+      "word": "report",
+      "pos": "noun",
+      "categories": [
+        "education",
+        "object"
+      ],
+      "meaningKo": "보고서",
+      "semanticTypes": [
+        "readable",
+        "writable",
+        "artifact"
+      ],
+      "difficulty": 3,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "reports"
+      }
+    },
+    {
+      "id": "essay",
+      "word": "essay",
+      "pos": "noun",
+      "categories": [
+        "education",
+        "object"
+      ],
+      "meaningKo": "에세이",
+      "semanticTypes": [
+        "readable",
+        "writable",
+        "artifact"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "essays"
+      }
+    },
+    {
+      "id": "document",
+      "word": "document",
+      "pos": "noun",
+      "categories": [
+        "education",
+        "object"
+      ],
+      "meaningKo": "문서",
+      "semanticTypes": [
+        "readable",
+        "writable",
+        "artifact"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "documents"
+      }
+    },
+    {
+      "id": "manual",
+      "word": "manual",
+      "pos": "noun",
+      "categories": [
+        "education",
+        "object"
+      ],
+      "meaningKo": "설명서",
+      "semanticTypes": [
+        "readable",
+        "writable",
+        "artifact"
+      ],
+      "difficulty": 3,
+      "frequency": 5,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "manuals"
+      }
+    },
+    {
+      "id": "novel",
+      "word": "novel",
+      "pos": "noun",
+      "categories": [
+        "education",
+        "object"
+      ],
+      "meaningKo": "소설",
+      "semanticTypes": [
+        "readable",
+        "writable",
+        "artifact"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "novels"
+      }
+    },
+    {
+      "id": "article",
+      "word": "article",
+      "pos": "noun",
+      "categories": [
+        "education",
+        "object"
+      ],
+      "meaningKo": "기사",
+      "semanticTypes": [
+        "readable",
+        "writable",
+        "artifact"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "articles"
+      }
+    },
+    {
+      "id": "diary",
+      "word": "diary",
+      "pos": "noun",
+      "categories": [
+        "education",
+        "object"
+      ],
+      "meaningKo": "일기",
+      "semanticTypes": [
+        "readable",
+        "writable",
+        "artifact"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "diaries"
+      }
+    },
+    {
+      "id": "message",
+      "word": "message",
+      "pos": "noun",
+      "categories": [
+        "education",
+        "object"
+      ],
+      "meaningKo": "메시지",
+      "semanticTypes": [
+        "readable",
+        "writable",
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "messages"
+      }
+    },
+    {
+      "id": "note",
+      "word": "note",
+      "pos": "noun",
+      "categories": [
+        "education",
+        "object"
+      ],
+      "meaningKo": "메모",
+      "semanticTypes": [
+        "readable",
+        "writable",
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "notes"
+      }
+    },
+    {
+      "id": "page",
+      "word": "page",
+      "pos": "noun",
+      "categories": [
+        "education",
+        "object"
+      ],
+      "meaningKo": "페이지",
+      "semanticTypes": [
+        "readable",
+        "writable",
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "pages"
+      }
+    },
+    {
+      "id": "school",
+      "word": "school",
+      "pos": "noun",
+      "categories": [
+        "education",
+        "place"
+      ],
+      "meaningKo": "학교",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "schools"
+      }
+    },
+    {
+      "id": "library",
+      "word": "library",
+      "pos": "noun",
+      "categories": [
+        "education",
+        "place"
+      ],
+      "meaningKo": "도서관",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "libraries"
+      }
+    },
+    {
+      "id": "lesson",
+      "word": "lesson",
+      "pos": "noun",
+      "categories": [
+        "education"
+      ],
+      "meaningKo": "수업",
+      "semanticTypes": [
+        "topic"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "lessons"
+      }
+    },
+    {
+      "id": "exam",
+      "word": "exam",
+      "pos": "noun",
+      "categories": [
+        "education"
+      ],
+      "meaningKo": "시험",
+      "semanticTypes": [
+        "topic"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "exams"
+      }
+    },
+    {
+      "id": "knowledge",
+      "word": "knowledge",
+      "pos": "noun",
+      "categories": [
+        "education"
+      ],
+      "meaningKo": "지식",
+      "semanticTypes": [
+        "topic"
+      ],
+      "difficulty": 3,
+      "frequency": 6,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "research",
+      "word": "research",
+      "pos": "noun",
+      "categories": [
+        "education",
+        "technology"
+      ],
+      "meaningKo": "연구",
+      "semanticTypes": [
+        "topic"
+      ],
+      "difficulty": 3,
+      "frequency": 6,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "homework",
+      "word": "homework",
+      "pos": "noun",
+      "categories": [
+        "education"
+      ],
+      "meaningKo": "숙제",
+      "semanticTypes": [
+        "topic"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "class",
+      "word": "class",
+      "pos": "noun",
+      "categories": [
+        "education"
+      ],
+      "meaningKo": "수업",
+      "semanticTypes": [
+        "topic"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "classes"
+      }
+    },
+    {
+      "id": "university",
+      "word": "university",
+      "pos": "noun",
+      "categories": [
+        "education",
+        "place"
+      ],
+      "meaningKo": "대학교",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "universities"
+      }
+    },
+    {
+      "id": "classroom",
+      "word": "classroom",
+      "pos": "noun",
+      "categories": [
+        "education",
+        "place"
+      ],
+      "meaningKo": "교실",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "classrooms"
+      }
+    },
+    {
+      "id": "lecture",
+      "word": "lecture",
+      "pos": "noun",
+      "categories": [
+        "education"
+      ],
+      "meaningKo": "강의",
+      "semanticTypes": [
+        "topic"
+      ],
+      "difficulty": 3,
+      "frequency": 5,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "lectures"
+      }
+    },
+    {
+      "id": "science",
+      "word": "science",
+      "pos": "noun",
+      "categories": [
+        "education",
+        "technology"
+      ],
+      "meaningKo": "과학",
+      "semanticTypes": [
+        "topic"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "math",
+      "word": "math",
+      "pos": "noun",
+      "categories": [
+        "education"
+      ],
+      "meaningKo": "수학",
+      "semanticTypes": [
+        "topic"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "history",
+      "word": "history",
+      "pos": "noun",
+      "categories": [
+        "education"
+      ],
+      "meaningKo": "역사",
+      "semanticTypes": [
+        "topic"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "computer",
+      "word": "computer",
+      "pos": "noun",
+      "categories": [
+        "technology",
+        "object"
+      ],
+      "meaningKo": "컴퓨터",
+      "semanticTypes": [
+        "artifact",
+        "buildable"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "computers"
+      }
+    },
+    {
+      "id": "robot",
+      "word": "robot",
+      "pos": "noun",
+      "categories": [
+        "technology",
+        "object"
+      ],
+      "meaningKo": "로봇",
+      "semanticTypes": [
+        "artifact",
+        "buildable"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "robots"
+      }
+    },
+    {
+      "id": "phone",
+      "word": "phone",
+      "pos": "noun",
+      "categories": [
+        "technology",
+        "object"
+      ],
+      "meaningKo": "전화",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "phones"
+      }
+    },
+    {
+      "id": "laptop",
+      "word": "laptop",
+      "pos": "noun",
+      "categories": [
+        "technology",
+        "object"
+      ],
+      "meaningKo": "노트북",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "laptops"
+      }
+    },
+    {
+      "id": "server",
+      "word": "server",
+      "pos": "noun",
+      "categories": [
+        "technology",
+        "object"
+      ],
+      "meaningKo": "서버",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 3,
+      "frequency": 5,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "servers"
+      }
+    },
+    {
+      "id": "app",
+      "word": "app",
+      "pos": "noun",
+      "categories": [
+        "technology"
+      ],
+      "meaningKo": "앱",
+      "semanticTypes": [
+        "artifact",
+        "buildable"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "apps"
+      }
+    },
+    {
+      "id": "website",
+      "word": "website",
+      "pos": "noun",
+      "categories": [
+        "technology"
+      ],
+      "meaningKo": "웹사이트",
+      "semanticTypes": [
+        "artifact",
+        "buildable"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "websites"
+      }
+    },
+    {
+      "id": "bridge",
+      "word": "bridge",
+      "pos": "noun",
+      "categories": [
+        "object",
+        "place"
+      ],
+      "meaningKo": "다리",
+      "semanticTypes": [
+        "artifact",
+        "buildable"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "bridges"
+      }
+    },
+    {
+      "id": "house",
+      "word": "house",
+      "pos": "noun",
+      "categories": [
+        "object",
+        "place"
+      ],
+      "meaningKo": "집",
+      "semanticTypes": [
+        "artifact",
+        "buildable",
+        "place"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "houses"
+      }
+    },
+    {
+      "id": "car",
+      "word": "car",
+      "pos": "noun",
+      "categories": [
+        "object",
+        "technology"
+      ],
+      "meaningKo": "자동차",
+      "semanticTypes": [
+        "artifact",
+        "buildable"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "cars"
+      }
+    },
+    {
+      "id": "bike",
+      "word": "bike",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "자전거",
+      "semanticTypes": [
+        "artifact",
+        "buildable"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "bikes"
+      }
+    },
+    {
+      "id": "machine",
+      "word": "machine",
+      "pos": "noun",
+      "categories": [
+        "technology",
+        "object"
+      ],
+      "meaningKo": "기계",
+      "semanticTypes": [
+        "artifact",
+        "buildable"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "machines"
+      }
+    },
+    {
+      "id": "tool",
+      "word": "tool",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "도구",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "tools"
+      }
+    },
+    {
+      "id": "device",
+      "word": "device",
+      "pos": "noun",
+      "categories": [
+        "technology",
+        "object"
+      ],
+      "meaningKo": "장치",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 3,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "devices"
+      }
+    },
+    {
+      "id": "boat",
+      "word": "boat",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "배",
+      "semanticTypes": [
+        "artifact",
+        "buildable"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "boats"
+      }
+    },
+    {
+      "id": "plane",
+      "word": "plane",
+      "pos": "noun",
+      "categories": [
+        "object",
+        "technology"
+      ],
+      "meaningKo": "비행기",
+      "semanticTypes": [
+        "artifact",
+        "buildable"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "planes"
+      }
+    },
+    {
+      "id": "tower",
+      "word": "tower",
+      "pos": "noun",
+      "categories": [
+        "object",
+        "place"
+      ],
+      "meaningKo": "탑",
+      "semanticTypes": [
+        "artifact",
+        "buildable"
+      ],
+      "difficulty": 3,
+      "frequency": 5,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "towers"
+      }
+    },
+    {
+      "id": "road",
+      "word": "road",
+      "pos": "noun",
+      "categories": [
+        "place"
+      ],
+      "meaningKo": "도로",
+      "semanticTypes": [
+        "artifact",
+        "buildable",
+        "place"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "roads"
+      }
+    },
+    {
+      "id": "data",
+      "word": "data",
+      "pos": "noun",
+      "categories": [
+        "technology"
+      ],
+      "meaningKo": "데이터",
+      "semanticTypes": [
+        "topic",
+        "artifact"
+      ],
+      "difficulty": 2,
+      "frequency": 8,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "code",
+      "word": "code",
+      "pos": "noun",
+      "categories": [
+        "technology"
+      ],
+      "meaningKo": "코드",
+      "semanticTypes": [
+        "topic",
+        "artifact"
+      ],
+      "difficulty": 2,
+      "frequency": 8,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "algorithm",
+      "word": "algorithm",
+      "pos": "noun",
+      "categories": [
+        "technology"
+      ],
+      "meaningKo": "알고리즘",
+      "semanticTypes": [
+        "topic",
+        "artifact"
+      ],
+      "difficulty": 4,
+      "frequency": 5,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "algorithms"
+      }
+    },
+    {
+      "id": "network",
+      "word": "network",
+      "pos": "noun",
+      "categories": [
+        "technology"
+      ],
+      "meaningKo": "네트워크",
+      "semanticTypes": [
+        "topic",
+        "artifact"
+      ],
+      "difficulty": 3,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "networks"
+      }
+    },
+    {
+      "id": "model",
+      "word": "model",
+      "pos": "noun",
+      "categories": [
+        "technology"
+      ],
+      "meaningKo": "모델",
+      "semanticTypes": [
+        "topic",
+        "artifact"
+      ],
+      "difficulty": 3,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "models"
+      }
+    },
+    {
+      "id": "database",
+      "word": "database",
+      "pos": "noun",
+      "categories": [
+        "technology"
+      ],
+      "meaningKo": "데이터베이스",
+      "semanticTypes": [
+        "topic",
+        "artifact"
+      ],
+      "difficulty": 3,
+      "frequency": 5,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "databases"
+      }
+    },
+    {
+      "id": "software",
+      "word": "software",
+      "pos": "noun",
+      "categories": [
+        "technology"
+      ],
+      "meaningKo": "소프트웨어",
+      "semanticTypes": [
+        "topic",
+        "artifact"
+      ],
+      "difficulty": 3,
+      "frequency": 6,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "hardware",
+      "word": "hardware",
+      "pos": "noun",
+      "categories": [
+        "technology"
+      ],
+      "meaningKo": "하드웨어",
+      "semanticTypes": [
+        "topic",
+        "artifact"
+      ],
+      "difficulty": 3,
+      "frequency": 5,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "system",
+      "word": "system",
+      "pos": "noun",
+      "categories": [
+        "technology"
+      ],
+      "meaningKo": "시스템",
+      "semanticTypes": [
+        "topic",
+        "artifact"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "systems"
+      }
+    },
+    {
+      "id": "program",
+      "word": "program",
+      "pos": "noun",
+      "categories": [
+        "technology"
+      ],
+      "meaningKo": "프로그램",
+      "semanticTypes": [
+        "topic",
+        "artifact"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "programs"
+      }
+    },
+    {
+      "id": "file",
+      "word": "file",
+      "pos": "noun",
+      "categories": [
+        "technology"
+      ],
+      "meaningKo": "파일",
+      "semanticTypes": [
+        "topic",
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "files"
+      }
+    },
+    {
+      "id": "signal",
+      "word": "signal",
+      "pos": "noun",
+      "categories": [
+        "technology"
+      ],
+      "meaningKo": "신호",
+      "semanticTypes": [
+        "topic",
+        "artifact"
+      ],
+      "difficulty": 3,
+      "frequency": 5,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "signals"
+      }
+    },
+    {
+      "id": "city",
+      "word": "city",
+      "pos": "noun",
+      "categories": [
+        "place"
+      ],
+      "meaningKo": "도시",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "cities"
+      }
+    },
+    {
+      "id": "hospital",
+      "word": "hospital",
+      "pos": "noun",
+      "categories": [
+        "place"
+      ],
+      "meaningKo": "병원",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "hospitals"
+      }
+    },
+    {
+      "id": "lab",
+      "word": "lab",
+      "pos": "noun",
+      "categories": [
+        "place",
+        "technology"
+      ],
+      "meaningKo": "실험실",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "labs"
+      }
+    },
+    {
+      "id": "park",
+      "word": "park",
+      "pos": "noun",
+      "categories": [
+        "place",
+        "nature"
+      ],
+      "meaningKo": "공원",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "parks"
+      }
+    },
+    {
+      "id": "office",
+      "word": "office",
+      "pos": "noun",
+      "categories": [
+        "place"
+      ],
+      "meaningKo": "사무실",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "offices"
+      }
+    },
+    {
+      "id": "kitchen",
+      "word": "kitchen",
+      "pos": "noun",
+      "categories": [
+        "place"
+      ],
+      "meaningKo": "부엌",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "kitchens"
+      }
+    },
+    {
+      "id": "garden",
+      "word": "garden",
+      "pos": "noun",
+      "categories": [
+        "place",
+        "nature"
+      ],
+      "meaningKo": "정원",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "gardens"
+      }
+    },
+    {
+      "id": "beach",
+      "word": "beach",
+      "pos": "noun",
+      "categories": [
+        "place",
+        "nature"
+      ],
+      "meaningKo": "해변",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "beaches"
+      }
+    },
+    {
+      "id": "museum",
+      "word": "museum",
+      "pos": "noun",
+      "categories": [
+        "place",
+        "education"
+      ],
+      "meaningKo": "박물관",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "museums"
+      }
+    },
+    {
+      "id": "market",
+      "word": "market",
+      "pos": "noun",
+      "categories": [
+        "place"
+      ],
+      "meaningKo": "시장",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "markets"
+      }
+    },
+    {
+      "id": "station",
+      "word": "station",
+      "pos": "noun",
+      "categories": [
+        "place"
+      ],
+      "meaningKo": "역",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "stations"
+      }
+    },
+    {
+      "id": "airport",
+      "word": "airport",
+      "pos": "noun",
+      "categories": [
+        "place"
+      ],
+      "meaningKo": "공항",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "airports"
+      }
+    },
+    {
+      "id": "forest",
+      "word": "forest",
+      "pos": "noun",
+      "categories": [
+        "nature",
+        "place"
+      ],
+      "meaningKo": "숲",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "forests"
+      }
+    },
+    {
+      "id": "river",
+      "word": "river",
+      "pos": "noun",
+      "categories": [
+        "nature",
+        "place"
+      ],
+      "meaningKo": "강",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "rivers"
+      }
+    },
+    {
+      "id": "ocean",
+      "word": "ocean",
+      "pos": "noun",
+      "categories": [
+        "nature",
+        "place"
+      ],
+      "meaningKo": "바다",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "oceans"
+      }
+    },
+    {
+      "id": "mountain",
+      "word": "mountain",
+      "pos": "noun",
+      "categories": [
+        "nature",
+        "place"
+      ],
+      "meaningKo": "산",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "mountains"
+      }
+    },
+    {
+      "id": "lake",
+      "word": "lake",
+      "pos": "noun",
+      "categories": [
+        "nature",
+        "place"
+      ],
+      "meaningKo": "호수",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "lakes"
+      }
+    },
+    {
+      "id": "island",
+      "word": "island",
+      "pos": "noun",
+      "categories": [
+        "nature",
+        "place"
+      ],
+      "meaningKo": "섬",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "islands"
+      }
+    },
+    {
+      "id": "field",
+      "word": "field",
+      "pos": "noun",
+      "categories": [
+        "nature",
+        "place"
+      ],
+      "meaningKo": "들판",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "fields"
+      }
+    },
+    {
+      "id": "zoo",
+      "word": "zoo",
+      "pos": "noun",
+      "categories": [
+        "place",
+        "animal"
+      ],
+      "meaningKo": "동물원",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "zoos"
+      }
+    },
+    {
+      "id": "farm",
+      "word": "farm",
+      "pos": "noun",
+      "categories": [
+        "place",
+        "nature"
+      ],
+      "meaningKo": "농장",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "farms"
+      }
+    },
+    {
+      "id": "restaurant",
+      "word": "restaurant",
+      "pos": "noun",
+      "categories": [
+        "place"
+      ],
+      "meaningKo": "식당",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "restaurants"
+      }
+    },
+    {
+      "id": "cafe",
+      "word": "cafe",
+      "pos": "noun",
+      "categories": [
+        "place"
+      ],
+      "meaningKo": "카페",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "cafes"
+      }
+    },
+    {
+      "id": "stadium",
+      "word": "stadium",
+      "pos": "noun",
+      "categories": [
+        "place"
+      ],
+      "meaningKo": "경기장",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "stadiums"
+      }
+    },
+    {
+      "id": "pool",
+      "word": "pool",
+      "pos": "noun",
+      "categories": [
+        "place"
+      ],
+      "meaningKo": "수영장",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "pools"
+      }
+    },
+    {
+      "id": "cave",
+      "word": "cave",
+      "pos": "noun",
+      "categories": [
+        "nature",
+        "place"
+      ],
+      "meaningKo": "동굴",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 3,
+      "frequency": 5,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "caves"
+      }
+    },
+    {
+      "id": "desert",
+      "word": "desert",
+      "pos": "noun",
+      "categories": [
+        "nature",
+        "place"
+      ],
+      "meaningKo": "사막",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 3,
+      "frequency": 5,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "deserts"
+      }
+    },
+    {
+      "id": "village",
+      "word": "village",
+      "pos": "noun",
+      "categories": [
+        "place"
+      ],
+      "meaningKo": "마을",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "villages"
+      }
+    },
+    {
+      "id": "factory",
+      "word": "factory",
+      "pos": "noun",
+      "categories": [
+        "place",
+        "technology"
+      ],
+      "meaningKo": "공장",
+      "semanticTypes": [
+        "place"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "factories"
+      }
+    },
+    {
+      "id": "tree",
+      "word": "tree",
+      "pos": "noun",
+      "categories": [
+        "nature",
+        "object"
+      ],
+      "meaningKo": "나무",
+      "semanticTypes": [
+        "nature_thing"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "trees"
+      }
+    },
+    {
+      "id": "flower",
+      "word": "flower",
+      "pos": "noun",
+      "categories": [
+        "nature",
+        "object"
+      ],
+      "meaningKo": "꽃",
+      "semanticTypes": [
+        "nature_thing"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "flowers"
+      }
+    },
+    {
+      "id": "sun",
+      "word": "sun",
+      "pos": "noun",
+      "categories": [
+        "nature"
+      ],
+      "meaningKo": "태양",
+      "semanticTypes": [
+        "nature_thing"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "suns"
+      }
+    },
+    {
+      "id": "moon",
+      "word": "moon",
+      "pos": "noun",
+      "categories": [
+        "nature"
+      ],
+      "meaningKo": "달",
+      "semanticTypes": [
+        "nature_thing"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "moons"
+      }
+    },
+    {
+      "id": "star",
+      "word": "star",
+      "pos": "noun",
+      "categories": [
+        "nature"
+      ],
+      "meaningKo": "별",
+      "semanticTypes": [
+        "nature_thing"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "stars"
+      }
+    },
+    {
+      "id": "cloud",
+      "word": "cloud",
+      "pos": "noun",
+      "categories": [
+        "nature"
+      ],
+      "meaningKo": "구름",
+      "semanticTypes": [
+        "nature_thing"
+      ],
+      "difficulty": 1,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "clouds"
+      }
+    },
+    {
+      "id": "rock",
+      "word": "rock",
+      "pos": "noun",
+      "categories": [
+        "nature",
+        "object"
+      ],
+      "meaningKo": "바위",
+      "semanticTypes": [
+        "nature_thing"
+      ],
+      "difficulty": 1,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "rocks"
+      }
+    },
+    {
+      "id": "leaf",
+      "word": "leaf",
+      "pos": "noun",
+      "categories": [
+        "nature",
+        "object"
+      ],
+      "meaningKo": "잎",
+      "semanticTypes": [
+        "nature_thing"
+      ],
+      "difficulty": 1,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "leaves"
+      }
+    },
+    {
+      "id": "seed",
+      "word": "seed",
+      "pos": "noun",
+      "categories": [
+        "nature",
+        "object"
+      ],
+      "meaningKo": "씨앗",
+      "semanticTypes": [
+        "nature_thing"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "seeds"
+      }
+    },
+    {
+      "id": "grass",
+      "word": "grass",
+      "pos": "noun",
+      "categories": [
+        "nature"
+      ],
+      "meaningKo": "풀",
+      "semanticTypes": [
+        "nature_thing"
+      ],
+      "difficulty": 1,
+      "frequency": 7,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "rain",
+      "word": "rain",
+      "pos": "noun",
+      "categories": [
+        "nature"
+      ],
+      "meaningKo": "비",
+      "semanticTypes": [
+        "nature_thing"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "snow",
+      "word": "snow",
+      "pos": "noun",
+      "categories": [
+        "nature"
+      ],
+      "meaningKo": "눈",
+      "semanticTypes": [
+        "nature_thing"
+      ],
+      "difficulty": 1,
+      "frequency": 7,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "wind",
+      "word": "wind",
+      "pos": "noun",
+      "categories": [
+        "nature"
+      ],
+      "meaningKo": "바람",
+      "semanticTypes": [
+        "nature_thing"
+      ],
+      "difficulty": 1,
+      "frequency": 7,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "soil",
+      "word": "soil",
+      "pos": "noun",
+      "categories": [
+        "nature"
+      ],
+      "meaningKo": "흙",
+      "semanticTypes": [
+        "nature_thing"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "mass",
+      "number": "singular"
+    },
+    {
+      "id": "bush",
+      "word": "bush",
+      "pos": "noun",
+      "categories": [
+        "nature",
+        "object"
+      ],
+      "meaningKo": "덤불",
+      "semanticTypes": [
+        "nature_thing"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "bushes"
+      }
+    },
+    {
+      "id": "table",
+      "word": "table",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "탁자",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "tables"
+      }
+    },
+    {
+      "id": "chair",
+      "word": "chair",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "의자",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "chairs"
+      }
+    },
+    {
+      "id": "pen",
+      "word": "pen",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "펜",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "pens"
+      }
+    },
+    {
+      "id": "pencil",
+      "word": "pencil",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "연필",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "pencils"
+      }
+    },
+    {
+      "id": "bag",
+      "word": "bag",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "가방",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "bags"
+      }
+    },
+    {
+      "id": "door",
+      "word": "door",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "문",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "doors"
+      }
+    },
+    {
+      "id": "window",
+      "word": "window",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "창문",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "windows"
+      }
+    },
+    {
+      "id": "ball",
+      "word": "ball",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "공",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "balls"
+      }
+    },
+    {
+      "id": "box",
+      "word": "box",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "상자",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "boxes"
+      }
+    },
+    {
+      "id": "cup",
+      "word": "cup",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "컵",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "cups"
+      }
+    },
+    {
+      "id": "bottle",
+      "word": "bottle",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "병",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "bottles"
+      }
+    },
+    {
+      "id": "key",
+      "word": "key",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "열쇠",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "keys"
+      }
+    },
+    {
+      "id": "map",
+      "word": "map",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "지도",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "maps"
+      }
+    },
+    {
+      "id": "clock",
+      "word": "clock",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "시계",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "clocks"
+      }
+    },
+    {
+      "id": "lamp",
+      "word": "lamp",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "램프",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "lamps"
+      }
+    },
+    {
+      "id": "mirror",
+      "word": "mirror",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "거울",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "mirrors"
+      }
+    },
+    {
+      "id": "camera",
+      "word": "camera",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "카메라",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "cameras"
+      }
+    },
+    {
+      "id": "ticket",
+      "word": "ticket",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "표",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "tickets"
+      }
+    },
+    {
+      "id": "hat",
+      "word": "hat",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "모자",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "hats"
+      }
+    },
+    {
+      "id": "shoe",
+      "word": "shoe",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "신발",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "shoes"
+      }
+    },
+    {
+      "id": "shirt",
+      "word": "shirt",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "셔츠",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 7,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "shirts"
+      }
+    },
+    {
+      "id": "coat",
+      "word": "coat",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "코트",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "coats"
+      }
+    },
+    {
+      "id": "wallet",
+      "word": "wallet",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "지갑",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "wallets"
+      }
+    },
+    {
+      "id": "umbrella",
+      "word": "umbrella",
+      "pos": "noun",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "우산",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "singular",
+      "forms": {
+        "plural": "umbrellas"
+      }
+    },
+    {
+      "id": "read",
+      "word": "read",
+      "pos": "verb",
+      "categories": [
+        "action",
+        "education"
+      ],
+      "meaningKo": "읽다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 1,
+      "frequency": 10,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "reads"
+      },
+      "frame": {
+        "subjects": [
+          "person",
+          "animate"
+        ],
+        "objects": [
+          "readable"
+        ],
+        "locations": null
+      }
+    },
+    {
+      "id": "teach",
+      "word": "teach",
+      "pos": "verb",
+      "categories": [
+        "action",
+        "education"
+      ],
+      "meaningKo": "가르치다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 2,
+      "frequency": 8,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "teaches"
+      },
+      "frame": {
+        "subjects": [
+          "person"
+        ],
+        "objects": [
+          "person",
+          "topic"
+        ],
+        "locations": null
+      }
+    },
+    {
+      "id": "write",
+      "word": "write",
+      "pos": "verb",
+      "categories": [
+        "action",
+        "education"
+      ],
+      "meaningKo": "쓰다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "writes"
+      },
+      "frame": {
+        "subjects": [
+          "person",
+          "animate"
+        ],
+        "objects": [
+          "writable"
+        ],
+        "locations": null
+      }
+    },
+    {
+      "id": "learn",
+      "word": "learn",
+      "pos": "verb",
+      "categories": [
+        "action",
+        "education"
+      ],
+      "meaningKo": "배우다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "learns"
+      },
+      "frame": {
+        "subjects": [
+          "person"
+        ],
+        "objects": [
+          "topic"
+        ],
+        "locations": null
+      }
+    },
+    {
+      "id": "build",
+      "word": "build",
+      "pos": "verb",
+      "categories": [
+        "action",
+        "technology"
+      ],
+      "meaningKo": "만들다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 2,
+      "frequency": 8,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "builds"
+      },
+      "frame": {
+        "subjects": [
+          "person"
+        ],
+        "objects": [
+          "buildable"
+        ],
+        "locations": null
+      }
+    },
+    {
+      "id": "run",
+      "word": "run",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "달리다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "runs"
+      },
+      "frame": {
+        "subjects": [
+          "person",
+          "animate"
+        ],
+        "objects": null,
+        "locations": [
+          "place"
+        ]
+      }
+    },
+    {
+      "id": "eat",
+      "word": "eat",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "먹다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "eats"
+      },
+      "frame": {
+        "subjects": [
+          "person",
+          "animate"
+        ],
+        "objects": [
+          "food"
+        ],
+        "locations": null
+      }
+    },
+    {
+      "id": "study",
+      "word": "study",
+      "pos": "verb",
+      "categories": [
+        "action",
+        "education"
+      ],
+      "meaningKo": "공부하다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "studies"
+      },
+      "frame": {
+        "subjects": [
+          "person"
+        ],
+        "objects": [
+          "topic"
+        ],
+        "locations": [
+          "place"
+        ]
+      }
+    },
+    {
+      "id": "code_v",
+      "word": "code",
+      "pos": "verb",
+      "categories": [
+        "action",
+        "technology"
+      ],
+      "meaningKo": "코딩하다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "codes"
+      },
+      "frame": {
+        "subjects": [
+          "person"
+        ],
+        "objects": [
+          "topic",
+          "artifact"
+        ],
+        "locations": null
+      }
+    },
+    {
+      "id": "grow",
+      "word": "grow",
+      "pos": "verb",
+      "categories": [
+        "action",
+        "nature"
+      ],
+      "meaningKo": "자라다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "grows"
+      },
+      "frame": {
+        "subjects": [
+          "nature_thing",
+          "animal"
+        ],
+        "objects": null,
+        "locations": [
+          "place"
+        ]
+      }
+    },
+    {
+      "id": "swim",
+      "word": "swim",
+      "pos": "verb",
+      "categories": [
+        "action",
+        "nature"
+      ],
+      "meaningKo": "수영하다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "swims"
+      },
+      "frame": {
+        "subjects": [
+          "person",
+          "animal"
+        ],
+        "objects": null,
+        "locations": [
+          "place"
+        ]
+      }
+    },
+    {
+      "id": "heal",
+      "word": "heal",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "치료하다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 3,
+      "frequency": 5,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "heals"
+      },
+      "frame": {
+        "subjects": [
+          "person"
+        ],
+        "objects": [
+          "person",
+          "animal"
+        ],
+        "locations": null
+      }
+    },
+    {
+      "id": "drink",
+      "word": "drink",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "마시다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "drinks"
+      },
+      "frame": {
+        "subjects": [
+          "person",
+          "animate"
+        ],
+        "objects": [
+          "food"
+        ],
+        "locations": null
+      }
+    },
+    {
+      "id": "cook",
+      "word": "cook",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "요리하다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "cooks"
+      },
+      "frame": {
+        "subjects": [
+          "person"
+        ],
+        "objects": [
+          "food"
+        ],
+        "locations": null
+      }
+    },
+    {
+      "id": "draw",
+      "word": "draw",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "그리다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "draws"
+      },
+      "frame": {
+        "subjects": [
+          "person"
+        ],
+        "objects": [
+          "artifact"
+        ],
+        "locations": null
+      }
+    },
+    {
+      "id": "play",
+      "word": "play",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "놀다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "plays"
+      },
+      "frame": {
+        "subjects": [
+          "person",
+          "animal"
+        ],
+        "objects": [
+          "artifact"
+        ],
+        "locations": [
+          "place"
+        ]
+      }
+    },
+    {
+      "id": "visit",
+      "word": "visit",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "방문하다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "visits"
+      },
+      "frame": {
+        "subjects": [
+          "person"
+        ],
+        "objects": null,
+        "locations": [
+          "place"
+        ]
+      }
+    },
+    {
+      "id": "open",
+      "word": "open",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "열다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "opens"
+      },
+      "frame": {
+        "subjects": [
+          "person"
+        ],
+        "objects": [
+          "artifact"
+        ],
+        "locations": null
+      }
+    },
+    {
+      "id": "carry",
+      "word": "carry",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "나르다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "carries"
+      },
+      "frame": {
+        "subjects": [
+          "person"
+        ],
+        "objects": [
+          "artifact",
+          "food"
+        ],
+        "locations": null
+      }
+    },
+    {
+      "id": "catch",
+      "word": "catch",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "잡다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "catches"
+      },
+      "frame": {
+        "subjects": [
+          "person",
+          "animal"
+        ],
+        "objects": [
+          "animal",
+          "artifact"
+        ],
+        "locations": null
+      }
+    },
+    {
+      "id": "fly",
+      "word": "fly",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "날다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "flies"
+      },
+      "frame": {
+        "subjects": [
+          "animal",
+          "person"
+        ],
+        "objects": null,
+        "locations": [
+          "place"
+        ]
+      }
+    },
+    {
+      "id": "climb",
+      "word": "climb",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "오르다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "climbs"
+      },
+      "frame": {
+        "subjects": [
+          "person",
+          "animal"
+        ],
+        "objects": null,
+        "locations": [
+          "place"
+        ]
+      }
+    },
+    {
+      "id": "plant_v",
+      "word": "plant",
+      "pos": "verb",
+      "categories": [
+        "action",
+        "nature"
+      ],
+      "meaningKo": "심다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "plants"
+      },
+      "frame": {
+        "subjects": [
+          "person"
+        ],
+        "objects": [
+          "nature_thing"
+        ],
+        "locations": [
+          "place"
+        ]
+      }
+    },
+    {
+      "id": "fix",
+      "word": "fix",
+      "pos": "verb",
+      "categories": [
+        "action",
+        "technology"
+      ],
+      "meaningKo": "고치다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 3,
+      "frequency": 5,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "fixes"
+      },
+      "frame": {
+        "subjects": [
+          "person"
+        ],
+        "objects": [
+          "artifact"
+        ],
+        "locations": null
+      }
+    },
+    {
+      "id": "design",
+      "word": "design",
+      "pos": "verb",
+      "categories": [
+        "action",
+        "technology"
+      ],
+      "meaningKo": "설계하다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 3,
+      "frequency": 5,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "designs"
+      },
+      "frame": {
+        "subjects": [
+          "person"
+        ],
+        "objects": [
+          "buildable",
+          "artifact"
+        ],
+        "locations": null
+      }
+    },
+    {
+      "id": "feed",
+      "word": "feed",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "먹이다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "feeds"
+      },
+      "frame": {
+        "subjects": [
+          "person"
+        ],
+        "objects": [
+          "animal"
+        ],
+        "locations": null
+      }
+    },
+    {
+      "id": "wash",
+      "word": "wash",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "씻다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 1,
+      "frequency": 7,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "washes"
+      },
+      "frame": {
+        "subjects": [
+          "person"
+        ],
+        "objects": [
+          "artifact",
+          "food"
+        ],
+        "locations": null
+      }
+    },
+    {
+      "id": "drive",
+      "word": "drive",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "운전하다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "drives"
+      },
+      "frame": {
+        "subjects": [
+          "person"
+        ],
+        "objects": [
+          "artifact"
+        ],
+        "locations": [
+          "place"
+        ]
+      }
+    },
+    {
+      "id": "watch",
+      "word": "watch",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "보다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "watches"
+      },
+      "frame": {
+        "subjects": [
+          "person"
+        ],
+        "objects": [
+          "animal",
+          "person",
+          "artifact"
+        ],
+        "locations": null
+      }
+    },
+    {
+      "id": "sing",
+      "word": "sing",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "노래하다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "sings"
+      },
+      "frame": {
+        "subjects": [
+          "person",
+          "animal"
+        ],
+        "objects": null,
+        "locations": [
+          "place"
+        ]
+      }
+    },
+    {
+      "id": "smart",
+      "word": "smart",
+      "pos": "adj",
+      "categories": [
+        "human",
+        "education"
+      ],
+      "meaningKo": "똑똑한",
+      "semanticTypes": [
+        "person"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "invariant"
+    },
+    {
+      "id": "fast",
+      "word": "fast",
+      "pos": "adj",
+      "categories": [
+        "technology"
+      ],
+      "meaningKo": "빠른",
+      "semanticTypes": [
+        "artifact",
+        "animal",
+        "person"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "invariant"
+    },
+    {
+      "id": "green",
+      "word": "green",
+      "pos": "adj",
+      "categories": [
+        "nature"
+      ],
+      "meaningKo": "초록색",
+      "semanticTypes": [
+        "nature_thing",
+        "place"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "invariant"
+    },
+    {
+      "id": "big",
+      "word": "big",
+      "pos": "adj",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "큰",
+      "semanticTypes": [
+        "artifact",
+        "place",
+        "animal",
+        "nature_thing"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "invariant"
+    },
+    {
+      "id": "new",
+      "word": "new",
+      "pos": "adj",
+      "categories": [
+        "technology"
+      ],
+      "meaningKo": "새로운",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "invariant"
+    },
+    {
+      "id": "small",
+      "word": "small",
+      "pos": "adj",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "작은",
+      "semanticTypes": [
+        "artifact",
+        "animal",
+        "nature_thing"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "invariant"
+    },
+    {
+      "id": "happy",
+      "word": "happy",
+      "pos": "adj",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "행복한",
+      "semanticTypes": [
+        "person",
+        "animal"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "invariant"
+    },
+    {
+      "id": "hungry",
+      "word": "hungry",
+      "pos": "adj",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "배고픈",
+      "semanticTypes": [
+        "person",
+        "animal"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "invariant"
+    },
+    {
+      "id": "old",
+      "word": "old",
+      "pos": "adj",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "오래된",
+      "semanticTypes": [
+        "person",
+        "artifact",
+        "place"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "invariant"
+    },
+    {
+      "id": "cold",
+      "word": "cold",
+      "pos": "adj",
+      "categories": [
+        "nature"
+      ],
+      "meaningKo": "차가운",
+      "semanticTypes": [
+        "food",
+        "place",
+        "nature_thing"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "invariant"
+    },
+    {
+      "id": "hot",
+      "word": "hot",
+      "pos": "adj",
+      "categories": [
+        "nature"
+      ],
+      "meaningKo": "뜨거운",
+      "semanticTypes": [
+        "food",
+        "place"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "invariant"
+    },
+    {
+      "id": "quiet",
+      "word": "quiet",
+      "pos": "adj",
+      "categories": [
+        "place"
+      ],
+      "meaningKo": "조용한",
+      "semanticTypes": [
+        "place",
+        "person"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "invariant"
+    },
+    {
+      "id": "loud",
+      "word": "loud",
+      "pos": "adj",
+      "categories": [
+        "place"
+      ],
+      "meaningKo": "시끄러운",
+      "semanticTypes": [
+        "place",
+        "animal",
+        "person"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "invariant"
+    },
+    {
+      "id": "bright",
+      "word": "bright",
+      "pos": "adj",
+      "categories": [
+        "nature"
+      ],
+      "meaningKo": "밝은",
+      "semanticTypes": [
+        "place",
+        "nature_thing",
+        "artifact"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "invariant"
+    },
+    {
+      "id": "strong",
+      "word": "strong",
+      "pos": "adj",
+      "categories": [
+        "human"
+      ],
+      "meaningKo": "강한",
+      "semanticTypes": [
+        "person",
+        "animal"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "invariant"
+    },
+    {
+      "id": "fresh",
+      "word": "fresh",
+      "pos": "adj",
+      "categories": [
+        "nature"
+      ],
+      "meaningKo": "신선한",
+      "semanticTypes": [
+        "food",
+        "nature_thing"
+      ],
+      "difficulty": 2,
+      "frequency": 7,
+      "countability": "count",
+      "number": "invariant"
+    },
+    {
+      "id": "clean",
+      "word": "clean",
+      "pos": "adj",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "깨끗한",
+      "semanticTypes": [
+        "place",
+        "artifact"
+      ],
+      "difficulty": 1,
+      "frequency": 7,
+      "countability": "count",
+      "number": "invariant"
+    },
+    {
+      "id": "soft",
+      "word": "soft",
+      "pos": "adj",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "부드러운",
+      "semanticTypes": [
+        "artifact",
+        "nature_thing"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "invariant"
+    },
+    {
+      "id": "heavy",
+      "word": "heavy",
+      "pos": "adj",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "무거운",
+      "semanticTypes": [
+        "artifact"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "invariant"
+    },
+    {
+      "id": "tiny",
+      "word": "tiny",
+      "pos": "adj",
+      "categories": [
+        "object"
+      ],
+      "meaningKo": "아주 작은",
+      "semanticTypes": [
+        "artifact",
+        "animal",
+        "nature_thing"
+      ],
+      "difficulty": 2,
+      "frequency": 6,
+      "countability": "count",
+      "number": "invariant"
+    }
+  ],
+  "relations": [
+    {
+      "from": "teacher",
+      "to": "read",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "teacher",
+      "to": "write",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "teacher",
+      "to": "learn",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "teacher",
+      "to": "run",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "teacher",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "teacher",
+      "to": "drink",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "teacher",
+      "to": "visit",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "teacher",
+      "to": "open",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "teacher",
+      "to": "carry",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "teacher",
+      "to": "watch",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "student",
+      "to": "read",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "student",
+      "to": "write",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "student",
+      "to": "learn",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "student",
+      "to": "run",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "student",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "student",
+      "to": "drink",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "student",
+      "to": "visit",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "student",
+      "to": "open",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "student",
+      "to": "carry",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "student",
+      "to": "watch",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "scientist",
+      "to": "read",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "scientist",
+      "to": "write",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "scientist",
+      "to": "learn",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "scientist",
+      "to": "run",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "scientist",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "scientist",
+      "to": "drink",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "scientist",
+      "to": "visit",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "scientist",
+      "to": "open",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "scientist",
+      "to": "carry",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "scientist",
+      "to": "watch",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "doctor",
+      "to": "read",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "doctor",
+      "to": "write",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "doctor",
+      "to": "learn",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "doctor",
+      "to": "run",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "doctor",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "doctor",
+      "to": "drink",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "doctor",
+      "to": "visit",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "doctor",
+      "to": "open",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "doctor",
+      "to": "carry",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "doctor",
+      "to": "watch",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "engineer",
+      "to": "read",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "engineer",
+      "to": "write",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "engineer",
+      "to": "learn",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "engineer",
+      "to": "run",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "engineer",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "engineer",
+      "to": "drink",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "engineer",
+      "to": "visit",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "engineer",
+      "to": "open",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "engineer",
+      "to": "carry",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "engineer",
+      "to": "watch",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "writer",
+      "to": "read",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "writer",
+      "to": "write",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "writer",
+      "to": "learn",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "writer",
+      "to": "run",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "writer",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "writer",
+      "to": "drink",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "writer",
+      "to": "visit",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "writer",
+      "to": "open",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "writer",
+      "to": "carry",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "writer",
+      "to": "watch",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "child",
+      "to": "read",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "child",
+      "to": "write",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "child",
+      "to": "learn",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "child",
+      "to": "run",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "child",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "child",
+      "to": "drink",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "child",
+      "to": "visit",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "child",
+      "to": "open",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "child",
+      "to": "carry",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "child",
+      "to": "watch",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "farmer",
+      "to": "read",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "farmer",
+      "to": "write",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "farmer",
+      "to": "learn",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "farmer",
+      "to": "run",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "farmer",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "farmer",
+      "to": "drink",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "farmer",
+      "to": "visit",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "farmer",
+      "to": "open",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "farmer",
+      "to": "carry",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "farmer",
+      "to": "watch",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "nurse",
+      "to": "read",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "nurse",
+      "to": "write",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "nurse",
+      "to": "learn",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "nurse",
+      "to": "run",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "nurse",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "nurse",
+      "to": "drink",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "nurse",
+      "to": "visit",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "nurse",
+      "to": "open",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "nurse",
+      "to": "carry",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "nurse",
+      "to": "watch",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "chef",
+      "to": "read",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "chef",
+      "to": "write",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "chef",
+      "to": "learn",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "chef",
+      "to": "run",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "chef",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "chef",
+      "to": "drink",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "chef",
+      "to": "visit",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "chef",
+      "to": "open",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "chef",
+      "to": "carry",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "chef",
+      "to": "watch",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "programmer",
+      "to": "read",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "programmer",
+      "to": "write",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "programmer",
+      "to": "learn",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "programmer",
+      "to": "run",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "programmer",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "programmer",
+      "to": "drink",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "programmer",
+      "to": "visit",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "programmer",
+      "to": "open",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "programmer",
+      "to": "carry",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "programmer",
+      "to": "watch",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "researcher",
+      "to": "read",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "researcher",
+      "to": "write",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "researcher",
+      "to": "learn",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "researcher",
+      "to": "run",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "researcher",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "researcher",
+      "to": "drink",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "researcher",
+      "to": "visit",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "researcher",
+      "to": "open",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "researcher",
+      "to": "carry",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "researcher",
+      "to": "watch",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "artist",
+      "to": "read",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "artist",
+      "to": "write",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "artist",
+      "to": "learn",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "artist",
+      "to": "run",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "artist",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "artist",
+      "to": "drink",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "artist",
+      "to": "visit",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "artist",
+      "to": "open",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "artist",
+      "to": "carry",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "artist",
+      "to": "watch",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "athlete",
+      "to": "read",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "athlete",
+      "to": "write",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "athlete",
+      "to": "learn",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "athlete",
+      "to": "run",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "athlete",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "athlete",
+      "to": "drink",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "athlete",
+      "to": "visit",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "athlete",
+      "to": "open",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "athlete",
+      "to": "carry",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "athlete",
+      "to": "watch",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "musician",
+      "to": "read",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "musician",
+      "to": "write",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "musician",
+      "to": "learn",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "musician",
+      "to": "run",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "musician",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "musician",
+      "to": "drink",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "musician",
+      "to": "visit",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "musician",
+      "to": "open",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "musician",
+      "to": "carry",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "musician",
+      "to": "watch",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "baker",
+      "to": "read",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "baker",
+      "to": "write",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "baker",
+      "to": "learn",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "baker",
+      "to": "run",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "baker",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "baker",
+      "to": "drink",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "baker",
+      "to": "visit",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "baker",
+      "to": "open",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "baker",
+      "to": "carry",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "baker",
+      "to": "watch",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "gardener",
+      "to": "read",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "gardener",
+      "to": "write",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "gardener",
+      "to": "learn",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "gardener",
+      "to": "run",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "gardener",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "gardener",
+      "to": "drink",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "gardener",
+      "to": "visit",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "gardener",
+      "to": "open",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "gardener",
+      "to": "carry",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "gardener",
+      "to": "watch",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "librarian",
+      "to": "read",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "librarian",
+      "to": "write",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "librarian",
+      "to": "learn",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "librarian",
+      "to": "run",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "librarian",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "librarian",
+      "to": "drink",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "librarian",
+      "to": "visit",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "librarian",
+      "to": "open",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "librarian",
+      "to": "carry",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "librarian",
+      "to": "watch",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "teacher",
+      "to": "teach",
+      "type": "CapableOf",
+      "weight": 1
+    },
+    {
+      "from": "student",
+      "to": "study",
+      "type": "CapableOf",
+      "weight": 1
+    },
+    {
+      "from": "scientist",
+      "to": "research",
+      "type": "RelatedTo",
+      "weight": 0.8
+    },
+    {
+      "from": "scientist",
+      "to": "build",
+      "type": "CapableOf",
+      "weight": 0.6
+    },
+    {
+      "from": "doctor",
+      "to": "heal",
+      "type": "CapableOf",
+      "weight": 1
+    },
+    {
+      "from": "engineer",
+      "to": "build",
+      "type": "CapableOf",
+      "weight": 0.9
+    },
+    {
+      "from": "engineer",
+      "to": "fix",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "engineer",
+      "to": "design",
+      "type": "CapableOf",
+      "weight": 0.9
+    },
+    {
+      "from": "programmer",
+      "to": "code_v",
+      "type": "CapableOf",
+      "weight": 1
+    },
+    {
+      "from": "programmer",
+      "to": "fix",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "chef",
+      "to": "cook",
+      "type": "CapableOf",
+      "weight": 1
+    },
+    {
+      "from": "artist",
+      "to": "draw",
+      "type": "CapableOf",
+      "weight": 1
+    },
+    {
+      "from": "farmer",
+      "to": "plant_v",
+      "type": "CapableOf",
+      "weight": 0.9
+    },
+    {
+      "from": "farmer",
+      "to": "grow",
+      "type": "CapableOf",
+      "weight": 0.7
+    },
+    {
+      "from": "gardener",
+      "to": "plant_v",
+      "type": "CapableOf",
+      "weight": 1
+    },
+    {
+      "from": "child",
+      "to": "play",
+      "type": "CapableOf",
+      "weight": 1
+    },
+    {
+      "from": "pilot",
+      "to": "fly",
+      "type": "CapableOf",
+      "weight": 0.9
+    },
+    {
+      "from": "driver",
+      "to": "drive",
+      "type": "CapableOf",
+      "weight": 1
+    },
+    {
+      "from": "nurse",
+      "to": "heal",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "baker",
+      "to": "cook",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "musician",
+      "to": "sing",
+      "type": "CapableOf",
+      "weight": 0.9
+    },
+    {
+      "from": "dog",
+      "to": "run",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "dog",
+      "to": "play",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "dog",
+      "to": "catch",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "dog",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "dog",
+      "to": "drink",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "cat",
+      "to": "run",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "cat",
+      "to": "play",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "cat",
+      "to": "catch",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "cat",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "bird",
+      "to": "fly",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "bird",
+      "to": "sing",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "bird",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "fish",
+      "to": "swim",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "fish",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "horse",
+      "to": "run",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "horse",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "duck",
+      "to": "swim",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "duck",
+      "to": "fly",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "duck",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "whale",
+      "to": "swim",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "bee",
+      "to": "fly",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "eagle",
+      "to": "fly",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "eagle",
+      "to": "catch",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "frog",
+      "to": "swim",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "frog",
+      "to": "catch",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "rabbit",
+      "to": "run",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "rabbit",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "monkey",
+      "to": "climb",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "monkey",
+      "to": "eat",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "monkey",
+      "to": "play",
+      "type": "CapableOf",
+      "weight": 0.85
+    },
+    {
+      "from": "eat",
+      "to": "apple",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "eat",
+      "to": "banana",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "eat",
+      "to": "bread",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "eat",
+      "to": "rice",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "eat",
+      "to": "soup",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "eat",
+      "to": "cheese",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "eat",
+      "to": "egg",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "eat",
+      "to": "cake",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "eat",
+      "to": "pizza",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "eat",
+      "to": "salad",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "eat",
+      "to": "orange",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "eat",
+      "to": "carrot",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "eat",
+      "to": "meat",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "eat",
+      "to": "sandwich",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "eat",
+      "to": "cookie",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "eat",
+      "to": "noodle",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "eat",
+      "to": "grape",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "eat",
+      "to": "tomato",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "eat",
+      "to": "steak",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "eat",
+      "to": "burger",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "eat",
+      "to": "honey",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "drink",
+      "to": "water",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "drink",
+      "to": "milk",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "drink",
+      "to": "coffee",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "drink",
+      "to": "tea",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "drink",
+      "to": "juice",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "drink",
+      "to": "soup",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "read",
+      "to": "book",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "read",
+      "to": "newspaper",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "read",
+      "to": "magazine",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "read",
+      "to": "letter",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "read",
+      "to": "story",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "read",
+      "to": "poem",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "read",
+      "to": "report",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "read",
+      "to": "essay",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "read",
+      "to": "document",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "read",
+      "to": "manual",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "read",
+      "to": "novel",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "read",
+      "to": "article",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "read",
+      "to": "diary",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "read",
+      "to": "message",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "read",
+      "to": "note",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "read",
+      "to": "page",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "write",
+      "to": "book",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "write",
+      "to": "letter",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "write",
+      "to": "story",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "write",
+      "to": "poem",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "write",
+      "to": "report",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "write",
+      "to": "essay",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "write",
+      "to": "document",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "write",
+      "to": "novel",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "write",
+      "to": "article",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "write",
+      "to": "diary",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "write",
+      "to": "message",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "write",
+      "to": "note",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "write",
+      "to": "page",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "teach",
+      "to": "student",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "teach",
+      "to": "child",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "teach",
+      "to": "lesson",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "teach",
+      "to": "class",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "teach",
+      "to": "science",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "teach",
+      "to": "math",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "teach",
+      "to": "history",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "teach",
+      "to": "knowledge",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "learn",
+      "to": "lesson",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "learn",
+      "to": "science",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "learn",
+      "to": "math",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "learn",
+      "to": "history",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "learn",
+      "to": "knowledge",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "learn",
+      "to": "research",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "study",
+      "to": "lesson",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "study",
+      "to": "exam",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "study",
+      "to": "homework",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "study",
+      "to": "science",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "study",
+      "to": "math",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "study",
+      "to": "history",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "study",
+      "to": "knowledge",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "study",
+      "to": "book",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "build",
+      "to": "robot",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "build",
+      "to": "house",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "build",
+      "to": "bridge",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "build",
+      "to": "car",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "build",
+      "to": "bike",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "build",
+      "to": "machine",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "build",
+      "to": "app",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "build",
+      "to": "website",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "build",
+      "to": "boat",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "build",
+      "to": "plane",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "build",
+      "to": "tower",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "build",
+      "to": "road",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "build",
+      "to": "computer",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "design",
+      "to": "robot",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "design",
+      "to": "app",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "design",
+      "to": "website",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "design",
+      "to": "model",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "design",
+      "to": "system",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "design",
+      "to": "program",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "design",
+      "to": "bridge",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "design",
+      "to": "house",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "code_v",
+      "to": "app",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "code_v",
+      "to": "website",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "code_v",
+      "to": "program",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "code_v",
+      "to": "algorithm",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "code_v",
+      "to": "system",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "code_v",
+      "to": "software",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "code_v",
+      "to": "model",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "cook",
+      "to": "soup",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "cook",
+      "to": "rice",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "cook",
+      "to": "egg",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "cook",
+      "to": "meat",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "cook",
+      "to": "salad",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "cook",
+      "to": "pizza",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "cook",
+      "to": "cake",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "cook",
+      "to": "noodle",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "cook",
+      "to": "steak",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "cook",
+      "to": "burger",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "draw",
+      "to": "map",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "draw",
+      "to": "note",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "fix",
+      "to": "computer",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "fix",
+      "to": "phone",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "fix",
+      "to": "laptop",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "fix",
+      "to": "robot",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "fix",
+      "to": "car",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "fix",
+      "to": "bike",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "fix",
+      "to": "machine",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "fix",
+      "to": "device",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "fix",
+      "to": "clock",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "open",
+      "to": "door",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "open",
+      "to": "window",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "open",
+      "to": "box",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "open",
+      "to": "bag",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "open",
+      "to": "bottle",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "carry",
+      "to": "bag",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "carry",
+      "to": "box",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "carry",
+      "to": "book",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "carry",
+      "to": "bottle",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "carry",
+      "to": "ball",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "carry",
+      "to": "apple",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "catch",
+      "to": "ball",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "catch",
+      "to": "fish",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "catch",
+      "to": "rabbit",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "catch",
+      "to": "bird",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "play",
+      "to": "ball",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "play",
+      "to": "dog",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "play",
+      "to": "cat",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "heal",
+      "to": "child",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "heal",
+      "to": "student",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "heal",
+      "to": "dog",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "heal",
+      "to": "cat",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "heal",
+      "to": "baby",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "feed",
+      "to": "dog",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "feed",
+      "to": "cat",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "feed",
+      "to": "bird",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "feed",
+      "to": "fish",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "feed",
+      "to": "horse",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "feed",
+      "to": "rabbit",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "feed",
+      "to": "cow",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "feed",
+      "to": "sheep",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "wash",
+      "to": "cup",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "wash",
+      "to": "bottle",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "wash",
+      "to": "shirt",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "wash",
+      "to": "shoe",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "wash",
+      "to": "apple",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "wash",
+      "to": "car",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "drive",
+      "to": "car",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "drive",
+      "to": "bike",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "watch",
+      "to": "bird",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "watch",
+      "to": "dog",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "watch",
+      "to": "cat",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "watch",
+      "to": "baby",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "watch",
+      "to": "clock",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "watch",
+      "to": "computer",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "plant_v",
+      "to": "tree",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "plant_v",
+      "to": "flower",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "plant_v",
+      "to": "seed",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "plant_v",
+      "to": "bush",
+      "type": "ActsOn",
+      "weight": 0.9
+    },
+    {
+      "from": "teacher",
+      "to": "school",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "teacher",
+      "to": "classroom",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "teacher",
+      "to": "university",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "teacher",
+      "to": "library",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "student",
+      "to": "school",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "student",
+      "to": "classroom",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "student",
+      "to": "university",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "student",
+      "to": "library",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "student",
+      "to": "park",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "scientist",
+      "to": "lab",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "scientist",
+      "to": "university",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "doctor",
+      "to": "hospital",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "nurse",
+      "to": "hospital",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "engineer",
+      "to": "office",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "engineer",
+      "to": "factory",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "engineer",
+      "to": "lab",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "programmer",
+      "to": "office",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "programmer",
+      "to": "lab",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "chef",
+      "to": "kitchen",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "chef",
+      "to": "restaurant",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "child",
+      "to": "school",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "child",
+      "to": "park",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "child",
+      "to": "garden",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "child",
+      "to": "house",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "farmer",
+      "to": "farm",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "farmer",
+      "to": "field",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "gardener",
+      "to": "garden",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "gardener",
+      "to": "park",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "baker",
+      "to": "kitchen",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "baker",
+      "to": "market",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "athlete",
+      "to": "stadium",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "athlete",
+      "to": "park",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "pilot",
+      "to": "airport",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "driver",
+      "to": "station",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "driver",
+      "to": "airport",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "driver",
+      "to": "city",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "librarian",
+      "to": "library",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "tourist",
+      "to": "museum",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "tourist",
+      "to": "park",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "tourist",
+      "to": "beach",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "tourist",
+      "to": "city",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "dog",
+      "to": "park",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "dog",
+      "to": "garden",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "dog",
+      "to": "house",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "cat",
+      "to": "house",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "cat",
+      "to": "garden",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "bird",
+      "to": "tree",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "bird",
+      "to": "forest",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "bird",
+      "to": "garden",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "bird",
+      "to": "park",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "fish",
+      "to": "river",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "fish",
+      "to": "ocean",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "fish",
+      "to": "lake",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "fish",
+      "to": "pool",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "horse",
+      "to": "farm",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "horse",
+      "to": "field",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "duck",
+      "to": "lake",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "duck",
+      "to": "river",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "duck",
+      "to": "park",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "whale",
+      "to": "ocean",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "cow",
+      "to": "farm",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "cow",
+      "to": "field",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "sheep",
+      "to": "farm",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "sheep",
+      "to": "field",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "bee",
+      "to": "garden",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "bee",
+      "to": "field",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "tree",
+      "to": "forest",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "tree",
+      "to": "garden",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "tree",
+      "to": "park",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "flower",
+      "to": "garden",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "flower",
+      "to": "park",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "book",
+      "to": "library",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "book",
+      "to": "school",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "computer",
+      "to": "office",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "computer",
+      "to": "lab",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "computer",
+      "to": "school",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "robot",
+      "to": "lab",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "car",
+      "to": "road",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "car",
+      "to": "city",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "car",
+      "to": "station",
+      "type": "AtLocation",
+      "weight": 0.8
+    },
+    {
+      "from": "smart",
+      "to": "student",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "smart",
+      "to": "scientist",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "smart",
+      "to": "programmer",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "smart",
+      "to": "engineer",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "smart",
+      "to": "child",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "fast",
+      "to": "car",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "fast",
+      "to": "bike",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "fast",
+      "to": "computer",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "fast",
+      "to": "algorithm",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "fast",
+      "to": "horse",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "fast",
+      "to": "athlete",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "green",
+      "to": "tree",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "green",
+      "to": "leaf",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "green",
+      "to": "grass",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "green",
+      "to": "park",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "green",
+      "to": "garden",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "green",
+      "to": "forest",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "big",
+      "to": "house",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "big",
+      "to": "city",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "big",
+      "to": "mountain",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "big",
+      "to": "ocean",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "big",
+      "to": "whale",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "big",
+      "to": "bridge",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "big",
+      "to": "dog",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "new",
+      "to": "computer",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "new",
+      "to": "phone",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "new",
+      "to": "app",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "new",
+      "to": "car",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "new",
+      "to": "model",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "new",
+      "to": "system",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "small",
+      "to": "ant",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "small",
+      "to": "bee",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "small",
+      "to": "seed",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "small",
+      "to": "cup",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "small",
+      "to": "key",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "small",
+      "to": "rabbit",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "happy",
+      "to": "child",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "happy",
+      "to": "friend",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "happy",
+      "to": "baby",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "happy",
+      "to": "dog",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "hungry",
+      "to": "child",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "hungry",
+      "to": "dog",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "hungry",
+      "to": "cat",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "hungry",
+      "to": "baby",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "old",
+      "to": "house",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "old",
+      "to": "tree",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "old",
+      "to": "book",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "old",
+      "to": "teacher",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "cold",
+      "to": "water",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "cold",
+      "to": "milk",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "cold",
+      "to": "ocean",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "cold",
+      "to": "wind",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "cold",
+      "to": "snow",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "hot",
+      "to": "coffee",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "hot",
+      "to": "tea",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "hot",
+      "to": "soup",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "hot",
+      "to": "sun",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "quiet",
+      "to": "library",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "quiet",
+      "to": "garden",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "quiet",
+      "to": "village",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "quiet",
+      "to": "park",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "loud",
+      "to": "stadium",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "loud",
+      "to": "market",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "loud",
+      "to": "wolf",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "bright",
+      "to": "sun",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "bright",
+      "to": "star",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "bright",
+      "to": "lamp",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "bright",
+      "to": "classroom",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "strong",
+      "to": "athlete",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "strong",
+      "to": "horse",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "strong",
+      "to": "soldier",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "fresh",
+      "to": "apple",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "fresh",
+      "to": "salad",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "fresh",
+      "to": "bread",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "fresh",
+      "to": "flower",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "clean",
+      "to": "kitchen",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "clean",
+      "to": "shirt",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "clean",
+      "to": "cup",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "clean",
+      "to": "hospital",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "soft",
+      "to": "bread",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "soft",
+      "to": "cloud",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "soft",
+      "to": "shirt",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "heavy",
+      "to": "box",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "heavy",
+      "to": "rock",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "heavy",
+      "to": "bag",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "tiny",
+      "to": "ant",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "tiny",
+      "to": "seed",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "tiny",
+      "to": "bee",
+      "type": "Describes",
+      "weight": 0.85
+    },
+    {
+      "from": "teacher",
+      "to": "student",
+      "type": "RelatedTo",
+      "weight": 0.7
+    },
+    {
+      "from": "teacher",
+      "to": "book",
+      "type": "RelatedTo",
+      "weight": 0.7
+    },
+    {
+      "from": "student",
+      "to": "exam",
+      "type": "RelatedTo",
+      "weight": 0.7
+    },
+    {
+      "from": "book",
+      "to": "knowledge",
+      "type": "RelatedTo",
+      "weight": 0.7
+    },
+    {
+      "from": "computer",
+      "to": "data",
+      "type": "RelatedTo",
+      "weight": 0.7
+    },
+    {
+      "from": "computer",
+      "to": "code",
+      "type": "RelatedTo",
+      "weight": 0.7
+    },
+    {
+      "from": "data",
+      "to": "model",
+      "type": "RelatedTo",
+      "weight": 0.7
+    },
+    {
+      "from": "code",
+      "to": "algorithm",
+      "type": "RelatedTo",
+      "weight": 0.7
+    },
+    {
+      "from": "school",
+      "to": "lesson",
+      "type": "RelatedTo",
+      "weight": 0.7
+    },
+    {
+      "from": "library",
+      "to": "knowledge",
+      "type": "RelatedTo",
+      "weight": 0.7
+    },
+    {
+      "from": "pen",
+      "to": "write",
+      "type": "RelatedTo",
+      "weight": 0.7
+    },
+    {
+      "from": "apple",
+      "to": "tree",
+      "type": "RelatedTo",
+      "weight": 0.7
+    }
+  ],
+  "templates": [
+    {
+      "id": "svo",
+      "kind": "svo",
+      "score": 10
+    },
+    {
+      "id": "sv_loc",
+      "kind": "sv_loc",
+      "score": 9
+    },
+    {
+      "id": "sv",
+      "kind": "sv",
+      "score": 6
+    },
+    {
+      "id": "adj_noun",
+      "kind": "adj_noun",
+      "score": 5
+    }
+  ]
+}

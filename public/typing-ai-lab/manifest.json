@@ -1,0 +1,44 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-07-17T17:29:53.424188+00:00",
+  "minWords": 5000,
+  "wordCount": 7659,
+  "relationCount": 22791,
+  "uniqueSurfaces": 7334,
+  "posCounts": {
+    "noun": 5208,
+    "verb": 1791,
+    "adj": 660
+  },
+  "difficultyCounts": {
+    "1": 670,
+    "2": 1286,
+    "3": 1923,
+    "4": 1928,
+    "5": 1852
+  },
+  "chunks": {
+    "words": [
+      "words-d1.json",
+      "words-d2.json",
+      "words-d3.json",
+      "words-d4.json",
+      "words-d5.json"
+    ],
+    "relations": [
+      "relations-d1.json",
+      "relations-d2.json",
+      "relations-d3.json",
+      "relations-d4.json",
+      "relations-d5.json"
+    ]
+  },
+  "sources": [
+    "wordfreq 3.1.1 (CC BY-SA 4.0, Robyn Speer)",
+    "Princeton WordNet / NLTK wordnet",
+    "Wiktionary en→ko (CC BY-SA 3.0 / GFDL) via open-dsl-dict",
+    "curated seed from flow-py typing-ai-lab"
+  ],
+  "curatedWordCount": 253,
+  "curatedFrameCount": 30
+}
