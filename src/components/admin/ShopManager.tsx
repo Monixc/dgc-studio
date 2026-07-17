@@ -131,7 +131,9 @@ export default function ShopManager() {
 
       <h2 className="mb-2 mt-8 text-lg font-semibold">구매 요청</h2>
       {pendingOrders.length === 0 ? (
-        <p className="text-sm text-muted-foreground">대기 중인 구매 요청이 없습니다.</p>
+        <div className="flex h-40 w-full items-center justify-center rounded-xl border border-dashed bg-muted/30 text-sm text-muted-foreground">
+          대기 중인 구매 요청이 없습니다.
+        </div>
       ) : (
         <div className="space-y-2">
           {pendingOrders.map((o) => (

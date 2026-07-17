@@ -1,19 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Users, FileText, Plus, Megaphone, CheckCircle2, CalendarDays, MessageSquare, Settings2,
+  Users, Plus, Megaphone, CheckCircle2, MessageSquare,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyProblems } from "@/hooks/useProblems";
 import { useOnlineUsers } from "@/hooks/usePresence";
 import { useAllStudents } from "@/hooks/useClassStudents";
 import { listRecentSubmissions } from "@/lib/submissions";
-import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import AppShell from "@/components/layout/AppShell";
 import ScheduleCalendar, { todayEventCount } from "@/components/dashboard/ScheduleCalendar";
 import AnnouncementsPanel from "@/components/dashboard/AnnouncementsPanel";
-import AcademicEventsPanel from "@/components/dashboard/AcademicEventsPanel";
 import MessageCenter from "@/components/dashboard/MessageCenter";
 
 function greetingFor(hour: number) {
@@ -43,20 +43,10 @@ export default function Dashboard() {
     queryFn: () => listRecentSubmissions(8),
   });
   const { data: allStudents = [] } = useAllStudents();
-  const { data: studentCount = 0 } = useQuery({
-    queryKey: ["student-count"],
-    queryFn: async () => {
-      const { count } = await supabase
-        .from("profiles").select("*", { count: "exact", head: true }).eq("role", "student");
-      return count ?? 0;
-    },
-  });
+  const [announceOpen, setAnnounceOpen] = useState(false);
 
   const titleOf = (id: string) => problems.find((p) => p.id === id)?.title ?? "문제";
   const todayClasses = user ? todayEventCount(user.id) : 0;
-  const todaySubmissions = recent.filter(
-    (s) => new Date(s.submitted_at).toDateString() === new Date().toDateString(),
-  ).length;
   const name = profile?.display_name || "선생님";
 
   return (
@@ -64,7 +54,7 @@ export default function Dashboard() {
       <div className="p-6">
         <div className="grid auto-rows-[minmax(0,auto)] grid-cols-1 gap-4 md:grid-cols-4">
           {/* 인사말 히어로 */}
-          <div className="flex flex-col justify-between rounded-2xl bg-zinc-900 p-6 text-white md:col-span-2">
+          <div className="flex flex-col justify-between rounded-2xl bg-zinc-900 p-6 text-white md:col-span-4">
             <div className="flex gap-1.5">
               <span className="size-3 rounded-full bg-red-400" />
               <span className="size-3 rounded-full bg-yellow-400" />
@@ -91,10 +81,6 @@ export default function Dashboard() {
               </button>
             </div>
           </div>
-
-          {/* 통계 */}
-          <Stat icon={Users} label="전체 학생" value={studentCount} sub="등록 학생" />
-          <Stat icon={FileText} label="오늘 제출" value={todaySubmissions} sub="전체 반 통틀어" />
 
           {/* 접속 중인 학생 */}
           <Bento className="md:col-span-2" icon={Users} title="접속 중인 학생" badge={`${onlineStudents.length} Online`}>
@@ -123,10 +109,15 @@ export default function Dashboard() {
               <p className="text-sm text-muted-foreground">아직 제출이 없습니다.</p>
             ) : (
               <div className="space-y-1">
-                {recent.map((s) => {
+                {recent.slice(0, 5).map((s) => {
                   const perfect = s.passed_tests === s.total_tests && s.total_tests > 0;
                   return (
-                    <div key={s.id} className="flex items-center justify-between border-b py-2.5 text-sm last:border-0">
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => nav(`/students/${s.user_id}/problems/${s.problem_id}`)}
+                      className="flex w-full items-center justify-between border-b py-2.5 text-left text-sm last:border-0 hover:bg-accent/50"
+                    >
                       <div className="min-w-0">
                         <div className="truncate font-medium">{titleOf(s.problem_id)}</div>
                         <div className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -140,19 +131,16 @@ export default function Dashboard() {
                         </div>
                         <div className="text-xs text-muted-foreground">{timeAgo(s.submitted_at)}</div>
                       </div>
-                    </div>
+                    </button>
                   );
                 })}
               </div>
             )}
           </Bento>
 
-          {/* 빠른 실행 */}
-          <Bento className="md:col-span-2" icon={Plus} title="빠른 실행">
-            <div className="grid grid-cols-2 gap-3">
-              <Tile icon={Plus} label="문제 만들기" onClick={() => nav("/problems")} />
-              <Tile icon={Settings2} label="반 관리" onClick={() => nav("/classes")} />
-            </div>
+          {/* 쪽지함 */}
+          <Bento className="md:col-span-2" icon={MessageSquare} title="쪽지함">
+            <MessageCenter recipients={allStudents} />
           </Bento>
 
           {/* 수업 시간표 — 편집 가능 캘린더 */}
@@ -161,18 +149,12 @@ export default function Dashboard() {
           </div>
 
           {/* 공지 */}
-          <Bento className="md:col-span-2" icon={Megaphone} title="공지사항">
-            <AnnouncementsPanel />
-          </Bento>
-
-          {/* 학사 일정 */}
-          <Bento className="md:col-span-2" icon={CalendarDays} title="학사 일정">
-            <AcademicEventsPanel />
-          </Bento>
-
-          {/* 쪽지함 */}
-          <Bento className="md:col-span-2" icon={MessageSquare} title="쪽지함">
-            <MessageCenter recipients={allStudents} />
+          <Bento className="md:col-span-2" icon={Megaphone} title="공지사항" action={
+            <Button size="sm" className="ml-auto" onClick={() => setAnnounceOpen(true)}>
+              <Plus /> 공지 추가
+            </Button>
+          }>
+            <AnnouncementsPanel open={announceOpen} onOpenChange={setAnnounceOpen} />
           </Bento>
         </div>
       </div>
@@ -203,33 +185,3 @@ function Bento({
   );
 }
 
-function Tile({
-  icon: Icon, label, onClick,
-}: { icon: React.ComponentType<{ className?: string }>; label: string; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className="flex flex-col items-center justify-center gap-2 rounded-2xl border p-4 text-sm hover:bg-accent"
-    >
-      <Icon className="size-5" />
-      {label}
-    </button>
-  );
-}
-
-function Stat({
-  icon: Icon, label, value, sub,
-}: { icon: React.ComponentType<{ className?: string }>; label: string; value: number; sub: string }) {
-  return (
-    <div className="flex flex-col justify-between rounded-2xl border bg-card p-4">
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Icon className="size-4" />
-        {label}
-      </div>
-      <div className="mt-2">
-        <div className="text-3xl font-bold">{value}</div>
-        <div className="text-xs text-muted-foreground">{sub}</div>
-      </div>
-    </div>
-  );
-}

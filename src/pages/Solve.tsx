@@ -5,9 +5,11 @@ import { toast } from "sonner";
 import { ArrowLeft, Send, CheckCircle2, XCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useProblem, usePublishedProblems } from "@/hooks/useProblems";
+import type { Problem } from "@/integrations/supabase/types";
 import { usePyodide } from "@/hooks/usePyodide";
 import { buildGradingSummary, type GradingSummary } from "@/lib/grading";
 import { submitSolution, listMySubmissions } from "@/lib/submissions";
+import { listPublishedProblemFolders } from "@/lib/problemFolders";
 import { loadDraft, saveDraft } from "@/lib/draft";
 import { useBroadcastLiveCode } from "@/hooks/useLiveCode";
 import FlowchartCanvas from "@/components/flow/FlowchartCanvas";
@@ -24,12 +26,38 @@ export default function Solve() {
   const { data: problems = [] } = usePublishedProblems();
   const { run, running, stop } = usePyodide();
 
-  const { data: submissions = [] } = useQuery({
+  const { data: submissions = [], refetch: refetchSubmissions } = useQuery({
     queryKey: ["my-submissions", user?.id],
     queryFn: () => listMySubmissions(user!.id),
     enabled: !!user,
   });
-  const solvedIds = new Set(submissions.map((s) => s.problem_id));
+  const folderIds = [...new Set(problems.flatMap((p) => (p.folder_id ? [p.folder_id] : [])))];
+  const { data: folders = [] } = useQuery({
+    queryKey: ["published-problem-folders", folderIds],
+    queryFn: () => listPublishedProblemFolders(folderIds),
+    enabled: folderIds.length > 0,
+  });
+
+  const bestSubmissionByProblem = new Map<string, (typeof submissions)[number]>();
+  for (const submission of submissions) {
+    const best = bestSubmissionByProblem.get(submission.problem_id);
+    if (!best || submission.score > best.score) bestSubmissionByProblem.set(submission.problem_id, submission);
+  }
+
+  const foldersById = new Map(folders.map((folder) => [folder.id, folder]));
+  const problemSections = problems
+    .filter((p) => p.category === problem?.category)
+    .reduce<{ folderId: string | null; folderName: string | null; problems: Problem[] }[]>((sections, item) => {
+      const folder = item.folder_id ? foldersById.get(item.folder_id) : undefined;
+      const subfolder = folder?.parent_id ? folder : undefined;
+      let section = sections.find((candidate) => candidate.folderId === (subfolder?.id ?? null));
+      if (!section) {
+        section = { folderId: subfolder?.id ?? null, folderName: subfolder?.name ?? null, problems: [] };
+        sections.push(section);
+      }
+      section.problems.push(item);
+      return sections;
+    }, []);
 
   const [code, setCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -78,6 +106,7 @@ export default function Solve() {
       }
       const summary = buildGradingSummary(tests, outputs);
       await submitSolution({ problemId: problem.id, userId: user.id, code, summary });
+      await refetchSubmissions();
       setResult(summary);
       toast.success(`${summary.passed}/${summary.total} 통과 · ${summary.score}/${summary.maxScore}점`);
     } catch (e: any) {
@@ -93,7 +122,7 @@ export default function Solve() {
   return (
     <div className="flex h-screen flex-col">
       <header className="flex items-center gap-2 border-b p-3">
-        <Button size="icon" variant="ghost" onClick={() => navigate("/student/problems")}>
+        <Button size="icon" variant="ghost" onClick={() => navigate(`/practice/${problem.category}`)} title="목록으로">
           <ArrowLeft />
         </Button>
         <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold uppercase text-primary-foreground">
@@ -105,22 +134,40 @@ export default function Solve() {
       <div className="flex min-h-0 flex-1 overflow-hidden">
         {/* 문제 목록 사이드 패널 */}
         <aside className="w-56 shrink-0 overflow-auto border-r">
-          {problems.map((p) => (
-            <button
-              key={p.id}
-              onClick={() => navigate(`/solve/${p.id}`)}
-              className={cn(
-                "flex w-full items-center gap-2 border-b p-2.5 text-left text-sm hover:bg-accent",
-                p.id === problem.id && "bg-accent"
+          {problemSections.map((section) => (
+            <div key={section.folderId ?? "unfiled"}>
+              {section.folderName && (
+                <div className="sticky top-0 z-10 border-b bg-muted/50 px-3 py-2 text-xs font-semibold text-muted-foreground">
+                  {section.folderName}
+                </div>
               )}
-            >
-              {solvedIds.has(p.id) ? (
-                <CheckCircle2 className="size-4 shrink-0 text-emerald-600" />
-              ) : (
-                <span className="size-4 shrink-0" />
-              )}
-              <span className="truncate">{p.title || "(제목 없음)"}</span>
-            </button>
+              {section.problems.map((p) => {
+                const submission = bestSubmissionByProblem.get(p.id);
+                const isCorrect = !!submission && submission.max_score > 0 && submission.score >= submission.max_score;
+                return (
+                  <button
+                    key={p.id}
+                    onClick={() => navigate(`/solve/${p.id}`)}
+                    className={cn(
+                      "flex w-full items-center gap-2 border-b p-2.5 text-left text-sm hover:bg-accent",
+                      p.id === problem.id && "bg-accent"
+                    )}
+                  >
+                    <span className="min-w-0 flex-1 truncate">{p.title || "(제목 없음)"}</span>
+                    <span
+                      className={cn(
+                        "shrink-0 text-xs font-medium",
+                        !submission && "text-muted-foreground",
+                        submission && !isCorrect && "text-amber-600",
+                        isCorrect && "text-emerald-600"
+                      )}
+                    >
+                      {submission ? `${submission.score}/${submission.max_score}점` : "미제출"}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           ))}
         </aside>
 

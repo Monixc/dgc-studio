@@ -23,9 +23,10 @@ import { toRFNodes, toRFEdges, fromRF, autoLayout, dslToGraph, newNodeId, newEdg
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
-import { LayoutGrid, FileCode } from "lucide-react";
+import { LayoutGrid, FileCode, ChevronUp, ChevronDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { cn } from "@/lib/utils";
 
 const PALETTE: { type: NodeType; label: string; defaultLabel: string }[] = [
   { type: "start", label: "시작", defaultLabel: "시작" },
@@ -56,6 +57,7 @@ interface Props {
 function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
   const rf = useReactFlow();
   const wrapRef = useRef<HTMLDivElement>(null);
+  const [paletteOpen, setPaletteOpen] = useState(true);
   const setNodesRef = useRef<ReturnType<typeof useNodesState>[1] | null>(null);
 
   const onLabelChange = useCallback((id: string, label: string) => {
@@ -294,16 +296,29 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
   return (
     <div className="relative h-full w-full" ref={wrapRef}>
       {editable && (
-        <div className="absolute left-2 top-2 z-10 flex max-w-[calc(100%-1rem)] flex-wrap gap-1 rounded-lg border bg-background/95 p-1 shadow-sm">
-          {PALETTE.map((p) => (
-            <Button key={p.type} size="sm" variant="outline" className="h-7 px-2 text-xs" onClick={() => addNode(p.type, p.defaultLabel)}>
-              + {p.label}
-            </Button>
-          ))}
-          <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={doAutoLayout} title="자동 정렬">
-            <LayoutGrid className="size-3.5" /> 정렬
+        <div className={cn("absolute left-2 top-2 z-10 flex flex-col gap-1 rounded-lg border bg-background/95 p-1 shadow-sm", paletteOpen ? "w-20" : "w-auto")}>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-7 w-full px-2 text-xs"
+            onClick={() => setPaletteOpen((v) => !v)}
+            title={paletteOpen ? "도구 접기" : "도구 펼치기"}
+          >
+            {paletteOpen ? <ChevronUp className="size-3.5" /> : <ChevronDown className="size-3.5" />}
           </Button>
-          <DslImportDialog onImport={importDsl} />
+          {paletteOpen && (
+            <>
+              {PALETTE.map((p) => (
+                <Button key={p.type} size="sm" variant="outline" className="h-7 w-full px-2 text-xs" onClick={() => addNode(p.type, p.defaultLabel)}>
+                  {p.label}
+                </Button>
+              ))}
+              <Button size="sm" variant="ghost" className="h-7 w-full px-2 text-xs" onClick={doAutoLayout} title="자동 정렬">
+                <LayoutGrid className="size-3.5" /> 정렬
+              </Button>
+              <DslImportDialog onImport={importDsl} />
+            </>
+          )}
         </div>
       )}
       {editable && selectedId && (
@@ -351,11 +366,6 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
         <Background />
         <Controls showInteractive={false} />
       </ReactFlow>
-      {editable && (
-        <div className="absolute bottom-2 left-2 z-10 rounded bg-background/90 px-2 py-1 text-[11px] text-muted-foreground shadow-sm">
-          더블클릭: 노드 라벨/간선 라벨 편집 · 핸들 드래그: 연결 · Delete: 삭제
-        </div>
-      )}
     </div>
   );
 }
@@ -385,7 +395,7 @@ function DslImportDialog({ onImport }: { onImport: (text: string) => void }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" title="DSL 가져오기">
+        <Button size="sm" variant="ghost" className="h-7 w-full px-2 text-xs" title="DSL 가져오기">
           <FileCode className="size-3.5" /> DSL
         </Button>
       </DialogTrigger>

@@ -76,7 +76,7 @@ export default function EditorPanel({ code, onCodeChange, readOnly, running, run
           language="python"
           value={code}
           onChange={(v) => onCodeChange(v ?? "")}
-          options={{ readOnly, minimap: { enabled: false }, fontSize: 14, scrollBeyondLastLine: false }}
+          options={{ readOnly, minimap: { enabled: false }, fontSize: 14, scrollBeyondLastLine: false, padding: { top: 8 } }}
         />
       </div>
 

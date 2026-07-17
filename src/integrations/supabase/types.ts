@@ -9,6 +9,14 @@ export interface Profile {
   created_at: string;
 }
 
+export interface StudentManagementNote {
+  student_id: string;
+  birth_date: string | null;
+  notes: string;
+  updated_by: string | null;
+  updated_at: string;
+}
+
 import type { FlowNode, FlowEdge } from "@/types/flowchart";
 
 // 캔버스 원본: nodes/edges 저장. 구버전 {dsl, positions} 도 로더에서 수용.
@@ -94,6 +102,15 @@ export interface GradingDetail {
   actualOutput: string;
   passed: boolean;
   points: number;
+}
+
+export interface SubmissionComment {
+  id: string;
+  submission_id: string;
+  author_id: string;
+  body: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface PointsLedgerEntry {

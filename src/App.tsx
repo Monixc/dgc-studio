@@ -10,16 +10,16 @@ import LiveClass from "@/pages/LiveClass";
 import Problems from "@/pages/Problems";
 import TeacherProblems from "@/pages/TeacherProblems";
 import StudentDashboard from "@/pages/StudentDashboard";
-import StudentProblems from "@/pages/StudentProblems";
 import MyClass from "@/pages/MyClass";
 import FlowchartPractice from "@/pages/FlowchartPractice";
 import PythonPractice from "@/pages/PythonPractice";
 import BlockPractice from "@/pages/BlockPractice";
+import TypingPractice from "@/pages/TypingPractice";
 import Solve from "@/pages/Solve";
 import TeacherShop from "@/pages/TeacherShop";
 import StudentShop from "@/pages/StudentShop";
-import TeacherNotifications from "@/pages/TeacherNotifications";
-import StudentNotifications from "@/pages/StudentNotifications";
+import Students from "@/pages/Students";
+import StudentSubmissionReview from "@/pages/StudentSubmissionReview";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -63,6 +63,22 @@ export default function App() {
               }
             />
             <Route
+              path="/students"
+              element={
+                <RequireRole role="teacher">
+                  <Students />
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/students/:studentId/problems/:problemId"
+              element={
+                <RequireRole role="teacher">
+                  <StudentSubmissionReview />
+                </RequireRole>
+              }
+            />
+            <Route
               path="/classes/:classId/live"
               element={
                 <RequireRole role="teacher">
@@ -91,14 +107,6 @@ export default function App() {
               element={
                 <RequireRole role="student">
                   <StudentDashboard />
-                </RequireRole>
-              }
-            />
-            <Route
-              path="/student/problems"
-              element={
-                <RequireRole role="student">
-                  <StudentProblems />
                 </RequireRole>
               }
             />
@@ -135,6 +143,14 @@ export default function App() {
               }
             />
             <Route
+              path="/practice/typing"
+              element={
+                <RequireAuth>
+                  <TypingPractice />
+                </RequireAuth>
+              }
+            />
+            <Route
               path="/shop"
               element={
                 <RequireRole role="teacher">
@@ -147,22 +163,6 @@ export default function App() {
               element={
                 <RequireRole role="student">
                   <StudentShop />
-                </RequireRole>
-              }
-            />
-            <Route
-              path="/notifications"
-              element={
-                <RequireRole role="teacher">
-                  <TeacherNotifications />
-                </RequireRole>
-              }
-            />
-            <Route
-              path="/student/notifications"
-              element={
-                <RequireRole role="student">
-                  <StudentNotifications />
                 </RequireRole>
               }
             />

@@ -1,0 +1,30 @@
+# 공통 타일 기호 정의 — 트랙 YAML에서 symbols: 로 덮어쓸 수 있습니다.
+#
+# layer: ground | road
+# asset: public/racing/ 아래 PNG 파일명(확장자 제외)
+# rotation: 0 | 90 | 180 | 270 (기본 0)
+#
+# ── layout ──
+#   한 줄 = 그리드 한 행, 공백으로 기호 구분
+#
+# ── route ── (둘 중 하나)
+#   1) 좌표: "3,0 4,0 5,1" 또는 "3,0>4,0>5,1"
+#   2) 기호: "h R v v R2 h ..." — start 셀에서 인접 타일을 따라 이동
+#
+# ── start / finish ──
+#   [col, row] — 출발·결승 마크 위치
+
+tileSize: 32
+
+symbols:
+  ".": { asset: dry_ground, layer: ground }
+  "g": { asset: green_ground, layer: ground }
+
+  "v": { asset: straight_road, rotation: 0, layer: road }
+  "V": { asset: straight_road, rotation: 180, layer: road }
+  "h": { asset: straight_road, rotation: 90, layer: road }
+
+  "L": { asset: corner_left, rotation: 0, layer: road }
+  "L2": { asset: corner_left, rotation: 180, layer: road }
+  "R": { asset: corner_right, rotation: 0, layer: road }
+  "R2": { asset: corner_right, rotation: 180, layer: road }

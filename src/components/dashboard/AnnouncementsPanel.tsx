@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useAnnouncements, useCreateAnnouncement, useDeleteAnnouncement } from "@/hooks/useAnnouncements";
 import { Button } from "@/components/ui/button";
@@ -8,12 +8,16 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-export default function AnnouncementsPanel({ readOnly = false }: { readOnly?: boolean }) {
+export default function AnnouncementsPanel({
+  readOnly = false, open: openProp, onOpenChange,
+}: { readOnly?: boolean; open?: boolean; onOpenChange?: (open: boolean) => void }) {
   const { user } = useAuth();
   const { data: announcements = [], isLoading } = useAnnouncements();
   const createMut = useCreateAnnouncement();
   const deleteMut = useDeleteAnnouncement();
-  const [open, setOpen] = useState(false);
+  const [openState, setOpenState] = useState(false);
+  const open = openProp ?? openState;
+  const setOpen = onOpenChange ?? setOpenState;
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
 
@@ -31,13 +35,6 @@ export default function AnnouncementsPanel({ readOnly = false }: { readOnly?: bo
 
   return (
     <>
-      {!readOnly && (
-        <div className="mb-2 flex justify-end">
-          <Button size="sm" onClick={() => setOpen(true)}>
-            <Plus /> 공지 추가
-          </Button>
-        </div>
-      )}
       {isLoading ? (
         <p className="text-sm text-muted-foreground">불러오는 중…</p>
       ) : announcements.length === 0 ? (

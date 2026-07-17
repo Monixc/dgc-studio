@@ -19,6 +19,13 @@ export async function listFolders(userId: string): Promise<ProblemFolder[]> {
   return (data ?? []) as ProblemFolder[];
 }
 
+export async function listPublishedProblemFolders(folderIds: string[]): Promise<ProblemFolder[]> {
+  if (folderIds.length === 0) return [];
+  const { data, error } = await supabase.from("problem_folders").select("*").in("id", folderIds);
+  if (error) throw error;
+  return (data ?? []) as ProblemFolder[];
+}
+
 /** 대분류(순서도/파이썬/블럭코딩) 폴더가 없으면 생성해서 채워준다. */
 export async function ensureDefaultFolders(userId: string, existing: ProblemFolder[]): Promise<ProblemFolder[]> {
   const missing = DEFAULT_CATEGORY_FOLDERS.filter(

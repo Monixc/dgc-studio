@@ -40,6 +40,17 @@ export function todayEventCount(uid: string): number {
   return load(uid).filter((e) => e.date === TODAY).length;
 }
 
+/** 이번 주 시간표 항목(요일/시간/제목). 반 관리 화면에서 수업 시간 가져오기용. */
+export function currentWeekSchedule(uid: string): { dayOfWeek: number; time: string; title: string }[] {
+  const start = startOfWeek(new Date());
+  const days = Array.from({ length: 7 }, (_, i) => addDays(start, i));
+  const byDate = new Map(days.map((d) => [fmt(d), d.getDay()]));
+  return load(uid)
+    .filter((e) => byDate.has(e.date) && e.time)
+    .map((e) => ({ dayOfWeek: byDate.get(e.date)!, time: e.time, title: e.title }))
+    .sort((a, b) => a.dayOfWeek - b.dayOfWeek || a.time.localeCompare(b.time));
+}
+
 export default function ScheduleCalendar({ className }: { className?: string }) {
   const { user } = useAuth();
   const uid = user!.id;
@@ -201,7 +212,7 @@ function WeekView({ cursor, eventsOn, onAdd, onEdit }: ViewProps) {
   const start = startOfWeek(cursor);
   const days = Array.from({ length: 7 }, (_, i) => addDays(start, i));
   return (
-    <div className="grid grid-cols-7 gap-2">
+    <div className="grid grid-cols-[repeat(auto-fill,minmax(119px,1fr))] gap-2">
       {days.map((d) => {
         const ds = fmt(d);
         return (

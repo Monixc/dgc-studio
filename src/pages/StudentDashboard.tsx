@@ -1,24 +1,30 @@
 import { useNavigate } from "react-router-dom";
-import { BookOpen, Megaphone, CalendarDays, Trophy, MessageSquare, ChevronRight } from "lucide-react";
+import { BookOpen, Trophy, MessageSquare, ChevronRight } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { usePublishedProblems } from "@/hooks/useProblems";
+import { useAssignedProblems } from "@/hooks/useClasses";
 import { useAllStudents } from "@/hooks/useClassStudents";
-import { useAllTeachers } from "@/hooks/useMessages";
+import { useStudentTeachers } from "@/hooks/useMessages";
 import { usePointsRanking } from "@/hooks/usePoints";
 import { useQuery } from "@tanstack/react-query";
 import { listMySubmissions } from "@/lib/submissions";
 import { cn } from "@/lib/utils";
 import AppShell, { STUDENT_MENU } from "@/components/layout/AppShell";
-import AnnouncementsPanel from "@/components/dashboard/AnnouncementsPanel";
-import AcademicEventsPanel from "@/components/dashboard/AcademicEventsPanel";
 import MessageCenter from "@/components/dashboard/MessageCenter";
+
+function greetingFor(hour: number) {
+  if (hour < 12) return "좋은 아침이에요";
+  if (hour < 18) return "좋은 오후예요";
+  return "좋은 저녁이에요";
+}
 
 export default function StudentDashboard() {
   const { user } = useAuth();
   const nav = useNavigate();
   const { data: problems = [] } = usePublishedProblems();
+  const { data: assigned = [] } = useAssignedProblems(user?.id);
   const { data: students = [] } = useAllStudents();
-  const { data: teachers = [] } = useAllTeachers();
+  const { data: teachers = [] } = useStudentTeachers(user?.id);
   const { data: ranking = [] } = usePointsRanking();
 
   const { data: submissions = [] } = useQuery({
@@ -33,15 +39,18 @@ export default function StudentDashboard() {
   const rankedStudents = [...students]
     .map((s) => ({ ...s, total: ranking.find((r) => r.studentId === s.id)?.total ?? 0 }))
     .sort((a, b) => b.total - a.total)
-    .slice(0, 10);
+    .slice(0, 5);
+  const name = user?.user_metadata?.display_name || "학생";
 
   return (
     <AppShell menu={STUDENT_MENU} homePath="/student">
       <div className="p-6">
-        <h1 className="mb-1 text-2xl font-bold">대시보드</h1>
-        <p className="mb-6 text-sm text-muted-foreground">{user && "환영합니다"}</p>
-
         <div className="grid auto-rows-[minmax(0,auto)] grid-cols-1 gap-4 md:grid-cols-4">
+          <div className="flex flex-col justify-between rounded-2xl bg-zinc-900 p-6 text-white md:col-span-4">
+            <div className="flex gap-1.5"><span className="size-3 rounded-full bg-red-400" /><span className="size-3 rounded-full bg-yellow-400" /><span className="size-3 rounded-full bg-green-400" /></div>
+            <div className="mt-6"><h1 className="text-2xl font-bold">{greetingFor(new Date().getHours())}, {name}님.</h1><p className="mt-2 text-sm text-white/70">오늘 풀어볼 문제 {assigned.length}개, 누적 제출 {submissions.length}회가 있어요.</p></div>
+            <div className="mt-6"><button onClick={() => nav("/myclass")} className="rounded-full bg-white px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-white/90">문제 풀러 가기</button></div>
+          </div>
           {/* 학습 현황: 이어서 풀기 */}
           <Bento className="md:col-span-2 md:row-span-2" icon={BookOpen} title="학습 현황 · 이어서 풀기">
             {recentProblemIds.length === 0 ? (
@@ -87,18 +96,7 @@ export default function StudentDashboard() {
             )}
           </Bento>
 
-          {/* 공지 */}
-          <Bento className="md:col-span-2" icon={Megaphone} title="공지사항">
-            <AnnouncementsPanel readOnly />
-          </Bento>
-
-          {/* 학사 일정 */}
-          <Bento className="md:col-span-2" icon={CalendarDays} title="학사 일정">
-            <AcademicEventsPanel readOnly />
-          </Bento>
-
-          {/* 쪽지 보내기 */}
-          <Bento className="md:col-span-4" icon={MessageSquare} title="쪽지 보내기">
+          <Bento className="md:col-span-4" icon={MessageSquare} title="선생님께 쪽지 보내기">
             <MessageCenter recipients={teachers} />
           </Bento>
         </div>

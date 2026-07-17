@@ -13,6 +13,31 @@ export async function listAllTeachers(): Promise<Profile[]> {
   return (data ?? []) as Profile[];
 }
 
+/** 학생이 속한 반을 담당하는 선생님만 쪽지 수신자로 반환한다. */
+export async function listStudentTeachers(studentId: string): Promise<Profile[]> {
+  const { data: memberships, error: membershipsError } = await supabase
+    .from("class_students")
+    .select("class_id")
+    .eq("student_id", studentId);
+  if (membershipsError) throw membershipsError;
+  const classIds = [...new Set((memberships ?? []).map((row) => row.class_id as string))];
+  if (!classIds.length) return [];
+
+  const { data: classes, error: classesError } = await supabase.from("classes").select("created_by").in("id", classIds);
+  if (classesError) throw classesError;
+  const teacherIds = [...new Set((classes ?? []).map((row) => row.created_by as string))];
+  if (!teacherIds.length) return [];
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("role", "teacher")
+    .in("id", teacherIds)
+    .order("display_name", { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as Profile[];
+}
+
 /** 내가 보낸/받은 쪽지 전체(최신순), 상대방 이름 포함. */
 export async function listMyMessages(userId: string): Promise<(MessageRow & { counterpart_name: string })[]> {
   const { data, error } = await supabase

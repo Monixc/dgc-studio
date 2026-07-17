@@ -1,0 +1,25 @@
+id: oval
+name: 오벌 서킷
+
+symbols:
+  ".": { asset: dry_ground, layer: ground }
+  "g": { asset: green_ground, layer: ground }
+  "v": { asset: straight_road, rotation: 0, layer: road }
+  "h": { asset: straight_road, rotation: 90, layer: road }
+  "L": { asset: corner_left, rotation: 0, layer: road }
+  "L2": { asset: corner_left, rotation: 180, layer: road }
+  "R": { asset: corner_right, rotation: 0, layer: road }
+  "R2": { asset: corner_right, rotation: 180, layer: road }
+
+layout:
+  - ". L h h R ."
+  - ". v g g v ."
+  - ". v g g v ."
+  - ". R2 h h L2 ."
+
+start: [2, 0]
+finish: [2, 0]
+
+# 기호 루트: start 셀에서 인접(상하좌우) 타일을 따라 이동
+# layout 하단이 "R2 h h L2" 이면 아래 순서 (L2↔R2 바꾸면 route도 같이 수정)
+route: h h R v v L2 h h R2 v v L

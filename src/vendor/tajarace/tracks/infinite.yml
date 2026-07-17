@@ -1,0 +1,30 @@
+id: track_02
+name: Infinity Circuit
+
+symbols:
+  ".": { asset: dry_ground, layer: ground }
+  "g": { asset: green_ground, layer: ground }
+  "v": { asset: straight_road, rotation: 0, layer: road }
+  "V": { asset: straight_road, rotation: 180, layer: road }
+  "h": { asset: straight_road, rotation: 90, layer: road }
+  "L": { asset: corner_left, rotation: 0, layer: road }
+  "L2": { asset: corner_left, rotation: 180, layer: road }
+  "R": { asset: corner_right, rotation: 0, layer: road }
+  "R2": { asset: corner_right, rotation: 180, layer: road }
+
+layout:
+  - ". . . L h h h h h R . L h h h h h R"
+  - ". . . V . . . . . v . V . . . . . v"
+  - ". . . V . . . . . R2 h L2 . L h h R v"
+  - ". . . V . . . . . . . . . v . . v v"
+  - ". . . V . . . . . . . . . v . . R2 L2"
+  - ". . . V . . . . . . . . . v . . L R"
+  - ". . . V . . . . . . . . . v . . v v"
+  - ". . . V . . . . . L h R . R2 h h L2 v"
+  - ". . . V . . . . . v . V . . . . . v"
+  - ". . . R2 h h h h h L2 . R2 h h h h h L2"
+
+start: [4, 0]
+finish: [3, 0]
+
+route: h h h h h R v R2 h L2 V L h h h h h R v v R h h L v v v v R2 h h L2 v v L2 h h h h h R2 V R h L v L2 h h h h h R2 V V V V V V V V L

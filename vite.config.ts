@@ -12,6 +12,11 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "@tajarace/core": path.resolve(__dirname, "./src/vendor/tajarace/core/index.ts"),
+      "@tajarace/content": path.resolve(__dirname, "./src/vendor/tajarace/content/index.ts"),
+      "@tajarace/storage": path.resolve(__dirname, "./src/vendor/tajarace/storage/index.ts"),
+      "@tajarace/racing": path.resolve(__dirname, "./src/vendor/tajarace/racing/index.ts"),
+      "@tajarace/ui": path.resolve(__dirname, "./src/vendor/tajarace/ui/index.ts"),
     },
   },
   test: {

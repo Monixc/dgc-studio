@@ -11,7 +11,14 @@
     "noImplicitAny": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "paths": { "@/*": ["./src/*"] },
+    "paths": {
+      "@/*": ["./src/*"],
+      "@tajarace/core": ["./src/vendor/tajarace/core/index.ts"],
+      "@tajarace/content": ["./src/vendor/tajarace/content/index.ts"],
+      "@tajarace/storage": ["./src/vendor/tajarace/storage/index.ts"],
+      "@tajarace/racing": ["./src/vendor/tajarace/racing/index.ts"],
+      "@tajarace/ui": ["./src/vendor/tajarace/ui/index.ts"]
+    },
     "skipLibCheck": true,
     "strict": false,
     "target": "ES2020",

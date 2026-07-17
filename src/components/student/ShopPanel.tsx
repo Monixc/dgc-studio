@@ -1,5 +1,5 @@
 import { toast } from "sonner";
-import { ShoppingCart } from "lucide-react";
+import { Coins, ShoppingCart } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { usePointsRanking } from "@/hooks/usePoints";
 import { useShopItems, useMyShopOrders, useRequestPurchase } from "@/hooks/useShop";
@@ -33,7 +33,10 @@ export default function ShopPanel() {
     <div className="p-6">
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-2xl font-bold">포인트 상점</h1>
-        <span className="text-sm font-semibold">보유 포인트: {balance}P</span>
+        <div className="inline-flex items-center gap-2 rounded-full border bg-background px-3 py-1 text-sm font-medium shadow-sm">
+          <Coins className="size-4 text-primary" />
+          <span>{balance}P</span>
+        </div>
       </div>
 
       {isLoading ? (
@@ -72,7 +75,9 @@ export default function ShopPanel() {
 
       <h2 className="mb-2 mt-8 text-lg font-semibold">구매 내역</h2>
       {myOrders.length === 0 ? (
-        <p className="text-sm text-muted-foreground">구매 요청 내역이 없습니다.</p>
+        <p className="rounded-lg border border-dashed bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
+          아직 구매한 물품이 없습니다. 분발하세요.
+        </p>
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {myOrders.map((o) => {

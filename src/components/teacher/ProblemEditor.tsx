@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Save, Globe, EyeOff } from "lucide-react";
+import { Save } from "lucide-react";
 import { useProblem, useUpdateProblem } from "@/hooks/useProblems";
 import { usePyodide } from "@/hooks/usePyodide";
 import FlowchartCanvas from "@/components/flow/FlowchartCanvas";
 import EditorPanel from "@/components/editor/EditorPanel";
 import GradingTestsEditor from "@/components/GradingTestsEditor";
-import TeacherSubmissions from "@/components/TeacherSubmissions";
 import type { GradingTest, ProblemCategory } from "@/integrations/supabase/types";
 import { PROBLEM_CATEGORY_LABEL } from "@/integrations/supabase/types";
 import type { FlowGraph } from "@/types/flowchart";
@@ -46,7 +45,7 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
     setLoaded(true);
   }, [problem]);
 
-  async function save(extra?: { is_published?: boolean }) {
+  async function save() {
     try {
       await updateMut.mutateAsync({
         id: problemId,
@@ -58,7 +57,6 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
           teacher_code: starter,
           grading_tests: tests,
           flowchart: { nodes: graph.nodes, edges: graph.edges },
-          ...extra,
         },
       });
       toast.success("저장됨");
@@ -83,21 +81,7 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
             <option key={c} value={c}>{PROBLEM_CATEGORY_LABEL[c]}</option>
           ))}
         </select>
-        <Input
-          type="number"
-          min={0}
-          value={points || ""}
-          onChange={(e) => setPoints(Number(e.target.value) || 0)}
-          className="w-24"
-          placeholder="포인트"
-          title="만점 시 지급 포인트"
-        />
         <div className="ml-auto flex gap-2">
-          <TeacherSubmissions problemId={problemId} />
-          <Button variant="outline" onClick={() => save({ is_published: !problem.is_published })} disabled={updateMut.isPending}>
-            {problem.is_published ? <EyeOff /> : <Globe />}
-            {problem.is_published ? "발행 취소" : "발행"}
-          </Button>
           <Button onClick={() => save()} disabled={updateMut.isPending}>
             <Save /> 저장
           </Button>
@@ -123,7 +107,21 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
                 <Textarea value={description} onChange={(e) => setDescription(e.target.value)} className="h-full resize-none" placeholder="문제 설명을 학생에게 보여줍니다." />
               </TabsContent>
               <TabsContent value="grading" className="flex-1 overflow-auto data-[state=inactive]:hidden">
-                <GradingTestsEditor tests={tests} onChange={setTests} />
+                <div className="space-y-1 border-b p-3">
+                  <Label htmlFor="points" className="font-normal text-muted-foreground">만점 시 지급 포인트</Label>
+                  <Input
+                    id="points"
+                    type="number"
+                    min={0}
+                    value={points || ""}
+                    onChange={(e) => setPoints(Number(e.target.value) || 0)}
+                    className="w-full"
+                    placeholder="포인트"
+                  />
+                </div>
+                <div className="p-3">
+                  <GradingTestsEditor tests={tests} onChange={setTests} />
+                </div>
               </TabsContent>
             </Tabs>
           </div>
@@ -142,6 +140,18 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
             </div>
             <div>
               <Label>채점 ({tests.length})</Label>
+              <div className="mt-1 space-y-1">
+                <Label htmlFor="points-alt" className="font-normal text-muted-foreground">만점 시 지급 포인트</Label>
+                <Input
+                  id="points-alt"
+                  type="number"
+                  min={0}
+                  value={points || ""}
+                  onChange={(e) => setPoints(Number(e.target.value) || 0)}
+                  className="w-full"
+                  placeholder="포인트"
+                />
+              </div>
               <GradingTestsEditor tests={tests} onChange={setTests} />
             </div>
           </div>

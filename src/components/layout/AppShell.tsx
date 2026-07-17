@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   GraduationCap, LayoutDashboard, Users, FileText, Keyboard,
-  ShoppingBag, PanelLeftClose, PanelLeftOpen, BookOpen, Workflow, Code2, Blocks, Bell,
+  ShoppingBag, PanelLeftClose, PanelLeftOpen, BookOpen, Workflow, Code2, Blocks,
+  ChevronDown, ClipboardList,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -13,24 +14,30 @@ interface Item {
   icon: React.ComponentType<{ className?: string }>;
   to?: string;
   soon?: boolean;
+  children?: Item[];
 }
 
 const MENU: Item[] = [
   { label: "반 관리", icon: Users, to: "/classes" },
+  { label: "학생 관리", icon: GraduationCap, to: "/students" },
   { label: "문제 관리", icon: FileText, to: "/problems" },
-  { label: "타자 연습", icon: Keyboard, soon: true },
+  { label: "타자 연습", icon: Keyboard, to: "/practice/typing" },
   { label: "포인트 상점", icon: ShoppingBag, to: "/shop" },
-  { label: "알림", icon: Bell, to: "/notifications" },
 ];
 
 export const STUDENT_MENU: Item[] = [
   { label: "내 수업", icon: BookOpen, to: "/myclass" },
-  { label: "순서도 연습", icon: Workflow, to: "/practice/flowchart" },
-  { label: "파이썬 코딩", icon: Code2, to: "/practice/general" },
-  { label: "블럭 코딩", icon: Blocks, to: "/practice/block" },
-  { label: "타자 연습", icon: Keyboard, soon: true },
+  {
+    label: "문제 풀이",
+    icon: ClipboardList,
+    children: [
+      { label: "순서도 연습", icon: Workflow, to: "/practice/flowchart" },
+      { label: "파이썬 코딩", icon: Code2, to: "/practice/general" },
+      { label: "블럭 코딩", icon: Blocks, to: "/practice/block" },
+    ],
+  },
+  { label: "타자 연습", icon: Keyboard, to: "/practice/typing" },
   { label: "포인트 상점", icon: ShoppingBag, to: "/student/shop" },
-  { label: "알림", icon: Bell, to: "/student/notifications" },
 ];
 
 // 모바일 하단 탭은 좁아서 학생은 핵심 3개(대시보드/내 수업/상점)만 노출. 나머지는 데스크톱 사이드바에서.
@@ -52,7 +59,9 @@ export default function AppShell({ children, menu = MENU, homePath = "/dashboard
     if (it.to) nav(it.to);
   };
 
-  const mobileMenu = menu === STUDENT_MENU ? menu.filter((it) => STUDENT_MOBILE_LABELS.includes(it.label)) : menu;
+  const mobileMenu = menu === STUDENT_MENU
+    ? menu.flatMap((it) => it.children ?? [it]).filter((it) => STUDENT_MOBILE_LABELS.includes(it.label))
+    : menu;
   const allItems: Item[] = [{ label: "대시보드", icon: LayoutDashboard, to: homePath }, ...mobileMenu];
 
   return (
@@ -77,16 +86,25 @@ export default function AppShell({ children, menu = MENU, homePath = "/dashboard
             collapsed={collapsed}
             onClick={() => nav(homePath)}
           />
-          <div className="my-2 border-t" />
-          {menu.map((it) => (
-            <NavButton
-              key={it.label}
-              item={it}
-              active={!!it.to && loc.pathname === it.to}
-              collapsed={collapsed}
-              onClick={() => go(it)}
-            />
-          ))}
+          {menu.map((it) =>
+            it.children ? (
+              <NavGroup
+                key={it.label}
+                item={it}
+                pathname={loc.pathname}
+                collapsed={collapsed}
+                onNavigate={(child) => go(child)}
+              />
+            ) : (
+              <NavButton
+                key={it.label}
+                item={it}
+                active={!!it.to && loc.pathname === it.to}
+                collapsed={collapsed}
+                onClick={() => go(it)}
+              />
+            ),
+          )}
         </nav>
       </aside>
 
@@ -109,16 +127,62 @@ export default function AppShell({ children, menu = MENU, homePath = "/dashboard
   );
 }
 
+/* ── 접이식 그룹 메뉴 ── */
+function NavGroup({
+  item, pathname, collapsed, onNavigate,
+}: { item: Item; pathname: string; collapsed: boolean; onNavigate: (child: Item) => void }) {
+  const isChildActive = item.children?.some((c) => c.to && pathname.startsWith(c.to)) ?? false;
+  const [open, setOpen] = useState(isChildActive);
+  const Icon = item.icon;
+
+  return (
+    <div>
+      <button
+        onClick={() => setOpen((o) => !o)}
+        title={collapsed ? item.label : undefined}
+        className={cn(
+          "flex w-full items-center gap-3 rounded-full px-3 py-2 text-sm transition",
+          isChildActive ? "text-primary font-medium" : "text-foreground hover:bg-accent",
+          collapsed && "justify-center px-0",
+        )}
+      >
+        <Icon className="size-4 shrink-0" />
+        {!collapsed && (
+          <>
+            <span className="flex-1 text-left">{item.label}</span>
+            <ChevronDown className={cn("size-3.5 transition-transform", open && "rotate-180")} />
+          </>
+        )}
+      </button>
+      {!collapsed && open && item.children && (
+        <div className="ml-5 mt-0.5 space-y-0.5 border-l pl-3">
+          {item.children.map((child) => (
+            <NavButton
+              key={child.label}
+              item={child}
+              active={!!child.to && pathname.startsWith(child.to)}
+              collapsed={false}
+              onClick={() => onNavigate(child)}
+              compact
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function NavButton({
-  item, active, collapsed, onClick,
-}: { item: Item; active?: boolean; collapsed: boolean; onClick: () => void }) {
+  item, active, collapsed, onClick, compact,
+}: { item: Item; active?: boolean; collapsed: boolean; onClick: () => void; compact?: boolean }) {
   const Icon = item.icon;
   return (
     <button
       onClick={onClick}
       title={collapsed ? item.label : undefined}
       className={cn(
-        "flex w-full items-center gap-3 rounded-full px-3 py-2 text-sm transition",
+        "flex w-full items-center gap-3 rounded-full px-3 text-sm transition",
+        compact ? "py-1.5" : "py-2",
         active ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-accent",
         collapsed && "justify-center px-0",
       )}
@@ -149,3 +213,4 @@ function BottomNavButton({ item, active, onClick }: { item: Item; active?: boole
     </button>
   );
 }
+

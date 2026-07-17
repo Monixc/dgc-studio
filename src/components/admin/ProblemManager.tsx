@@ -1,7 +1,8 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { toast } from "sonner";
-import { Plus, Trash2, Folder, FolderPlus, ChevronRight, ChevronDown, Circle, Globe, EyeOff, PanelLeftClose, PanelLeftOpen } from "lucide-react";
-import type { ImperativePanelHandle } from "react-resizable-panels";
+import { Plus, Trash2, Folder, FolderPlus, ChevronRight, ChevronDown, Circle, Globe, EyeOff, Send, CheckSquare } from "lucide-react";
+import type { ImperativePanelHandle, ImperativePanelGroupHandle } from "react-resizable-panels";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyProblems, useCreateProblem, useDeleteProblem, useUpdateProblem } from "@/hooks/useProblems";
 import { useProblemsRealtime } from "@/hooks/useProblemsRealtime";
@@ -17,6 +18,7 @@ const ALL = "__all__";
 const PROBLEM_DND_TYPE = "text/flowpy-problem-id";
 
 export default function ProblemManager() {
+  const location = useLocation();
   const { user } = useAuth();
   const userId = user!.id;
   const { data: problems = [], isLoading } = useMyProblems(userId);
@@ -33,11 +35,21 @@ export default function ProblemManager() {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
+  const [bulkMode, setBulkMode] = useState(false);
+  const [bulkSelected, setBulkSelected] = useState<Set<string>>(new Set());
 
+  useEffect(() => {
+    const openId = (location.state as { openProblemId?: string } | null)?.openProblemId;
+    if (openId) setSelectedId(openId);
+  }, [location.state]);
+
+  const panelGroupRef = useRef<ImperativePanelGroupHandle>(null);
   const folderPanelRef = useRef<ImperativePanelHandle>(null);
   const listPanelRef = useRef<ImperativePanelHandle>(null);
   const [folderCollapsed, setFolderCollapsed] = useState(false);
   const [listCollapsed, setListCollapsed] = useState(false);
+  const lastFolderSizeRef = useRef(17);
+  const lastListSizeRef = useRef(15);
 
   const filtered = activeFolder === ALL ? problems : problems.filter((p) => p.folder_id === activeFolder);
 
@@ -52,9 +64,8 @@ export default function ProblemManager() {
     });
   }
 
-  async function handleAddChild(parentId: string) {
-    const name = prompt("새 하위 폴더 이름");
-    if (!name?.trim()) return;
+  async function handleAddChild(parentId: string, name: string) {
+    if (!name.trim()) return;
     try {
       await createFolderMut.mutateAsync({ userId, name: name.trim(), parentId });
       setExpanded((prev) => new Set(prev).add(parentId));
@@ -63,17 +74,25 @@ export default function ProblemManager() {
     }
   }
 
+  // 패널 하나를 접거나 펼 때 라이브러리가 남는 공간을 다른 패널에 비례 배분하면서,
+  // 이미 접혀 있던 옆 패널까지 임계값을 넘겨 같이 펼쳐버리는 문제가 있었음.
+  // 그래서 두 패널 크기를 항상 명시적으로 계산해 setLayout으로 한 번에 고정한다.
+  function applyPanelLayout(nextFolderCollapsed: boolean, nextListCollapsed: boolean) {
+    const folderSize = nextFolderCollapsed ? 5 : lastFolderSizeRef.current;
+    const listSize = nextListCollapsed ? 5 : lastListSizeRef.current;
+    panelGroupRef.current?.setLayout([folderSize, listSize, 100 - folderSize - listSize]);
+  }
+
   function toggleFolderPanel() {
-    if (folderCollapsed) folderPanelRef.current?.expand();
-    else folderPanelRef.current?.collapse();
-    // 상대 패널이 접힌 상태였다면, 이쪽 패널 크기 변경으로 밀려서 같이 펼쳐지지 않도록 재고정.
-    if (listCollapsed) requestAnimationFrame(() => listPanelRef.current?.collapse());
+    const next = !folderCollapsed;
+    setFolderCollapsed(next);
+    applyPanelLayout(next, listCollapsed);
   }
 
   function toggleListPanel() {
-    if (listCollapsed) listPanelRef.current?.expand();
-    else listPanelRef.current?.collapse();
-    if (folderCollapsed) requestAnimationFrame(() => folderPanelRef.current?.collapse());
+    const next = !listCollapsed;
+    setListCollapsed(next);
+    applyPanelLayout(folderCollapsed, next);
   }
 
   async function handleColorChange(id: string, color: string) {
@@ -102,6 +121,8 @@ export default function ProblemManager() {
       const category = resolveFolderCategory(folderId, folders);
       const p = await createProblemMut.mutateAsync({ userId, category, folderId });
       setSelectedId(p.id);
+      setFolderCollapsed(true);
+      applyPanelLayout(true, listCollapsed);
     } catch (e: any) {
       toast.error(e?.message ?? "생성 실패");
     }
@@ -128,6 +149,48 @@ export default function ProblemManager() {
     }
   }
 
+  function toggleBulkMode() {
+    setBulkMode((v) => !v);
+    setBulkSelected(new Set());
+  }
+
+  function toggleBulkSelect(id: string) {
+    setBulkSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  async function handleBulkDelete() {
+    if (bulkSelected.size === 0) return toast.info("선택된 문제가 없습니다.");
+    if (!confirm(`선택한 문제 ${bulkSelected.size}개를 삭제할까요?`)) return;
+    try {
+      await Promise.all([...bulkSelected].map((id) => deleteProblemMut.mutateAsync(id)));
+      if (selectedId && bulkSelected.has(selectedId)) setSelectedId(null);
+      toast.success(`${bulkSelected.size}개 삭제됨`);
+      toggleBulkMode();
+    } catch (e: any) {
+      toast.error(e?.message ?? "삭제 실패");
+    }
+  }
+
+  async function handleBulkPublishSelected() {
+    if (bulkSelected.size === 0) return toast.info("선택된 문제가 없습니다.");
+    try {
+      await Promise.all([...bulkSelected].map((id) => updateProblemMut.mutateAsync({ id, patch: { is_published: true } })));
+      toast.success(`${bulkSelected.size}개 발행 완료`);
+      toggleBulkMode();
+    } catch (e: any) {
+      toast.error(e?.message ?? "일괄 발행 실패");
+    }
+  }
+
+  function toggleSelectAll() {
+    setBulkSelected((prev) => (prev.size === filtered.length ? new Set() : new Set(filtered.map((p) => p.id))));
+  }
+
   async function handleDropOnFolder(folderId: string, e: React.DragEvent) {
     e.preventDefault();
     setDragOverId(null);
@@ -144,28 +207,24 @@ export default function ProblemManager() {
   }
 
   return (
-    <ResizablePanelGroup direction="horizontal" className="h-full overflow-hidden">
+    <ResizablePanelGroup ref={panelGroupRef} direction="horizontal" className="h-full overflow-hidden">
       <ResizablePanel
         ref={folderPanelRef}
-        defaultSize={24}
-        minSize={18}
+        defaultSize={17}
+        minSize={14}
         maxSize={35}
         collapsible
         collapsedSize={5}
+        onResize={(size) => { if (size > 5.5) lastFolderSizeRef.current = size; }}
         onCollapse={() => setFolderCollapsed(true)}
         onExpand={() => setFolderCollapsed(false)}
         className="flex h-full flex-col bg-muted/20"
       >
-        <div className={cn("flex items-center border-b p-2", folderCollapsed ? "justify-center" : "justify-between")}>
-          {!folderCollapsed && <span className="whitespace-nowrap text-sm font-semibold">폴더</span>}
-          <button
-            className={cn("shrink-0 text-muted-foreground hover:text-foreground", !folderCollapsed && "ml-auto")}
-            onClick={toggleFolderPanel}
-            title={folderCollapsed ? "폴더 패널 펼치기" : "폴더 패널 접기"}
-          >
-            {folderCollapsed ? <PanelLeftOpen className="size-4" /> : <PanelLeftClose className="size-4" />}
-          </button>
-        </div>
+        {!folderCollapsed && (
+          <div className="flex items-center border-b p-2">
+            <span className="whitespace-nowrap text-sm font-semibold">폴더</span>
+          </div>
+        )}
         <div className="flex-1 overflow-auto p-1">
           {folderCollapsed ? (
             <div className="flex flex-col items-center gap-1 py-1">
@@ -183,7 +242,7 @@ export default function ProblemManager() {
                   title={f.name}
                   className={cn("rounded p-1.5 hover:bg-accent", activeFolder === f.id && "bg-accent")}
                 >
-                  <Folder className={cn("size-4", !f.color && "text-muted-foreground")} style={f.color ? { color: f.color } : undefined} />
+                  <Folder className={cn("size-4", !f.color && "text-muted-foreground")} style={f.color ? { color: f.color, fill: f.color, fillOpacity: 0.2 } : undefined} />
                 </button>
               ))}
             </div>
@@ -217,36 +276,46 @@ export default function ProblemManager() {
         </div>
       </ResizablePanel>
 
-      <ResizableHandle withHandle />
+      <ResizableHandle onToggle={toggleFolderPanel} collapsed={folderCollapsed} />
 
       <ResizablePanel
         ref={listPanelRef}
-        defaultSize={22}
+        defaultSize={15}
         minSize={14}
         maxSize={40}
         collapsible
         collapsedSize={5}
+        onResize={(size) => { if (size > 5.5) lastListSizeRef.current = size; }}
         onCollapse={() => setListCollapsed(true)}
         onExpand={() => setListCollapsed(false)}
         className="flex h-full flex-col bg-muted/20"
       >
-        <div className={cn("flex items-center border-b p-2", listCollapsed ? "justify-center" : "justify-between")}>
-          {!listCollapsed && <span className="whitespace-nowrap text-sm font-semibold">문제 목록</span>}
-          <div className={cn("flex items-center", !listCollapsed && "ml-auto gap-0.5")}>
-            {!listCollapsed && (
-              <Button size="icon" className="h-8 w-8" onClick={handleCreateProblem} disabled={createProblemMut.isPending} title="문제 추가">
-                <Plus />
-              </Button>
+        {!listCollapsed && (
+          <div className="flex items-center gap-1 border-b p-2">
+            <span className="whitespace-nowrap text-sm font-semibold">문제 목록</span>
+            {!bulkMode ? (
+              <div className="ml-auto flex items-center gap-1">
+                <button
+                  className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50"
+                  onClick={handleCreateProblem}
+                  disabled={createProblemMut.isPending}
+                  title="문제 추가"
+                >
+                  <Plus className="size-4" />
+                </button>
+                <button
+                  className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
+                  onClick={toggleBulkMode}
+                  title="일괄 선택"
+                >
+                  <CheckSquare className="size-4" />
+                </button>
+              </div>
+            ) : (
+              <span className="ml-auto text-xs text-muted-foreground">{bulkSelected.size}개 선택됨</span>
             )}
-            <button
-              className={cn("shrink-0 text-muted-foreground hover:text-foreground", !listCollapsed && "ml-1 border-l pl-1.5")}
-              onClick={toggleListPanel}
-              title={listCollapsed ? "문제 목록 패널 펼치기" : "문제 목록 패널 접기"}
-            >
-              {listCollapsed ? <PanelLeftOpen className="size-4" /> : <PanelLeftClose className="size-4" />}
-            </button>
           </div>
-        </div>
+        )}
         <div className="flex-1 overflow-auto p-1">
           {listCollapsed ? (
             <div className="flex flex-col items-center gap-2 py-2">
@@ -269,29 +338,61 @@ export default function ProblemManager() {
             filtered.map((p) => (
               <div
                 key={p.id}
-                draggable
+                draggable={!bulkMode}
                 onDragStart={(e) => e.dataTransfer.setData(PROBLEM_DND_TYPE, p.id)}
-                onClick={() => setSelectedId(p.id)}
+                onClick={() => (bulkMode ? toggleBulkSelect(p.id) : setSelectedId(p.id))}
                 className={cn(
-                  "group flex cursor-grab items-center gap-2 rounded-md p-2 text-sm hover:bg-accent active:cursor-grabbing",
-                  selectedId === p.id && "bg-accent"
+                  "group flex items-center gap-2 rounded-md p-2 text-sm hover:bg-accent",
+                  bulkMode ? "cursor-pointer" : "cursor-grab active:cursor-grabbing",
+                  (bulkMode ? bulkSelected.has(p.id) : selectedId === p.id) && "bg-accent"
                 )}
               >
+                {bulkMode && (
+                  <input
+                    type="checkbox"
+                    checked={bulkSelected.has(p.id)}
+                    onChange={() => toggleBulkSelect(p.id)}
+                    onClick={(e) => e.stopPropagation()}
+                    className="size-3.5 shrink-0"
+                  />
+                )}
                 <Circle className={cn("size-2 shrink-0", p.is_published ? "fill-emerald-500 text-emerald-500" : "fill-muted-foreground/40 text-muted-foreground/40")} />
                 <span className="flex-1 truncate">{p.title || "(제목 없음)"}</span>
-                <button className="opacity-0 group-hover:opacity-100" onClick={(e) => togglePublish(p.id, !p.is_published, e)} title="발행 전환">
-                  {p.is_published ? <EyeOff className="size-4" /> : <Globe className="size-4" />}
-                </button>
-                <button className="opacity-0 group-hover:opacity-100" onClick={(e) => handleDeleteProblem(p.id, e)} title="삭제">
-                  <Trash2 className="size-4" />
-                </button>
+                {!bulkMode && (
+                  <>
+                    <button className="opacity-0 group-hover:opacity-100" onClick={(e) => togglePublish(p.id, !p.is_published, e)} title="발행 전환">
+                      {p.is_published ? <EyeOff className="size-4" /> : <Globe className="size-4" />}
+                    </button>
+                    <button className="opacity-0 group-hover:opacity-100" onClick={(e) => handleDeleteProblem(p.id, e)} title="삭제">
+                      <Trash2 className="size-4" />
+                    </button>
+                  </>
+                )}
               </div>
             ))
           )}
         </div>
+        {!listCollapsed && bulkMode && (
+          <div className="flex flex-col gap-1 border-t p-2">
+            <Button variant="outline" className="w-full" onClick={toggleSelectAll}>
+              {bulkSelected.size === filtered.length ? "전체 해제" : "전체 선택"}
+            </Button>
+            <div className="flex flex-wrap gap-1">
+              <Button variant="destructive" className="min-w-24 flex-1" onClick={handleBulkDelete} disabled={deleteProblemMut.isPending}>
+                <Trash2 /> 선택 삭제 ({bulkSelected.size})
+              </Button>
+              <Button variant="secondary" className="min-w-24 flex-1" onClick={handleBulkPublishSelected} disabled={updateProblemMut.isPending}>
+                <Send /> 선택 발행
+              </Button>
+            </div>
+            <Button variant="ghost" className="w-full" onClick={toggleBulkMode}>
+              취소
+            </Button>
+          </div>
+        )}
       </ResizablePanel>
 
-      <ResizableHandle withHandle />
+      <ResizableHandle onToggle={toggleListPanel} collapsed={listCollapsed} />
 
       <ResizablePanel defaultSize={60} className="overflow-hidden">
         {selectedId ? (
@@ -332,7 +433,7 @@ function FolderTreeNode({
   onToggleExpand: (id: string) => void;
   activeFolder: string;
   onSelect: (id: string) => void;
-  onAddChild: (parentId: string) => void;
+  onAddChild: (parentId: string, name: string) => void;
   onDelete: (id: string) => void;
   onColorChange: (id: string, color: string) => void;
   dragOverId: string | null;
@@ -342,6 +443,29 @@ function FolderTreeNode({
   const kids = childrenOf(folder.id);
   const isExpanded = expanded.has(folder.id);
   const isDefault = !!folder.category;
+
+  const [creating, setCreating] = useState(false);
+  const [draftName, setDraftName] = useState("");
+
+  function submitCreate() {
+    const name = draftName.trim();
+    setCreating(false);
+    setDraftName("");
+    if (name) onAddChild(folder.id, name);
+  }
+
+  // 컬러피커 드래그 중 매 픽셀마다 onChange(=input 이벤트)로 뮤테이션이 나가면
+  // 리렌더가 겹쳐 네이티브 팝업이 바로 닫혀버림 → 드래그 종료(change 이벤트)에만 커밋.
+  const colorInputRef = useRef<HTMLInputElement>(null);
+  const [liveColor, setLiveColor] = useState(folder.color ?? "#94a3b8");
+  useEffect(() => setLiveColor(folder.color ?? "#94a3b8"), [folder.color]);
+  useEffect(() => {
+    const el = colorInputRef.current;
+    if (!el) return;
+    const handleCommit = (e: Event) => onColorChange(folder.id, (e.target as HTMLInputElement).value);
+    el.addEventListener("change", handleCommit);
+    return () => el.removeEventListener("change", handleCommit);
+  }, [folder.id, onColorChange]);
 
   return (
     <div>
@@ -364,30 +488,36 @@ function FolderTreeNode({
         ) : (
           <span className="w-3.5 shrink-0" />
         )}
-        <Folder className={cn("size-4 shrink-0", !folder.color && "text-muted-foreground")} style={folder.color ? { color: folder.color } : undefined} />
-        <span className={cn("flex-1 truncate", isDefault && "font-medium")}>{folder.name}</span>
         <label
-          className="opacity-0 group-hover:opacity-100"
+          className="flex shrink-0 cursor-pointer items-center justify-center rounded-md p-0.5 hover:bg-accent"
           onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
+          onDragStart={(e) => e.preventDefault()}
           title="폴더 색상"
         >
+          <Folder className={cn("size-4", !folder.color && "text-muted-foreground")} style={folder.color ? { color: folder.color, fill: folder.color, fillOpacity: 0.2 } : undefined} />
           <input
+            ref={colorInputRef}
             type="color"
-            value={folder.color ?? "#94a3b8"}
-            onChange={(e) => onColorChange(folder.id, e.target.value)}
-            className="size-3.5 cursor-pointer rounded-full border-0 p-0"
+            value={liveColor}
+            onChange={(e) => setLiveColor(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+            className="sr-only"
           />
         </label>
+        <span className={cn("flex-1 truncate", isDefault && "font-medium")}>{folder.name}</span>
         <button
-          className="opacity-0 group-hover:opacity-100"
-          onClick={(e) => { e.stopPropagation(); onAddChild(folder.id); }}
+          className="flex size-5 shrink-0 items-center justify-center opacity-0 group-hover:opacity-100"
+          onClick={(e) => { e.stopPropagation(); setCreating(true); }}
           title="하위 폴더 추가"
         >
           <FolderPlus className="size-3.5" />
         </button>
         {!isDefault && (
           <button
-            className="opacity-0 group-hover:opacity-100"
+            className="flex size-5 shrink-0 items-center justify-center opacity-0 group-hover:opacity-100"
             onClick={(e) => { e.stopPropagation(); onDelete(folder.id); }}
             title="폴더 삭제"
           >
@@ -395,6 +525,25 @@ function FolderTreeNode({
           </button>
         )}
       </div>
+      {creating && (
+        <div style={{ paddingLeft: (depth + 1) * 14 }} className="flex items-center gap-1 p-2">
+          <span className="w-3.5 shrink-0" />
+          <Folder className="size-4 shrink-0 text-muted-foreground" />
+          <input
+            autoFocus
+            value={draftName}
+            onChange={(e) => setDraftName(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") submitCreate();
+              if (e.key === "Escape") { setCreating(false); setDraftName(""); }
+            }}
+            onBlur={submitCreate}
+            placeholder="새 폴더 이름"
+            className="h-6 flex-1 rounded border bg-background px-1 text-sm outline-none"
+          />
+        </div>
+      )}
       {isExpanded && kids.map((k) => (
         <FolderTreeNode
           key={k.id}

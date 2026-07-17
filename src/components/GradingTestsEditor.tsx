@@ -17,12 +17,9 @@ export default function GradingTestsEditor({ tests, onChange }: Props) {
   const remove = (id: string) => onChange(tests.filter((t) => t.id !== id));
 
   return (
-    <div className="space-y-4 p-3">
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
-          입력(stdin)을 주고 학생 코드의 출력(stdout)이 기대 출력과 일치하면 정답. 총 {tests.length}개.
-        </p>
-        <Button size="sm" onClick={() => onChange([...tests, makeEmptyTest()])}>
+    <div className="space-y-4">
+      <div className="flex flex-col gap-2">
+        <Button size="sm" className="w-full" onClick={() => onChange([...tests, makeEmptyTest()])}>
           <Plus /> 테스트 추가
         </Button>
       </div>

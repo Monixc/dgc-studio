@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { LogOut, Pencil, Check, ChevronDown } from "lucide-react";
+import { Bell, LogOut, Pencil, Check, ChevronDown } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { signOut } from "@/lib/auth";
 import { AVATAR_COLORS, loadPrefs, savePrefs, type ProfilePrefs } from "@/lib/profile-prefs";
 import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import NotificationSettings from "@/components/notifications/NotificationSettings";
 import { cn } from "@/lib/utils";
 
 export default function Header({ title }: { title?: string }) {
@@ -13,6 +15,7 @@ export default function Header({ title }: { title?: string }) {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [nameInput, setNameInput] = useState("");
+  const [notifOpen, setNotifOpen] = useState(false);
 
   const name = prefs.displayName || profile?.display_name || "사용자";
   const initial = name.trim().charAt(0).toUpperCase() || "?";
@@ -103,6 +106,15 @@ export default function Header({ title }: { title?: string }) {
               </div>
 
               <button
+                onClick={() => {
+                  setOpen(false);
+                  setNotifOpen(true);
+                }}
+                className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm hover:bg-accent"
+              >
+                <Bell className="size-4" /> 알림
+              </button>
+              <button
                 onClick={() => signOut()}
                 className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm text-destructive hover:bg-accent"
               >
@@ -112,6 +124,15 @@ export default function Header({ title }: { title?: string }) {
           </>
         )}
       </div>
+
+      <Dialog open={notifOpen} onOpenChange={setNotifOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>알림</DialogTitle>
+          </DialogHeader>
+          <NotificationSettings />
+        </DialogContent>
+      </Dialog>
     </header>
   );
 }

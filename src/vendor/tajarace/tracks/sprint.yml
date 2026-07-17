@@ -1,0 +1,16 @@
+id: sprint
+name: 스프린트 (직선)
+
+symbols:
+  ".": { asset: dry_ground, layer: ground }
+  "h": { asset: straight_road, rotation: 90, layer: road }
+
+# 13칸 직선 — row/col 은 0부터 시작 (row 1 은 없음)
+layout:
+  - "h h h h h h h h h h h h h"
+
+start: [0, 0]
+finish: [12, 0]
+
+# h 13개 = start 포함 전체 칸 순회 (첫 h 는 start 와 같으면 자동 스킵)
+route: h h h h h h h h h h h h h
