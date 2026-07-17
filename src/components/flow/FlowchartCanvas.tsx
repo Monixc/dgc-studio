@@ -16,6 +16,7 @@ import {
   type Node,
 } from "@xyflow/react";
 import { nodeTypes } from "./FlowNode";
+import { ForReturnEdge } from "./ForReturnEdge";
 import type { FlowGraph, NodeType } from "@/types/flowchart";
 import type { FlowNodeData } from "@/lib/flow-layout";
 import { toRFNodes, toRFEdges, fromRF, autoLayout, dslToGraph, newNodeId, newEdgeId, orderParentsFirst } from "@/lib/flow-graph";
@@ -38,6 +39,8 @@ const PALETTE: { type: NodeType; label: string; defaultLabel: string }[] = [
   { type: "call", label: "호출", defaultLabel: "func(x)" },
   { type: "end", label: "끝", defaultLabel: "끝" },
 ];
+
+const edgeTypes = { "for-return": ForReturnEdge };
 
 const DSL_HELP = `start / end · input/output/process · if/elif/else · for/while · def
 들여쓰기로 블록. 가져오면 현재 순서도를 대체합니다.`;
@@ -89,10 +92,11 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
 
   const onConnect = useCallback(
     (c: Connection) => {
-      // for 컨테이너가 끼면 직선(꺾임 없이), 아니면 smoothstep
+      // 반복문 본문에서 컨테이너로 돌아오면 전용 직각 경로를 사용한다.
       const isFor = (id: string | null) =>
         (nodes.find((n) => n.id === id)?.data as FlowNodeData | undefined)?.nodeType === "for";
-      const type = isFor(c.source) || isFor(c.target) ? "straight" : "smoothstep";
+      const isForReturn = isFor(c.target) && nodes.find((n) => n.id === c.source)?.parentId === c.target;
+      const type = isForReturn ? "for-return" : isFor(c.source) || isFor(c.target) ? "straight" : "smoothstep";
       setEdges((eds) => addEdge({ ...c, id: newEdgeId(), type, markerEnd: { type: MarkerType.ArrowClosed } }, eds));
     },
     [setEdges, nodes]
@@ -316,6 +320,7 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         connectionMode={ConnectionMode.Loose}
         panActivationKeyCode={null}
         onNodesChange={onNodesChange}

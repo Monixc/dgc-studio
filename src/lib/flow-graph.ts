@@ -78,7 +78,7 @@ export function autoLayout(graph: FlowGraph): FlowGraph {
 
 /**
  * DSL 텍스트 → 캔버스 그래프. for 루프는 컨테이너로 중첩(본문 노드를 감싸고
- * 상단→첫 블록, 마지막 블록→하단을 직선으로 연결). 나머지는 dagre 세로 배치.
+ * 상단→첫 블록은 수직으로, 마지막 블록→하단은 직각 경로로 연결). 나머지는 dagre 세로 배치.
  */
 export function dslToGraph(dsl: string): FlowGraph {
   const { data } = parseDsl(dsl);
@@ -215,17 +215,17 @@ export function dslToGraph(dsl: string): FlowGraph {
     n.position = { x: (p?.x ?? 0) - d.w / 2, y: (p?.y ?? 0) - d.h / 2 };
   }
 
-  // 간선: for 관련은 직선 + 상단/하단만, 나머지는 smoothstep
+  // 간선: for 진입은 수직, 본문 복귀는 전용 직각 경로, 나머지는 smoothstep
   const edges: FlowEdge[] = data.edges.map((e) => {
     const s = byId.get(e.source)!;
     const t = byId.get(e.target)!;
     const base = { id: e.id, source: e.source, target: e.target };
-    // 컨테이너 → 첫 본문 블록(진입): 상단에서 상단으로 직선
+    // 컨테이너 → 첫 본문 블록(진입): 첫 노드 중심에 맞춘 상단에서 수직 진입
     if (s.type === "for" && t.parentId === s.id)
-      return { ...base, pathType: "straight" as const, sourceHandle: "top", targetHandle: "top" };
-    // 마지막 본문 블록 → 컨테이너(복귀): 하단에서 하단으로 직선
+      return { ...base, pathType: "straight" as const, sourceHandle: "top-entry", targetHandle: "top" };
+    // 마지막 본문 블록 → 컨테이너(복귀): 세 구간 직각 경로
     if (t.type === "for" && s.parentId === t.id)
-      return { ...base, pathType: "straight" as const, sourceHandle: "bottom", targetHandle: "bottom" };
+      return { ...base, pathType: "for-return" as const, sourceHandle: "bottom", targetHandle: "bottom" };
     // 컨테이너 → 다음(루프 종료): 하단→상단 직선
     if (s.type === "for")
       return { ...base, pathType: "straight" as const, sourceHandle: "bottom", targetHandle: "top" };
@@ -269,12 +269,25 @@ export function toRFNodes(
 ): Node[] {
   // 부모(for 컨테이너)가 자식보다 먼저 오도록 위상 정렬 (React Flow 요구사항, 중첩 지원)
   const ordered = orderParentsFirst(graph.nodes);
+  const byId = new Map(graph.nodes.map((n) => [n.id, n]));
+  const entryChildByForId = new Map<string, FlowNode>();
+  for (const e of graph.edges) {
+    const source = byId.get(e.source);
+    const target = byId.get(e.target);
+    if (source?.type === "for" && target?.parentId === source.id && !entryChildByForId.has(source.id)) {
+      entryChildByForId.set(source.id, target);
+    }
+  }
+
   return ordered.map((n) => {
+    const entryChild = n.type === "for" ? entryChildByForId.get(n.id) : undefined;
+    const entryWidth = entryChild ? (entryChild.type === "for" ? entryChild.width ?? 260 : NODE_SIZE[entryChild.type].w) : 0;
+    const forEntryX = entryChild?.position ? entryChild.position.x + entryWidth / 2 : undefined;
     const node: Node = {
       id: n.id,
       type: "flow",
       position: n.position ?? { x: 0, y: 0 },
-      data: { label: n.label, nodeType: n.type, style: n.style, onLabelChange: opts?.onLabelChange } satisfies FlowNodeData,
+      data: { label: n.label, nodeType: n.type, style: n.style, forEntryX, onLabelChange: opts?.onLabelChange } satisfies FlowNodeData,
     };
     if (n.type === "for") node.style = { width: n.width ?? 260, height: n.height ?? 160 };
     // parentId 로 그룹 소속만 지정(extent 미지정 → 밖으로 드래그해 분리 가능)
@@ -323,7 +336,7 @@ export function fromRF(nodes: Node[], edges: Edge[]): FlowGraph {
       label: typeof e.label === "string" ? e.label : undefined,
       sourceHandle: e.sourceHandle ?? undefined,
       targetHandle: e.targetHandle ?? undefined,
-      pathType: (e.type as "smoothstep" | "straight" | "bezier" | undefined) ?? undefined,
+      pathType: (e.type as "smoothstep" | "straight" | "bezier" | "for-return" | undefined) ?? undefined,
     })),
   };
 }

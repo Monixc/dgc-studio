@@ -43,8 +43,8 @@ export interface FlowEdge {
   label?: string;
   sourceHandle?: string;
   targetHandle?: string;
-  /** 간선 경로 종류. for 컨테이너 연결은 직선(straight)으로 꺾임 없이. 기본 smoothstep */
-  pathType?: "smoothstep" | "straight" | "bezier";
+  /** 간선 경로 종류. 반복문 본문 복귀는 전용 직각 경로(for-return)를 사용한다. */
+  pathType?: "smoothstep" | "straight" | "bezier" | "for-return";
 }
 
 export interface FlowchartData {
