@@ -3,12 +3,11 @@ import type { Problem, ProblemCategory } from "@/integrations/supabase/types";
 
 export const PROBLEMS_KEY = ["problems"] as const;
 
-/** 선생: 본인이 만든 문제 목록. */
-export async function listMyProblems(userId: string): Promise<Problem[]> {
+/** 선생: 전체 교사 공유 문제 목록(누가 만들었든 조회·수정·삭제 가능). userId는 캐시 키/게이팅용. */
+export async function listMyProblems(_userId: string): Promise<Problem[]> {
   const { data, error } = await supabase
     .from("problems")
     .select("*")
-    .eq("created_by", userId)
     .order("updated_at", { ascending: false });
   if (error) throw error;
   return (data ?? []) as Problem[];

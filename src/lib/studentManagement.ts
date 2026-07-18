@@ -17,49 +17,34 @@ export interface StudentSubmission extends Submission {
   problem_title: string;
 }
 
-// SEC-3: 담당(내 반에 소속된) 학생만 반환. 전체 학생 열거·PII 노출 차단.
-export async function listManagedStudents(teacherId: string): Promise<ManagedStudent[]> {
-  const { data: classes, error: classesError } = await supabase
-    .from("classes")
-    .select("*")
-    .eq("created_by", teacherId)
-    .order("created_at", { ascending: true });
-  if (classesError) {
-    throw new Error(`담당 반 조회 실패: ${classesError.message}`);
-  }
-
-  const classRows = (classes ?? []) as ClassRow[];
-  const classIds = classRows.map((row) => row.id);
-  if (!classIds.length) return [];
-
-  const { data: memberData, error: memberError } = await supabase
-    .from("class_students")
-    .select("class_id, student_id")
-    .in("class_id", classIds);
-  if (memberError) {
-    throw new Error(`학생 소속 조회 실패: ${memberError.message}`);
-  }
-  const memberships = (memberData ?? []) as { class_id: string; student_id: string }[];
-  const studentIds = [...new Set(memberships.map((m) => m.student_id))];
-  if (!studentIds.length) return [];
-
+// 교사 공유 모델: 내 반 학생뿐 아니라 전체 학생을 반환하고, 소속 반을 함께 붙인다.
+export async function listManagedStudents(_teacherId: string): Promise<ManagedStudent[]> {
   const { data: students, error: studentsError } = await supabase
     .from("profiles")
     .select("*")
-    .in("id", studentIds)
     .eq("role", "student")
     .order("display_name", { ascending: true });
   if (studentsError) {
     throw new Error(`학생 프로필 조회 실패: ${studentsError.message}`);
   }
+  const studentRows = (students ?? []) as Profile[];
+  if (!studentRows.length) return [];
 
-  const classById = new Map(classRows.map((row) => [row.id, row]));
+  // 소속 반 매핑(교사는 전체 반/소속 조회 가능). 실패해도 학생 목록은 반환.
+  const { data: memberData } = await supabase.from("class_students").select("class_id, student_id");
+  const memberships = (memberData ?? []) as { class_id: string; student_id: string }[];
+  const classIds = [...new Set(memberships.map((m) => m.class_id))];
+  const classById = new Map<string, ClassRow>();
+  if (classIds.length) {
+    const { data: classes } = await supabase.from("classes").select("*").in("id", classIds);
+    for (const row of (classes ?? []) as ClassRow[]) classById.set(row.id, row);
+  }
   const classesByStudent = new Map<string, ClassRow[]>();
   for (const membership of memberships) {
     const classroom = classById.get(membership.class_id);
     if (classroom) classesByStudent.set(membership.student_id, [...(classesByStudent.get(membership.student_id) ?? []), classroom]);
   }
-  return ((students ?? []) as Profile[]).map((student) => ({ ...student, classes: classesByStudent.get(student.id) ?? [] }));
+  return studentRows.map((student) => ({ ...student, classes: classesByStudent.get(student.id) ?? [] }));
 }
 
 export async function listStudentTypingLogs(
