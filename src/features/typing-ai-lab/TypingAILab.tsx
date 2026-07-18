@@ -396,6 +396,12 @@ export default function TypingAILab({
     void (async () => {
       try {
         if (result.mode === "competition" && competition.isTestMatch) {
+          // 봇(TEST-07) 대전도 학생 본인 기록이므로 경쟁 랭킹에 저장한다.
+          try {
+            await saveTypingAiLabResult(userId, result);
+          } catch {
+            // 저장 실패해도 게임 종료 처리는 진행
+          }
           await competition.complete({
             totalScore: result.score.total,
             grade: result.score.grade,

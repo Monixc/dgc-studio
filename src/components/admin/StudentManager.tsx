@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { AlertCircle, BarChart3, BookOpen, ChevronRight, ClipboardList, Coins, RefreshCw, Save, Search, UserRound } from "lucide-react";
+import { AlertCircle, BarChart3, BookOpen, ChevronRight, ClipboardList, Coins, NotebookPen, RefreshCw, Save, Search, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
+import { usePortfolioRealtime } from "@/hooks/usePortfolioRealtime";
+import { useStudentSubmissionsRealtime } from "@/hooks/useStudentSubmissionsRealtime";
 import { usePointsRanking } from "@/hooks/usePoints";
 import {
   getStudentManagementNote,
@@ -16,6 +18,7 @@ import {
 } from "@/lib/studentManagement";
 import { TYPING_MODE_LABEL } from "@/lib/typing-logs";
 import { dailyTypingBests, type DailyTypingBest } from "@/lib/studentTypingAnalytics";
+import { listPortfolioSubmissions } from "@/lib/portfolio";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -43,6 +46,8 @@ export default function StudentManager() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
+  usePortfolioRealtime();
+  useStudentSubmissionsRealtime();
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [birthDate, setBirthDate] = useState("");
@@ -82,6 +87,11 @@ export default function StudentManager() {
     queryFn: () => listStudentSubmissions(selectedStudent!.id),
     enabled: !!selectedStudent,
   });
+  const { data: portfolioSubmissions = [], isLoading: portfolioLoading } = useQuery({
+    queryKey: ["student-management", "portfolio-submissions", selectedStudent?.id],
+    queryFn: () => listPortfolioSubmissions({ studentId: selectedStudent!.id }),
+    enabled: !!selectedStudent,
+  });
   const {
     data: typingLogs = [],
     isLoading: typingLoading,
@@ -102,6 +112,16 @@ export default function StudentManager() {
   });
   const { data: pointRanking = [] } = usePointsRanking();
   const groups = useMemo(() => submissionGroups(submissions), [submissions]);
+  const portfolioGroups = useMemo(() => {
+    const grouped = new Map<string, typeof portfolioSubmissions>();
+    for (const submission of portfolioSubmissions) {
+      grouped.set(submission.document_id, [...(grouped.get(submission.document_id) ?? []), submission]);
+    }
+    return [...grouped.values()].map((versions) => ({
+      latest: versions.reduce((latest, version) => version.version > latest.version ? version : latest),
+      versions,
+    }));
+  }, [portfolioSubmissions]);
 
   const saveNote = useMutation({
     mutationFn: () => saveStudentManagementNote({
@@ -212,6 +232,44 @@ export default function StudentManager() {
                       <span className="text-xs text-muted-foreground">최근 제출 {new Date(latest.submitted_at).toLocaleString("ko-KR")} · {versions.length}개 버전</span>
                     </span>
                     <span className="text-sm font-semibold">{latest.score}/{latest.max_score}</span>
+                    <ChevronRight className="size-4 text-muted-foreground" />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="mt-5 rounded-xl border bg-background shadow-sm">
+            <div className="border-b px-5 py-4">
+              <div className="flex items-center gap-2">
+                <NotebookPen className="size-4 text-primary" />
+                <h3 className="font-semibold">포트폴리오 노트</h3>
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">학생이 제출한 학습 노트와 버전별 첨삭 내용을 확인합니다.</p>
+            </div>
+            {portfolioLoading ? (
+              <p className="p-5 text-sm text-muted-foreground">포트폴리오를 불러오는 중…</p>
+            ) : portfolioGroups.length === 0 ? (
+              <p className="p-5 text-sm text-muted-foreground">아직 제출한 포트폴리오가 없습니다.</p>
+            ) : (
+              <div className="divide-y">
+                {portfolioGroups.map(({ latest }) => (
+                  <button
+                    key={latest.document_id}
+                    type="button"
+                    onClick={() => navigate(`/students/${selectedStudent.id}/portfolio/${latest.id}`)}
+                    className="flex w-full items-center gap-3 px-5 py-4 text-left hover:bg-muted/50"
+                  >
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-violet-500/10 text-violet-600">
+                      <NotebookPen className="size-4" />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-sm font-medium">{latest.title || "제목 없는 노트"}</span>
+                      <span className="text-xs text-muted-foreground">
+                        최근 제출 {new Date(latest.submitted_at).toLocaleString("ko-KR")}
+                      </span>
+                    </span>
+                    <span className="text-xs font-semibold text-primary">상세보기</span>
                     <ChevronRight className="size-4 text-muted-foreground" />
                   </button>
                 ))}

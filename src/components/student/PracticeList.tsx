@@ -12,10 +12,12 @@ interface Props {
   title: string;
   category?: ProblemCategory;
   problems?: Problem[];
+  /** solve 진입 시 사이드바/뒤로가기 범위 (예: "myclass"면 내 수업 할당 문제만). */
+  solveScope?: string;
 }
 
 /** category 지정 시 발행된 문제 중 해당 카테고리만, problems 직접 지정 시 그 목록 그대로. */
-export default function PracticeList({ title, category, problems: fixedProblems }: Props) {
+export default function PracticeList({ title, category, problems: fixedProblems, solveScope }: Props) {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { data: published = [], isLoading } = usePublishedProblems(!fixedProblems);
@@ -61,7 +63,7 @@ export default function PracticeList({ title, category, problems: fixedProblems 
                 key={p.id}
                 type="button"
                 className="flex w-full items-center gap-3 border-t px-4 py-3 text-left transition first:border-t-0 hover:bg-accent/50"
-                onClick={() => navigate(`/solve/${p.id}`)}
+                onClick={() => navigate(`/solve/${p.id}${solveScope ? `?scope=${solveScope}` : ""}`)}
               >
                 <div className="truncate font-medium">{p.title || "(제목 없음)"}</div>
                 <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-border bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">

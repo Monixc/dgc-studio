@@ -1,16 +1,14 @@
 import { useNavigate } from "react-router-dom";
-import { BookOpen, Trophy, MessageSquare, ChevronRight } from "lucide-react";
+import { BookOpen, Trophy, ChevronRight } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { usePublishedProblems } from "@/hooks/useProblems";
 import { useAssignedProblems } from "@/hooks/useClasses";
 import { useAllStudents } from "@/hooks/useClassStudents";
-import { useStudentTeachers } from "@/hooks/useMessages";
 import { usePointsRanking } from "@/hooks/usePoints";
 import { useQuery } from "@tanstack/react-query";
 import { listMySubmissions } from "@/lib/submissions";
 import { cn } from "@/lib/utils";
 import AppShell, { STUDENT_MENU } from "@/components/layout/AppShell";
-import MessageCenter from "@/components/dashboard/MessageCenter";
 
 function greetingFor(hour: number) {
   if (hour < 12) return "좋은 아침이에요";
@@ -24,7 +22,6 @@ export default function StudentDashboard() {
   const { data: problems = [] } = usePublishedProblems();
   const { data: assigned = [] } = useAssignedProblems(user?.id);
   const { data: students = [] } = useAllStudents();
-  const { data: teachers = [] } = useStudentTeachers(user?.id);
   const { data: ranking = [] } = usePointsRanking();
 
   const { data: submissions = [] } = useQuery({
@@ -94,10 +91,6 @@ export default function StudentDashboard() {
                 ))}
               </div>
             )}
-          </Bento>
-
-          <Bento className="md:col-span-4" icon={MessageSquare} title="선생님께 쪽지 보내기">
-            <MessageCenter recipients={teachers} />
           </Bento>
         </div>
       </div>

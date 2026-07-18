@@ -17,16 +17,8 @@ export interface StudentSubmission extends Submission {
   problem_title: string;
 }
 
+// SEC-3: 담당(내 반에 소속된) 학생만 반환. 전체 학생 열거·PII 노출 차단.
 export async function listManagedStudents(teacherId: string): Promise<ManagedStudent[]> {
-  const { data: students, error: studentsError } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("role", "student")
-    .order("display_name", { ascending: true });
-  if (studentsError) {
-    throw new Error(`학생 프로필 조회 실패: ${studentsError.message}`);
-  }
-
   const { data: classes, error: classesError } = await supabase
     .from("classes")
     .select("*")
@@ -38,20 +30,31 @@ export async function listManagedStudents(teacherId: string): Promise<ManagedStu
 
   const classRows = (classes ?? []) as ClassRow[];
   const classIds = classRows.map((row) => row.id);
-  let memberships: { class_id: string; student_id: string }[] = [];
-  if (classIds.length) {
-    const { data, error } = await supabase
-      .from("class_students")
-      .select("class_id, student_id")
-      .in("class_id", classIds);
-    if (error) {
-      throw new Error(`학생 소속 조회 실패: ${error.message}`);
-    }
-    memberships = (data ?? []) as { class_id: string; student_id: string }[];
+  if (!classIds.length) return [];
+
+  const { data: memberData, error: memberError } = await supabase
+    .from("class_students")
+    .select("class_id, student_id")
+    .in("class_id", classIds);
+  if (memberError) {
+    throw new Error(`학생 소속 조회 실패: ${memberError.message}`);
+  }
+  const memberships = (memberData ?? []) as { class_id: string; student_id: string }[];
+  const studentIds = [...new Set(memberships.map((m) => m.student_id))];
+  if (!studentIds.length) return [];
+
+  const { data: students, error: studentsError } = await supabase
+    .from("profiles")
+    .select("*")
+    .in("id", studentIds)
+    .eq("role", "student")
+    .order("display_name", { ascending: true });
+  if (studentsError) {
+    throw new Error(`학생 프로필 조회 실패: ${studentsError.message}`);
   }
 
-  const classesByStudent = new Map<string, ClassRow[]>();
   const classById = new Map(classRows.map((row) => [row.id, row]));
+  const classesByStudent = new Map<string, ClassRow[]>();
   for (const membership of memberships) {
     const classroom = classById.get(membership.class_id);
     if (classroom) classesByStudent.set(membership.student_id, [...(classesByStudent.get(membership.student_id) ?? []), classroom]);

@@ -5,6 +5,7 @@ import { ArrowLeft, MessageSquarePlus, Send } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { usePyodide } from "@/hooks/usePyodide";
+import { useStudentSubmissionsRealtime } from "@/hooks/useStudentSubmissionsRealtime";
 import {
   createSubmissionComment,
   listManagedStudents,
@@ -21,6 +22,7 @@ export default function StudentSubmissionReview() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const qc = useQueryClient();
+  useStudentSubmissionsRealtime();
   const { run, running, stop } = usePyodide();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [comment, setComment] = useState("");

@@ -39,6 +39,9 @@ interface ProgressPayload {
 
 const DISCONNECT_MS = 30_000;
 const TEST_MATCH_ID = "local-test-match";
+// ponytail: 5초 안에 사람 상대가 안 잡히면 봇으로 자동 전환. 실제 대전자가 드물어
+// 무한 대기( "상대 찾는 중…" )로 봇이 안 뜨는 문제 방지. 대기 시간은 필요 시 조정.
+const BOT_FALLBACK_MS = 5_000;
 
 export function useTypingAiCompetition(args: {
   userId: string;
@@ -55,6 +58,7 @@ export function useTypingAiCompetition(args: {
   const lastSeenRef = useRef(Date.now());
   const pollRef = useRef<number | null>(null);
   const disconnectRef = useRef<number | null>(null);
+  const botTimerRef = useRef<number | null>(null);
 
   const cleanupChannel = useCallback(() => {
     if (channelRef.current) {
@@ -68,6 +72,10 @@ export function useTypingAiCompetition(args: {
     if (disconnectRef.current) {
       window.clearTimeout(disconnectRef.current);
       disconnectRef.current = null;
+    }
+    if (botTimerRef.current) {
+      window.clearTimeout(botTimerRef.current);
+      botTimerRef.current = null;
     }
   }, []);
 
@@ -146,77 +154,6 @@ export function useTypingAiCompetition(args: {
     [cleanupChannel, displayName, userId],
   );
 
-  const joinQueue = useCallback(async () => {
-    setError(null);
-    try {
-      const res = await quickMatch(displayName, poolIds);
-      if (res.status === "queued") {
-        setPhase("queued");
-        // 매칭 대기 폴링: 내가 매치에 들어갔는지
-        pollRef.current = window.setInterval(() => {
-          void supabase
-            .from("typing_ai_lab_match_players")
-            .select("match_id, typing_ai_lab_matches!inner(status)")
-            .eq("user_id", userId)
-            .in("typing_ai_lab_matches.status", ["countdown", "playing"])
-            .limit(1)
-            .maybeSingle()
-            .then(({ data }) => {
-              const id = (data as { match_id?: string } | null)?.match_id;
-              if (id) {
-                if (pollRef.current) window.clearInterval(pollRef.current);
-                void attachMatch(id);
-              }
-            });
-        }, 1500);
-      } else if (res.match_id) {
-        await attachMatch(res.match_id);
-      }
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "매칭 실패");
-      setPhase("idle");
-    }
-  }, [attachMatch, displayName, poolIds, userId]);
-
-  const cancel = useCallback(async () => {
-    try {
-      await cancelQueue();
-    } catch {
-      // ignore
-    }
-    cleanupChannel();
-    setPhase("idle");
-    setMatch(null);
-    setPlayers([]);
-    setOpponent(null);
-  }, [cleanupChannel]);
-
-  const stopSimulation = useCallback(() => {
-    if (pollRef.current) {
-      window.clearInterval(pollRef.current);
-      pollRef.current = null;
-    }
-  }, []);
-
-  const beginPlay = useCallback(async () => {
-    if (!match) return;
-    if (match.id === TEST_MATCH_ID) {
-      stopSimulation();
-      pollRef.current = window.setInterval(() => {
-        setOpponent((prev) => prev && ({
-          ...prev,
-          datasetSize: prev.datasetSize + (Math.random() > 0.45 ? 1 : 0),
-          accuracy: Math.max(82, Math.min(99, prev.accuracy + (Math.random() - 0.5) * 3)),
-          totalPreview: Math.round((prev.totalPreview + Math.random() * 2.4) * 10) / 10,
-        }));
-      }, 900);
-      setPhase("playing");
-      return;
-    }
-    await startMatch(match.id);
-    setPhase("playing");
-  }, [match, stopSimulation]);
-
   const startTestMatch = useCallback(async () => {
     try {
       await cancelQueue();
@@ -257,6 +194,86 @@ export function useTypingAiCompetition(args: {
     setError(null);
     setPhase("countdown");
   }, [cleanupChannel, displayName, poolIds, userId]);
+
+  const joinQueue = useCallback(async () => {
+    setError(null);
+    try {
+      const res = await quickMatch(displayName, poolIds);
+      if (res.status === "queued") {
+        setPhase("queued");
+        // 매칭 대기 폴링: 내가 매치에 들어갔는지
+        pollRef.current = window.setInterval(() => {
+          void supabase
+            .from("typing_ai_lab_match_players")
+            .select("match_id, typing_ai_lab_matches!inner(status)")
+            .eq("user_id", userId)
+            .in("typing_ai_lab_matches.status", ["countdown", "playing"])
+            .limit(1)
+            .maybeSingle()
+            .then(({ data }) => {
+              const id = (data as { match_id?: string } | null)?.match_id;
+              if (id) {
+                if (pollRef.current) window.clearInterval(pollRef.current);
+                if (botTimerRef.current) {
+                  window.clearTimeout(botTimerRef.current);
+                  botTimerRef.current = null;
+                }
+                void attachMatch(id);
+              }
+            });
+        }, 1500);
+        // 사람 상대가 없으면 봇(TEST-07) 자동 투입
+        botTimerRef.current = window.setTimeout(() => {
+          botTimerRef.current = null;
+          void startTestMatch();
+        }, BOT_FALLBACK_MS);
+      } else if (res.match_id) {
+        await attachMatch(res.match_id);
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "매칭 실패");
+      setPhase("idle");
+    }
+  }, [attachMatch, displayName, poolIds, startTestMatch, userId]);
+
+  const cancel = useCallback(async () => {
+    try {
+      await cancelQueue();
+    } catch {
+      // ignore
+    }
+    cleanupChannel();
+    setPhase("idle");
+    setMatch(null);
+    setPlayers([]);
+    setOpponent(null);
+  }, [cleanupChannel]);
+
+  const stopSimulation = useCallback(() => {
+    if (pollRef.current) {
+      window.clearInterval(pollRef.current);
+      pollRef.current = null;
+    }
+  }, []);
+
+  const beginPlay = useCallback(async () => {
+    if (!match) return;
+    if (match.id === TEST_MATCH_ID) {
+      stopSimulation();
+      pollRef.current = window.setInterval(() => {
+        setOpponent((prev) => prev && ({
+          ...prev,
+          datasetSize: prev.datasetSize + (Math.random() > 0.45 ? 1 : 0),
+          accuracy: Math.max(82, Math.min(99, prev.accuracy + (Math.random() - 0.5) * 3)),
+          totalPreview: Math.round((prev.totalPreview + Math.random() * 2.4) * 10) / 10,
+        }));
+      }, 900);
+      setPhase("playing");
+      return;
+    }
+    await startMatch(match.id);
+    setPhase("playing");
+  }, [match, stopSimulation]);
 
   const broadcastProgress = useCallback(
     (payload: Omit<ProgressPayload, "userId" | "name">) => {

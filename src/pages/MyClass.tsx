@@ -9,7 +9,7 @@ export default function MyClass() {
 
   return (
     <AppShell menu={STUDENT_MENU} homePath="/student">
-      <PracticeList title="내 수업" problems={problems} />
+      <PracticeList title="내 수업" problems={problems} solveScope="myclass" />
     </AppShell>
   );
 }

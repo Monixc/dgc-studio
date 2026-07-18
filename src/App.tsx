@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner";
@@ -8,7 +9,6 @@ import Dashboard from "@/pages/Dashboard";
 import Classes from "@/pages/Classes";
 import LiveClass from "@/pages/LiveClass";
 import Problems from "@/pages/Problems";
-import TeacherProblems from "@/pages/TeacherProblems";
 import StudentDashboard from "@/pages/StudentDashboard";
 import MyClass from "@/pages/MyClass";
 import FlowchartPractice from "@/pages/FlowchartPractice";
@@ -21,6 +21,10 @@ import StudentShop from "@/pages/StudentShop";
 import Students from "@/pages/Students";
 import StudentSubmissionReview from "@/pages/StudentSubmissionReview";
 import NotFound from "@/pages/NotFound";
+
+const StudentPortfolio = lazy(() => import("@/pages/StudentPortfolio"));
+const StudentPortfolioEditor = lazy(() => import("@/pages/StudentPortfolioEditor"));
+const StudentPortfolioReview = lazy(() => import("@/pages/StudentPortfolioReview"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -44,7 +48,8 @@ export default function App() {
       <AuthProvider>
         <PresenceGate />
         <BrowserRouter>
-          <Routes>
+          <Suspense fallback={<div className="flex h-dvh items-center justify-center text-sm text-muted-foreground">화면을 불러오는 중…</div>}>
+            <Routes>
             <Route path="/" element={<Home />} />
             <Route
               path="/dashboard"
@@ -79,6 +84,14 @@ export default function App() {
               }
             />
             <Route
+              path="/students/:studentId/portfolio/:submissionId"
+              element={
+                <RequireRole role="teacher">
+                  <StudentPortfolioReview />
+                </RequireRole>
+              }
+            />
+            <Route
               path="/classes/:classId/live"
               element={
                 <RequireRole role="teacher">
@@ -91,14 +104,6 @@ export default function App() {
               element={
                 <RequireRole role="teacher">
                   <Problems />
-                </RequireRole>
-              }
-            />
-            <Route
-              path="/teacher"
-              element={
-                <RequireRole role="teacher">
-                  <TeacherProblems />
                 </RequireRole>
               }
             />
@@ -167,6 +172,22 @@ export default function App() {
               }
             />
             <Route
+              path="/student/portfolio"
+              element={
+                <RequireRole role="student">
+                  <StudentPortfolio />
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/student/portfolio/:documentId/edit"
+              element={
+                <RequireRole role="student">
+                  <StudentPortfolioEditor />
+                </RequireRole>
+              }
+            />
+            <Route
               path="/solve/:problemId"
               element={
                 <RequireAuth>
@@ -175,7 +196,8 @@ export default function App() {
               }
             />
             <Route path="*" element={<NotFound />} />
-          </Routes>
+            </Routes>
+          </Suspense>
         </BrowserRouter>
       </AuthProvider>
       <Toaster richColors position="top-center" />

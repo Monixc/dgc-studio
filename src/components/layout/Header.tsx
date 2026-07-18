@@ -1,21 +1,37 @@
 import { useState } from "react";
-import { Bell, LogOut, Pencil, Check, ChevronDown } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { Bell, LogOut, MessageSquare, Pencil, Check } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { signOut } from "@/lib/auth";
 import { AVATAR_COLORS, loadPrefs, savePrefs, type ProfilePrefs } from "@/lib/profile-prefs";
+import { CLASS_STUDENTS_KEY, listAllStudents } from "@/lib/classStudents";
+import { useStudentTeachers } from "@/hooks/useMessages";
+import { useChat } from "@/hooks/useChat";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import NotificationSettings from "@/components/notifications/NotificationSettings";
+import NotificationBell from "@/components/notifications/NotificationBell";
+import ChatPanel from "@/components/chat/ChatPanel";
 import { cn } from "@/lib/utils";
 
 export default function Header({ title }: { title?: string }) {
-  const { user, profile } = useAuth();
+  const { user, profile, role } = useAuth();
   const uid = user!.id;
   const [prefs, setPrefs] = useState<ProfilePrefs>(() => loadPrefs(uid));
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [nameInput, setNameInput] = useState("");
   const [notifOpen, setNotifOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+
+  const chat = useChat(uid);
+  const teacherRecipients = useStudentTeachers(role === "student" ? uid : undefined);
+  const studentRecipients = useQuery({
+    queryKey: [...CLASS_STUDENTS_KEY, "all"],
+    queryFn: listAllStudents,
+    enabled: role === "teacher",
+  });
+  const recipients = role === "teacher" ? studentRecipients.data ?? [] : teacherRecipients.data ?? [];
 
   const name = prefs.displayName || profile?.display_name || "사용자";
   const initial = name.trim().charAt(0).toUpperCase() || "?";
@@ -38,10 +54,25 @@ export default function Header({ title }: { title?: string }) {
   return (
     <header className="flex h-14 items-center border-b bg-background px-6">
       {title && <h2 className="text-sm font-semibold text-muted-foreground">{title}</h2>}
-      <div className="relative ml-auto">
+      <div className="ml-auto flex items-center gap-1">
+      <NotificationBell userId={uid} />
+      <button
+        onClick={() => setChatOpen(true)}
+        className="relative rounded-full p-2 text-muted-foreground hover:bg-accent hover:text-foreground"
+        title="채팅"
+      >
+        <MessageSquare className="size-5" />
+        {chat.unreadCount > 0 && (
+          <span className="absolute right-0.5 top-0.5 flex min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold text-white">
+            {chat.unreadCount > 9 ? "9+" : chat.unreadCount}
+          </span>
+        )}
+      </button>
+      <div className="relative">
         <button
           onClick={() => setOpen((o) => !o)}
-          className="flex items-center gap-2 rounded-full py-1 pl-1 pr-2 hover:bg-accent"
+          className="flex items-center rounded-full p-1 hover:bg-accent"
+          title={name}
         >
           <span
             className="flex size-8 items-center justify-center rounded-full text-sm font-semibold text-white"
@@ -49,8 +80,6 @@ export default function Header({ title }: { title?: string }) {
           >
             {initial}
           </span>
-          <span className="text-sm font-medium">{name}</span>
-          <ChevronDown className="size-4 text-muted-foreground" />
         </button>
 
         {open && (
@@ -112,7 +141,7 @@ export default function Header({ title }: { title?: string }) {
                 }}
                 className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm hover:bg-accent"
               >
-                <Bell className="size-4" /> 알림
+                <Bell className="size-4" /> 알림 설정
               </button>
               <button
                 onClick={() => signOut()}
@@ -124,11 +153,20 @@ export default function Header({ title }: { title?: string }) {
           </>
         )}
       </div>
+      </div>
+
+      <ChatPanel
+        open={chatOpen}
+        onClose={() => setChatOpen(false)}
+        userId={uid}
+        recipients={recipients}
+        chat={chat}
+      />
 
       <Dialog open={notifOpen} onOpenChange={setNotifOpen}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle>알림</DialogTitle>
+            <DialogTitle>알림 설정</DialogTitle>
           </DialogHeader>
           <NotificationSettings />
         </DialogContent>

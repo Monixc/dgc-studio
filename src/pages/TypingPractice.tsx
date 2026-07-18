@@ -1401,15 +1401,15 @@ function PracticeCategoryMenu({
   const code = codeOrder.map((id) => CATEGORIES.find((item) => item.id === id)!);
   const cardTone: Record<Category, string> = {
     english: "bg-[#f4c95d] text-[#342500] hover:bg-[#ffd86b]",
-    python: "bg-[linear-gradient(135deg,#3776ab_0%,#3776ab_56%,#ffd343_100%)] text-white hover:brightness-110",
-    lua: "bg-gradient-to-br from-[#000080] to-[#7588d8] text-white hover:brightness-110",
-    javascript: "bg-gradient-to-br from-[#b58f00] to-[#f7df1e] text-white hover:brightness-110",
-    html: "bg-gradient-to-br from-[#e34f26] to-[#f06529] text-white hover:brightness-110",
-    typescript: "bg-gradient-to-br from-[#235a97] to-[#3178c6] text-white hover:brightness-110",
-    sql: "bg-gradient-to-br from-[#333333] to-[#df6c20] text-white hover:brightness-110",
-    react: "bg-gradient-to-br from-[#20232a] to-[#61dafb] text-white hover:brightness-110",
-    css: "bg-gradient-to-br from-[#264de4] to-[#2965f1] text-white hover:brightness-110",
-    shell: "bg-gradient-to-br from-[#15803d] to-[#84cc16] text-white hover:brightness-110",
+    python: "bg-[#3776ab] text-white hover:bg-[#4384b9]",
+    lua: "bg-[#000080] text-white hover:bg-[#11119a]",
+    javascript: "bg-[#f7df1e] text-[#211f0b] hover:bg-[#ffe640]",
+    html: "bg-[#e34f26] text-white hover:bg-[#ed5b35]",
+    typescript: "bg-[#3178c6] text-white hover:bg-[#3f87d5]",
+    sql: "bg-[#e76f00] text-white hover:bg-[#f27a0b]",
+    react: "bg-[#61dafb] text-[#172126] hover:bg-[#7ee2fc]",
+    css: "bg-[#264de4] text-white hover:bg-[#345bed]",
+    shell: "bg-[#4eaa25] text-white hover:bg-[#5ab932]",
   };
   const cardLayout: Partial<Record<Category, string>> = {
     python: "sm:col-span-3 sm:row-span-2",
@@ -1507,7 +1507,6 @@ function PracticeCategoryMenu({
                     cardLayout[item.id],
                   )}
                 >
-                  <span className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_0%,rgba(255,255,255,.28),transparent_45%)]" />
                   <CategoryLogoWatermark category={item.id} />
                   <div className="relative z-10 flex items-start justify-between">
                     <span className="text-[9px] font-bold tracking-[0.16em] opacity-60">{cardGroup[item.id]}</span>
@@ -1679,28 +1678,117 @@ function PracticeMode({
     );
   }
 
+  const codeMode = isCodeCategory(category);
+  const ActiveCategoryIcon = PRACTICE_CATEGORY_ICON[category];
+
   if (result) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
-        <section className="w-full max-w-2xl rounded-2xl border bg-card p-6 text-center shadow-sm">
-          <CheckCircle2 className="mx-auto size-12 text-green-500" />
-          <h2 className="mt-3 text-2xl font-bold">연습 완료!</h2>
-          <div className="mx-auto mt-6 grid max-w-2xl grid-cols-3 gap-3">
-            <ResultStat label="평균 타수" value={`${result.taja}타`} />
-            <ResultStat label="정확도" value={`${result.accuracy}%`} />
-            <ResultStat label="완료 스니펫" value={result.completed} />
+      <main className={cn(
+        "flex min-h-screen items-center justify-center p-4",
+        codeMode
+          ? "bg-[#080b10] text-zinc-100"
+          : "bg-[#ece5d8] text-amber-950 dark:bg-[#100e0b] dark:text-amber-50",
+      )}>
+        <section className={cn(
+          "w-full max-w-2xl overflow-hidden shadow-[0_24px_80px_rgba(0,0,0,.25)]",
+          codeMode
+            ? "rounded-xl bg-[#0d1117]"
+            : "relative border border-amber-950/20 bg-[radial-gradient(circle_at_top,#fffaf0_0%,#f4ead7_68%,#eadbc2_100%)] font-serif shadow-[0_24px_80px_rgba(69,26,3,.2)] dark:border-amber-100/15 dark:bg-[radial-gradient(circle_at_top,#211c14_0%,#17130e_72%)]",
+        )}>
+          {!codeMode && (
+            <div className="pointer-events-none absolute inset-3 border border-amber-950/10 dark:border-amber-100/10" aria-hidden />
+          )}
+          {codeMode && (
+            <div className="relative flex h-9 items-center bg-[#161b22] px-3">
+              <div className="flex gap-1.5" aria-hidden>
+                <span className="size-2.5 rounded-full bg-[#ff5f56]" />
+                <span className="size-2.5 rounded-full bg-[#ffbd2e]" />
+                <span className="size-2.5 rounded-full bg-[#27c93f]" />
+              </div>
+              <span className="pointer-events-none absolute inset-x-24 text-center text-[11px] text-zinc-500">
+                flow-typing — report
+              </span>
+            </div>
+          )}
+          <div className={cn("p-6 sm:p-8", codeMode ? "font-mono" : "text-center")}>
+            {codeMode ? (
+              <div className="text-left text-sm">
+                <p className="text-zinc-300">
+                  <span className="mr-2 text-emerald-400">$</span>
+                  flow-typing report --latest
+                </p>
+                <p className="mt-4 text-emerald-400">
+                  <span className="mr-2">✓</span>
+                  Session completed successfully
+                </p>
+                <p className="mt-1 text-zinc-500">
+                  language: <span className="text-sky-400">{categoryMeta?.label}</span>
+                </p>
+              </div>
+            ) : (
+              <>
+                <p className="text-[9px] font-bold tracking-[0.32em] text-amber-900/45 dark:text-amber-100/35">
+                  TYPEWRITER&apos;S PRACTICE RECORD
+                </p>
+                <div className="mx-auto mt-4 flex max-w-sm items-center gap-4 text-amber-900/45 dark:text-amber-100/40">
+                  <span className="h-px flex-1 bg-current" />
+                  <ActiveCategoryIcon className="size-6" />
+                  <span className="h-px flex-1 bg-current" />
+                </div>
+                <h2 className="mt-3 text-3xl font-bold tracking-tight">연습 완료</h2>
+                <p className="mt-2 text-xs italic text-amber-900/50 dark:text-amber-100/40">
+                  {categoryMeta?.label} 연습 기록을 한 장의 문서로 남겼습니다.
+                </p>
+              </>
+            )}
+            <div className={cn(
+              "mx-auto max-w-2xl",
+              codeMode
+                ? "mt-5 divide-y divide-zinc-800 border-y border-zinc-800"
+                : "mt-7 grid grid-cols-3 divide-x divide-amber-950/15 border-y border-amber-950/20 dark:divide-amber-100/15 dark:border-amber-100/20",
+            )}>
+              <ResultStat tone={codeMode ? "code" : "prose"} label={codeMode ? "average_taja" : "평균 타수"} value={`${result.taja}타`} />
+              <ResultStat tone={codeMode ? "code" : "prose"} label={codeMode ? "accuracy" : "정확도"} value={`${result.accuracy}%`} />
+              <ResultStat tone={codeMode ? "code" : "prose"} label={codeMode ? "completed_snippets" : "완료 스니펫"} value={result.completed} />
+            </div>
+            <div className={cn("mt-6 flex gap-2", codeMode ? "justify-start" : "justify-center")}>
+              <Button
+                type="button"
+                variant="outline"
+                className={cn(
+                  "rounded-lg",
+                  codeMode
+                    ? "border-zinc-700 bg-[#161b22] text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                    : "rounded-none border-amber-950/20 bg-transparent font-sans text-amber-950 shadow-none hover:bg-amber-950/10 hover:text-amber-950 dark:border-amber-100/20 dark:text-amber-50 dark:hover:bg-amber-100/10 dark:hover:text-white",
+                )}
+                onClick={() => setCategory(null)}
+              >
+                <ArrowLeft /> 연습 선택
+              </Button>
+              <Button
+                type="button"
+                className={cn(
+                  "rounded-lg",
+                  codeMode
+                    ? "bg-sky-600 text-white hover:bg-sky-500"
+                    : "rounded-none bg-amber-950 font-sans text-amber-50 shadow-none hover:bg-amber-900 dark:bg-amber-100 dark:text-amber-950 dark:hover:bg-white",
+                )}
+                onClick={() => resetSession()}
+              >
+                <RotateCcw /> 다시 연습
+              </Button>
+            </div>
           </div>
-          <div className="mt-6 flex justify-center gap-2">
-            <Button variant="outline" onClick={() => resetSession(null)}><ArrowLeft /> 연습 선택</Button>
-            <Button onClick={() => resetSession()}><RotateCcw /> 다시 연습</Button>
-          </div>
+          {codeMode && (
+            <div className="flex h-6 items-center justify-between bg-sky-700 px-3 text-[10px] text-sky-50">
+              <span>session complete</span>
+              <span>{result.taja} taja · {result.accuracy}% accuracy</span>
+            </div>
+          )}
         </section>
       </main>
     );
   }
-
-  const codeMode = isCodeCategory(category);
-  const ActiveCategoryIcon = PRACTICE_CATEGORY_ICON[category];
 
   return (
     <main className={cn(
@@ -1716,7 +1804,7 @@ function PracticeMode({
         )}>
           <button
             type="button"
-            onClick={() => resetSession(null)}
+            onClick={() => setCategory(null)}
             className={cn(
               "inline-flex items-center gap-2 text-sm transition",
               codeMode ? "text-zinc-400 hover:text-white" : "text-amber-900/60 hover:text-amber-950 dark:text-amber-100/50 dark:hover:text-white",
@@ -1853,6 +1941,12 @@ function PracticeMode({
         <div className="flex flex-wrap justify-end gap-2">
           <Button
             variant="outline"
+            className={cn(
+              "rounded-lg shadow-none",
+              codeMode
+                ? "border-zinc-700 bg-[#161b22] text-zinc-300 hover:border-zinc-600 hover:bg-zinc-800 hover:text-white"
+                : "border-amber-900/15 bg-[#f6f0e4] text-amber-900 hover:bg-amber-900/10 hover:text-amber-950 dark:border-amber-100/15 dark:bg-[#1a1712] dark:text-amber-100 dark:hover:bg-amber-100/10 dark:hover:text-white",
+            )}
             onClick={() => {
               resetSession();
               if (loadState === "ready") drawNext();
@@ -1860,7 +1954,19 @@ function PracticeMode({
           >
             <RotateCcw /> 처음부터
           </Button>
-          {startedAt !== null && <Button onClick={() => finishSession()}>연습 종료</Button>}
+          {startedAt !== null && (
+            <Button
+              className={cn(
+                "rounded-lg shadow-none",
+                codeMode
+                  ? "bg-sky-600 text-white hover:bg-sky-500"
+                  : "bg-amber-900 text-amber-50 hover:bg-amber-800 dark:bg-amber-200 dark:text-amber-950 dark:hover:bg-amber-100",
+              )}
+              onClick={() => finishSession()}
+            >
+              연습 종료
+            </Button>
+          )}
         </div>
       </div>
     </main>
@@ -2082,11 +2188,33 @@ function Stat({
   );
 }
 
-function ResultStat({ label, value }: { label: string; value: string | number }) {
+function ResultStat({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: string | number;
+  tone: "code" | "prose";
+}) {
   return (
-    <div className="rounded-xl bg-muted p-4">
-      <div className="text-xs text-muted-foreground">{label}</div>
-      <div className="mt-1 font-mono text-2xl font-bold">{value}</div>
+    <div className={cn(
+      tone === "code" ? "flex items-center justify-between py-3 text-left" : "p-4",
+      tone === "code"
+        ? "text-zinc-100"
+        : "bg-transparent",
+    )}>
+      <div className={cn(
+        "text-xs",
+        tone === "code" ? "text-zinc-500" : "text-amber-900/45 dark:text-amber-100/35",
+      )}>
+        {tone === "code" && <span className="mr-2 text-sky-500">&gt;</span>}
+        {label}
+      </div>
+      <div className={cn(
+        "font-mono text-2xl font-bold",
+        tone === "code" ? "text-emerald-400" : "mt-1 text-amber-950 dark:text-amber-50",
+      )}>{value}</div>
     </div>
   );
 }

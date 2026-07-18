@@ -2,19 +2,17 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Users, Plus, Megaphone, CheckCircle2, MessageSquare,
+  Users, Plus, Megaphone, CheckCircle2,
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useMyProblems } from "@/hooks/useProblems";
 import { useOnlineUsers } from "@/hooks/usePresence";
-import { useAllStudents } from "@/hooks/useClassStudents";
 import { listRecentSubmissions } from "@/lib/submissions";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import AppShell from "@/components/layout/AppShell";
 import ScheduleCalendar, { todayEventCount } from "@/components/dashboard/ScheduleCalendar";
 import AnnouncementsPanel from "@/components/dashboard/AnnouncementsPanel";
-import MessageCenter from "@/components/dashboard/MessageCenter";
 
 function greetingFor(hour: number) {
   if (hour < 12) return "좋은 아침이에요";
@@ -42,7 +40,6 @@ export default function Dashboard() {
     queryKey: ["recent-submissions"],
     queryFn: () => listRecentSubmissions(8),
   });
-  const { data: allStudents = [] } = useAllStudents();
   const [announceOpen, setAnnounceOpen] = useState(false);
 
   const titleOf = (id: string) => problems.find((p) => p.id === id)?.title ?? "문제";
@@ -136,11 +133,6 @@ export default function Dashboard() {
                 })}
               </div>
             )}
-          </Bento>
-
-          {/* 쪽지함 */}
-          <Bento className="md:col-span-2" icon={MessageSquare} title="쪽지함">
-            <MessageCenter recipients={allStudents} />
           </Bento>
 
           {/* 수업 시간표 — 편집 가능 캘린더 */}

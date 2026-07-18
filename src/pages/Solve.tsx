@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ArrowLeft, Send, CheckCircle2, XCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useProblem, usePublishedProblems } from "@/hooks/useProblems";
+import { useAssignedProblems } from "@/hooks/useClasses";
+import { getAssignedClassNames } from "@/lib/classes";
 import type { Problem } from "@/integrations/supabase/types";
 import { usePyodide } from "@/hooks/usePyodide";
 import { buildGradingSummary, type GradingSummary } from "@/lib/grading";
@@ -17,13 +19,23 @@ import { normalizeStored } from "@/lib/flow-graph";
 import EditorPanel, { type ConsoleLine } from "@/components/editor/EditorPanel";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Markdown } from "@/components/Markdown";
 
 export default function Solve() {
   const { problemId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [searchParams] = useSearchParams();
+  const isMyClass = searchParams.get("scope") === "myclass";
   const { data: problem, isLoading } = useProblem(problemId);
-  const { data: problems = [] } = usePublishedProblems();
+  const { data: published = [] } = usePublishedProblems(!isMyClass);
+  const { data: assigned = [] } = useAssignedProblems(isMyClass ? user?.id : undefined);
+  const problems = isMyClass ? assigned : published;
+  const { data: classNames = [] } = useQuery({
+    queryKey: ["assigned-class-names", user?.id, problemId],
+    queryFn: () => getAssignedClassNames(user!.id, problemId!),
+    enabled: isMyClass && !!user && !!problemId,
+  });
   const { run, running, stop } = usePyodide();
 
   const { data: submissions = [], refetch: refetchSubmissions } = useQuery({
@@ -122,11 +134,11 @@ export default function Solve() {
   return (
     <div className="flex h-screen flex-col">
       <header className="flex items-center gap-2 border-b p-3">
-        <Button size="icon" variant="ghost" onClick={() => navigate(`/practice/${problem.category}`)} title="목록으로">
+        <Button size="icon" variant="ghost" onClick={() => navigate(isMyClass ? "/myclass" : `/practice/${problem.category}`)} title="목록으로">
           <ArrowLeft />
         </Button>
         <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold uppercase text-primary-foreground">
-          {problem.category}
+          {isMyClass && classNames.length > 0 ? classNames.join(", ") : problem.category}
         </span>
         <h1 className="text-lg font-semibold">{problem.title}</h1>
       </header>
@@ -147,7 +159,7 @@ export default function Solve() {
                 return (
                   <button
                     key={p.id}
-                    onClick={() => navigate(`/solve/${p.id}`)}
+                    onClick={() => navigate(`/solve/${p.id}${isMyClass ? "?scope=myclass" : ""}`)}
                     className={cn(
                       "flex w-full items-center gap-2 border-b p-2.5 text-left text-sm hover:bg-accent",
                       p.id === problem.id && "bg-accent"
@@ -180,12 +192,12 @@ export default function Solve() {
             </div>
           ) : (
             <div className="min-h-0 flex-1 overflow-auto p-4">
-              {problem.description && <p className="whitespace-pre-wrap text-sm">{problem.description}</p>}
+              {problem.description && <Markdown>{problem.description}</Markdown>}
             </div>
           )}
           <div className={cn("overflow-auto border-t p-3", problem.category === "flowchart" ? "max-h-[45%]" : "max-h-[35%]")}>
             {problem.category === "flowchart" && problem.description && (
-              <p className="mb-3 whitespace-pre-wrap text-sm">{problem.description}</p>
+              <Markdown className="mb-3">{problem.description}</Markdown>
             )}
             {result && (
               <div className="space-y-1">

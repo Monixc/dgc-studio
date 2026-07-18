@@ -231,3 +231,64 @@ export interface TypingAiLabWordStat {
   mastered_at: string | null;
   updated_at: string;
 }
+
+export type JsonValue = null | boolean | number | string | JsonValue[] | { [key: string]: JsonValue };
+
+export interface PortfolioDocument {
+  id: string;
+  student_id: string;
+  title: string;
+  content_json: JsonValue;
+  content_text: string;
+  revision: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PortfolioAsset {
+  id: string;
+  document_id: string;
+  storage_path: string;
+  file_name: string;
+  mime_type: string;
+  size_bytes: number;
+  created_at: string;
+}
+
+export interface PortfolioSubmission {
+  id: string;
+  document_id: string;
+  student_id: string;
+  class_id: string;
+  teacher_id: string;
+  version: number;
+  source_revision: number;
+  title: string;
+  content_json: JsonValue;
+  content_text: string;
+  submitted_at: string;
+}
+
+export interface PortfolioSubmissionAsset {
+  submission_id: string;
+  asset_id: string;
+}
+
+export type PortfolioCommentAnchorType = "document" | "range" | "asset";
+
+export interface PortfolioComment {
+  id: string;
+  submission_id: string;
+  author_id: string;
+  body: string;
+  anchor_type: PortfolioCommentAnchorType;
+  start_position: number | null;
+  end_position: number | null;
+  start_line: number | null;
+  end_line: number | null;
+  quoted_text: string | null;
+  asset_id: string | null;
+  asset_index: number | null;
+  created_at: string;
+  updated_at: string;
+}

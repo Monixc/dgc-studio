@@ -10,3 +10,5 @@ supabase/.temp
 *.log
 .venv-lexicon
 data/typing-ai-lab/raw
+
+.playwright-cli/

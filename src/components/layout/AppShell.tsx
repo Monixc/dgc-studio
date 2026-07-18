@@ -1,9 +1,10 @@
+/* eslint-disable react-refresh/only-export-components */
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   GraduationCap, LayoutDashboard, Users, FileText, Keyboard,
   ShoppingBag, PanelLeftClose, PanelLeftOpen, BookOpen, Workflow, Code2, Blocks,
-  ChevronDown, ClipboardList,
+  ChevronDown, ClipboardList, NotebookPen,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -37,11 +38,12 @@ export const STUDENT_MENU: Item[] = [
     ],
   },
   { label: "타자 연습", icon: Keyboard, to: "/practice/typing" },
+  { label: "포트폴리오", icon: NotebookPen, to: "/student/portfolio" },
   { label: "포인트 상점", icon: ShoppingBag, to: "/student/shop" },
 ];
 
-// 모바일 하단 탭은 좁아서 학생은 핵심 3개(대시보드/내 수업/상점)만 노출. 나머지는 데스크톱 사이드바에서.
-const STUDENT_MOBILE_LABELS = ["내 수업", "포인트 상점"];
+// 모바일 하단 탭은 좁아서 학생은 핵심 메뉴만 노출. 나머지는 데스크톱 사이드바에서.
+const STUDENT_MOBILE_LABELS = ["내 수업", "포트폴리오", "포인트 상점"];
 
 interface AppShellProps {
   children: React.ReactNode;

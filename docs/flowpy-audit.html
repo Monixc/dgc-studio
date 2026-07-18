@@ -1,0 +1,428 @@
+<title>Flow-Py 서비스 플로우 감사</title>
+<style>
+  :root {
+    --bg: #eaeef4;
+    --surface: #ffffff;
+    --surface-2: #f4f7fb;
+    --ink: #0f172a;
+    --muted: #5a6577;
+    --line: #d5dce7;
+    --accent: #1d4ed8;
+    --accent-soft: #dbe6ff;
+    --sev-crit: #c0392b;
+    --sev-high: #b45309;
+    --sev-med: #9a6a06;
+    --sev-low: #475569;
+    --sev-good: #0f766e;
+    --grid: rgba(29, 78, 216, 0.06);
+    --shadow: 0 1px 2px rgba(15, 23, 42, .06), 0 8px 24px -12px rgba(15, 23, 42, .18);
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0a0e16;
+      --surface: #121826;
+      --surface-2: #0f1522;
+      --ink: #e8edf6;
+      --muted: #97a3b8;
+      --line: #232d40;
+      --accent: #5b8bff;
+      --accent-soft: #17233d;
+      --sev-crit: #f0736a;
+      --sev-high: #f0ad4e;
+      --sev-med: #e6c34b;
+      --sev-low: #9fb0c6;
+      --sev-good: #37c9b0;
+      --grid: rgba(91, 139, 255, 0.08);
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px -14px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #eaeef4; --surface: #ffffff; --surface-2: #f4f7fb; --ink: #0f172a; --muted: #5a6577;
+    --line: #d5dce7; --accent: #1d4ed8; --accent-soft: #dbe6ff;
+    --sev-crit: #c0392b; --sev-high: #b45309; --sev-med: #9a6a06; --sev-low: #475569; --sev-good: #0f766e;
+    --grid: rgba(29,78,216,.06); --shadow: 0 1px 2px rgba(15,23,42,.06), 0 8px 24px -12px rgba(15,23,42,.18);
+  }
+  :root[data-theme="dark"] {
+    --bg: #0a0e16; --surface: #121826; --surface-2: #0f1522; --ink: #e8edf6; --muted: #97a3b8;
+    --line: #232d40; --accent: #5b8bff; --accent-soft: #17233d;
+    --sev-crit: #f0736a; --sev-high: #f0ad4e; --sev-med: #e6c34b; --sev-low: #9fb0c6; --sev-good: #37c9b0;
+    --grid: rgba(91,139,255,.08); --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px -14px rgba(0,0,0,.6);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans);
+    line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 940px; margin: 0 auto; padding: 0 24px 96px; }
+
+  /* header */
+  header.masthead {
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 26px 26px,
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 26px 26px,
+      var(--surface);
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 40px;
+  }
+  .masthead .wrap { padding-top: 48px; padding-bottom: 36px; }
+  .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 14px; font-weight: 600; }
+  h1 { font-size: clamp(28px, 5vw, 44px); line-height: 1.08; margin: 0 0 16px; letter-spacing: -.02em;
+    text-wrap: balance; font-weight: 800; }
+  .lede { font-size: 17px; color: var(--muted); margin: 0; max-width: 62ch; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 22px; font-family: var(--mono);
+    font-size: 12.5px; color: var(--muted); }
+  .meta b { color: var(--ink); font-weight: 600; }
+
+  /* scoreboard */
+  .scoreboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px;
+    margin: 0 0 44px; }
+  .stat { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 16px 14px;
+    box-shadow: var(--shadow); position: relative; overflow: hidden; }
+  .stat::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--c, var(--accent)); }
+  .stat .n { font-size: 30px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+  .stat .l { font-family: var(--mono); font-size: 11px; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--muted); margin-top: 2px; }
+
+  section { margin: 0 0 52px; }
+  h2 { font-size: 13px; font-family: var(--mono); letter-spacing: .14em; text-transform: uppercase;
+    color: var(--muted); font-weight: 600; margin: 0 0 6px; display: flex; align-items: baseline; gap: 10px; }
+  h2 .idx { color: var(--accent); }
+  .sec-title { font-size: 24px; font-weight: 750; letter-spacing: -.015em; margin: 0 0 20px; text-wrap: balance; }
+
+  /* route table */
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow);
+    background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 620px; }
+  th, td { text-align: left; padding: 11px 16px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  thead th { font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--muted); font-weight: 600; background: var(--surface-2); }
+  tbody tr:last-child td { border-bottom: none; }
+  td code, .mono { font-family: var(--mono); font-size: 12.5px; }
+  td code { background: var(--surface-2); padding: 2px 6px; border-radius: 5px; border: 1px solid var(--line); }
+  .guard { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .pass { color: var(--sev-good); font-weight: 600; white-space: nowrap; }
+  .pass::before { content: "✓ "; }
+  .codeonly { color: var(--muted); white-space: nowrap; }
+  .codeonly::before { content: "◐ "; color: var(--accent); }
+
+  /* journeys */
+  .journeys { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 640px) { .journeys { grid-template-columns: 1fr; } }
+  .journey { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px;
+    box-shadow: var(--shadow); }
+  .journey h3 { margin: 0 0 4px; font-size: 16px; }
+  .journey .role { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--accent); }
+  ol.flow { list-style: none; counter-reset: s; margin: 16px 0 0; padding: 0; }
+  ol.flow li { counter-increment: s; position: relative; padding: 0 0 14px 30px; font-size: 14px; }
+  ol.flow li::before { content: counter(s); position: absolute; left: 0; top: -1px; width: 20px; height: 20px;
+    border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-family: var(--mono);
+    font-size: 11px; font-weight: 700; display: grid; place-items: center; }
+  ol.flow li::after { content: ""; position: absolute; left: 9.5px; top: 22px; bottom: 4px; width: 1px; background: var(--line); }
+  ol.flow li:last-child { padding-bottom: 0; }
+  ol.flow li:last-child::after { display: none; }
+  .friction { margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--line); font-size: 13px; color: var(--muted); }
+  .friction b { color: var(--sev-high); font-weight: 600; }
+
+  /* findings */
+  .finding { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--c);
+    border-radius: 10px; padding: 18px 20px; box-shadow: var(--shadow); margin-bottom: 14px; }
+  .finding[data-sev="crit"] { --c: var(--sev-crit); }
+  .finding[data-sev="high"] { --c: var(--sev-high); }
+  .finding[data-sev="med"]  { --c: var(--sev-med); }
+  .finding[data-sev="low"]  { --c: var(--sev-low); }
+  .f-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  .f-id { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .f-title { font-size: 16.5px; font-weight: 700; letter-spacing: -.01em; margin: 0; flex: 1 1 auto; }
+  .chip { font-family: var(--mono); font-size: 10.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    padding: 3px 9px; border-radius: 999px; color: #fff; white-space: nowrap; }
+  .chip[data-sev="crit"] { background: var(--sev-crit); }
+  .chip[data-sev="high"] { background: var(--sev-high); }
+  .chip[data-sev="med"]  { background: var(--sev-med); }
+  .chip[data-sev="low"]  { background: var(--sev-low); }
+  .finding dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; font-size: 14px; }
+  @media (max-width: 560px) { .finding dl { grid-template-columns: 1fr; gap: 2px 0; } .finding dd { margin-bottom: 8px; } }
+  .finding dt { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .05em;
+    color: var(--muted); padding-top: 2px; }
+  .finding dd { margin: 0; }
+  .finding dd.fix { color: var(--ink); }
+  .finding dd.fix b { color: var(--sev-good); }
+  .finding code { font-family: var(--mono); font-size: 12.5px; background: var(--surface-2); padding: 1px 5px;
+    border-radius: 4px; border: 1px solid var(--line); }
+
+  /* good + rec lists */
+  .goodbox { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 8px 22px;
+    box-shadow: var(--shadow); }
+  ul.good { list-style: none; margin: 0; padding: 0; }
+  ul.good li { padding: 12px 0 12px 26px; border-bottom: 1px solid var(--line); position: relative; font-size: 14px; }
+  ul.good li:last-child { border-bottom: none; }
+  ul.good li::before { content: "✓"; position: absolute; left: 0; top: 12px; color: var(--sev-good); font-weight: 800; }
+  ul.good b { font-weight: 650; }
+
+  ol.recs { counter-reset: r; list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  ol.recs li { counter-increment: r; background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    padding: 14px 18px 14px 52px; position: relative; box-shadow: var(--shadow); font-size: 14.5px; }
+  ol.recs li::before { content: counter(r); position: absolute; left: 14px; top: 12px; width: 26px; height: 26px;
+    background: var(--accent); color: #fff; border-radius: 7px; font-family: var(--mono); font-weight: 700;
+    display: grid; place-items: center; font-size: 13px; }
+  ol.recs .tag { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .05em;
+    padding: 2px 7px; border-radius: 5px; margin-left: 8px; border: 1px solid var(--c, var(--line)); color: var(--c, var(--muted)); }
+
+  .quality { display: grid; gap: 10px; }
+  .q-item { display: flex; gap: 14px; align-items: baseline; padding: 12px 16px; background: var(--surface);
+    border: 1px solid var(--line); border-radius: 10px; font-size: 14px; box-shadow: var(--shadow); }
+  .q-item .k { font-family: var(--mono); font-size: 12px; color: var(--accent); white-space: nowrap; flex: 0 0 auto;
+    min-width: 96px; }
+
+  footer { border-top: 1px solid var(--line); padding-top: 24px; margin-top: 8px; font-size: 13px; color: var(--muted); }
+  footer b { color: var(--ink); }
+  .callout { background: var(--accent-soft); border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px;
+    font-size: 13.5px; margin: 0 0 32px; }
+  .callout b { color: var(--accent); }
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">보안 · UX · 코드 검증 리포트</p>
+    <h1>Flow-Py 서비스 플로우 감사</h1>
+    <p class="lede">순서도 기반 파이썬 학습 서비스의 권한 라우팅, 사용자 흐름, 그리고 Supabase RLS 보안 모델을
+      정적 분석과 Playwright 실행 검증으로 점검했습니다.</p>
+    <div class="meta">
+      <span><b>날짜</b> 2026-07-18</span>
+      <span><b>방식</b> 정적 분석 + Playwright 런타임</span>
+      <span><b>스택</b> React · React Router · Supabase · Pyodide</span>
+      <span><b>범위</b> 라우팅 · RLS · 엣지함수 · 클라 흐름</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="scoreboard">
+    <div class="stat" style="--c:var(--sev-crit)"><div class="n">1</div><div class="l">Critical</div></div>
+    <div class="stat" style="--c:var(--sev-high)"><div class="n">1</div><div class="l">High</div></div>
+    <div class="stat" style="--c:var(--sev-med)"><div class="n">2</div><div class="l">Medium</div></div>
+    <div class="stat" style="--c:var(--sev-low)"><div class="n">3</div><div class="l">Low · Info</div></div>
+    <div class="stat" style="--c:var(--accent)"><div class="n">9/9</div><div class="l">라우팅 통과</div></div>
+    <div class="stat" style="--c:var(--sev-good)"><div class="n">8</div><div class="l">보안 강점</div></div>
+  </div>
+
+  <p class="callout"><b>한 줄 요약 —</b> 라우팅과 RLS 소유권 모델은 견고하고 포트폴리오·상점 결제는 서버에서 원자적으로 처리돼
+    안전합니다. 다만 <b>채점이 브라우저(Pyodide)에서 이뤄지고 그 점수를 클라이언트가 그대로 DB에 기록</b>하기 때문에
+    포인트 경제가 위조 가능합니다 — 이것이 최우선 수정 대상입니다.</p>
+
+  <!-- ROUTING -->
+  <section>
+    <h2><span class="idx">01</span> 검증</h2>
+    <p class="sec-title">권한 기반 라우팅 검증</p>
+    <p style="margin:-8px 0 18px;color:var(--muted);font-size:14px;max-width:64ch">
+      모든 보호 라우트는 <code class="mono">RequireRole</code> / <code class="mono">RequireAuth</code> 래퍼를 거칩니다.
+      미로그인 상태의 리다이렉트는 Playwright로 실제 실행해 확인했고(<span class="pass" style="display:inline"></span> 표시),
+      역할 불일치 리다이렉트는 세션 계정이 없어 코드 레벨로만 검증했습니다(◐ 표시).</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>라우트</th><th>가드</th><th>대상</th><th>미로그인 결과</th></tr></thead>
+        <tbody>
+          <tr><td><code>/</code></td><td class="guard">Home</td><td>공개</td><td class="pass">Landing 렌더</td></tr>
+          <tr><td><code>/dashboard</code></td><td class="guard">RequireRole teacher</td><td>교사</td><td class="pass">/ 로 리다이렉트</td></tr>
+          <tr><td><code>/classes · /students · /problems · /shop</code></td><td class="guard">RequireRole teacher</td><td>교사</td><td class="codeonly">/ (코드 검증)</td></tr>
+          <tr><td><code>/classes/:id/live</code></td><td class="guard">RequireRole teacher</td><td>교사</td><td class="codeonly">/ (코드 검증)</td></tr>
+          <tr><td><code>/student</code></td><td class="guard">RequireRole student</td><td>학생</td><td class="pass">/ 로 리다이렉트</td></tr>
+          <tr><td><code>/myclass · /practice/* · /student/shop</code></td><td class="guard">RequireRole student</td><td>학생</td><td class="codeonly">/ (코드 검증)</td></tr>
+          <tr><td><code>/practice/typing</code></td><td class="guard">RequireAuth</td><td>공통</td><td class="codeonly">/ (코드 검증)</td></tr>
+          <tr><td><code>/solve/:problemId</code></td><td class="guard">RequireAuth</td><td>공통</td><td class="pass">/ 로 리다이렉트</td></tr>
+          <tr><td><code>*</code></td><td class="guard">—</td><td>공개</td><td class="pass">NotFound 렌더</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="friction" style="border-top:none;padding-top:14px">
+      역할 분기 로직은 견고합니다. <code class="mono">RequireRole</code>은 역할 불일치 시 각자 홈(<code class="mono">teacher→/dashboard</code>,
+      <code class="mono">student→/student</code>)으로 보내고, 프로필 행이 없는 세션(<code class="mono">role === null</code>)은
+      무한 리다이렉트 대신 <code class="mono">OrphanedSession</code>이 강제 로그아웃 처리합니다.
+      <b>주의:</b> 라우트 가드는 화면 전환만 막습니다 — 실제 데이터 보호는 전적으로 RLS에 의존하므로, 아래 RLS 취약점이 그대로 실질 위험이 됩니다.
+    </div>
+  </section>
+
+  <!-- UX FLOW -->
+  <section>
+    <h2><span class="idx">02</span> 흐름</h2>
+    <p class="sec-title">사용자 여정 · 마찰 지점</p>
+    <div class="journeys">
+      <div class="journey">
+        <span class="role">Teacher</span>
+        <h3>교사 흐름</h3>
+        <ol class="flow">
+          <li>가입 시 <b>선생님 코드</b> 입력 → <code class="mono">claim_teacher</code>로 승격</li>
+          <li>문제 작성(순서도 DSL · 스타터/테스트 코드 · 배점)</li>
+          <li>반 생성 → 학생 등록 → 문제 배정</li>
+          <li>대시보드에서 제출·라이브 코드·타자 기록 확인</li>
+          <li>상점 상품 등록, 구매 요청 승인/거절</li>
+          <li>포트폴리오 제출본에 범위 지정 피드백</li>
+        </ol>
+        <p class="friction">이메일 확인이 켜진 프로젝트라면 가입 직후 세션이 없어 <b>교사 승격이 로그인 이후로 미뤄짐</b> —
+          첫 로그인에서 학생 화면이 잠깐 노출될 수 있음.</p>
+      </div>
+      <div class="journey">
+        <span class="role">Student</span>
+        <h3>학생 흐름</h3>
+        <ol class="flow">
+          <li>아이디로 가입(합성 이메일 <code class="mono">id@flowpy.local</code>)</li>
+          <li>내 반의 배정 문제 열람</li>
+          <li>순서도를 보며 코드 작성 · Pyodide 실행</li>
+          <li>제출 → <b>브라우저에서 채점</b> → 만점 시 포인트</li>
+          <li>타자 연습 · AI 연구소로 추가 포인트</li>
+          <li>상점에서 포인트로 상품 구매 요청</li>
+        </ol>
+        <p class="friction">채점이 클라이언트에서 끝나므로 <b>테스트 기대값이 학생에게 그대로 노출</b>됨 —
+          숨김 테스트 케이스 구성이 불가능(정답 열람 가능).</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECURITY -->
+  <section>
+    <h2><span class="idx">03</span> 보안</h2>
+    <p class="sec-title">RLS · 무결성 취약점 (심각도순)</p>
+
+    <div class="finding" data-sev="crit">
+      <div class="f-head"><span class="f-id">SEC-1</span>
+        <h3 class="f-title">클라이언트 채점 점수로 포인트 위조</h3>
+        <span class="chip" data-sev="crit">Critical</span></div>
+      <dl>
+        <dt>근거</dt><dd>채점은 브라우저 Pyodide에서 수행되고 <code>submitSolution()</code>이 클라이언트가 계산한
+          <code>score</code>/<code>max_score</code>를 그대로 <code>submissions</code>에 삽입. RLS insert 체크는
+          <code>user_id = auth.uid()</code>와 문제 <code>is_published</code>만 확인.</dd>
+        <dt>영향</dt><dd>학생이 개발자도구에서 문제를 풀지 않고 <code>score = max_score</code> 행을 삽입하면
+          트리거 <code>award_points_on_submission</code>가 자동으로 포인트 지급 → 상점에서 실물(간식 쿠폰·숙제 면제권)로 교환.
+          포인트 경제 전체가 위조 가능.</dd>
+        <dt class="fix">수정</dt><dd class="fix"><b>서버 채점으로 이전</b>: 엣지 함수/RPC가 테스트를 실행하거나 기대 출력을 서버에만 보관해 검증.
+          최소한 클라이언트 자기보고 점수로는 포인트를 지급하지 않도록.</dd>
+      </dl>
+    </div>
+
+    <div class="finding" data-sev="high">
+      <div class="f-head"><span class="f-id">SEC-2</span>
+        <h3 class="f-title">타자 포인트 파밍 (작업 증명 없음)</h3>
+        <span class="chip" data-sev="high">High</span></div>
+      <dl>
+        <dt>근거</dt><dd><code>complete_typing_practice</code>는 보상 액수는 서버가 고정하지만 <b>실제 타자가 일어났다는 증거를 요구하지 않음</b>.
+          <code>race_live</code>의 <code>p_won</code>은 클라이언트 값이며 무검증(+5). 유일한 제약은 모드별 10초 쿨다운.</dd>
+        <dt>영향</dt><dd>스크립트로 RPC를 반복 호출해 분당 약 60~90P 채굴 가능.
+          (<code>ai_competition</code>은 매치 참가를 검증해 안전하나 <code>race_live/ghost/practice</code>는 미검증.)</dd>
+        <dt class="fix">수정</dt><dd class="fix"><b>보상을 서버가 만든 결과 행에 바인딩</b>(ai_competition 패턴 재사용) 또는 일일 상한 설정.</dd>
+      </dl>
+    </div>
+
+    <div class="finding" data-sev="med">
+      <div class="f-head"><span class="f-id">SEC-3</span>
+        <h3 class="f-title">교사 간 학생 PII 교차 접근</h3>
+        <span class="chip" data-sev="med">Medium</span></div>
+      <dl>
+        <dt>근거</dt><dd><code>student_management_notes</code> 정책이 <code>for all using (is_teacher())</code> — 담당 교사가 아닌
+          <b>임의의 교사</b> 허용. <code>listManagedStudents</code>도 소속 무관하게 <code>role='student'</code> 전체를 조회.</dd>
+        <dt>영향</dt><dd>다중 교사 배포 시 아무 교사나 모든 학생의 <code>birth_date</code>·메모(미성년자 PII)를 읽고 수정 가능.</dd>
+        <dt class="fix">수정</dt><dd class="fix"><b>담당 관계로 스코프</b>: 0028의 <code>is_teacher_of_student</code> 조인 패턴을 정책에 적용, 목록도 교사의 반으로 한정.</dd>
+      </dl>
+    </div>
+
+    <div class="finding" data-sev="med">
+      <div class="f-head"><span class="f-id">SEC-4</span>
+        <h3 class="f-title">교사 권한 승격 무차별 대입 가능</h3>
+        <span class="chip" data-sev="med">Medium</span></div>
+      <dl>
+        <dt>근거</dt><dd><code>claim_teacher(code)</code>를 인증된 누구나 <b>횟수 제한 없이</b> 호출 가능. 레이트 리밋/락아웃 없음.</dd>
+        <dt>영향</dt><dd><code>teacher_code</code>가 짧거나 추측 가능하면 학생이 교사로 승격 → 전체 제출·학생관리·상점 접근.</dd>
+        <dt class="fix">수정</dt><dd class="fix"><b>긴 랜덤 코드 + 시도 제한</b>(advisory-lock 지연 또는 사용자별 시도 카운터).
+          <b>강점:</b> 가입 트리거가 role을 student로 강제하고 코드는 서버 전용(<code>app_config</code> SELECT 정책 없음).</dd>
+      </dl>
+    </div>
+
+    <div class="finding" data-sev="low">
+      <div class="f-head"><span class="f-id">SEC-5</span>
+        <h3 class="f-title">전체 사용자 명단 · 아이디 열거</h3>
+        <span class="chip" data-sev="low">Low</span></div>
+      <dl>
+        <dt>근거</dt><dd><code>profiles</code> SELECT 정책이 <code>using (true)</code> — 인증된 누구나 전원의
+          <code>id·display_name(=아이디)·role</code> 조회.</dd>
+        <dt>영향</dt><dd>합성 이메일 로그인(<code>id@flowpy.local</code>)과 결합 시 유효 아이디 전량이 노출돼 크리덴셜 스터핑 표면 확대, 학생 명단 유출.</dd>
+        <dt class="fix">수정</dt><dd class="fix">SELECT를 필요한 행(본인 · 같은 반 · 담당 교사)으로 제한하거나, 이름은 스코프된 RPC/뷰로 노출.</dd>
+      </dl>
+    </div>
+
+    <div class="finding" data-sev="low">
+      <div class="f-head"><span class="f-id">SEC-6</span>
+        <h3 class="f-title">임의 교사에게 쪽지 발송 (스팸)</h3>
+        <span class="chip" data-sev="low">Low</span></div>
+      <dl>
+        <dt>근거</dt><dd><code>messages</code> insert 정책이 학생 → <code>role='teacher'</code> 전원 허용(담당 무관).</dd>
+        <dt>영향</dt><dd>학생이 소속 외 교사에게도 쪽지·푸시 유발 가능(스팸 벡터).</dd>
+        <dt class="fix">수정</dt><dd class="fix">수신자를 학생이 등록된 반의 담당 교사로 제한.</dd>
+      </dl>
+    </div>
+
+    <div class="finding" data-sev="low">
+      <div class="f-head"><span class="f-id">SEC-7</span>
+        <h3 class="f-title">엣지 함수 잘못된 JSON → 500</h3>
+        <span class="chip" data-sev="low">Info</span></div>
+      <dl>
+        <dt>근거</dt><dd><code>send-push</code>가 <code>await req.json()</code>을 try 없이 호출 → 잘못된 본문에 400 대신 미처리 500.</dd>
+        <dt class="fix">수정</dt><dd class="fix">파싱을 감싸 400 반환. 기능적 위험은 낮음.</dd>
+      </dl>
+    </div>
+  </section>
+
+  <!-- STRENGTHS -->
+  <section>
+    <h2><span class="idx">04</span> 강점</h2>
+    <p class="sec-title">잘 설계된 보안 지점</p>
+    <div class="goodbox">
+      <ul class="good">
+        <li><b>일관된 소유권 RLS</b> — 모든 테이블에 RLS 활성화, <code class="mono">created_by = auth.uid()</code> 모델을 전 테이블에 일관 적용.</li>
+        <li><b>search_path 고정</b> — 모든 <code class="mono">SECURITY DEFINER</code> 함수가 <code class="mono">search_path</code>를 핀 고정(인젝션 차단).</li>
+        <li><b>상점 결제 원자성</b> — <code class="mono">decide_shop_order</code>가 <code class="mono">FOR UPDATE</code>로 재고·잔액을 서버에서 원자 검증 → 위조 불가.</li>
+        <li><b>포인트 원장 보호</b> — 자동 지급은 DB 트리거 경유, <code class="mono">points_ledger</code> 클라 직접 insert 차단(교사 또는 definer 함수만).</li>
+        <li><b>푸시 서버 검증</b> — 엣지 함수가 수신자·문구를 서버에서 재도출하고 행 소유권 확인(스푸핑 방지), <code class="mono">class_reminder</code>는 service_role 토큰 요구.</li>
+        <li><b>XSS 정화</b> — 마크다운을 <code class="mono">marked</code> 후 <code class="mono">DOMPurify.sanitize</code>로 정화.</li>
+        <li><b>포트폴리오 서브시스템(0028)</b> — 정확한 <code class="mono">teacher_id</code> 스코프, 제출 스냅샷 불변 트리거, 스토리지 경로 소유권 체크, 낙관적 리비전 잠금.</li>
+        <li><b>RLS 재귀 회피</b> — <code class="mono">is_teacher()</code>·<code class="mono">is_enrolled_in_class()</code> definer 함수로 정책 상호참조 무한재귀 제거(0027).</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- CODE QUALITY -->
+  <section>
+    <h2><span class="idx">05</span> 품질</h2>
+    <p class="sec-title">코드 리뷰 — 유지보수성</p>
+    <div class="quality">
+      <div class="q-item"><span class="k">God 컴포넌트</span><span><code>TypingPractice.tsx</code>가 2,225줄 — 단일 파일에 상태·게임 로직·UI 혼재. 테스트·수정 난이도 높음. 훅/서브컴포넌트로 분해 권장.</span></div>
+      <div class="q-item"><span class="k">중복 로직</span><span>"행 조회 후 <code>profiles.display_name</code> 조인" 패턴이 <code>submissions.ts</code>·<code>typing-logs.ts</code>·<code>studentManagement.ts</code> 등 4곳 이상 반복. <code>attachStudentNames()</code> 헬퍼로 추출.</span></div>
+      <div class="q-item"><span class="k">타입 안전성</span><span>생성된 <code>types.ts</code>가 있음에도 <code>as any</code>/<code>: any</code> 캐스트 40건(예: <code>profs: any</code>). 타입 보장을 우회 — 점진 제거 권장.</span></div>
+      <div class="q-item"><span class="k">N+1 조회</span><span>배정 문제·이름 조인에서 순차 조회 다수. 교실 규모에선 수용 가능 — 관찰 항목으로만 기록.</span></div>
+      <div class="q-item"><span class="k">시크릿 위생</span><span><code>.env.example</code>만 커밋되고 실제 키·서비스롤 키는 코드에 없음 — 양호.</span></div>
+    </div>
+  </section>
+
+  <!-- RECOMMENDATIONS -->
+  <section>
+    <h2><span class="idx">06</span> 조치</h2>
+    <p class="sec-title">우선순위 권고</p>
+    <ol class="recs">
+      <li>서버 채점으로 이전 — 클라이언트 자기보고 점수의 포인트 지급 차단 <span class="tag" style="--c:var(--sev-crit)">SEC-1 · Critical</span></li>
+      <li>타자 보상을 서버 생성 결과 행에 바인딩하거나 일일 상한 <span class="tag" style="--c:var(--sev-high)">SEC-2 · High</span></li>
+      <li><code>student_management_notes</code> 및 학생 목록을 담당 교사로 스코프 <span class="tag" style="--c:var(--sev-med)">SEC-3 · Medium</span></li>
+      <li><code>claim_teacher</code> 시도 제한 + 긴 랜덤 코드 <span class="tag" style="--c:var(--sev-med)">SEC-4 · Medium</span></li>
+      <li><code>profiles</code>·<code>messages</code> 정책을 반 관계로 좁히기 <span class="tag" style="--c:var(--sev-low)">SEC-5·6 · Low</span></li>
+      <li><code>TypingPractice.tsx</code> 분해 + 이름 조인 헬퍼 추출 <span class="tag" style="--c:var(--accent)">품질</span></li>
+    </ol>
+  </section>
+
+  <footer>
+    <p><b>검증 방식.</b> 라이브 백엔드 자격증명이 없어, 미로그인 경로의 라우팅은 로컬 Vite + Playwright로 실제 실행 검증했고
+      (<code class="mono">/dashboard·/student·/solve/*</code> → <code class="mono">/</code> 리다이렉트, <code class="mono">/nonexistent</code> → NotFound 확인),
+      역할 불일치 리다이렉트·RLS 정책·엣지 함수·클라이언트 무결성은 소스 정적 분석으로 평가했습니다.
+      실 계정 2개(교사·학생)가 준비되면 교차 역할 흐름과 SEC-1/SEC-2 재현을 런타임으로 마저 확인할 수 있습니다.</p>
+  </footer>
+
+</div>

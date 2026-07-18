@@ -14,12 +14,31 @@ webpush.setVapidDetails("mailto:admin@flowpy.local", VAPID_PUBLIC_KEY, VAPID_PRI
 const admin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 
 interface Payload {
-  event: "announcement" | "message" | "shop_order_request" | "shop_order_decided" | "class_reminder";
+  event:
+    | "announcement"
+    | "message"
+    | "shop_order_request"
+    | "shop_order_decided"
+    | "portfolio_submitted"
+    | "portfolio_feedback"
+    | "class_reminder";
   id?: string;
   user_ids?: string[];
   title?: string;
   body?: string;
   url?: string;
+}
+
+// 인앱 알림 피드(헤더 벨)용 행 저장. 채팅(message)은 별도 UI라 호출부에서 제외한다. best-effort.
+async function saveNotifications(userIds: string[], title: string, body: string, url: string) {
+  if (userIds.length === 0) return;
+  try {
+    await admin.from("notifications").insert(
+      userIds.map((user_id) => ({ user_id, title, body, url })),
+    );
+  } catch {
+    // 알림 저장 실패해도 본 동작(푸시)은 막지 않음
+  }
 }
 
 async function sendTo(userIds: string[], title: string, body: string, url: string) {
@@ -44,14 +63,21 @@ async function sendTo(userIds: string[], title: string, body: string, url: strin
 }
 
 Deno.serve(async (req) => {
-  const payload = (await req.json()) as Payload;
+  let payload: Payload;
+  try {
+    payload = (await req.json()) as Payload;
+  } catch {
+    return new Response("invalid json", { status: 400 });
+  }
   const authHeader = req.headers.get("Authorization") ?? "";
   const token = authHeader.replace("Bearer ", "");
 
   // pg_cron이 service role 키로 직접 호출하는 경로: payload를 그대로 신뢰
   if (payload.event === "class_reminder") {
     if (token !== SERVICE_ROLE_KEY) return new Response("forbidden", { status: 403 });
-    const sent = await sendTo(payload.user_ids ?? [], payload.title ?? "", payload.body ?? "", payload.url ?? "/");
+    const ids = payload.user_ids ?? [];
+    await saveNotifications(ids, payload.title ?? "", payload.body ?? "", payload.url ?? "/");
+    const sent = await sendTo(ids, payload.title ?? "", payload.body ?? "", payload.url ?? "/");
     return Response.json({ sent });
   }
 
@@ -103,10 +129,44 @@ Deno.serve(async (req) => {
     title = row.status === "approved" ? "구매 승인됨" : "구매 거절됨";
     body = row.shop_items.name;
     url = "/student/shop";
+  } else if (payload.event === "portfolio_submitted") {
+    // 학생이 제출 → 담당 교사에게 알림
+    const { data: row } = await admin
+      .from("portfolio_submissions")
+      .select("id, student_id, teacher_id, title")
+      .eq("id", payload.id)
+      .single();
+    if (!row || row.student_id !== caller.id) return new Response("forbidden", { status: 403 });
+    recipientIds = [row.teacher_id];
+    title = "포트폴리오 제출";
+    body = row.title || "학생이 포트폴리오를 제출했습니다.";
+    url = `/students/${row.student_id}/portfolio/${row.id}`;
+  } else if (payload.event === "portfolio_feedback") {
+    // 교사가 피드백 → 작성 학생에게 알림
+    const { data: row } = await admin
+      .from("portfolio_comments")
+      .select("author_id, body, submission_id")
+      .eq("id", payload.id)
+      .single();
+    if (!row || row.author_id !== caller.id) return new Response("forbidden", { status: 403 });
+    const { data: sub } = await admin
+      .from("portfolio_submissions")
+      .select("student_id, document_id")
+      .eq("id", row.submission_id)
+      .single();
+    if (!sub) return new Response("forbidden", { status: 403 });
+    recipientIds = [sub.student_id];
+    title = "새 피드백";
+    body = row.body.slice(0, 50);
+    url = `/student/portfolio?document=${sub.document_id}`;
   } else {
     return new Response("bad event", { status: 400 });
   }
 
+  // 채팅(message)은 채팅 아이콘의 미읽음 배지로 다루므로 알림 피드에는 넣지 않는다.
+  if (payload.event !== "message") {
+    await saveNotifications(recipientIds, title, body, url);
+  }
   const sent = await sendTo(recipientIds, title, body, url);
   return Response.json({ sent });
 });

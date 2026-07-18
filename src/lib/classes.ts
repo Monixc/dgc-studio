@@ -76,6 +76,25 @@ export async function setClassProblems(classId: string, problemIds: string[]): P
 }
 
 /** 학생: 본인이 속한 반에 배정된 문제 전체(중복 제거). */
+/** 학생 기준, 해당 문제가 배정된 반 이름들(본인 소속 반 한정, 중복 제거). */
+export async function getAssignedClassNames(studentId: string, problemId: string): Promise<string[]> {
+  const { data: cs, error: csErr } = await supabase
+    .from("class_students")
+    .select("class_id")
+    .eq("student_id", studentId);
+  if (csErr) throw csErr;
+  const classIds = [...new Set((cs ?? []).map((r) => r.class_id as string))];
+  if (classIds.length === 0) return [];
+
+  const { data, error } = await supabase
+    .from("class_problems")
+    .select("classes(name)")
+    .eq("problem_id", problemId)
+    .in("class_id", classIds);
+  if (error) throw error;
+  return [...new Set((data ?? []).map((r) => (r.classes as { name: string } | null)?.name).filter(Boolean) as string[])];
+}
+
 export async function listAssignedProblems(studentId: string): Promise<Problem[]> {
   const { data: cs, error: csErr } = await supabase
     .from("class_students")

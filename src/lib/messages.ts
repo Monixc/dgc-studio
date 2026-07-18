@@ -59,6 +59,17 @@ export async function listMyMessages(userId: string): Promise<(MessageRow & { co
   }));
 }
 
+/** 상대가 나에게 보낸 미읽음 쪽지를 읽음 처리(스레드 열람 시). */
+export async function markMessagesRead(userId: string, counterpartId: string): Promise<void> {
+  const { error } = await supabase
+    .from("messages")
+    .update({ read_at: new Date().toISOString() })
+    .eq("recipient_id", userId)
+    .eq("sender_id", counterpartId)
+    .is("read_at", null);
+  if (error) throw error;
+}
+
 export async function sendMessage(senderId: string, recipientId: string, body: string): Promise<MessageRow> {
   const { data, error } = await supabase
     .from("messages")
