@@ -15,6 +15,50 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Markdown } from "@/components/Markdown";
+import { cn } from "@/lib/utils";
+
+function DescriptionField({
+  value,
+  onChange,
+  fill,
+  showLabel = true,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  /** true면 부모 높이를 그대로 채움(순서도 탭), false면 고정 높이(h-40) */
+  fill?: boolean;
+  showLabel?: boolean;
+}) {
+  const [preview, setPreview] = useState(false);
+  const bodyClassName = fill ? "mt-1 flex-1 min-h-0" : "mt-1 h-40";
+  return (
+    <div className={cn(fill && "flex h-full min-h-0 flex-col")}>
+      <div className="flex items-center justify-between">
+        {showLabel ? <Label>문제 설명</Label> : <span />}
+        <button
+          type="button"
+          onClick={() => setPreview((p) => !p)}
+          className="text-xs text-muted-foreground underline underline-offset-2"
+        >
+          {preview ? "편집" : "미리보기"}
+        </button>
+      </div>
+      {preview ? (
+        <div className={cn("overflow-auto rounded-md border p-2", bodyClassName)}>
+          <Markdown>{value || "_내용 없음_"}</Markdown>
+        </div>
+      ) : (
+        <Textarea
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className={cn("resize-none", bodyClassName)}
+          placeholder="문제 설명을 학생에게 보여줍니다. (Markdown 지원)"
+        />
+      )}
+    </div>
+  );
+}
 
 export default function ProblemEditor({ problemId }: { problemId: string }) {
   const { data: problem, isLoading } = useProblem(problemId);
@@ -103,8 +147,8 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
               <TabsContent value="starter" className="flex-1 overflow-hidden data-[state=inactive]:hidden">
                 <EditorPanel code={starter} onCodeChange={setStarter} running={running} run={run} stop={stop} />
               </TabsContent>
-              <TabsContent value="desc" className="flex-1 overflow-auto p-3 data-[state=inactive]:hidden">
-                <Textarea value={description} onChange={(e) => setDescription(e.target.value)} className="h-full resize-none" placeholder="문제 설명을 학생에게 보여줍니다." />
+              <TabsContent value="desc" className="flex flex-1 flex-col overflow-hidden p-3 data-[state=inactive]:hidden">
+                <DescriptionField value={description} onChange={setDescription} fill showLabel={false} />
               </TabsContent>
               <TabsContent value="grading" className="flex-1 overflow-auto data-[state=inactive]:hidden">
                 <div className="space-y-1 border-b p-3">
@@ -129,18 +173,10 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
       ) : (
         <div className="grid flex-1 grid-cols-2 overflow-hidden">
           <div className="flex h-full flex-col gap-4 overflow-auto border-r p-3">
-            <div>
-              <Label>문제 설명</Label>
-              <Textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="mt-1 h-40 resize-none"
-                placeholder="문제 설명을 학생에게 보여줍니다."
-              />
-            </div>
+            <DescriptionField value={description} onChange={setDescription} />
             <div>
               <Label>채점 ({tests.length})</Label>
-              <div className="mt-1 space-y-1">
+              <div className="mb-3 mt-1 space-y-1">
                 <Label htmlFor="points-alt" className="font-normal text-muted-foreground">만점 시 지급 포인트</Label>
                 <Input
                   id="points-alt"

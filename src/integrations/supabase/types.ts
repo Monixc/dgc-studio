@@ -195,6 +195,7 @@ export interface Submission {
   problem_id: string;
   user_id: string;
   code: string;
+  block_image: string | null;
   result: string;
   score: number;
   max_score: number;

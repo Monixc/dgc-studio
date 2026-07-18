@@ -2,20 +2,49 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Submission } from "@/integrations/supabase/types";
 import type { GradingSummary } from "@/lib/grading";
 
+const BLOCK_IMAGE_PREFIX = "flow-py:block-image:";
+
+function serializeResult(summary: GradingSummary, blockImage?: string): string {
+  const text = summary.details.map((detail) => `${detail.title}: ${detail.passed ? "통과" : "실패"}`).join("\n");
+  return blockImage
+    ? `${BLOCK_IMAGE_PREFIX}${JSON.stringify({ text, blockImage })}`
+    : text;
+}
+
+export function hydrateSubmission<T extends Submission>(submission: T): T {
+  if (!submission.result.startsWith(BLOCK_IMAGE_PREFIX)) {
+    return { ...submission, block_image: submission.block_image ?? null };
+  }
+  try {
+    const stored = JSON.parse(submission.result.slice(BLOCK_IMAGE_PREFIX.length)) as {
+      text?: string;
+      blockImage?: string;
+    };
+    return {
+      ...submission,
+      result: stored.text ?? "",
+      block_image: stored.blockImage ?? null,
+    };
+  } catch {
+    return { ...submission, block_image: null };
+  }
+}
+
 export async function submitSolution(params: {
   problemId: string;
   userId: string;
   code: string;
+  blockImage?: string;
   summary: GradingSummary;
 }): Promise<Submission> {
-  const { problemId, userId, code, summary } = params;
+  const { problemId, userId, code, blockImage, summary } = params;
   const { data, error } = await supabase
     .from("submissions")
     .insert({
       problem_id: problemId,
       user_id: userId,
       code,
-      result: summary.details.map((d) => `${d.title}: ${d.passed ? "통과" : "실패"}`).join("\n"),
+      result: serializeResult(summary, blockImage),
       score: summary.score,
       max_score: summary.maxScore,
       passed_tests: summary.passed,
@@ -25,7 +54,7 @@ export async function submitSolution(params: {
     .select()
     .single();
   if (error) throw error;
-  return data as Submission;
+  return hydrateSubmission(data as Submission);
 }
 
 /** 학생 본인의 제출 목록(최신순). problemId 지정 시 해당 문제만. */
@@ -34,7 +63,7 @@ export async function listMySubmissions(userId: string, problemId?: string): Pro
   if (problemId) q = q.eq("problem_id", problemId);
   const { data, error } = await q;
   if (error) throw error;
-  return (data ?? []) as Submission[];
+  return ((data ?? []) as Submission[]).map(hydrateSubmission);
 }
 
 /** 선생: 본인 문제에 달린 최근 제출(학생 이름 포함). RLS 로 접근 가능한 것만 반환. */
@@ -45,7 +74,7 @@ export async function listRecentSubmissions(limit = 8): Promise<(Submission & { 
     .order("submitted_at", { ascending: false })
     .limit(limit);
   if (error) throw error;
-  const rows = (data ?? []) as Submission[];
+  const rows = ((data ?? []) as Submission[]).map(hydrateSubmission);
   const ids = [...new Set(rows.map((r) => r.user_id))];
   const names = new Map<string, string>();
   if (ids.length) {
@@ -63,7 +92,7 @@ export async function listProblemSubmissions(problemId: string): Promise<(Submis
     .eq("problem_id", problemId)
     .order("submitted_at", { ascending: false });
   if (error) throw error;
-  const rows = (data ?? []) as Submission[];
+  const rows = ((data ?? []) as Submission[]).map(hydrateSubmission);
   const ids = [...new Set(rows.map((r) => r.user_id))];
   const names = new Map<string, string>();
   if (ids.length) {

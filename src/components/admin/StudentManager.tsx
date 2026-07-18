@@ -184,9 +184,9 @@ export default function StudentManager() {
         </div>
         <div className="flex-1 overflow-auto p-2">
           {filteredStudents.length === 0 ? <p className="p-3 text-center text-xs text-muted-foreground">등록된 학생이 없습니다.</p> : filteredStudents.map((student) => (
-            <button key={student.id} onClick={() => setSelectedId(student.id)} className={cn("mb-1 flex w-full items-center gap-3 rounded-lg p-2.5 text-left transition", selectedStudent?.id === student.id ? "bg-primary text-primary-foreground" : "hover:bg-accent")}>
-              <span className={cn("flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold", selectedStudent?.id === student.id ? "bg-primary-foreground/15" : "bg-muted")}>{student.display_name.slice(0, 1) || "?"}</span>
-              <span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{student.display_name || "이름 없음"}</span><span className={cn("block truncate text-[11px]", selectedStudent?.id === student.id ? "text-primary-foreground/70" : "text-muted-foreground")}>{student.classes.map((c) => c.name).join(", ") || "미배정"}</span></span>
+            <button key={student.id} onClick={() => setSelectedId(student.id)} className={cn("mb-1 flex w-full items-center gap-3 rounded-lg p-2.5 text-left transition hover:bg-accent", selectedStudent?.id === student.id && "bg-accent")}>
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold">{student.display_name.slice(0, 1) || "?"}</span>
+              <span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{student.display_name || "이름 없음"}</span><span className="block truncate text-[11px] text-muted-foreground">{student.classes.map((c) => c.name).join(", ") || "미배정"}</span></span>
               <ChevronRight className="size-4 shrink-0 opacity-60" />
             </button>
           ))}

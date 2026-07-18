@@ -22,7 +22,7 @@ export default function TeacherSubmissions({ problemId }: { problemId: string })
           <ClipboardList /> 제출 현황
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[80vh] overflow-auto">
+      <DialogContent className="max-h-[80vh] overflow-auto sm:max-w-4xl">
         <DialogHeader>
           <DialogTitle>제출 현황</DialogTitle>
         </DialogHeader>
@@ -65,7 +65,20 @@ export default function TeacherSubmissions({ problemId }: { problemId: string })
                         </div>
                       ))}
                     </div>
-                    <pre className="overflow-auto rounded bg-muted p-2 font-mono text-xs">{s.code}</pre>
+                    <div className={cn("grid gap-3", s.block_image && "md:grid-cols-2")}>
+                      {s.block_image && (
+                        <div className="min-w-0">
+                          <h3 className="mb-1 text-xs font-semibold text-muted-foreground">블록 조합</h3>
+                          <div className="overflow-auto rounded border bg-white p-2">
+                            <img src={s.block_image} alt={`${s.student_name}의 블록 조합`} className="max-w-none" />
+                          </div>
+                        </div>
+                      )}
+                      <div className="min-w-0">
+                        <h3 className="mb-1 text-xs font-semibold text-muted-foreground">변환된 Python 코드</h3>
+                        <pre className="overflow-auto rounded bg-muted p-2 font-mono text-xs">{s.code}</pre>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>

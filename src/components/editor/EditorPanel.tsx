@@ -22,9 +22,11 @@ interface Props {
   footer?: ReactNode;
   /** 실행 완료 시 콘솔 라인 전달(라이브 뷰 브로드캐스트 등) */
   onResult?: (lines: ConsoleLine[]) => void;
+  /** 기본 Monaco 에디터 대신 렌더할 커스텀 에디터(블록 코딩 작업대 등) */
+  editor?: ReactNode;
 }
 
-export default function EditorPanel({ code, onCodeChange, readOnly, running, run, stop, footer, onResult }: Props) {
+export default function EditorPanel({ code, onCodeChange, readOnly, running, run, stop, footer, onResult, editor }: Props) {
   const [stdin, setStdin] = useState("");
   const [lines, setLines] = useState<ConsoleLine[]>([]);
 
@@ -72,12 +74,14 @@ export default function EditorPanel({ code, onCodeChange, readOnly, running, run
       </div>
 
       <div className="min-h-0 flex-1">
-        <Editor
-          language="python"
-          value={code}
-          onChange={(v) => onCodeChange(v ?? "")}
-          options={{ readOnly, minimap: { enabled: false }, fontSize: 14, scrollBeyondLastLine: false, padding: { top: 8 } }}
-        />
+        {editor ?? (
+          <Editor
+            language="python"
+            value={code}
+            onChange={(v) => onCodeChange(v ?? "")}
+            options={{ readOnly, minimap: { enabled: false }, fontSize: 14, scrollBeyondLastLine: false, padding: { top: 8 } }}
+          />
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-px border-t bg-border" style={{ height: 180 }}>
@@ -90,9 +94,9 @@ export default function EditorPanel({ code, onCodeChange, readOnly, running, run
             className="flex-1 resize-none bg-background p-2 font-mono text-xs outline-none"
           />
         </div>
-        <div className="flex flex-col bg-background">
+        <div className="flex min-h-0 flex-col bg-background">
           <div className="border-b px-2 py-1 text-xs font-semibold text-muted-foreground">출력</div>
-          <pre className="flex-1 overflow-auto p-2 font-mono text-xs">
+          <pre className="min-h-0 flex-1 overflow-auto p-2 font-mono text-xs">
             {lines.length === 0 ? (
               <span className="text-muted-foreground">실행 결과가 여기에 표시됩니다.</span>
             ) : (

@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, Send, CheckCircle2, XCircle, MessageSquare } from "lucide-react";
+import { ArrowLeft, Send, CheckCircle2, XCircle, MessageSquare, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { listMySubmissionFeedback } from "@/lib/studentManagement";
 import { useSubmissionFeedbackRealtime } from "@/hooks/useSubmissionFeedbackRealtime";
@@ -19,9 +19,11 @@ import { useBroadcastLiveCode } from "@/hooks/useLiveCode";
 import FlowchartCanvas from "@/components/flow/FlowchartCanvas";
 import { normalizeStored } from "@/lib/flow-graph";
 import EditorPanel, { type ConsoleLine } from "@/components/editor/EditorPanel";
+import BlockWorkspacePanel, { type BlockWorkspacePanelHandle } from "@/features/block-coding/BlockWorkspacePanel";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Markdown } from "@/components/Markdown";
+import { RotateCcw } from "lucide-react";
 
 export default function Solve() {
   const { problemId } = useParams();
@@ -80,14 +82,19 @@ export default function Solve() {
     }, []);
 
   const [code, setCode] = useState("");
+  const [codeReady, setCodeReady] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<GradingSummary | null>(null);
   const [runResult, setRunResult] = useState<ConsoleLine[] | undefined>(undefined);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const blockPanelRef = useRef<BlockWorkspacePanelHandle>(null);
 
   // 임시저장 복원 (없으면 시작 코드)
   useEffect(() => {
     if (!problem || !user) return;
+    setCodeReady(false);
     setCode(loadDraft(user.id, problem.id) ?? problem.starter_code ?? "");
+    setCodeReady(true);
   }, [problem, user]);
 
   // 코드 변경 시 디바운스 임시저장
@@ -96,6 +103,15 @@ export default function Solve() {
     const t = setTimeout(() => saveDraft(user.id, problem.id, code), 500);
     return () => clearTimeout(t);
   }, [code, problem, user]);
+
+  useEffect(() => {
+    if (!feedbackOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setFeedbackOpen(false);
+    };
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [feedbackOpen]);
 
   // 선생님 "수업하기" 라이브 뷰용 실시간 브로드캐스트 (교사가 볼 때만 의미 있음, 저장 없음)
   useBroadcastLiveCode(
@@ -125,7 +141,10 @@ export default function Solve() {
         outputs.push(res.output);
       }
       const summary = buildGradingSummary(tests, outputs);
-      await submitSolution({ problemId: problem.id, userId: user.id, code, summary });
+      const blockImage = problem.category === "block"
+        ? await blockPanelRef.current?.captureImage()
+        : undefined;
+      await submitSolution({ problemId: problem.id, userId: user.id, code, blockImage, summary });
       await refetchSubmissions();
       setResult(summary);
       toast.success(`${summary.passed}/${summary.total} 통과 · ${summary.score}/${summary.maxScore}점`);
@@ -149,6 +168,21 @@ export default function Solve() {
           {isMyClass && classNames.length > 0 ? classNames.join(", ") : problem.category}
         </span>
         <h1 className="text-lg font-semibold">{problem.title}</h1>
+        <Button
+          size="icon"
+          variant="ghost"
+          className="relative ml-auto"
+          onClick={() => setFeedbackOpen(true)}
+          title="선생님 첨삭"
+          aria-label="선생님 첨삭 열기"
+        >
+          <MessageSquare />
+          {feedback.length > 0 && (
+            <span className="absolute right-0 top-0 flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+              {feedback.length}
+            </span>
+          )}
+        </Button>
       </header>
 
       <div className="flex min-h-0 flex-1 overflow-hidden">
@@ -191,9 +225,19 @@ export default function Solve() {
           ))}
         </aside>
 
-        <div className="grid flex-1 grid-cols-2 overflow-hidden">
-        {/* 좌: (순서도일 때만 캔버스) + 설명 + 결과 */}
-        <div className="flex flex-col overflow-hidden border-r">
+        <div
+          className={cn(
+            "flex-1 overflow-hidden",
+            problem.category === "block" ? "flex flex-col" : "grid grid-cols-2",
+          )}
+        >
+        {/* 순서도: 좌(캔버스+설명+결과) 우(에디터) 2열 / 블록 코딩: 위(설명+결과) 아래(블록 작업대) 세로 배치 */}
+        <div
+          className={cn(
+            "flex flex-col overflow-hidden",
+            problem.category === "block" ? "max-h-[38%] border-b" : "border-r",
+          )}
+        >
           {problem.category === "flowchart" ? (
             <div className="min-h-0 flex-1">
               <FlowchartCanvas graph={normalizeStored(problem.flowchart)} resetKey={problem.id} />
@@ -203,6 +247,7 @@ export default function Solve() {
               {problem.description && <Markdown>{problem.description}</Markdown>}
             </div>
           )}
+          {(problem.category === "flowchart" || result) && (
           <div className={cn("overflow-auto border-t p-3", problem.category === "flowchart" ? "max-h-[45%]" : "max-h-[35%]")}>
             {problem.category === "flowchart" && problem.description && (
               <Markdown className="mb-3">{problem.description}</Markdown>
@@ -224,26 +269,12 @@ export default function Solve() {
                 ))}
               </div>
             )}
-            {feedback.length > 0 && (
-              <div className="mt-3 space-y-2 border-t pt-3">
-                <div className="flex items-center gap-1.5 text-sm font-semibold">
-                  <MessageSquare className="size-4 text-primary" /> 선생님 첨삭
-                </div>
-                {feedback.map((c) => (
-                  <article key={c.id} className="rounded-lg border bg-muted/30 p-2.5 text-sm">
-                    <p className="whitespace-pre-wrap">{c.body}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {new Date(c.created_at).toLocaleString("ko-KR", { dateStyle: "short", timeStyle: "short" })}
-                    </p>
-                  </article>
-                ))}
-              </div>
-            )}
           </div>
+          )}
         </div>
 
-          {/* 우: 코드 편집 + 실행 + 제출 */}
-          <div className="h-full">
+          {/* 우/아래: 코드 편집 + 실행 + 제출 */}
+          <div className={cn(problem.category === "block" ? "min-h-0 flex-1" : "h-full")}>
           <EditorPanel
             code={code}
             onCodeChange={(v) => { setCode(v); setRunResult(undefined); }}
@@ -251,15 +282,81 @@ export default function Solve() {
             run={run}
             stop={stop}
             onResult={setRunResult}
+            editor={
+              problem.category === "block" && codeReady ? (
+                <BlockWorkspacePanel
+                  key={problem.id}
+                  ref={blockPanelRef}
+                  starterCode={problem.starter_code ?? ""}
+                  initialCode={code}
+                  onCodeChange={(v) => { setCode(v); setRunResult(undefined); }}
+                />
+              ) : undefined
+            }
             footer={
-              <Button size="sm" onClick={handleSubmit} disabled={submitting || running}>
-                <Send /> {submitting ? "채점 중…" : "제출"}
-              </Button>
+              <>
+                {problem.category === "block" && (
+                  <Button size="sm" variant="outline" onClick={() => blockPanelRef.current?.resetToStarter()}>
+                    <RotateCcw /> 초기화
+                  </Button>
+                )}
+                <Button size="sm" onClick={handleSubmit} disabled={submitting || running}>
+                  <Send /> {submitting ? "채점 중…" : "제출"}
+                </Button>
+              </>
             }
           />
         </div>
         </div>
       </div>
+
+      {feedbackOpen && (
+        <>
+          <button
+            type="button"
+            className="fixed inset-0 z-40 bg-black/30"
+            onClick={() => setFeedbackOpen(false)}
+            aria-label="첨삭 패널 닫기"
+          />
+          <aside
+            className="fixed inset-y-0 right-0 z-50 flex w-80 max-w-[90vw] flex-col border-l bg-background shadow-xl"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="feedback-panel-title"
+          >
+            <div className="flex items-center gap-2 border-b p-3">
+              <MessageSquare className="size-4 text-primary" />
+              <h2 id="feedback-panel-title" className="font-semibold">선생님 첨삭</h2>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="ml-auto"
+                onClick={() => setFeedbackOpen(false)}
+                aria-label="닫기"
+              >
+                <X />
+              </Button>
+            </div>
+            <div className="flex-1 space-y-3 overflow-auto p-3">
+              {feedback.length === 0 ? (
+                <p className="py-8 text-center text-sm text-muted-foreground">아직 등록된 첨삭이 없습니다.</p>
+              ) : (
+                feedback.map((comment) => (
+                  <article key={comment.id} className="rounded-lg border bg-muted/30 p-3 text-sm">
+                    <p className="whitespace-pre-wrap">{comment.body}</p>
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      {new Date(comment.created_at).toLocaleString("ko-KR", {
+                        dateStyle: "short",
+                        timeStyle: "short",
+                      })}
+                    </p>
+                  </article>
+                ))
+              )}
+            </div>
+          </aside>
+        </>
+      )}
     </div>
   );
 }

@@ -114,15 +114,31 @@ export default function StudentSubmissionReview() {
           </div>
         </aside>
 
-        <div className="min-w-0 flex-1">
-          <EditorPanel
-            code={selected.code}
-            onCodeChange={() => {}}
-            readOnly
-            running={running}
-            run={run}
-            stop={stop}
-          />
+        <div className={cn("grid min-w-0 flex-1", selected.block_image && "grid-cols-2")}>
+          {selected.block_image && (
+            <section className="min-h-0 min-w-0 overflow-auto border-r bg-muted/20">
+              <h2 className="sticky top-0 z-10 border-b bg-background px-3 py-2 text-xs font-semibold text-muted-foreground">
+                제출한 블록 조합
+              </h2>
+              <div className="p-3">
+                <img
+                  src={selected.block_image}
+                  alt="학생이 제출한 블록 조합"
+                  className="max-w-none rounded border bg-white"
+                />
+              </div>
+            </section>
+          )}
+          <div className="min-h-0 min-w-0">
+            <EditorPanel
+              code={selected.code}
+              onCodeChange={() => {}}
+              readOnly
+              running={running}
+              run={run}
+              stop={stop}
+            />
+          </div>
         </div>
 
         <aside className="flex w-72 shrink-0 flex-col border-l">

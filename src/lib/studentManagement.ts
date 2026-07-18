@@ -8,6 +8,7 @@ import type {
   SubmissionComment,
   TypingPracticeLog,
 } from "@/integrations/supabase/types";
+import { hydrateSubmission } from "@/lib/submissions";
 
 export interface ManagedStudent extends Profile {
   classes: ClassRow[];
@@ -109,7 +110,7 @@ export async function listStudentSubmissions(studentId: string): Promise<Student
     .eq("user_id", studentId)
     .order("submitted_at", { ascending: false });
   if (error) throw error;
-  const submissions = (data ?? []) as Submission[];
+  const submissions = ((data ?? []) as Submission[]).map(hydrateSubmission);
   const problemIds = [...new Set(submissions.map((submission) => submission.problem_id))];
   if (!problemIds.length) return [];
 
