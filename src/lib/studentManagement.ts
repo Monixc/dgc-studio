@@ -144,13 +144,38 @@ export async function listSubmissionComments(submissionId: string): Promise<Subm
   return (data ?? []) as SubmissionComment[];
 }
 
-export async function createSubmissionComment(params: { submissionId: string; authorId: string; body: string }): Promise<void> {
+export async function createSubmissionComment(params: { submissionId: string; authorId: string; body: string }): Promise<string | null> {
   const body = params.body.trim();
-  if (!body) return;
-  const { error } = await supabase.from("submission_comments").insert({
-    submission_id: params.submissionId,
-    author_id: params.authorId,
-    body,
-  });
+  if (!body) return null;
+  const { data, error } = await supabase
+    .from("submission_comments")
+    .insert({
+      submission_id: params.submissionId,
+      author_id: params.authorId,
+      body,
+    })
+    .select("id")
+    .single();
   if (error) throw error;
+  return (data?.id as string) ?? null;
+}
+
+/** 학생 본인이 이 문제에 제출한 것들에 달린 교사 첨삭 전체(최신순). */
+export async function listMySubmissionFeedback(userId: string, problemId: string): Promise<SubmissionComment[]> {
+  const { data: subs, error: subsError } = await supabase
+    .from("submissions")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("problem_id", problemId);
+  if (subsError) throw subsError;
+  const ids = (subs ?? []).map((s) => s.id as string);
+  if (!ids.length) return [];
+
+  const { data, error } = await supabase
+    .from("submission_comments")
+    .select("*")
+    .in("submission_id", ids)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as SubmissionComment[];
 }

@@ -21,6 +21,7 @@ interface Payload {
     | "shop_order_decided"
     | "portfolio_submitted"
     | "portfolio_feedback"
+    | "submission_feedback"
     | "class_reminder";
   id?: string;
   user_ids?: string[];
@@ -159,6 +160,24 @@ Deno.serve(async (req) => {
     title = "새 피드백";
     body = row.body.slice(0, 50);
     url = `/student/portfolio?document=${sub.document_id}`;
+  } else if (payload.event === "submission_feedback") {
+    // 교사가 문제 제출에 첨삭 → 제출 학생에게 알림
+    const { data: row } = await admin
+      .from("submission_comments")
+      .select("author_id, body, submission_id")
+      .eq("id", payload.id)
+      .single();
+    if (!row || row.author_id !== caller.id) return new Response("forbidden", { status: 403 });
+    const { data: sub } = await admin
+      .from("submissions")
+      .select("user_id, problem_id")
+      .eq("id", row.submission_id)
+      .single();
+    if (!sub) return new Response("forbidden", { status: 403 });
+    recipientIds = [sub.user_id];
+    title = "문제 첨삭 도착";
+    body = row.body.slice(0, 50);
+    url = `/solve/${sub.problem_id}`;
   } else {
     return new Response("bad event", { status: 400 });
   }

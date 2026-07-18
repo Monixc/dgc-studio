@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { usePyodide } from "@/hooks/usePyodide";
 import { useStudentSubmissionsRealtime } from "@/hooks/useStudentSubmissionsRealtime";
+import { notifyPush } from "@/lib/push";
 import {
   createSubmissionComment,
   listManagedStudents,
@@ -58,8 +59,9 @@ export default function StudentSubmissionReview() {
 
   const addComment = useMutation({
     mutationFn: () => createSubmissionComment({ submissionId: selected!.id, authorId: user!.id, body: comment }),
-    onSuccess: () => {
+    onSuccess: (commentId) => {
       setComment("");
+      if (commentId) void notifyPush("submission_feedback", commentId);
       qc.invalidateQueries({ queryKey: ["student-management", "comments", selected?.id] });
     },
     onError: () => toast.error("코멘트를 저장하지 못했습니다."),

@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, Send, CheckCircle2, XCircle } from "lucide-react";
+import { ArrowLeft, Send, CheckCircle2, XCircle, MessageSquare } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { listMySubmissionFeedback } from "@/lib/studentManagement";
+import { useSubmissionFeedbackRealtime } from "@/hooks/useSubmissionFeedbackRealtime";
 import { useProblem, usePublishedProblems } from "@/hooks/useProblems";
 import { useAssignedProblems } from "@/hooks/useClasses";
 import { getAssignedClassNames } from "@/lib/classes";
@@ -42,6 +44,12 @@ export default function Solve() {
     queryKey: ["my-submissions", user?.id],
     queryFn: () => listMySubmissions(user!.id),
     enabled: !!user,
+  });
+  useSubmissionFeedbackRealtime();
+  const { data: feedback = [] } = useQuery({
+    queryKey: ["my-submission-feedback", user?.id, problemId],
+    queryFn: () => listMySubmissionFeedback(user!.id, problemId!),
+    enabled: !!user && !!problemId,
   });
   const folderIds = [...new Set(problems.flatMap((p) => (p.folder_id ? [p.folder_id] : [])))];
   const { data: folders = [] } = useQuery({
@@ -213,6 +221,21 @@ export default function Solve() {
                     )}
                     <span className={cn(!d.passed && "text-destructive")}>{d.title}</span>
                   </div>
+                ))}
+              </div>
+            )}
+            {feedback.length > 0 && (
+              <div className="mt-3 space-y-2 border-t pt-3">
+                <div className="flex items-center gap-1.5 text-sm font-semibold">
+                  <MessageSquare className="size-4 text-primary" /> 선생님 첨삭
+                </div>
+                {feedback.map((c) => (
+                  <article key={c.id} className="rounded-lg border bg-muted/30 p-2.5 text-sm">
+                    <p className="whitespace-pre-wrap">{c.body}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {new Date(c.created_at).toLocaleString("ko-KR", { dateStyle: "short", timeStyle: "short" })}
+                    </p>
+                  </article>
                 ))}
               </div>
             )}
