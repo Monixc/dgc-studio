@@ -1,10 +1,12 @@
 import { supabase } from "@/integrations/supabase/client";
 import type {
   ClassRow,
+  PointsLedgerEntry,
   Profile,
   StudentManagementNote,
   Submission,
   SubmissionComment,
+  TypingPracticeLog,
 } from "@/integrations/supabase/types";
 
 export interface ManagedStudent extends Profile {
@@ -16,12 +18,23 @@ export interface StudentSubmission extends Submission {
 }
 
 export async function listManagedStudents(teacherId: string): Promise<ManagedStudent[]> {
-  const [{ data: students, error: studentsError }, { data: classes, error: classesError }] = await Promise.all([
-    supabase.from("profiles").select("*").eq("role", "student").order("display_name", { ascending: true }),
-    supabase.from("classes").select("*").eq("created_by", teacherId).order("created_at", { ascending: true }),
-  ]);
-  if (studentsError) throw studentsError;
-  if (classesError) throw classesError;
+  const { data: students, error: studentsError } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("role", "student")
+    .order("display_name", { ascending: true });
+  if (studentsError) {
+    throw new Error(`학생 프로필 조회 실패: ${studentsError.message}`);
+  }
+
+  const { data: classes, error: classesError } = await supabase
+    .from("classes")
+    .select("*")
+    .eq("created_by", teacherId)
+    .order("created_at", { ascending: true });
+  if (classesError) {
+    throw new Error(`담당 반 조회 실패: ${classesError.message}`);
+  }
 
   const classRows = (classes ?? []) as ClassRow[];
   const classIds = classRows.map((row) => row.id);
@@ -31,7 +44,9 @@ export async function listManagedStudents(teacherId: string): Promise<ManagedStu
       .from("class_students")
       .select("class_id, student_id")
       .in("class_id", classIds);
-    if (error) throw error;
+    if (error) {
+      throw new Error(`학생 소속 조회 실패: ${error.message}`);
+    }
     memberships = (data ?? []) as { class_id: string; student_id: string }[];
   }
 
@@ -42,6 +57,39 @@ export async function listManagedStudents(teacherId: string): Promise<ManagedStu
     if (classroom) classesByStudent.set(membership.student_id, [...(classesByStudent.get(membership.student_id) ?? []), classroom]);
   }
   return ((students ?? []) as Profile[]).map((student) => ({ ...student, classes: classesByStudent.get(student.id) ?? [] }));
+}
+
+export async function listStudentTypingLogs(
+  studentId: string,
+  days = 30,
+): Promise<TypingPracticeLog[]> {
+  const since = new Date();
+  since.setHours(0, 0, 0, 0);
+  since.setDate(since.getDate() - Math.max(0, days - 1));
+
+  const { data, error } = await supabase
+    .from("typing_practice_logs")
+    .select("*")
+    .eq("student_id", studentId)
+    .gte("completed_at", since.toISOString())
+    .order("completed_at", { ascending: true });
+  if (error) throw new Error(`타자 기록 조회 실패: ${error.message}`);
+  return (data ?? []) as TypingPracticeLog[];
+}
+
+export async function listStudentPointEarnings(
+  studentId: string,
+  limit = 100,
+): Promise<PointsLedgerEntry[]> {
+  const { data, error } = await supabase
+    .from("points_ledger")
+    .select("*")
+    .eq("student_id", studentId)
+    .gt("amount", 0)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error) throw new Error(`포인트 획득 이력 조회 실패: ${error.message}`);
+  return (data ?? []) as PointsLedgerEntry[];
 }
 
 export async function getStudentManagementNote(studentId: string): Promise<StudentManagementNote | null> {

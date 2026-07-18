@@ -1,0 +1,129 @@
+{
+  "version": 1,
+  "minimum_total": 3000,
+  "minimum_per_category": 200,
+  "target_per_category": 360,
+  "sources": [
+    {
+      "category": "python",
+      "repository": "pallets/flask",
+      "commit": "36e4a824f340fdee7ed50937ba8e7f6bc7d17f81",
+      "license": "BSD-3-Clause",
+      "license_url": "https://github.com/pallets/flask/blob/36e4a824f340fdee7ed50937ba8e7f6bc7d17f81/LICENSE.txt",
+      "include": ["src/**/*.py", "tests/**/*.py"],
+      "exclude": ["__pycache__", "snapshots"]
+    },
+    {
+      "category": "lua",
+      "repository": "LuaLS/lua-language-server",
+      "commit": "a9aa09a801a8d08d6813caf5e7a5898a63da4ebc",
+      "license": "MIT",
+      "license_url": "https://github.com/LuaLS/lua-language-server/blob/a9aa09a801a8d08d6813caf5e7a5898a63da4ebc/LICENSE",
+      "include": ["script/**/*.lua", "test/**/*.lua"],
+      "exclude": ["locale", "meta"]
+    },
+    {
+      "category": "javascript",
+      "repository": "lodash/lodash",
+      "commit": "a666ba591064c8011988275790ad7d625279f09c",
+      "license": "MIT",
+      "license_url": "https://github.com/lodash/lodash/blob/a666ba591064c8011988275790ad7d625279f09c/LICENSE",
+      "include": ["*.js", "fp/**/*.js", "lib/**/*.js", "test/**/*.js"],
+      "exclude": [".min.js", "vendor"]
+    },
+    {
+      "category": "javascript",
+      "repository": "axios/axios",
+      "commit": "af4f6d960f7478604841cfff2eb5c2491565c518",
+      "license": "MIT",
+      "license_url": "https://github.com/axios/axios/blob/af4f6d960f7478604841cfff2eb5c2491565c518/LICENSE",
+      "include": ["lib/**/*.js", "test/**/*.js"],
+      "exclude": ["dist", "node_modules", ".min.js"]
+    },
+    {
+      "category": "html",
+      "repository": "twbs/bootstrap",
+      "commit": "6f20e52759a0e0dee2c2f171e9357f3ccca52992",
+      "license": "MIT",
+      "license_url": "https://github.com/twbs/bootstrap/blob/6f20e52759a0e0dee2c2f171e9357f3ccca52992/LICENSE",
+      "include": [
+        "site/content/docs/**/*.html",
+        "site/layouts/**/*.html",
+        "js/tests/**/*.html"
+      ],
+      "exclude": ["dist", ".min.html"]
+    },
+    {
+      "category": "html",
+      "repository": "jquery/jquery",
+      "commit": "7e1efd77598a527c67d2a674a1259787f7e441fd",
+      "license": "MIT",
+      "license_url": "https://github.com/jquery/jquery/blob/7e1efd77598a527c67d2a674a1259787f7e441fd/LICENSE.txt",
+      "include": ["test/**/*.html"],
+      "exclude": ["dist", ".min.html"]
+    },
+    {
+      "category": "html",
+      "repository": "mdn/interactive-examples",
+      "commit": "13024db581b08fae11a0ca229497198b9b0534e7",
+      "license": "CC0-1.0",
+      "license_url": "https://github.com/mdn/interactive-examples/blob/13024db581b08fae11a0ca229497198b9b0534e7/LICENSE",
+      "include": ["live-examples/**/*.html"],
+      "exclude": ["node_modules", ".min.html"]
+    },
+    {
+      "category": "typescript",
+      "repository": "microsoft/TypeScript",
+      "commit": "637d5746b70257028fb95aad32ddec6b26ab0a14",
+      "license": "Apache-2.0",
+      "license_url": "https://github.com/microsoft/TypeScript/blob/637d5746b70257028fb95aad32ddec6b26ab0a14/LICENSE.txt",
+      "include": ["src/**/*.ts"],
+      "exclude": ["tests", "generated", "_namespaces"]
+    },
+    {
+      "category": "sql",
+      "repository": "dbt-labs/dbt-core",
+      "commit": "4f6e0f4c76ca0804b31a597f89caa96513fd5cd1",
+      "license": "Apache-2.0",
+      "license_url": "https://github.com/dbt-labs/dbt-core/blob/4f6e0f4c76ca0804b31a597f89caa96513fd5cd1/License.md",
+      "include": ["**/*.sql"],
+      "exclude": ["target", "logs", "site-packages"]
+    },
+    {
+      "category": "sql",
+      "repository": "sqlfluff/sqlfluff",
+      "commit": "af8b6b2fb591dd0e7800c55066b4b9b8336aea1b",
+      "license": "MIT",
+      "license_url": "https://github.com/sqlfluff/sqlfluff/blob/af8b6b2fb591dd0e7800c55066b4b9b8336aea1b/LICENSE.md",
+      "include": ["test/fixtures/**/*.sql", "plugins/**/*.sql"],
+      "exclude": ["node_modules", "site-packages"]
+    },
+    {
+      "category": "react-tsx",
+      "repository": "shadcn-ui/ui",
+      "commit": "d28738b183c5eaa69d8d540826e450f30d39ab6c",
+      "license": "MIT",
+      "license_url": "https://github.com/shadcn-ui/ui/blob/d28738b183c5eaa69d8d540826e450f30d39ab6c/LICENSE.md",
+      "include": ["apps/**/*.tsx", "packages/**/*.tsx"],
+      "exclude": ["node_modules", ".next", "registry/new-york"]
+    },
+    {
+      "category": "css",
+      "repository": "twbs/bootstrap",
+      "commit": "6f20e52759a0e0dee2c2f171e9357f3ccca52992",
+      "license": "MIT",
+      "license_url": "https://github.com/twbs/bootstrap/blob/6f20e52759a0e0dee2c2f171e9357f3ccca52992/LICENSE",
+      "include": ["dist/css/*.css", "site/**/*.css", "js/tests/**/*.css"],
+      "exclude": [".min.css", ".rtl.css", "coverage"]
+    },
+    {
+      "category": "shell",
+      "repository": "ohmyzsh/ohmyzsh",
+      "commit": "677a4592b18c08ddea737f8aca70bac0e9fc9313",
+      "license": "MIT",
+      "license_url": "https://github.com/ohmyzsh/ohmyzsh/blob/677a4592b18c08ddea737f8aca70bac0e9fc9313/LICENSE.txt",
+      "include": ["**/*.sh", "**/*.zsh"],
+      "exclude": ["vendor", "node_modules", "cache"]
+    }
+  ]
+}

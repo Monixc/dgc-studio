@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  ArrowLeft, CheckCircle2, ChevronRight, Flag, FlaskConical, Gauge, Ghost, Keyboard, Radio,
-  RotateCcw, Target, Timer, Trophy, Zap,
+  ArrowLeft, Atom, BookOpenText, Braces, CheckCircle2, ChevronRight, CodeXml, Database,
+  FileCode2, FileType2, Flag, FlaskConical, Gauge, Ghost, History, Keyboard, Moon, Palette,
+  Radio, RefreshCw, RotateCcw, Target, Terminal, Timer, Trophy, Zap,
 } from "lucide-react";
 import AppShell, { STUDENT_MENU } from "@/components/layout/AppShell";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,13 @@ import {
   type TypingRankingEntry,
   type TypingResult,
 } from "@/lib/typing";
+import {
+  TYPING_MODE_LABEL,
+  listTypingPracticeLogs,
+  saveTypingPracticeLog,
+  type TypingPracticeLogView,
+} from "@/lib/typing-logs";
+import type { TypingPracticeMode } from "@/integrations/supabase/types";
 import { cn } from "@/lib/utils";
 import { createContentProvider } from "@tajarace/content";
 import {
@@ -32,15 +40,23 @@ import {
 import { createLocalStorageAdapter, type TypingRecord } from "@tajarace/storage";
 import { F1Track } from "@tajarace/ui";
 import { defaultTrackId, trackRegistry } from "@/vendor/tajarace/tracks";
+import {
+  CATEGORY_META,
+  ShuffleBag,
+  categoryFileName,
+  filterByUnit,
+  isCodeCategory,
+  loadCategoryItems,
+  type PracticeCategory,
+  type PracticeContentItem,
+  type ProseUnit,
+} from "@/features/typing-practice/content";
+import ProseTypingPane from "@/features/typing-practice/ProseTypingPane";
+import CodeTypingPane from "@/features/typing-practice/CodeTypingPane";
 
 type Mode = "home" | "racing" | "practice" | "ai-lab";
 type RaceType = "live" | "ghost";
-type Category = "english" | "python" | "lua" | "javascript" | "html";
-
-interface Snippet {
-  title: string;
-  text: string;
-}
+type Category = PracticeCategory;
 
 const SESSION_MS = 5 * 60 * 1000;
 const raceContentProvider = createContentProvider();
@@ -162,40 +178,31 @@ function getRaceSnippetView(
   };
 }
 
-const CATEGORIES: { id: Category; label: string; icon: string; description: string }[] = [
-  { id: "english", label: "영문", icon: "🔤", description: "영어 단어와 문장" },
-  { id: "python", label: "Python", icon: "🐍", description: "파이썬 코드" },
-  { id: "lua", label: "Lua", icon: "🌙", description: "Lua 코드" },
-  { id: "javascript", label: "JavaScript", icon: "⚡", description: "자바스크립트 코드" },
-  { id: "html", label: "HTML", icon: "🌐", description: "HTML 마크업" },
-];
-
-const CONTENT: Record<Category, Snippet[]> = {
-  english: [
-    { title: "Quick Brown Fox", text: "the quick brown fox jumps over the lazy dog while typing fast improves accuracy and speed" },
-    { title: "Tech Vocabulary", text: "algorithm database framework interface module repository deployment authentication encryption" },
-    { title: "Programming Terms", text: "function variable constant iteration recursion abstraction polymorphism encapsulation inheritance" },
-  ],
-  python: [
-    { title: "List Comprehension", text: "squares = [x ** 2 for x in range(10) if x % 2 == 0]" },
-    { title: "Function", text: "def greet(name):\n    message = f\"Hello, {name}!\"\n    return message" },
-    { title: "Dictionary", text: "scores = {name: len(name) for name in students}\nprint(scores)" },
-  ],
-  lua: [
-    { title: "Table Iteration", text: "for key, value in pairs(items) do\n    print(key, value)\nend" },
-    { title: "Function", text: "local function add(a, b)\n    return a + b\nend" },
-    { title: "Default Value", text: "local score = player.score or 0\nprint(\"Score:\", score)" },
-  ],
-  javascript: [
-    { title: "Arrow Function", text: "const sum = (a, b) => a + b;\nconst doubled = numbers.map(n => n * 2);" },
-    { title: "Async/Await", text: "async function fetchData(url) {\n  const res = await fetch(url);\n  return res.json();\n}" },
-    { title: "Destructuring", text: "const { name, score = 0 } = player;\nconsole.log(`${name}: ${score}`);" },
-  ],
-  html: [
-    { title: "Semantic HTML", text: "<header><nav><a href=\"/\">Home</a></nav></header>" },
-    { title: "Form Elements", text: "<form><input type=\"text\" name=\"user\"><button type=\"submit\">Send</button></form>" },
-    { title: "Article", text: "<article><h2>Title</h2><p>Write clear and accessible markup.</p></article>" },
-  ],
+const CATEGORIES = CATEGORY_META;
+const PRACTICE_CATEGORY_ICON: Record<Category, typeof Keyboard> = {
+  english: BookOpenText,
+  python: FileCode2,
+  lua: Moon,
+  javascript: Braces,
+  html: CodeXml,
+  typescript: FileType2,
+  sql: Database,
+  react: Atom,
+  css: Palette,
+  shell: Terminal,
+};
+const PRACTICE_CATEGORY_LOGO: Partial<Record<Category, {
+  src: string;
+  cutout?: "dark" | "light";
+}>> = {
+  python: { src: "/code-typing/python-logo-only.svg" },
+  lua: { src: "/code-typing/Lua-Logo.svg", cutout: "light" },
+  javascript: { src: "/code-typing/javaScript_logo.svg", cutout: "dark" },
+  html: { src: "/code-typing/HTML5_logo.svg", cutout: "light" },
+  typescript: { src: "/code-typing/Typescript_logo.svg", cutout: "light" },
+  sql: { src: "/code-typing/Sql_data_base_with_logo.svg" },
+  react: { src: "/code-typing/React-icon.svg" },
+  css: { src: "/code-typing/CSS3_logo_and_wordmark.svg", cutout: "light" },
 };
 
 export default function TypingPractice() {
@@ -206,12 +213,20 @@ export default function TypingPractice() {
   const myName = profile?.display_name || user?.user_metadata?.display_name || "나";
   const myId = user?.id ?? "guest";
   const ranking = mode === "home" ? loadTypingRanking(myId, myName) : [];
+  const logStudentCompletion = useCallback(
+    (practiceMode: TypingPracticeMode, taja: number, won = false, matchId?: string) => {
+      if (role !== "student" || !user?.id) return;
+      void saveTypingPracticeLog(practiceMode, taja, won, matchId).catch(() => undefined);
+    },
+    [role, user?.id],
+  );
 
   if (mode === "racing") {
     return (
       <RaceMode
         myId={myId}
         myName={myName}
+        onComplete={logStudentCompletion}
         onExit={() => setMode("home")}
       />
     );
@@ -222,6 +237,17 @@ export default function TypingPractice() {
       <TypingAILab
         userId={myId}
         displayName={myName}
+        onComplete={logStudentCompletion}
+        onExit={() => setMode("home")}
+      />
+    );
+  }
+
+  if (mode === "practice") {
+    return (
+      <PracticeMode
+        userId={myId}
+        onComplete={logStudentCompletion}
         onExit={() => setMode("home")}
       />
     );
@@ -238,16 +264,8 @@ export default function TypingPractice() {
           <p className="mt-1 text-sm text-muted-foreground">레이싱으로 겨루거나, 연습으로 타수를 키워 보세요.</p>
         </header>
 
-        {mode === "home" ? (
-          <TypingModeHome ranking={ranking} onSelect={setMode} />
-        ) : (
-          <>
-            <Button variant="ghost" className="-ml-2" onClick={() => setMode("home")}>
-              <ArrowLeft /> 모드 선택
-            </Button>
-            <PracticeMode userId={myId} />
-          </>
-        )}
+        <TypingModeHome ranking={ranking} onSelect={setMode} />
+        {role === "teacher" && <TeacherTypingLogs />}
       </div>
     </AppShell>
   );
@@ -283,12 +301,13 @@ function TypingModeHome({
           icon={FlaskConical}
           title="AI 타이핑 연구소"
           description="단어 Dataset으로 Graph·문장 추론 연구"
+          backgroundImage="/typing-ai-lab/background.png"
           onClick={() => onSelect("ai-lab")}
         />
         <ModeCard
           icon={Keyboard}
           title="일반 연습"
-          description="영문·개발 언어 5분 집중 연습"
+          description="문학 영타·9종 코드 5분 집중 연습"
           onClick={() => onSelect("practice")}
         />
       </section>
@@ -325,28 +344,126 @@ function ModeCard({
   icon: Icon,
   title,
   description,
+  backgroundImage,
   onClick,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   title: string;
   description: string;
+  backgroundImage?: string;
   onClick: () => void;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="group flex min-h-44 flex-col justify-between rounded-2xl border bg-card p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-primary hover:shadow-md"
+      className={cn(
+        "group flex min-h-44 flex-col justify-between rounded-2xl border bg-card bg-cover bg-center p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-primary hover:shadow-md",
+        backgroundImage && "border-cyan-300/25 text-white",
+      )}
+      style={backgroundImage ? {
+        backgroundImage: `linear-gradient(rgb(1 8 16 / 38%), rgb(1 8 16 / 88%)), url('${backgroundImage}')`,
+      } : undefined}
     >
       <div className="flex items-start justify-between">
-        <span className="rounded-xl bg-primary/10 p-3 text-primary"><Icon className="size-5" /></span>
-        <ChevronRight className="size-5 text-muted-foreground transition group-hover:translate-x-1" />
+        <span className={cn(
+          "rounded-xl bg-primary/10 p-3 text-primary",
+          backgroundImage && "border border-cyan-200/20 bg-cyan-300/15 text-cyan-100 backdrop-blur-sm",
+        )}><Icon className="size-5" /></span>
+        <ChevronRight className={cn(
+          "size-5 text-muted-foreground transition group-hover:translate-x-1",
+          backgroundImage && "text-white/60",
+        )} />
       </div>
       <div>
         <h2 className="font-bold">{title}</h2>
-        <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+        <p className={cn("mt-1 text-sm text-muted-foreground", backgroundImage && "text-white/70")}>
+          {description}
+        </p>
       </div>
     </button>
+  );
+}
+
+function TeacherTypingLogs() {
+  const [logs, setLogs] = useState<TypingPracticeLogView[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(false);
+    try {
+      setLogs(await listTypingPracticeLogs());
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void load();
+    const timer = window.setInterval(() => void load(), 15_000);
+    return () => window.clearInterval(timer);
+  }, [load]);
+
+  return (
+    <section className="mt-5 rounded-2xl border bg-card p-5 shadow-sm">
+      <header className="mb-4 flex items-center gap-2">
+        <History className="size-5 text-primary" />
+        <div>
+          <h2 className="font-semibold">학생 타자 연습 완료 로그</h2>
+          <p className="text-xs text-muted-foreground">최근 완료 기록 100건</p>
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="ml-auto"
+          onClick={() => void load()}
+          disabled={loading}
+          aria-label="로그 새로고침"
+        >
+          <RefreshCw className={cn("size-4", loading && "animate-spin")} />
+        </Button>
+      </header>
+
+      {error ? (
+        <p className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
+          로그를 불러오지 못했습니다. DB 마이그레이션 적용 여부를 확인하세요.
+        </p>
+      ) : loading && logs.length === 0 ? (
+        <p className="py-6 text-center text-sm text-muted-foreground">로그 불러오는 중…</p>
+      ) : logs.length === 0 ? (
+        <p className="py-6 text-center text-sm text-muted-foreground">아직 완료 기록이 없습니다.</p>
+      ) : (
+        <div className="max-h-96 space-y-2 overflow-y-auto pr-1">
+          {logs.map((log) => (
+            <div
+              key={log.id}
+              className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border px-3 py-2.5 text-sm"
+            >
+              <span className="font-semibold">[{log.student_name}]</span>
+              <span>
+                {TYPING_MODE_LABEL[log.mode]} 연습 완료
+                {" - "}
+                타수 <b>{log.taja.toLocaleString()}타</b>
+                {" · "}
+                포인트 획득 <b>{log.points}P</b>
+              </span>
+              <time className="ml-auto text-xs text-muted-foreground" dateTime={log.completed_at}>
+                {new Date(log.completed_at).toLocaleString("ko-KR", {
+                  month: "numeric",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </time>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
 
@@ -355,10 +472,12 @@ function ModeCard({
 function RaceMode({
   myId,
   myName,
+  onComplete,
   onExit,
 }: {
   myId: string;
   myName: string;
+  onComplete: (mode: TypingPracticeMode, taja: number, won?: boolean) => void;
   onExit: () => void;
 }) {
   const [seed, setSeed] = useState(0);
@@ -538,6 +657,7 @@ function RaceMode({
             myId={myId}
             myName={myName}
             track={track}
+            onComplete={onComplete}
             onRematch={() => setSeed((n) => n + 1)}
             onExit={() => {
               setInRace(false);
@@ -551,6 +671,7 @@ function RaceMode({
             myId={myId}
             myName={myName}
             track={track}
+            onComplete={onComplete}
             onExit={() => {
               setInRace(false);
               setRaceType(null);
@@ -624,11 +745,12 @@ function RaceModeCard({
 }
 
 function RaceRound({
-  myId, myName, track, onRematch, onExit, onInRaceChange,
+  myId, myName, track, onComplete, onRematch, onExit, onInRaceChange,
 }: {
   myId: string;
   myName: string;
   track: TrackDefinition;
+  onComplete: (mode: TypingPracticeMode, taja: number, won?: boolean) => void;
   onRematch: () => void;
   onExit: () => void;
   onInRaceChange: (inRace: boolean) => void;
@@ -650,6 +772,7 @@ function RaceRound({
   const [state, setState] = useState<RaceState>(() => controller.getState());
   const [pointsMap, setPointsMap] = useState<Record<string, number>>({});
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const completionLoggedRef = useRef(false);
 
   useEffect(() => {
     void raceStorage.getUser(myId).then((existing) =>
@@ -669,6 +792,15 @@ function RaceRound({
       if (event.type === "race-finish") {
         setState({ ...controller.getState() });
         setPointsMap(event.pointsMap);
+        if (!completionLoggedRef.current) {
+          completionLoggedRef.current = true;
+          const mine = event.rankings.find((participant) => participant.id === myId);
+          onComplete(
+            "race_live",
+            wpmToTaja(mine?.wpm ?? 0),
+            mine?.rank === 1 || event.rankings[0]?.id === myId,
+          );
+        }
       }
     });
 
@@ -676,7 +808,7 @@ function RaceRound({
       unsub();
       controller.destroy();
     };
-  }, [controller, myId, myName]);
+  }, [controller, myId, myName, onComplete]);
 
   useEffect(() => {
     onInRaceChange(state.status !== "waiting");
@@ -893,12 +1025,14 @@ function GhostRace({
   myId,
   myName,
   track,
+  onComplete,
   onExit,
   onInRaceChange,
 }: {
   myId: string;
   myName: string;
   track: TrackDefinition;
+  onComplete: (mode: TypingPracticeMode, taja: number, won?: boolean) => void;
   onExit: () => void;
   onInRaceChange: (inRace: boolean) => void;
 }) {
@@ -978,6 +1112,7 @@ function GhostRace({
       myName={myName}
       ghost={selected}
       track={track}
+      onComplete={onComplete}
       onExit={onExit}
       onRematch={() => setRoundSeed((seed) => seed + 1)}
     />
@@ -989,6 +1124,7 @@ function GhostRaceRound({
   myName,
   ghost,
   track,
+  onComplete,
   onExit,
   onRematch,
 }: {
@@ -996,6 +1132,7 @@ function GhostRaceRound({
   myName: string;
   ghost: GhostOption;
   track: TrackDefinition;
+  onComplete: (mode: TypingPracticeMode, taja: number, won?: boolean) => void;
   onExit: () => void;
   onRematch: () => void;
 }) {
@@ -1017,6 +1154,7 @@ function GhostRaceRound({
   const [state, setState] = useState<RaceState>(() => controller.getState());
   const [pointsMap, setPointsMap] = useState<Record<string, number>>({});
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const completionLoggedRef = useRef(false);
 
   useEffect(() => {
     void raceStorage.getUser(myId).then((existing) =>
@@ -1032,6 +1170,11 @@ function GhostRaceRound({
       if (event.type === "race-finish") {
         setState({ ...controller.getState() });
         setPointsMap(event.pointsMap);
+        if (!completionLoggedRef.current) {
+          completionLoggedRef.current = true;
+          const mine = event.rankings.find((participant) => participant.id === myId);
+          onComplete("race_ghost", wpmToTaja(mine?.wpm ?? 0));
+        }
       }
     });
     controller.startRace();
@@ -1039,7 +1182,7 @@ function GhostRaceRound({
       unsub();
       controller.destroy();
     };
-  }, [controller, myId, myName]);
+  }, [controller, myId, myName, onComplete]);
 
   useEffect(() => {
     if (state.status === "racing") inputRef.current?.focus();
@@ -1194,10 +1337,215 @@ function RankBadge({ rank }: { rank: number }) {
 
 /* ── Practice ── */
 
-function PracticeMode({ userId }: { userId: string }) {
+function CategoryLogoWatermark({ category }: { category: Category }) {
+  const logo = PRACTICE_CATEGORY_LOGO[category];
+  if (!logo) {
+    const Icon = PRACTICE_CATEGORY_ICON[category];
+    return (
+      <Icon className="pointer-events-none absolute right-3 top-1/2 size-24 -translate-y-1/2 text-white opacity-15 transition group-hover:scale-105 group-hover:opacity-25" />
+    );
+  }
+
+  if (!logo.cutout) {
+    return (
+      <img
+        src={logo.src}
+        alt=""
+        aria-hidden
+        className="pointer-events-none absolute -right-2 top-1/2 size-28 -translate-y-1/2 object-contain opacity-20 brightness-0 invert transition group-hover:scale-105 group-hover:opacity-30"
+      />
+    );
+  }
+
+  const maskId = `typing-logo-${category}`;
+  return (
+    <svg
+      viewBox="0 0 100 100"
+      aria-hidden
+      className="pointer-events-none absolute -right-2 top-1/2 size-28 -translate-y-1/2 opacity-20 transition group-hover:scale-105 group-hover:opacity-30"
+    >
+      <mask
+        id={maskId}
+        x="0"
+        y="0"
+        width="100"
+        height="100"
+        maskUnits="userSpaceOnUse"
+        style={{ maskType: "luminance" }}
+      >
+        <image
+          href={logo.src}
+          width="100"
+          height="100"
+          preserveAspectRatio="xMidYMid meet"
+          style={logo.cutout === "light" ? { filter: "invert(1)" } : undefined}
+        />
+      </mask>
+      <rect width="100" height="100" fill="white" mask={`url(#${maskId})`} />
+    </svg>
+  );
+}
+
+function PracticeCategoryMenu({
+  onSelect,
+  onExit,
+}: {
+  onSelect: (category: Category) => void;
+  onExit: () => void;
+}) {
+  const prose = CATEGORIES.find((item) => item.id === "english")!;
+  const codeOrder: Category[] = [
+    "python", "javascript", "typescript", "react", "html",
+    "css", "sql", "lua", "shell",
+  ];
+  const code = codeOrder.map((id) => CATEGORIES.find((item) => item.id === id)!);
+  const cardTone: Record<Category, string> = {
+    english: "bg-[#f4c95d] text-[#342500] hover:bg-[#ffd86b]",
+    python: "bg-[linear-gradient(135deg,#3776ab_0%,#3776ab_56%,#ffd343_100%)] text-white hover:brightness-110",
+    lua: "bg-gradient-to-br from-[#000080] to-[#7588d8] text-white hover:brightness-110",
+    javascript: "bg-gradient-to-br from-[#b58f00] to-[#f7df1e] text-white hover:brightness-110",
+    html: "bg-gradient-to-br from-[#e34f26] to-[#f06529] text-white hover:brightness-110",
+    typescript: "bg-gradient-to-br from-[#235a97] to-[#3178c6] text-white hover:brightness-110",
+    sql: "bg-gradient-to-br from-[#333333] to-[#df6c20] text-white hover:brightness-110",
+    react: "bg-gradient-to-br from-[#20232a] to-[#61dafb] text-white hover:brightness-110",
+    css: "bg-gradient-to-br from-[#264de4] to-[#2965f1] text-white hover:brightness-110",
+    shell: "bg-gradient-to-br from-[#15803d] to-[#84cc16] text-white hover:brightness-110",
+  };
+  const cardLayout: Partial<Record<Category, string>> = {
+    python: "sm:col-span-3 sm:row-span-2",
+    javascript: "sm:col-span-3",
+    typescript: "sm:col-span-3",
+    react: "sm:col-span-2 sm:row-span-2",
+    html: "sm:col-span-2",
+    css: "sm:col-span-2",
+    sql: "sm:col-span-2",
+    lua: "sm:col-span-2",
+    shell: "sm:col-span-6",
+  };
+  const cardGroup: Partial<Record<Category, string>> = {
+    python: "GENERAL PURPOSE",
+    lua: "SCRIPTING",
+    javascript: "WEB CORE",
+    html: "WEB STRUCTURE",
+    typescript: "TYPED WEB",
+    sql: "DATA",
+    react: "UI COMPONENT",
+    css: "UI STYLE",
+    shell: "AUTOMATION & CLI",
+  };
+
+  return (
+    <main className="min-h-screen bg-[#090d14] px-3 py-4 font-sans text-zinc-100 sm:px-6 sm:py-6 lg:px-8">
+      <div className="mx-auto max-w-6xl overflow-hidden rounded-2xl border border-zinc-700/80 bg-[#0d1117] shadow-[0_24px_80px_rgba(0,0,0,.4)]">
+        <div className="flex h-11 items-center gap-3 border-b border-zinc-800 bg-[#161b22] px-4">
+          <div className="flex gap-1.5" aria-hidden>
+            <span className="size-3 rounded-full bg-[#ff5f56]" />
+            <span className="size-3 rounded-full bg-[#ffbd2e]" />
+            <span className="size-3 rounded-full bg-[#27c93f]" />
+          </div>
+          <span className="rounded-t-md border border-b-0 border-zinc-700/80 bg-[#0d1117] px-4 py-2 text-xs text-zinc-400">
+            typing-practice.menu
+          </span>
+          <button
+            type="button"
+            onClick={onExit}
+            className="ml-auto inline-flex items-center gap-2 text-xs text-zinc-500 transition hover:text-white"
+          >
+            <ArrowLeft className="size-4" /> 돌아가기
+          </button>
+        </div>
+
+        <div className="p-4 sm:p-6 lg:p-8">
+          <header className="mb-6">
+            <p className="text-[10px] font-bold tracking-[0.24em] text-sky-400">TYPING PRACTICE</p>
+            <h1 className="mt-1 text-2xl font-black tracking-tight sm:text-3xl">연습할 콘텐츠를 선택하세요</h1>
+          </header>
+
+          <button
+            type="button"
+            onClick={() => onSelect(prose.id)}
+            className={cn(
+              "group relative flex min-h-44 w-full overflow-hidden rounded-2xl p-6 text-left transition sm:min-h-52 sm:p-8",
+              cardTone.english,
+            )}
+          >
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,.35),transparent_42%)]" />
+            <span
+              aria-hidden
+              className="pointer-events-none absolute -right-3 top-1/2 -translate-y-1/2 text-[7rem] font-black leading-none tracking-[-0.08em] text-white/20 transition group-hover:scale-105 sm:right-5 sm:text-[10rem]"
+            >
+              ABC
+            </span>
+            <div className="relative flex w-full items-end justify-between gap-6">
+              <div>
+                <p className="text-[10px] font-bold tracking-[0.22em] opacity-55">PUBLIC DOMAIN LITERATURE</p>
+                <h2 className="mt-1 text-3xl font-black sm:text-4xl">영문 타자</h2>
+                <p className="mt-2 max-w-xl text-sm opacity-60">고전 문학 11,000여 문장과 문단으로 자연스럽게 영문 타자를 연습합니다.</p>
+              </div>
+              <ChevronRight className="size-7 shrink-0 opacity-35 transition group-hover:translate-x-1 group-hover:opacity-80" />
+            </div>
+          </button>
+
+          <div className="mb-3 mt-7 flex items-end justify-between">
+            <div>
+              <p className="text-[10px] font-bold tracking-[0.22em] text-sky-400/60">CODE TRAINING</p>
+              <h2 className="mt-1 text-lg font-bold">코드 타자</h2>
+            </div>
+            <span className="text-xs text-zinc-600">언어별 300개 이상 스니펫</span>
+          </div>
+
+          <div className="grid grid-flow-row-dense grid-cols-2 gap-3 sm:auto-rows-[8rem] sm:grid-cols-6">
+            {code.map((item) => {
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => onSelect(item.id)}
+                  className={cn(
+                    "group relative flex min-h-32 flex-col justify-between overflow-hidden rounded-xl p-4 text-left transition hover:-translate-y-0.5 hover:shadow-lg",
+                    cardTone[item.id],
+                    cardLayout[item.id],
+                  )}
+                >
+                  <span className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_0%,rgba(255,255,255,.28),transparent_45%)]" />
+                  <CategoryLogoWatermark category={item.id} />
+                  <div className="relative z-10 flex items-start justify-between">
+                    <span className="text-[9px] font-bold tracking-[0.16em] opacity-60">{cardGroup[item.id]}</span>
+                    <span className="text-[9px] font-bold uppercase tracking-wider opacity-50">{item.extension}</span>
+                  </div>
+                  <div className="relative z-10">
+                    <h3 className="text-sm font-black">{item.label}</h3>
+                    <p className="mt-1 text-xs opacity-70">{item.description}</p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+function PracticeMode({
+  userId,
+  onComplete,
+  onExit,
+}: {
+  userId: string;
+  onComplete: (mode: TypingPracticeMode, taja: number, won?: boolean) => void;
+  onExit: () => void;
+}) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const [category, setCategory] = useState<Category>("english");
-  const [snippetIndex, setSnippetIndex] = useState(0);
+  const completionLoggedRef = useRef(false);
+  const bagRef = useRef(new ShuffleBag());
+  const forceReloadRef = useRef(false);
+  const [category, setCategory] = useState<Category | null>(null);
+  const [proseUnit, setProseUnit] = useState<ProseUnit | "all">("sentence");
+  const [snippet, setSnippet] = useState<PracticeContentItem | null>(null);
+  const [loadState, setLoadState] = useState<"loading" | "ready" | "error">("loading");
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [poolSize, setPoolSize] = useState(0);
   const [typed, setTyped] = useState("");
   const [correctBefore, setCorrectBefore] = useState(0);
   const [totalBefore, setTotalBefore] = useState(0);
@@ -1205,20 +1553,54 @@ function PracticeMode({ userId }: { userId: string }) {
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [elapsedMs, setElapsedMs] = useState(0);
   const [result, setResult] = useState<TypingResult | null>(null);
+  const [retryTick, setRetryTick] = useState(0);
 
-  const snippet = CONTENT[category][snippetIndex]!;
-  const statuses = useMemo(
-    () => [...snippet.text].map((char, i) => {
+  const statuses = useMemo(() => {
+    if (!snippet) return [] as Array<"correct" | "incorrect" | "pending">;
+    return [...snippet.text].map((char, i) => {
       if (i >= typed.length) return "pending" as const;
       return typed[i] === char ? "correct" as const : "incorrect" as const;
-    }),
-    [snippet.text, typed],
-  );
+    });
+  }, [snippet, typed]);
   const currentCorrect = statuses.filter((s) => s === "correct").length;
   const stats = calculateTypingResult(correctBefore + currentCorrect, totalBefore + typed.length, elapsedMs, completed);
   const remainingMs = Math.max(0, SESSION_MS - elapsedMs);
-  const bestKey = `flowpy:typing-best-taja:${userId}:${category}`;
-  const best = Number(localStorage.getItem(bestKey) ?? 0);
+  const bestKey = category ? `flowpy:typing-best-taja:${userId}:${category}` : "";
+  const best = bestKey ? Number(localStorage.getItem(bestKey) ?? 0) : 0;
+  const categoryMeta = CATEGORIES.find((c) => c.id === category) ?? null;
+
+  const drawNext = useCallback(() => {
+    const next = bagRef.current.next();
+    setSnippet(next);
+    setTyped("");
+  }, []);
+
+  const loadPool = useCallback(async (nextCategory: Category, unit: ProseUnit | "all", force = false) => {
+    setLoadState("loading");
+    setLoadError(null);
+    setSnippet(null);
+    try {
+      const items = await loadCategoryItems(nextCategory, force);
+      const filtered = nextCategory === "english" ? filterByUnit(items, unit) : items;
+      bagRef.current.setPool(filtered);
+      setPoolSize(filtered.length);
+      const first = bagRef.current.next();
+      if (!first) throw new Error("콘텐츠가 비어 있습니다");
+      setSnippet(first);
+      setLoadState("ready");
+      window.setTimeout(() => inputRef.current?.focus(), 0);
+    } catch (err) {
+      setLoadState("error");
+      setLoadError(err instanceof Error ? err.message : "콘텐츠를 불러오지 못했습니다");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!category) return;
+    const force = forceReloadRef.current;
+    forceReloadRef.current = false;
+    void loadPool(category, proseUnit, force);
+  }, [category, proseUnit, retryTick, loadPool]);
 
   const finishSession = (finalElapsedMs = elapsedMs) => {
     const finalResult = calculateTypingResult(correctBefore + currentCorrect, totalBefore + typed.length, finalElapsedMs, completed);
@@ -1226,6 +1608,10 @@ function PracticeMode({ userId }: { userId: string }) {
     setResult(finalResult);
     setStartedAt(null);
     if (finalResult.taja > best) localStorage.setItem(bestKey, String(finalResult.taja));
+    if (!completionLoggedRef.current) {
+      completionLoggedRef.current = true;
+      onComplete(category === "english" ? "practice_english" : "practice_code", finalResult.taja);
+    }
   };
 
   useEffect(() => {
@@ -1239,9 +1625,8 @@ function PracticeMode({ userId }: { userId: string }) {
     return () => window.clearInterval(timer);
   });
 
-  const reset = (nextCategory = category) => {
+  const resetSession = (nextCategory: Category | null = category) => {
     setCategory(nextCategory);
-    setSnippetIndex(0);
     setTyped("");
     setCorrectBefore(0);
     setTotalBefore(0);
@@ -1249,11 +1634,12 @@ function PracticeMode({ userId }: { userId: string }) {
     setStartedAt(null);
     setElapsedMs(0);
     setResult(null);
-    window.setTimeout(() => inputRef.current?.focus(), 0);
+    completionLoggedRef.current = false;
+    if (nextCategory) window.setTimeout(() => inputRef.current?.focus(), 0);
   };
 
   const enterText = (text: string) => {
-    if (result || typed.length >= snippet.text.length) return;
+    if (!snippet || result || typed.length >= snippet.text.length) return;
     if (startedAt === null) setStartedAt(Date.now());
     const nextTyped = (typed + text).slice(0, snippet.text.length);
     if (nextTyped.length < snippet.text.length) {
@@ -1264,12 +1650,11 @@ function PracticeMode({ userId }: { userId: string }) {
     setCorrectBefore((v) => v + correct);
     setTotalBefore((v) => v + nextTyped.length);
     setCompleted((v) => v + 1);
-    setSnippetIndex((v) => (v + 1) % CONTENT[category].length);
-    setTyped("");
+    drawNext();
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.metaKey || event.ctrlKey || event.altKey || result) return;
+    if (!snippet || event.metaKey || event.ctrlKey || event.altKey || result) return;
     if (event.key === "Backspace") {
       event.preventDefault();
       setTyped((v) => v.slice(0, -1));
@@ -1285,65 +1670,200 @@ function PracticeMode({ userId }: { userId: string }) {
     }
   };
 
-  if (result) {
+  if (!category) {
     return (
-      <section className="rounded-2xl border bg-card p-6 text-center shadow-sm">
-        <CheckCircle2 className="mx-auto size-12 text-green-500" />
-        <h2 className="mt-3 text-2xl font-bold">연습 완료!</h2>
-        <div className="mx-auto mt-6 grid max-w-2xl grid-cols-3 gap-3">
-          <ResultStat label="평균 타수" value={`${result.taja}타`} />
-          <ResultStat label="정확도" value={`${result.accuracy}%`} />
-          <ResultStat label="완료 스니펫" value={result.completed} />
-        </div>
-        <Button className="mt-6" onClick={() => reset()}><RotateCcw /> 다시 연습</Button>
-      </section>
+      <PracticeCategoryMenu
+        onExit={onExit}
+        onSelect={(nextCategory) => resetSession(nextCategory)}
+      />
     );
   }
 
+  if (result) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
+        <section className="w-full max-w-2xl rounded-2xl border bg-card p-6 text-center shadow-sm">
+          <CheckCircle2 className="mx-auto size-12 text-green-500" />
+          <h2 className="mt-3 text-2xl font-bold">연습 완료!</h2>
+          <div className="mx-auto mt-6 grid max-w-2xl grid-cols-3 gap-3">
+            <ResultStat label="평균 타수" value={`${result.taja}타`} />
+            <ResultStat label="정확도" value={`${result.accuracy}%`} />
+            <ResultStat label="완료 스니펫" value={result.completed} />
+          </div>
+          <div className="mt-6 flex justify-center gap-2">
+            <Button variant="outline" onClick={() => resetSession(null)}><ArrowLeft /> 연습 선택</Button>
+            <Button onClick={() => resetSession()}><RotateCcw /> 다시 연습</Button>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  const codeMode = isCodeCategory(category);
+  const ActiveCategoryIcon = PRACTICE_CATEGORY_ICON[category];
+
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
-        {CATEGORIES.map((item) => (
+    <main className={cn(
+      "min-h-screen",
+      codeMode
+        ? "bg-[#080b10] text-zinc-100"
+        : "bg-[#ece5d8] text-amber-950 dark:bg-[#100e0b] dark:text-amber-50",
+    )}>
+      <div className="mx-auto max-w-6xl space-y-4 px-4 py-4 sm:px-6 lg:px-8">
+        <header className={cn(
+          "flex flex-wrap items-center justify-between gap-3 border-b pb-3",
+          codeMode ? "border-zinc-800" : "border-amber-900/15 dark:border-amber-100/10",
+        )}>
           <button
-            key={item.id}
             type="button"
-            disabled={startedAt !== null}
-            onClick={() => reset(item.id)}
+            onClick={() => resetSession(null)}
             className={cn(
-              "rounded-xl border bg-card p-3 text-left transition hover:border-primary disabled:cursor-not-allowed disabled:opacity-60",
-              category === item.id && "border-primary bg-primary/5 ring-1 ring-primary",
+              "inline-flex items-center gap-2 text-sm transition",
+              codeMode ? "text-zinc-400 hover:text-white" : "text-amber-900/60 hover:text-amber-950 dark:text-amber-100/50 dark:hover:text-white",
             )}
           >
-            <span className="text-xl">{item.icon}</span>
-            <span className="mt-1 block text-sm font-semibold">{item.label}</span>
-            <span className="block text-xs text-muted-foreground">{item.description}</span>
+            <ArrowLeft className="size-4" /> 연습 선택
           </button>
-        ))}
+          <div className="flex items-center gap-2">
+            <ActiveCategoryIcon className="size-5" />
+            <div>
+              <h1 className="text-sm font-bold">{categoryMeta?.label} 타자 연습</h1>
+              <p className={cn("text-[10px]", codeMode ? "text-zinc-500" : "text-amber-900/45 dark:text-amber-100/35")}>
+                {poolSize.toLocaleString()}개 연습 데이터
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onExit}
+            className={cn(
+              "text-xs transition",
+              codeMode ? "text-zinc-500 hover:text-white" : "text-amber-900/45 hover:text-amber-950 dark:text-amber-100/35 dark:hover:text-white",
+            )}
+          >
+            타자 연습 종료
+          </button>
+        </header>
+
+        {category === "english" && (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs text-amber-900/50 dark:text-amber-100/40">연습 단위</span>
+            {([
+              ["sentence", "문장"],
+              ["paragraph", "짧은 문단"],
+              ["all", "전체"],
+            ] as const).map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                disabled={startedAt !== null}
+                onClick={() => setProseUnit(id)}
+                className={cn(
+                  "rounded-full border px-3 py-1 text-xs transition disabled:cursor-not-allowed disabled:opacity-60",
+                  proseUnit === id
+                    ? "border-amber-800/35 bg-amber-900/10 font-semibold text-amber-950 dark:border-amber-100/30 dark:bg-amber-100/10 dark:text-amber-50"
+                    : "border-amber-900/15 text-amber-900/55 hover:border-amber-900/35 dark:border-amber-100/10 dark:text-amber-100/45",
+                )}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div className={cn(
+          "overflow-hidden shadow-sm",
+          codeMode ? "rounded-xl bg-[#0d1117]" : "rounded-2xl bg-[#f6f0e4] dark:bg-[#1a1712]",
+        )}>
+          {codeMode && (
+            <div className="flex h-8 items-center gap-2 bg-[#161b22] px-3">
+              <span className="size-2 rounded-full bg-[#ff5f56]" />
+              <span className="size-2 rounded-full bg-[#ffbd2e]" />
+              <span className="size-2 rounded-full bg-[#27c93f]" />
+              <span className="ml-2 text-[10px] text-zinc-500">session.telemetry</span>
+            </div>
+          )}
+          <section className={cn(
+            "grid grid-cols-2 overflow-hidden sm:grid-cols-5",
+            !codeMode && "divide-x divide-amber-900/10 dark:divide-amber-100/10",
+          )}>
+            <Stat tone={codeMode ? "code" : "prose"} icon={Timer} label="남은 시간" value={formatTime(remainingMs)} />
+            <Stat tone={codeMode ? "code" : "prose"} icon={Gauge} label="타수" value={`${stats.taja}타`} />
+            <Stat tone={codeMode ? "code" : "prose"} icon={Target} label="정확도" value={`${stats.accuracy}%`} />
+            <Stat tone={codeMode ? "code" : "prose"} icon={CheckCircle2} label="완료" value={`${completed}개`} />
+            <Stat tone={codeMode ? "code" : "prose"} icon={Trophy} label="최고 기록" value={`${best}타`} className="col-span-2 sm:col-span-1" />
+          </section>
+        </div>
+
+        {loadState === "loading" && (
+          <div className={cn(
+            "flex flex-col items-center justify-center gap-3 border py-16 text-sm",
+            codeMode ? "border-zinc-800 bg-[#0d1117] text-zinc-500" : "border-amber-900/15 bg-[#f6f0e4] text-amber-900/50 dark:border-amber-100/10 dark:bg-[#1a1712]",
+          )}>
+            <RefreshCw className="size-6 animate-spin" />
+            {categoryMeta?.label} 콘텐츠 불러오는 중…
+          </div>
+        )}
+
+        {loadState === "error" && (
+          <div className="border border-destructive/30 bg-destructive/5 p-6 text-center">
+            <p className="text-sm text-destructive">{loadError ?? "콘텐츠를 불러오지 못했습니다"}</p>
+            <Button
+              className="mt-4"
+              variant="outline"
+              onClick={() => {
+                forceReloadRef.current = true;
+                setRetryTick((n) => n + 1);
+              }}
+            >
+              <RefreshCw /> 다시 시도
+            </Button>
+          </div>
+        )}
+
+        {loadState === "ready" && snippet && (
+          codeMode ? (
+            <CodeTypingPane
+              text={snippet.text}
+              fileName={categoryFileName(snippet)}
+              language={categoryMeta?.language ?? category}
+              typedLength={typed.length}
+              statuses={statuses}
+              inputRef={inputRef}
+              onKeyDown={handleKeyDown}
+              hint={startedAt === null ? "입력하면 시작" : "입력 중"}
+              source={snippet.source}
+              license={snippet.license}
+            />
+          ) : (
+            <ProseTypingPane
+              text={snippet.text}
+              title={snippet.title}
+              author={snippet.author}
+              source={snippet.source}
+              typedLength={typed.length}
+              statuses={statuses}
+              inputRef={inputRef}
+              onKeyDown={handleKeyDown}
+              hint={startedAt === null ? "첫 글자를 입력하면 시작됩니다" : "입력 중"}
+            />
+          )
+        )}
+
+        <div className="flex flex-wrap justify-end gap-2">
+          <Button
+            variant="outline"
+            onClick={() => {
+              resetSession();
+              if (loadState === "ready") drawNext();
+            }}
+          >
+            <RotateCcw /> 처음부터
+          </Button>
+          {startedAt !== null && <Button onClick={() => finishSession()}>연습 종료</Button>}
+        </div>
       </div>
-
-      <section className="grid grid-cols-2 gap-3 rounded-2xl border bg-card p-4 shadow-sm md:grid-cols-5">
-        <Stat icon={Timer} label="남은 시간" value={formatTime(remainingMs)} />
-        <Stat icon={Gauge} label="타수" value={`${stats.taja}타`} />
-        <Stat icon={Target} label="정확도" value={`${stats.accuracy}%`} />
-        <Stat icon={CheckCircle2} label="완료" value={`${completed}개`} />
-        <Stat icon={Trophy} label="최고 기록" value={`${best}타`} className="col-span-2 md:col-span-1" />
-      </section>
-
-      <TypingPane
-        text={snippet.text}
-        title={snippet.title}
-        typedLength={typed.length}
-        statuses={statuses}
-        inputRef={inputRef}
-        onKeyDown={handleKeyDown}
-        hint={startedAt === null ? "아래 문장을 입력하면 시작됩니다" : "입력 중"}
-      />
-
-      <div className="flex justify-end gap-2">
-        <Button variant="outline" onClick={() => reset()}><RotateCcw /> 처음부터</Button>
-        {startedAt !== null && <Button onClick={() => finishSession()}>연습 종료</Button>}
-      </div>
-    </div>
+    </main>
   );
 }
 
@@ -1524,19 +2044,39 @@ function TypingPane({
 }
 
 function Stat({
-  icon: Icon, label, value, className,
+  icon: Icon, label, value, className, tone = "default",
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
   value: string | number;
   className?: string;
+  tone?: "default" | "code" | "prose";
 }) {
   return (
-    <div className={cn("flex items-center gap-3", className)}>
-      <Icon className="size-5 text-primary" />
+    <div className={cn(
+      "flex items-center gap-3 p-3",
+      tone === "code" && "bg-transparent",
+      tone === "prose" && "bg-transparent",
+      className,
+    )}>
+      <Icon className={cn(
+        "size-5",
+        tone === "default" && "text-primary",
+        tone === "code" && "text-sky-400",
+        tone === "prose" && "text-amber-800 dark:text-amber-200",
+      )} />
       <div>
-        <div className="text-xs text-muted-foreground">{label}</div>
-        <div className="font-mono text-lg font-bold">{value}</div>
+        <div className={cn(
+          "text-xs",
+          tone === "default" && "text-muted-foreground",
+          tone === "code" && "text-zinc-500",
+          tone === "prose" && "text-amber-900/50 dark:text-amber-100/40",
+        )}>{label}</div>
+        <div className={cn(
+          "font-mono text-lg font-bold",
+          tone === "code" && "text-zinc-100",
+          tone === "prose" && "text-amber-950 dark:text-amber-50",
+        )}>{value}</div>
       </div>
     </div>
   );

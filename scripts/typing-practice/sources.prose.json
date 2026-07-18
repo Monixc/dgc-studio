@@ -1,0 +1,147 @@
+{
+  "version": 1,
+  "minimum_items": 8000,
+  "target_items_per_source": 800,
+  "sources": [
+    {
+      "id": "austen-pride-and-prejudice",
+      "title": "Pride and Prejudice",
+      "author": "Jane Austen",
+      "author_death_year": 1817,
+      "gutenberg_id": 1342,
+      "url": "https://www.gutenberg.org/cache/epub/1342/pg1342.txt",
+      "license": "Public Domain",
+      "rights_url": "https://www.gutenberg.org/policy/permission.html"
+    },
+    {
+      "id": "shelley-frankenstein",
+      "title": "Frankenstein",
+      "author": "Mary Wollstonecraft Shelley",
+      "author_death_year": 1851,
+      "gutenberg_id": 84,
+      "url": "https://www.gutenberg.org/cache/epub/84/pg84.txt",
+      "license": "Public Domain",
+      "rights_url": "https://www.gutenberg.org/policy/permission.html"
+    },
+    {
+      "id": "melville-moby-dick",
+      "title": "Moby-Dick",
+      "author": "Herman Melville",
+      "author_death_year": 1891,
+      "gutenberg_id": 2701,
+      "url": "https://www.gutenberg.org/cache/epub/2701/pg2701.txt",
+      "license": "Public Domain",
+      "rights_url": "https://www.gutenberg.org/policy/permission.html"
+    },
+    {
+      "id": "dickens-tale-two-cities",
+      "title": "A Tale of Two Cities",
+      "author": "Charles Dickens",
+      "author_death_year": 1870,
+      "gutenberg_id": 98,
+      "url": "https://www.gutenberg.org/cache/epub/98/pg98.txt",
+      "license": "Public Domain",
+      "rights_url": "https://www.gutenberg.org/policy/permission.html"
+    },
+    {
+      "id": "doyle-sherlock-holmes",
+      "title": "The Adventures of Sherlock Holmes",
+      "author": "Arthur Conan Doyle",
+      "author_death_year": 1930,
+      "gutenberg_id": 1661,
+      "url": "https://www.gutenberg.org/cache/epub/1661/pg1661.txt",
+      "license": "Public Domain",
+      "rights_url": "https://www.gutenberg.org/policy/permission.html"
+    },
+    {
+      "id": "twain-tom-sawyer",
+      "title": "The Adventures of Tom Sawyer",
+      "author": "Mark Twain",
+      "author_death_year": 1910,
+      "gutenberg_id": 74,
+      "url": "https://www.gutenberg.org/cache/epub/74/pg74.txt",
+      "license": "Public Domain",
+      "rights_url": "https://www.gutenberg.org/policy/permission.html"
+    },
+    {
+      "id": "wells-time-machine",
+      "title": "The Time Machine",
+      "author": "H. G. Wells",
+      "author_death_year": 1946,
+      "gutenberg_id": 35,
+      "url": "https://www.gutenberg.org/cache/epub/35/pg35.txt",
+      "license": "Public Domain",
+      "rights_url": "https://www.gutenberg.org/policy/permission.html"
+    },
+    {
+      "id": "carroll-alice",
+      "title": "Alice's Adventures in Wonderland",
+      "author": "Lewis Carroll",
+      "author_death_year": 1898,
+      "gutenberg_id": 11,
+      "url": "https://www.gutenberg.org/cache/epub/11/pg11.txt",
+      "license": "Public Domain",
+      "rights_url": "https://www.gutenberg.org/policy/permission.html"
+    },
+    {
+      "id": "stoker-dracula",
+      "title": "Dracula",
+      "author": "Bram Stoker",
+      "author_death_year": 1912,
+      "gutenberg_id": 345,
+      "url": "https://www.gutenberg.org/cache/epub/345/pg345.txt",
+      "license": "Public Domain",
+      "rights_url": "https://www.gutenberg.org/policy/permission.html"
+    },
+    {
+      "id": "bronte-jane-eyre",
+      "title": "Jane Eyre",
+      "author": "Charlotte Brontë",
+      "author_death_year": 1855,
+      "gutenberg_id": 1260,
+      "url": "https://www.gutenberg.org/cache/epub/1260/pg1260.txt",
+      "license": "Public Domain",
+      "rights_url": "https://www.gutenberg.org/policy/permission.html"
+    },
+    {
+      "id": "bronte-wuthering-heights",
+      "title": "Wuthering Heights",
+      "author": "Emily Brontë",
+      "author_death_year": 1848,
+      "gutenberg_id": 768,
+      "url": "https://www.gutenberg.org/cache/epub/768/pg768.txt",
+      "license": "Public Domain",
+      "rights_url": "https://www.gutenberg.org/policy/permission.html"
+    },
+    {
+      "id": "wilde-dorian-gray",
+      "title": "The Picture of Dorian Gray",
+      "author": "Oscar Wilde",
+      "author_death_year": 1900,
+      "gutenberg_id": 174,
+      "url": "https://www.gutenberg.org/cache/epub/174/pg174.txt",
+      "license": "Public Domain",
+      "rights_url": "https://www.gutenberg.org/policy/permission.html"
+    },
+    {
+      "id": "dickens-great-expectations",
+      "title": "Great Expectations",
+      "author": "Charles Dickens",
+      "author_death_year": 1870,
+      "gutenberg_id": 1400,
+      "url": "https://www.gutenberg.org/cache/epub/1400/pg1400.txt",
+      "license": "Public Domain",
+      "rights_url": "https://www.gutenberg.org/policy/permission.html"
+    },
+    {
+      "id": "montgomery-anne-green-gables",
+      "title": "Anne of Green Gables",
+      "author": "L. M. Montgomery",
+      "author_death_year": 1942,
+      "gutenberg_id": 45,
+      "url": "https://www.gutenberg.org/cache/epub/45/pg45.txt",
+      "license": "Public Domain",
+      "rights_url": "https://www.gutenberg.org/policy/permission.html"
+    }
+  ]
+}

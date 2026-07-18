@@ -1,17 +1,21 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { BarChart3, BookOpen, ChevronRight, ClipboardList, Coins, Save, Search, UserRound } from "lucide-react";
+import { AlertCircle, BarChart3, BookOpen, ChevronRight, ClipboardList, Coins, RefreshCw, Save, Search, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { usePointsRanking } from "@/hooks/usePoints";
 import {
   getStudentManagementNote,
   listManagedStudents,
+  listStudentPointEarnings,
   listStudentSubmissions,
+  listStudentTypingLogs,
   saveStudentManagementNote,
   type StudentSubmission,
 } from "@/lib/studentManagement";
+import { TYPING_MODE_LABEL } from "@/lib/typing-logs";
+import { dailyTypingBests, type DailyTypingBest } from "@/lib/studentTypingAnalytics";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -46,7 +50,13 @@ export default function StudentManager() {
   const [chartMetric, setChartMetric] = useState<"submissions" | "correct">("submissions");
   const [chartType, setChartType] = useState<"bar" | "line">("bar");
 
-  const { data: students = [], isLoading: studentsLoading } = useQuery({
+  const {
+    data: students = [],
+    isLoading: studentsLoading,
+    isError: studentsError,
+    error: studentsErrorDetail,
+    refetch: refetchStudents,
+  } = useQuery({
     queryKey: ["student-management", "students", user?.id],
     queryFn: () => listManagedStudents(user!.id),
     enabled: !!user,
@@ -70,6 +80,24 @@ export default function StudentManager() {
   const { data: submissions = [], isLoading: submissionsLoading } = useQuery({
     queryKey: ["student-management", "submissions", selectedStudent?.id],
     queryFn: () => listStudentSubmissions(selectedStudent!.id),
+    enabled: !!selectedStudent,
+  });
+  const {
+    data: typingLogs = [],
+    isLoading: typingLoading,
+    isError: typingError,
+  } = useQuery({
+    queryKey: ["student-management", "typing-logs", selectedStudent?.id],
+    queryFn: () => listStudentTypingLogs(selectedStudent!.id),
+    enabled: !!selectedStudent,
+  });
+  const {
+    data: pointEarnings = [],
+    isLoading: pointEarningsLoading,
+    isError: pointEarningsError,
+  } = useQuery({
+    queryKey: ["student-management", "point-earnings", selectedStudent?.id],
+    queryFn: () => listStudentPointEarnings(selectedStudent!.id),
     enabled: !!selectedStudent,
   });
   const { data: pointRanking = [] } = usePointsRanking();
@@ -107,8 +135,25 @@ export default function StudentManager() {
     });
   }, [chartMetric, submissions]);
   const maxDaily = Math.max(1, ...dailyData.map((day) => day.count));
+  const typingTrend = useMemo(() => dailyTypingBests(typingLogs), [typingLogs]);
 
   if (studentsLoading) return <div className="flex h-full items-center justify-center text-sm text-muted-foreground">학생 정보를 불러오는 중…</div>;
+  if (studentsError) {
+    return (
+      <div className="flex h-full items-center justify-center p-6">
+        <div className="max-w-md rounded-xl border border-destructive/30 bg-background p-6 text-center shadow-sm">
+          <AlertCircle className="mx-auto size-8 text-destructive" />
+          <h1 className="mt-3 font-semibold">학생 목록을 불러오지 못했습니다.</h1>
+          <p className="mt-2 break-words text-xs text-muted-foreground">
+            {studentsErrorDetail instanceof Error ? studentsErrorDetail.message : "알 수 없는 조회 오류"}
+          </p>
+          <Button className="mt-4" size="sm" onClick={() => void refetchStudents()}>
+            <RefreshCw className="size-4" /> 다시 시도
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-full min-h-0">
@@ -173,6 +218,49 @@ export default function StudentManager() {
               </div>
             )}
           </div>
+
+          <div className="mt-5 rounded-xl border bg-background shadow-sm">
+            <div className="border-b px-5 py-4">
+              <h3 className="font-semibold">포인트 획득 이력</h3>
+              <p className="text-xs text-muted-foreground">문제 풀이와 타자 연습 등으로 획득한 포인트입니다.</p>
+            </div>
+            {pointEarningsLoading ? (
+              <p className="p-5 text-sm text-muted-foreground">포인트 이력을 불러오는 중…</p>
+            ) : pointEarningsError ? (
+              <p className="p-5 text-sm text-destructive">포인트 이력을 불러오지 못했습니다.</p>
+            ) : pointEarnings.length === 0 ? (
+              <p className="p-5 text-sm text-muted-foreground">아직 포인트 획득 이력이 없습니다.</p>
+            ) : (
+              <div className="max-h-80 divide-y overflow-auto">
+                {pointEarnings.map((entry) => (
+                  <div key={entry.id} className="flex items-center gap-3 px-5 py-3">
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-amber-500/10 text-amber-600">
+                      <Coins className="size-4" />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium">{entry.reason || "포인트 지급"}</p>
+                      <p className="text-xs text-muted-foreground">{new Date(entry.created_at).toLocaleString("ko-KR")}</p>
+                    </div>
+                    <strong className="shrink-0 text-sm text-amber-600">+{entry.amount.toLocaleString()}P</strong>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="mt-5 rounded-xl border bg-background p-5 shadow-sm">
+            <div className="mb-4">
+              <h3 className="font-semibold">최근 30일 타자 속도 변화</h3>
+              <p className="text-xs text-muted-foreground">모든 타자 연습 모드를 합쳐 날짜별 최고 기록만 표시합니다.</p>
+            </div>
+            {typingLoading ? (
+              <p className="py-12 text-center text-sm text-muted-foreground">타자 기록을 불러오는 중…</p>
+            ) : typingError ? (
+              <p className="py-12 text-center text-sm text-destructive">타자 기록을 불러오지 못했습니다.</p>
+            ) : (
+              <TypingTrendChart data={typingTrend} />
+            )}
+          </div>
         </>}
       </section>
     </div>
@@ -184,6 +272,46 @@ function ActivityChart({ data, max, type, metric }: { data: { key: string; label
   const yAt = (count: number) => 112 - (count / max) * 96;
   const points = data.map((day, index) => `${xAt(index)},${yAt(day.count)}`).join(" ");
   return <div><div className="mb-2 text-xs text-muted-foreground">날짜별 {metric === "submissions" ? "제출 횟수" : "정답 처리된 문제 수"}</div><div className="relative h-40">{type === "bar" ? <div className="flex h-full items-end gap-1.5">{data.map((day) => <div key={day.key} className="flex min-w-0 flex-1 flex-col items-center justify-end gap-1"><span className="text-[10px] text-muted-foreground">{day.count || ""}</span><div className="w-full max-w-8 rounded-t bg-primary/80 transition-all" style={{ height: `${Math.max(day.count ? 10 : 2, (day.count / max) * 105)}px` }} title={`${day.label}: ${day.count}개`} /><span className="whitespace-nowrap text-[9px] text-muted-foreground">{day.label}</span></div>)}</div> : <><div className="relative h-[125px]"><svg viewBox="0 0 100 120" preserveAspectRatio="none" className="absolute inset-0 size-full" aria-label="학습 활동 선 그래프"><line x1="2" y1="112" x2="98" y2="112" stroke="currentColor" className="text-border" vectorEffect="non-scaling-stroke" /><polyline points={points} fill="none" stroke="hsl(var(--primary))" strokeWidth="2" vectorEffect="non-scaling-stroke" /></svg>{data.map((day, index) => <span key={day.key} className="absolute size-2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-background bg-primary" style={{ left: `${xAt(index)}%`, top: `${(yAt(day.count) / 120) * 100}%` }} title={`${day.label}: ${day.count}개`} />)}</div><div className="flex justify-between px-0.5">{data.map((day) => <span key={day.key} className="whitespace-nowrap text-[9px] text-muted-foreground">{day.label}</span>)}</div></>}</div></div>;
+}
+
+function TypingTrendChart({ data }: { data: DailyTypingBest[] }) {
+  const max = Math.max(100, ...data.map((day) => day.taja));
+  const xAt = (index: number) => 4 + (index / Math.max(1, data.length - 1)) * 92;
+  const yAt = (taja: number) => 108 - (taja / max) * 92;
+  const points = data.map((day, index) => `${xAt(index)},${yAt(day.taja)}`).join(" ");
+  const hasRecords = data.some((day) => day.taja > 0);
+
+  if (!hasRecords) {
+    return <p className="py-12 text-center text-sm text-muted-foreground">최근 30일간 타자 연습 기록이 없습니다.</p>;
+  }
+
+  return (
+    <div>
+      <div className="mb-2 flex justify-between text-[10px] text-muted-foreground">
+        <span>{max}타</span>
+        <span>일별 최고 타수</span>
+      </div>
+      <div className="relative h-48">
+        <svg viewBox="0 0 100 116" preserveAspectRatio="none" className="absolute inset-0 size-full" aria-label="타자 속도 변화 선 그래프">
+          {[16, 62, 108].map((y) => (
+            <line key={y} x1="4" y1={y} x2="96" y2={y} stroke="currentColor" className="text-border" vectorEffect="non-scaling-stroke" />
+          ))}
+          <polyline points={points} fill="none" stroke="hsl(var(--primary))" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+        </svg>
+        {data.map((day, index) => day.taja > 0 && (
+          <span
+            key={day.key}
+            className="absolute size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-background bg-primary"
+            style={{ left: `${xAt(index)}%`, top: `${(yAt(day.taja) / 116) * 100}%` }}
+            title={`${day.label}: ${day.taja}타${day.mode ? ` · ${TYPING_MODE_LABEL[day.mode]}` : ""}`}
+          />
+        ))}
+      </div>
+      <div className="mt-1 flex justify-between text-[9px] text-muted-foreground">
+        {data.filter((_, index) => index % 7 === 0 || index === data.length - 1).map((day) => <span key={day.key}>{day.label}</span>)}
+      </div>
+    </div>
+  );
 }
 
 function Metric({ label, value, icon: Icon }: { label: string; value: string; icon: typeof BookOpen }) { return <div className="rounded-xl border bg-background p-3"><Icon className="mb-2 size-4 text-primary" /><p className="text-[11px] text-muted-foreground">{label}</p><p className="mt-0.5 text-lg font-bold">{value}</p></div>; }

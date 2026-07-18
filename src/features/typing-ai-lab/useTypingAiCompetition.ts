@@ -38,6 +38,7 @@ interface ProgressPayload {
 }
 
 const DISCONNECT_MS = 30_000;
+const TEST_MATCH_ID = "local-test-match";
 
 export function useTypingAiCompetition(args: {
   userId: string;
@@ -190,11 +191,72 @@ export function useTypingAiCompetition(args: {
     setOpponent(null);
   }, [cleanupChannel]);
 
+  const stopSimulation = useCallback(() => {
+    if (pollRef.current) {
+      window.clearInterval(pollRef.current);
+      pollRef.current = null;
+    }
+  }, []);
+
   const beginPlay = useCallback(async () => {
     if (!match) return;
+    if (match.id === TEST_MATCH_ID) {
+      stopSimulation();
+      pollRef.current = window.setInterval(() => {
+        setOpponent((prev) => prev && ({
+          ...prev,
+          datasetSize: prev.datasetSize + (Math.random() > 0.45 ? 1 : 0),
+          accuracy: Math.max(82, Math.min(99, prev.accuracy + (Math.random() - 0.5) * 3)),
+          totalPreview: Math.round((prev.totalPreview + Math.random() * 2.4) * 10) / 10,
+        }));
+      }, 900);
+      setPhase("playing");
+      return;
+    }
     await startMatch(match.id);
     setPhase("playing");
-  }, [match]);
+  }, [match, stopSimulation]);
+
+  const startTestMatch = useCallback(async () => {
+    try {
+      await cancelQueue();
+    } catch {
+      // 로컬 테스트는 큐 취소 실패와 무관하게 시작 가능
+    }
+    cleanupChannel();
+    const now = new Date().toISOString();
+    const testMatch: MatchRow = {
+      id: TEST_MATCH_ID,
+      status: "countdown",
+      seed: Date.now(),
+      started_at: null,
+      finished_at: null,
+      created_at: now,
+    };
+    setMatch(testMatch);
+    setPlayers([
+      {
+        match_id: TEST_MATCH_ID,
+        user_id: userId,
+        display_name: displayName,
+        pool_ids: poolIds,
+        total_score: null,
+        grade: null,
+        dataset_size: null,
+        forfeit: false,
+      },
+    ]);
+    setOpponent({
+      userId: "test-opponent",
+      name: "TEST-07",
+      datasetSize: 0,
+      accuracy: 94,
+      totalPreview: 0,
+      online: true,
+    });
+    setError(null);
+    setPhase("countdown");
+  }, [cleanupChannel, displayName, poolIds, userId]);
 
   const broadcastProgress = useCallback(
     (payload: Omit<ProgressPayload, "userId" | "name">) => {
@@ -215,13 +277,27 @@ export function useTypingAiCompetition(args: {
       resultId?: string | null;
     }) => {
       if (!match) return;
+      if (match.id === TEST_MATCH_ID) {
+        stopSimulation();
+        cleanupChannel();
+        setPhase("finished");
+        return;
+      }
       await finishMatch(match.id, args);
       setPhase("finished");
     },
-    [match],
+    [cleanupChannel, match, stopSimulation],
   );
 
   const leave = useCallback(async () => {
+    if (match?.id === TEST_MATCH_ID) {
+      cleanupChannel();
+      setPhase("idle");
+      setMatch(null);
+      setPlayers([]);
+      setOpponent(null);
+      return;
+    }
     if (match && (phase === "countdown" || phase === "playing")) {
       try {
         await forfeitMatch(match.id);
@@ -252,10 +328,13 @@ export function useTypingAiCompetition(args: {
     players,
     opponent,
     error,
+    isTestMatch: match?.id === TEST_MATCH_ID,
     myPool,
     joinQueue,
+    startTestMatch,
     cancel,
     beginPlay,
+    stopSimulation,
     broadcastProgress,
     complete,
     leave,

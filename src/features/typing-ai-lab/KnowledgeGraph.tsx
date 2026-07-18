@@ -123,11 +123,11 @@ export default function KnowledgeGraph({
   }, [active, edges]);
 
   if (ids.length === 0) {
-    return <p className="text-sm text-zinc-500">노드 없음</p>;
+    return <p className="text-sm text-slate-500">노드 없음</p>;
   }
 
   return (
-    <div className="relative h-80 w-full overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950">
+    <div className="relative h-80 w-full overflow-hidden border border-cyan-300/20 bg-[#010810]">
       <svg
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
         className="size-full"
@@ -137,8 +137,8 @@ export default function KnowledgeGraph({
       >
         <defs>
           <radialGradient id="graph-bg">
-            <stop offset="0%" stopColor="#18181b" />
-            <stop offset="100%" stopColor="#09090b" />
+            <stop offset="0%" stopColor="#062033" />
+            <stop offset="100%" stopColor="#010810" />
           </radialGradient>
           <filter id="node-glow" x="-100%" y="-100%" width="300%" height="300%">
             <feGaussianBlur stdDeviation="3" result="blur" />
@@ -164,9 +164,9 @@ export default function KnowledgeGraph({
                 y1={from.y}
                 x2={to.x}
                 y2={to.y}
-                stroke={highlighted ? "#a7f3d0" : "#52525b"}
+                stroke={highlighted ? "#67e8f9" : "#164e63"}
                 strokeWidth={highlighted ? 1.8 : 0.65}
-                strokeOpacity={dimmed ? 0.08 : highlighted ? 0.9 : 0.26}
+                strokeOpacity={dimmed ? 0.08 : highlighted ? 0.95 : 0.35}
               />
             );
           })}
@@ -203,7 +203,7 @@ export default function KnowledgeGraph({
                 <circle
                   r={selected ? radius + 2.5 : radius}
                   fill={node.color}
-                  stroke={selected ? "#ffffff" : "transparent"}
+                  stroke={selected ? "#a5f3fc" : "transparent"}
                   strokeWidth={1.2}
                   filter={selected ? "url(#node-glow)" : undefined}
                 />
@@ -214,14 +214,14 @@ export default function KnowledgeGraph({
                       y={-18}
                       width={Math.max(74, word.word.length * 8 + 22)}
                       height={36}
-                      rx={6}
-                      fill="#18181b"
-                      stroke="#3f3f46"
+                      fill="#03111d"
+                      stroke="#22d3ee"
+                      strokeOpacity={0.45}
                     />
-                    <text x={18} y={-3} fill="#fafafa" fontSize={12} fontWeight={600}>
+                    <text x={18} y={-3} fill="#ecfeff" fontSize={12} fontWeight={600}>
                       {word.word}
                     </text>
-                    <text x={18} y={11} fill="#a1a1aa" fontSize={9}>
+                    <text x={18} y={11} fill="#94a3b8" fontSize={9}>
                       {word.meaningKo}
                     </text>
                   </>
@@ -231,7 +231,7 @@ export default function KnowledgeGraph({
           })}
         </g>
       </svg>
-      <p className="pointer-events-none absolute bottom-2 left-3 text-[10px] text-zinc-600">
+      <p className="pointer-events-none absolute bottom-2 left-3 text-[10px] text-cyan-300/40">
         점을 선택하면 단어와 연결을 확인할 수 있습니다
       </p>
     </div>

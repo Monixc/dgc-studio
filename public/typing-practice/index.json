@@ -1,0 +1,131 @@
+{
+  "categories": {
+    "css": {
+      "chunks": [
+        "chunks/css-001.json",
+        "chunks/css-002.json"
+      ],
+      "count": 360
+    },
+    "html": {
+      "chunks": [
+        "chunks/html-001.json",
+        "chunks/html-002.json"
+      ],
+      "count": 360
+    },
+    "javascript": {
+      "chunks": [
+        "chunks/javascript-001.json",
+        "chunks/javascript-002.json"
+      ],
+      "count": 327
+    },
+    "lua": {
+      "chunks": [
+        "chunks/lua-001.json",
+        "chunks/lua-002.json"
+      ],
+      "count": 360
+    },
+    "prose": {
+      "chunks": [
+        "chunks/prose-001.json",
+        "chunks/prose-002.json",
+        "chunks/prose-003.json",
+        "chunks/prose-004.json",
+        "chunks/prose-005.json",
+        "chunks/prose-006.json",
+        "chunks/prose-007.json",
+        "chunks/prose-008.json",
+        "chunks/prose-009.json",
+        "chunks/prose-010.json",
+        "chunks/prose-011.json",
+        "chunks/prose-012.json",
+        "chunks/prose-013.json",
+        "chunks/prose-014.json",
+        "chunks/prose-015.json",
+        "chunks/prose-016.json",
+        "chunks/prose-017.json",
+        "chunks/prose-018.json",
+        "chunks/prose-019.json",
+        "chunks/prose-020.json",
+        "chunks/prose-021.json",
+        "chunks/prose-022.json",
+        "chunks/prose-023.json",
+        "chunks/prose-024.json",
+        "chunks/prose-025.json",
+        "chunks/prose-026.json",
+        "chunks/prose-027.json",
+        "chunks/prose-028.json",
+        "chunks/prose-029.json",
+        "chunks/prose-030.json",
+        "chunks/prose-031.json",
+        "chunks/prose-032.json",
+        "chunks/prose-033.json",
+        "chunks/prose-034.json",
+        "chunks/prose-035.json",
+        "chunks/prose-036.json",
+        "chunks/prose-037.json",
+        "chunks/prose-038.json",
+        "chunks/prose-039.json",
+        "chunks/prose-040.json",
+        "chunks/prose-041.json",
+        "chunks/prose-042.json",
+        "chunks/prose-043.json",
+        "chunks/prose-044.json",
+        "chunks/prose-045.json",
+        "chunks/prose-046.json",
+        "chunks/prose-047.json",
+        "chunks/prose-048.json",
+        "chunks/prose-049.json",
+        "chunks/prose-050.json",
+        "chunks/prose-051.json",
+        "chunks/prose-052.json",
+        "chunks/prose-053.json",
+        "chunks/prose-054.json",
+        "chunks/prose-055.json",
+        "chunks/prose-056.json"
+      ],
+      "count": 11098
+    },
+    "python": {
+      "chunks": [
+        "chunks/python-001.json",
+        "chunks/python-002.json"
+      ],
+      "count": 360
+    },
+    "react-tsx": {
+      "chunks": [
+        "chunks/react-tsx-001.json",
+        "chunks/react-tsx-002.json"
+      ],
+      "count": 360
+    },
+    "shell": {
+      "chunks": [
+        "chunks/shell-001.json",
+        "chunks/shell-002.json"
+      ],
+      "count": 342
+    },
+    "sql": {
+      "chunks": [
+        "chunks/sql-001.json",
+        "chunks/sql-002.json"
+      ],
+      "count": 360
+    },
+    "typescript": {
+      "chunks": [
+        "chunks/typescript-001.json",
+        "chunks/typescript-002.json"
+      ],
+      "count": 360
+    }
+  },
+  "chunk_size": 200,
+  "schema_version": 1,
+  "total": 14287
+}

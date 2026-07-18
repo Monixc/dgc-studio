@@ -10,7 +10,9 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "build:lexicon": ".venv-lexicon/bin/python scripts/typing-ai-lab/build_lexicon.py"
+    "build:lexicon": ".venv-lexicon/bin/python scripts/typing-ai-lab/build_lexicon.py",
+    "build:typing-corpus": "python3 scripts/typing-practice/build_corpus.py build",
+    "validate:typing-corpus": "python3 scripts/typing-practice/build_corpus.py validate"
   },
   "dependencies": {
     "@dagrejs/dagre": "^1.1.4",

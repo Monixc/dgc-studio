@@ -123,6 +123,25 @@ export interface PointsLedgerEntry {
   created_at: string;
 }
 
+export type TypingPracticeMode =
+  | "practice"
+  | "practice_english"
+  | "practice_code"
+  | "race_live"
+  | "race_ghost"
+  | "ai_learning"
+  | "ai_competition";
+
+export interface TypingPracticeLog {
+  id: string;
+  student_id: string;
+  mode: TypingPracticeMode;
+  taja: number;
+  points: number;
+  match_id: string | null;
+  completed_at: string;
+}
+
 export interface MessageRow {
   id: string;
   sender_id: string;
