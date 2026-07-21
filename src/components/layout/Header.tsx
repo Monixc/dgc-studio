@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Bell, LogOut, MessageSquare, Pencil, Check } from "lucide-react";
+import { Bell, GraduationCap, LogOut, MessageSquare, Pencil, Check } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { signOut } from "@/lib/auth";
 import { AVATAR_COLORS, loadPrefs, savePrefs, type ProfilePrefs } from "@/lib/profile-prefs";
@@ -52,7 +52,11 @@ export default function Header({ title }: { title?: string }) {
   };
 
   return (
-    <header className="flex h-14 items-center border-b bg-background px-6">
+    <header className="flex h-14 items-center gap-2 border-b bg-background px-4 md:px-6">
+      <div className="flex items-center gap-1.5 md:hidden">
+        <GraduationCap className="size-5 text-primary" />
+        <span className="text-base font-bold">디랩과천</span>
+      </div>
       {title && <h2 className="text-sm font-semibold text-muted-foreground">{title}</h2>}
       <div className="ml-auto flex items-center gap-1">
       <NotificationBell userId={uid} />

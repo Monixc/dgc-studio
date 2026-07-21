@@ -44,6 +44,7 @@ export const STUDENT_MENU: Item[] = [
 
 // 모바일 하단 탭은 좁아서 학생은 핵심 메뉴만 노출. 나머지는 데스크톱 사이드바에서.
 const STUDENT_MOBILE_LABELS = ["내 수업", "포트폴리오", "포인트 상점"];
+const MOBILE_HIDDEN_LABELS = ["타자 연습"];
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -63,7 +64,7 @@ export default function AppShell({ children, menu = MENU, homePath = "/dashboard
 
   const mobileMenu = menu === STUDENT_MENU
     ? menu.flatMap((it) => it.children ?? [it]).filter((it) => STUDENT_MOBILE_LABELS.includes(it.label))
-    : menu;
+    : menu.filter((it) => !MOBILE_HIDDEN_LABELS.includes(it.label));
   const allItems: Item[] = [{ label: "대시보드", icon: LayoutDashboard, to: homePath }, ...mobileMenu];
 
   return (
@@ -71,7 +72,7 @@ export default function AppShell({ children, menu = MENU, homePath = "/dashboard
       <aside className={cn("hidden md:flex flex-col border-r bg-background transition-all", collapsed ? "w-16" : "w-56")}>
         <div className={cn("flex h-14 items-center gap-2 border-b px-3", collapsed && "justify-center px-0")}>
           {!collapsed && <GraduationCap className="shrink-0 text-primary" />}
-          {!collapsed && <span className="text-lg font-bold">Flow-Py</span>}
+          {!collapsed && <span className="text-lg font-bold">디랩과천</span>}
           <button
             className={cn("rounded p-1 text-muted-foreground hover:bg-accent", !collapsed && "ml-auto")}
             onClick={() => setCollapsed((c) => !c)}

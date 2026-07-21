@@ -296,7 +296,7 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
   return (
     <div className="relative h-full w-full" ref={wrapRef}>
       {editable && (
-        <div className={cn("absolute left-2 top-2 z-10 flex flex-col gap-1 rounded-lg border bg-background/95 p-1 shadow-sm", paletteOpen ? "w-20" : "w-auto")}>
+        <div className={cn("absolute left-2 top-2 z-10 flex max-h-[calc(100%-1rem)] flex-col gap-1 overflow-y-auto rounded-lg border bg-background/95 p-1 shadow-sm", paletteOpen ? "w-20" : "w-auto")}>
           <Button
             size="sm"
             variant="ghost"

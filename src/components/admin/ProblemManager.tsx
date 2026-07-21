@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { Plus, Trash2, Folder, FolderPlus, ChevronRight, ChevronDown, Circle, Globe, EyeOff, Send, CheckSquare } from "lucide-react";
 import type { ImperativePanelHandle, ImperativePanelGroupHandle } from "react-resizable-panels";
 import { useAuth } from "@/hooks/useAuth";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useMyProblems, useCreateProblem, useDeleteProblem, useUpdateProblem } from "@/hooks/useProblems";
 import { useProblemsRealtime } from "@/hooks/useProblemsRealtime";
 import { useFolders, useCreateFolder, useDeleteFolder, useUpdateFolderColor } from "@/hooks/useProblemFolders";
@@ -37,6 +38,9 @@ export default function ProblemManager() {
   const [dragOverId, setDragOverId] = useState<string | null>(null);
   const [bulkMode, setBulkMode] = useState(false);
   const [bulkSelected, setBulkSelected] = useState<Set<string>>(new Set());
+  const isMobile = useIsMobile();
+  const [mobileFolderOpen, setMobileFolderOpen] = useState(false);
+  const [mobileListOpen, setMobileListOpen] = useState(false);
 
   useEffect(() => {
     const openId = (location.state as { openProblemId?: string } | null)?.openProblemId;
@@ -206,6 +210,144 @@ export default function ProblemManager() {
     }
   }
 
+  function renderFolderList(onSelect: (id: string) => void) {
+    return (
+      <>
+        <FolderItem label="전체" active={activeFolder === ALL} onClick={() => onSelect(ALL)} />
+        {childrenOf(null).map((f) => (
+          <FolderTreeNode
+            key={f.id}
+            folder={f}
+            depth={0}
+            childrenOf={childrenOf}
+            expanded={expanded}
+            onToggleExpand={toggleExpand}
+            activeFolder={activeFolder}
+            onSelect={onSelect}
+            onAddChild={handleAddChild}
+            onDelete={handleDeleteFolder}
+            onColorChange={handleColorChange}
+            dragOverId={dragOverId}
+            setDragOverId={setDragOverId}
+            onDrop={handleDropOnFolder}
+          />
+        ))}
+      </>
+    );
+  }
+
+  function renderProblemRow(p: (typeof filtered)[number], opts?: { alwaysShowActions?: boolean; onAfterSelect?: () => void }) {
+    const actionCls = opts?.alwaysShowActions ? "" : "opacity-0 group-hover:opacity-100";
+    return (
+      <div
+        key={p.id}
+        draggable={!bulkMode}
+        onDragStart={(e) => e.dataTransfer.setData(PROBLEM_DND_TYPE, p.id)}
+        onClick={() => { if (bulkMode) toggleBulkSelect(p.id); else { setSelectedId(p.id); opts?.onAfterSelect?.(); } }}
+        className={cn(
+          "group flex items-center gap-2 rounded-md p-2 text-sm hover:bg-accent",
+          bulkMode ? "cursor-pointer" : "cursor-grab active:cursor-grabbing",
+          (bulkMode ? bulkSelected.has(p.id) : selectedId === p.id) && "bg-accent"
+        )}
+      >
+        {bulkMode && (
+          <input
+            type="checkbox"
+            checked={bulkSelected.has(p.id)}
+            onChange={() => toggleBulkSelect(p.id)}
+            onClick={(e) => e.stopPropagation()}
+            className="size-3.5 shrink-0"
+          />
+        )}
+        <Circle className={cn("size-2 shrink-0", p.is_published ? "fill-emerald-500 text-emerald-500" : "fill-muted-foreground/40 text-muted-foreground/40")} />
+        <span className="flex-1 truncate">{p.title || "(제목 없음)"}</span>
+        {!bulkMode && (
+          <>
+            <button className={actionCls} onClick={(e) => togglePublish(p.id, !p.is_published, e)} title="발행 전환">
+              {p.is_published ? <EyeOff className="size-4" /> : <Globe className="size-4" />}
+            </button>
+            <button className={actionCls} onClick={(e) => handleDeleteProblem(p.id, e)} title="삭제">
+              <Trash2 className="size-4" />
+            </button>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  if (isMobile) {
+    const activeFolderName = activeFolder === ALL ? "전체" : folders.find((f) => f.id === activeFolder)?.name ?? "폴더";
+    const selectedProblem = filtered.find((p) => p.id === selectedId);
+    return (
+      <div className="flex h-full flex-col">
+        <div className="flex items-center gap-1 border-b bg-muted/20 p-2">
+          <div className="relative flex-1">
+            <button
+              onClick={() => { setMobileFolderOpen((o) => !o); setMobileListOpen(false); }}
+              className="flex w-full items-center gap-2 rounded-md border bg-background px-2 py-2 text-sm"
+            >
+              <Folder className="size-4 shrink-0 text-muted-foreground" />
+              <span className="flex-1 truncate text-left">{activeFolderName}</span>
+              <ChevronDown className={cn("size-4 shrink-0 transition-transform", mobileFolderOpen && "rotate-180")} />
+            </button>
+            {mobileFolderOpen && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setMobileFolderOpen(false)} />
+                <div className="absolute inset-x-0 top-full z-50 mt-1 max-h-[60vh] overflow-auto rounded-lg border bg-background p-1 shadow-lg">
+                  {renderFolderList((id) => { setActiveFolder(id); setMobileFolderOpen(false); })}
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className="relative flex-1">
+            <button
+              onClick={() => { setMobileListOpen((o) => !o); setMobileFolderOpen(false); }}
+              className="flex w-full items-center gap-2 rounded-md border bg-background px-2 py-2 text-sm"
+            >
+              <span className="flex-1 truncate text-left">{selectedProblem ? (selectedProblem.title || "(제목 없음)") : "문제 목록"}</span>
+              <ChevronDown className={cn("size-4 shrink-0 transition-transform", mobileListOpen && "rotate-180")} />
+            </button>
+            {mobileListOpen && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setMobileListOpen(false)} />
+                <div className="absolute inset-x-0 top-full z-50 mt-1 max-h-[60vh] overflow-auto rounded-lg border bg-background p-1 shadow-lg">
+                  <div className="flex items-center justify-end border-b p-1">
+                    <button
+                      className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50"
+                      onClick={handleCreateProblem}
+                      disabled={createProblemMut.isPending}
+                      title="문제 추가"
+                    >
+                      <Plus className="size-4" />
+                    </button>
+                  </div>
+                  {isLoading ? (
+                    <p className="p-2 text-sm text-muted-foreground">불러오는 중…</p>
+                  ) : filtered.length === 0 ? (
+                    <p className="p-2 text-sm text-muted-foreground">“문제 추가”로 시작하세요.</p>
+                  ) : (
+                    filtered.map((p) => renderProblemRow(p, { alwaysShowActions: true, onAfterSelect: () => setMobileListOpen(false) }))
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-hidden">
+          {selectedId ? (
+            <ProblemEditor key={selectedId} problemId={selectedId} />
+          ) : (
+            <div className="flex h-full items-center justify-center p-6 text-center text-muted-foreground">
+              위에서 문제를 선택하거나 “문제 추가”를 누르세요.
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <ResizablePanelGroup ref={panelGroupRef} direction="horizontal" className="h-full overflow-hidden">
       <ResizablePanel
@@ -247,31 +389,7 @@ export default function ProblemManager() {
               ))}
             </div>
           ) : (
-            <>
-              <FolderItem
-                label="전체"
-                active={activeFolder === ALL}
-                onClick={() => setActiveFolder(ALL)}
-              />
-              {childrenOf(null).map((f) => (
-                <FolderTreeNode
-                  key={f.id}
-                  folder={f}
-                  depth={0}
-                  childrenOf={childrenOf}
-                  expanded={expanded}
-                  onToggleExpand={toggleExpand}
-                  activeFolder={activeFolder}
-                  onSelect={setActiveFolder}
-                  onAddChild={handleAddChild}
-                  onDelete={handleDeleteFolder}
-                  onColorChange={handleColorChange}
-                  dragOverId={dragOverId}
-                  setDragOverId={setDragOverId}
-                  onDrop={handleDropOnFolder}
-                />
-              ))}
-            </>
+            renderFolderList(setActiveFolder)
           )}
         </div>
       </ResizablePanel>
@@ -335,41 +453,7 @@ export default function ProblemManager() {
           ) : filtered.length === 0 ? (
             <p className="p-2 text-sm text-muted-foreground">“문제 추가”로 시작하세요.</p>
           ) : (
-            filtered.map((p) => (
-              <div
-                key={p.id}
-                draggable={!bulkMode}
-                onDragStart={(e) => e.dataTransfer.setData(PROBLEM_DND_TYPE, p.id)}
-                onClick={() => (bulkMode ? toggleBulkSelect(p.id) : setSelectedId(p.id))}
-                className={cn(
-                  "group flex items-center gap-2 rounded-md p-2 text-sm hover:bg-accent",
-                  bulkMode ? "cursor-pointer" : "cursor-grab active:cursor-grabbing",
-                  (bulkMode ? bulkSelected.has(p.id) : selectedId === p.id) && "bg-accent"
-                )}
-              >
-                {bulkMode && (
-                  <input
-                    type="checkbox"
-                    checked={bulkSelected.has(p.id)}
-                    onChange={() => toggleBulkSelect(p.id)}
-                    onClick={(e) => e.stopPropagation()}
-                    className="size-3.5 shrink-0"
-                  />
-                )}
-                <Circle className={cn("size-2 shrink-0", p.is_published ? "fill-emerald-500 text-emerald-500" : "fill-muted-foreground/40 text-muted-foreground/40")} />
-                <span className="flex-1 truncate">{p.title || "(제목 없음)"}</span>
-                {!bulkMode && (
-                  <>
-                    <button className="opacity-0 group-hover:opacity-100" onClick={(e) => togglePublish(p.id, !p.is_published, e)} title="발행 전환">
-                      {p.is_published ? <EyeOff className="size-4" /> : <Globe className="size-4" />}
-                    </button>
-                    <button className="opacity-0 group-hover:opacity-100" onClick={(e) => handleDeleteProblem(p.id, e)} title="삭제">
-                      <Trash2 className="size-4" />
-                    </button>
-                  </>
-                )}
-              </div>
-            ))
+            filtered.map((p) => renderProblemRow(p))
           )}
         </div>
         {!listCollapsed && bulkMode && (

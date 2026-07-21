@@ -1,9 +1,10 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Plus, Trash2, Pencil, Check, Users, UserPlus, X, Coins, MonitorPlay, Bell, Circle } from "lucide-react";
+import { Plus, Trash2, Pencil, Check, Users, UserPlus, X, Coins, MonitorPlay, Bell, Circle, ChevronDown } from "lucide-react";
 import type { ImperativePanelHandle } from "react-resizable-panels";
 import { useAuth } from "@/hooks/useAuth";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   useClasses, useCreateClass, useRenameClass, useDeleteClass, useUpdateClassSchedule,
   useClassProblemIds, useSetClassProblems,
@@ -38,6 +39,8 @@ export default function ClassManager() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [nameInput, setNameInput] = useState("");
   const [assignOpen, setAssignOpen] = useState(false);
+  const isMobile = useIsMobile();
+  const [mobileListOpen, setMobileListOpen] = useState(false);
 
   const listPanelRef = useRef<ImperativePanelHandle>(null);
   const [listCollapsed, setListCollapsed] = useState(false);
@@ -134,109 +137,53 @@ export default function ClassManager() {
     }
   }
 
-  return (
-    <ResizablePanelGroup direction="horizontal" className="h-full overflow-hidden">
-      <ResizablePanel
-        ref={listPanelRef}
-        defaultSize={17}
-        minSize={14}
-        maxSize={35}
-        collapsible
-        collapsedSize={5}
-        onCollapse={() => setListCollapsed(true)}
-        onExpand={() => setListCollapsed(false)}
-        className="flex h-full flex-col bg-muted/20"
-      >
-        {!listCollapsed && (
-          <div className="flex items-center gap-1 border-b p-2">
-            <span className="whitespace-nowrap text-sm font-semibold">반 목록</span>
-            <button
-              className="ml-auto rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50"
-              onClick={handleCreate}
-              disabled={createMut.isPending}
-              title="새 반"
-            >
-              <Plus className="size-4" />
-            </button>
-          </div>
+  function renderClassRow(c: (typeof classes)[number], opts?: { alwaysShowActions?: boolean; onAfterSelect?: () => void }) {
+    const actionCls = opts?.alwaysShowActions ? "" : "opacity-0 group-hover:opacity-100";
+    return (
+      <div
+        key={c.id}
+        onClick={() => { setSelectedId(c.id); opts?.onAfterSelect?.(); }}
+        className={cn(
+          "group flex cursor-pointer items-center gap-2 rounded-md p-2 text-sm hover:bg-accent",
+          selectedId === c.id && "bg-accent"
         )}
-        <div className="flex-1 overflow-auto p-1">
-          {listCollapsed ? (
-            <div className="flex flex-col items-center gap-1 py-1">
-              {classes.map((c) => (
-                <button
-                  key={c.id}
-                  onClick={() => setSelectedId(c.id)}
-                  title={c.name || "(이름 없음)"}
-                  className={cn("rounded p-1.5 hover:bg-accent", selectedId === c.id && "bg-accent")}
-                >
-                  <Users className="size-4 text-muted-foreground" />
-                </button>
-              ))}
-            </div>
-          ) : isLoading ? (
-            <p className="p-2 text-sm text-muted-foreground">불러오는 중…</p>
-          ) : classes.length === 0 ? (
-            <p className="p-2 text-sm text-muted-foreground">“새 반”으로 시작하세요.</p>
-          ) : (
-            classes.map((c) => (
-              <div
-                key={c.id}
-                onClick={() => setSelectedId(c.id)}
-                className={cn(
-                  "group flex cursor-pointer items-center gap-2 rounded-md p-2 text-sm hover:bg-accent",
-                  selectedId === c.id && "bg-accent"
-                )}
-              >
-                <Users className="size-4 shrink-0 text-muted-foreground" />
-                {editingId === c.id ? (
-                  <Input
-                    autoFocus
-                    value={nameInput}
-                    onChange={(e) => setNameInput(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && saveEdit(c.id)}
-                    onClick={(e) => e.stopPropagation()}
-                    className="h-7"
-                  />
-                ) : (
-                  <span className="flex-1 truncate">{c.name || "(이름 없음)"}</span>
-                )}
-                {editingId === c.id ? (
-                  <button onClick={(e) => { e.stopPropagation(); saveEdit(c.id); }} title="저장">
-                    <Check className="size-4" />
-                  </button>
-                ) : (
-                  <button
-                    className="opacity-0 group-hover:opacity-100"
-                    onClick={(e) => { e.stopPropagation(); startEdit(c.id, c.name); }}
-                    title="이름 수정"
-                  >
-                    <Pencil className="size-4" />
-                  </button>
-                )}
-                <button
-                  className="opacity-0 group-hover:opacity-100"
-                  onClick={(e) => { e.stopPropagation(); handleDelete(c.id); }}
-                  title="삭제"
-                >
-                  <Trash2 className="size-4" />
-                </button>
-              </div>
-            ))
-          )}
-        </div>
-      </ResizablePanel>
-
-      <ResizableHandle onToggle={toggleListPanel} collapsed={listCollapsed} />
-
-      <ResizablePanel defaultSize={83} className="overflow-auto p-6">
-        {!selected ? (
-          <div className="flex h-full items-center justify-center text-muted-foreground">
-            왼쪽에서 반을 선택하거나 “새 반”을 만드세요.
-          </div>
+      >
+        <Users className="size-4 shrink-0 text-muted-foreground" />
+        {editingId === c.id ? (
+          <Input
+            autoFocus
+            value={nameInput}
+            onChange={(e) => setNameInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && saveEdit(c.id)}
+            onClick={(e) => e.stopPropagation()}
+            className="h-7"
+          />
         ) : (
-          <>
-            <div className="mb-6 flex items-center gap-2 rounded-lg border p-3">
+          <span className="flex-1 truncate">{c.name || "(이름 없음)"}</span>
+        )}
+        {editingId === c.id ? (
+          <button onClick={(e) => { e.stopPropagation(); saveEdit(c.id); }} title="저장">
+            <Check className="size-4" />
+          </button>
+        ) : (
+          <button className={actionCls} onClick={(e) => { e.stopPropagation(); startEdit(c.id, c.name); }} title="이름 수정">
+            <Pencil className="size-4" />
+          </button>
+        )}
+        <button className={actionCls} onClick={(e) => { e.stopPropagation(); handleDelete(c.id); }} title="삭제">
+          <Trash2 className="size-4" />
+        </button>
+      </div>
+    );
+  }
+
+  const detail = !selected ? (
+    <div className="flex h-full items-center justify-center p-6 text-center text-muted-foreground">
+      {isMobile ? "위에서 반을 선택하거나 “새 반”을 만드세요." : "왼쪽에서 반을 선택하거나 “새 반”을 만드세요."}
+    </div>
+  ) : (
+    <div className={isMobile ? "p-4" : "p-6"}>
+      <div className="mb-6 flex flex-wrap items-center gap-2 rounded-lg border p-3">
               <Bell className="size-4 shrink-0 text-muted-foreground" />
               <span className="text-sm font-medium">수업 시간</span>
               <select
@@ -414,8 +361,105 @@ export default function ClassManager() {
                 }
               }}
             />
-          </>
+          </div>
+  );
+
+  if (isMobile) {
+    return (
+      <div className="flex h-full flex-col">
+        <div className="relative border-b bg-muted/20 p-2">
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setMobileListOpen((o) => !o)}
+              className="flex flex-1 items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm"
+            >
+              <Users className="size-4 shrink-0 text-muted-foreground" />
+              <span className="flex-1 truncate text-left">{selected ? selected.name || "(이름 없음)" : "반 목록"}</span>
+              <ChevronDown className={cn("size-4 shrink-0 transition-transform", mobileListOpen && "rotate-180")} />
+            </button>
+            <button
+              className="shrink-0 rounded p-2 text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50"
+              onClick={handleCreate}
+              disabled={createMut.isPending}
+              title="새 반"
+            >
+              <Plus className="size-4" />
+            </button>
+          </div>
+          {mobileListOpen && (
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setMobileListOpen(false)} />
+              <div className="absolute inset-x-2 top-full z-50 mt-1 max-h-[60vh] overflow-auto rounded-lg border bg-background p-1 shadow-lg">
+                {isLoading ? (
+                  <p className="p-2 text-sm text-muted-foreground">불러오는 중…</p>
+                ) : classes.length === 0 ? (
+                  <p className="p-2 text-sm text-muted-foreground">“새 반”으로 시작하세요.</p>
+                ) : (
+                  classes.map((c) => renderClassRow(c, { alwaysShowActions: true, onAfterSelect: () => setMobileListOpen(false) }))
+                )}
+              </div>
+            </>
+          )}
+        </div>
+        <div className="flex-1 overflow-auto">{detail}</div>
+      </div>
+    );
+  }
+
+  return (
+    <ResizablePanelGroup direction="horizontal" className="h-full overflow-hidden">
+      <ResizablePanel
+        ref={listPanelRef}
+        defaultSize={17}
+        minSize={14}
+        maxSize={35}
+        collapsible
+        collapsedSize={5}
+        onCollapse={() => setListCollapsed(true)}
+        onExpand={() => setListCollapsed(false)}
+        className="flex h-full flex-col bg-muted/20"
+      >
+        {!listCollapsed && (
+          <div className="flex items-center gap-1 border-b p-2">
+            <span className="whitespace-nowrap text-sm font-semibold">반 목록</span>
+            <button
+              className="ml-auto rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50"
+              onClick={handleCreate}
+              disabled={createMut.isPending}
+              title="새 반"
+            >
+              <Plus className="size-4" />
+            </button>
+          </div>
         )}
+        <div className="flex-1 overflow-auto p-1">
+          {listCollapsed ? (
+            <div className="flex flex-col items-center gap-1 py-1">
+              {classes.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => setSelectedId(c.id)}
+                  title={c.name || "(이름 없음)"}
+                  className={cn("rounded p-1.5 hover:bg-accent", selectedId === c.id && "bg-accent")}
+                >
+                  <Users className="size-4 text-muted-foreground" />
+                </button>
+              ))}
+            </div>
+          ) : isLoading ? (
+            <p className="p-2 text-sm text-muted-foreground">불러오는 중…</p>
+          ) : classes.length === 0 ? (
+            <p className="p-2 text-sm text-muted-foreground">“새 반”으로 시작하세요.</p>
+          ) : (
+            classes.map((c) => renderClassRow(c))
+          )}
+        </div>
+      </ResizablePanel>
+
+      <ResizableHandle onToggle={toggleListPanel} collapsed={listCollapsed} />
+
+      <ResizablePanel defaultSize={83} className="overflow-auto">
+        {detail}
       </ResizablePanel>
     </ResizablePanelGroup>
   );

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { AlertCircle, BarChart3, BookOpen, ChevronRight, ClipboardList, Coins, NotebookPen, RefreshCw, Save, Search, UserRound } from "lucide-react";
+import { AlertCircle, BarChart3, BookOpen, ChevronDown, ChevronRight, ClipboardList, Coins, NotebookPen, RefreshCw, Save, Search, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { usePortfolioRealtime } from "@/hooks/usePortfolioRealtime";
@@ -54,6 +54,7 @@ export default function StudentManager() {
   const [notes, setNotes] = useState("");
   const [chartMetric, setChartMetric] = useState<"submissions" | "correct">("submissions");
   const [chartType, setChartType] = useState<"bar" | "line">("bar");
+  const [mobileListOpen, setMobileListOpen] = useState(false);
 
   const {
     data: students = [],
@@ -176,8 +177,8 @@ export default function StudentManager() {
   }
 
   return (
-    <div className="flex h-full min-h-0">
-      <aside className="flex w-64 shrink-0 flex-col border-r bg-background">
+    <div className="flex h-full min-h-0 flex-col md:flex-row">
+      <aside className="hidden w-64 shrink-0 flex-col border-r bg-background md:flex">
         <div className="border-b p-3">
           <h1 className="mb-3 text-base font-bold">학생 관리</h1>
           <div className="relative"><Search className="pointer-events-none absolute left-2.5 top-2.5 size-4 text-muted-foreground" /><Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="학생 검색" className="h-9 pl-8 text-xs" /></div>
@@ -192,6 +193,38 @@ export default function StudentManager() {
           ))}
         </div>
       </aside>
+
+      <div className="relative border-b bg-background p-3 md:hidden">
+        <h1 className="mb-3 text-base font-bold">학생 관리</h1>
+        <button
+          onClick={() => setMobileListOpen((o) => !o)}
+          className="flex w-full items-center gap-2 rounded-md border bg-background px-3 py-2 text-left text-sm"
+        >
+          <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold">
+            {(selectedStudent?.display_name || "?").slice(0, 1)}
+          </span>
+          <span className="min-w-0 flex-1 truncate">{selectedStudent?.display_name || "학생 선택"}</span>
+          <ChevronDown className={cn("size-4 shrink-0 transition-transform", mobileListOpen && "rotate-180")} />
+        </button>
+        {mobileListOpen && (
+          <>
+            <div className="fixed inset-0 z-40" onClick={() => setMobileListOpen(false)} />
+            <div className="absolute inset-x-3 top-full z-50 mt-1 max-h-[60vh] overflow-auto rounded-lg border bg-background p-2 shadow-lg">
+              <div className="relative mb-2">
+                <Search className="pointer-events-none absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
+                <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="학생 검색" className="h-9 pl-8 text-xs" />
+              </div>
+              {filteredStudents.length === 0 ? <p className="p-3 text-center text-xs text-muted-foreground">등록된 학생이 없습니다.</p> : filteredStudents.map((student) => (
+                <button key={student.id} onClick={() => { setSelectedId(student.id); setMobileListOpen(false); }} className={cn("mb-1 flex w-full items-center gap-3 rounded-lg p-2.5 text-left transition hover:bg-accent", selectedStudent?.id === student.id && "bg-accent")}>
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold">{student.display_name.slice(0, 1) || "?"}</span>
+                  <span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{student.display_name || "이름 없음"}</span><span className="block truncate text-[11px] text-muted-foreground">{student.classes.map((c) => c.name).join(", ") || "미배정"}</span></span>
+                  <ChevronRight className="size-4 shrink-0 opacity-60" />
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
 
       <section className="min-w-0 flex-1 overflow-auto bg-muted/20 p-4 md:p-6">
         {!selectedStudent ? <EmptyState /> : <>

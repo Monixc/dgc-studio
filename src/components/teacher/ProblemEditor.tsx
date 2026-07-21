@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import { Save } from "lucide-react";
 import { useProblem, useUpdateProblem } from "@/hooks/useProblems";
 import { usePyodide } from "@/hooks/usePyodide";
+import { useIsMobile } from "@/hooks/use-mobile";
 import FlowchartCanvas from "@/components/flow/FlowchartCanvas";
 import EditorPanel from "@/components/editor/EditorPanel";
 import GradingTestsEditor from "@/components/GradingTestsEditor";
@@ -64,6 +65,7 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
   const { data: problem, isLoading } = useProblem(problemId);
   const updateMut = useUpdateProblem();
   const { run, running, stop } = usePyodide();
+  const isMobile = useIsMobile();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -133,20 +135,22 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
       </div>
 
       {category === "flowchart" ? (
-        <div className="grid flex-1 grid-cols-2 overflow-hidden">
-          <div className="h-full border-r">
+        <div className={cn("flex flex-1 overflow-hidden", isMobile ? "flex-col" : "grid grid-cols-2")}>
+          <div className={cn(isMobile ? "h-64 shrink-0 border-b" : "h-full border-r")}>
             {loaded && <FlowchartCanvas graph={graph} editable resetKey={problemId} onChange={setGraph} />}
           </div>
-          <div className="flex flex-col overflow-hidden">
-            <Tabs defaultValue="starter" className="flex flex-1 flex-col overflow-hidden">
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+            <Tabs defaultValue={isMobile ? "desc" : "starter"} className="flex flex-1 flex-col overflow-hidden">
               <TabsList className="m-2 self-start">
-                <TabsTrigger value="starter">코드 · 실행</TabsTrigger>
+                {!isMobile && <TabsTrigger value="starter">코드 · 실행</TabsTrigger>}
                 <TabsTrigger value="desc">문제 설명</TabsTrigger>
                 <TabsTrigger value="grading">채점 ({tests.length})</TabsTrigger>
               </TabsList>
-              <TabsContent value="starter" className="flex-1 overflow-hidden data-[state=inactive]:hidden">
-                <EditorPanel code={starter} onCodeChange={setStarter} running={running} run={run} stop={stop} />
-              </TabsContent>
+              {!isMobile && (
+                <TabsContent value="starter" className="flex-1 overflow-hidden data-[state=inactive]:hidden">
+                  <EditorPanel code={starter} onCodeChange={setStarter} running={running} run={run} stop={stop} />
+                </TabsContent>
+              )}
               <TabsContent value="desc" className="flex flex-1 flex-col overflow-hidden p-3 data-[state=inactive]:hidden">
                 <DescriptionField value={description} onChange={setDescription} fill showLabel={false} />
               </TabsContent>
@@ -171,8 +175,8 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
           </div>
         </div>
       ) : (
-        <div className="grid flex-1 grid-cols-2 overflow-hidden">
-          <div className="flex h-full flex-col gap-4 overflow-auto border-r p-3">
+        <div className={cn("flex flex-1 overflow-hidden", isMobile ? "flex-col" : "grid grid-cols-2")}>
+          <div className={cn("flex flex-col gap-4 overflow-auto p-3", isMobile ? "flex-1" : "h-full border-r")}>
             <DescriptionField value={description} onChange={setDescription} />
             <div>
               <Label>채점 ({tests.length})</Label>
@@ -191,9 +195,11 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
               <GradingTestsEditor tests={tests} onChange={setTests} />
             </div>
           </div>
-          <div className="overflow-hidden">
-            <EditorPanel code={starter} onCodeChange={setStarter} running={running} run={run} stop={stop} />
-          </div>
+          {!isMobile && (
+            <div className="overflow-hidden">
+              <EditorPanel code={starter} onCodeChange={setStarter} running={running} run={run} stop={stop} />
+            </div>
+          )}
         </div>
       )}
     </div>
