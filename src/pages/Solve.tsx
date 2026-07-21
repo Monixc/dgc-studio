@@ -86,7 +86,7 @@ export default function Solve() {
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<GradingSummary | null>(null);
   const [runResult, setRunResult] = useState<ConsoleLine[] | undefined>(undefined);
-  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(searchParams.get("feedback") === "1");
   const blockPanelRef = useRef<BlockWorkspacePanelHandle>(null);
 
   // 임시저장 복원 (없으면 시작 코드)
@@ -103,6 +103,10 @@ export default function Solve() {
     const t = setTimeout(() => saveDraft(user.id, problem.id, code), 500);
     return () => clearTimeout(t);
   }, [code, problem, user]);
+
+  useEffect(() => {
+    if (searchParams.get("feedback") === "1") setFeedbackOpen(true);
+  }, [searchParams]);
 
   useEffect(() => {
     if (!feedbackOpen) return;

@@ -3,6 +3,7 @@ import { ArrowLeft, GitCompare, Loader2, MessageSquarePlus, Send, Trash2 } from 
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Textarea } from "@/components/ui/textarea";
 import { PortfolioViewer } from "@/features/portfolio/PortfolioViewer";
 import type {
@@ -198,7 +199,7 @@ export default function StudentPortfolioReview() {
         </div>
       </header>
 
-      <div className="grid min-h-0 flex-1 overflow-auto lg:grid-cols-[11rem_minmax(0,1fr)_20rem] lg:overflow-hidden">
+      <div className="grid min-h-0 flex-1 overflow-auto lg:grid-cols-[11rem_minmax(0,1fr)] lg:overflow-hidden">
         <aside className="border-b bg-background lg:flex lg:min-h-0 lg:flex-col lg:border-b-0 lg:border-r">
           <div className="border-b px-3 py-2 text-xs font-semibold text-muted-foreground">제출 버전</div>
           <div className="flex gap-2 overflow-x-auto p-2 lg:block lg:flex-1 lg:overflow-y-auto">
@@ -221,7 +222,9 @@ export default function StudentPortfolioReview() {
           </div>
         </aside>
 
-        <main className="min-w-0 overflow-visible p-3 sm:p-5 lg:overflow-y-auto">
+        <ResizablePanelGroup direction="horizontal" className="min-h-0 min-w-0 lg:overflow-hidden">
+        <ResizablePanel defaultSize={72} minSize={40} className="min-w-0">
+        <main className="h-full min-w-0 overflow-visible p-3 sm:p-5 lg:overflow-y-auto">
           <div className="mx-auto mb-3 flex max-w-4xl justify-end">
             {previousSubmission && (
               <Button
@@ -268,8 +271,12 @@ export default function StudentPortfolioReview() {
             />
           )}
         </main>
+        </ResizablePanel>
 
-        <aside className="flex min-h-[24rem] flex-col border-t bg-background lg:min-h-0 lg:border-l lg:border-t-0">
+        <ResizableHandle withHandle />
+
+        <ResizablePanel defaultSize={28} minSize={18} maxSize={55} className="min-w-0">
+        <aside className="flex h-full min-h-[24rem] flex-col border-t bg-background lg:min-h-0 lg:border-l lg:border-t-0">
           <div className="border-b p-3">
             <div className="flex items-center gap-2 text-sm font-semibold">
               <MessageSquarePlus className="size-4" /> 교사 피드백
@@ -418,6 +425,8 @@ export default function StudentPortfolioReview() {
             </Button>
           </div>
         </aside>
+        </ResizablePanel>
+        </ResizablePanelGroup>
       </div>
     </div>
   );

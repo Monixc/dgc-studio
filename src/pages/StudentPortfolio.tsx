@@ -14,16 +14,13 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import AppShell, { STUDENT_MENU } from "@/components/layout/AppShell";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { useAuth } from "@/hooks/useAuth";
 import {
   useCreatePortfolioDocument,
   useDeletePortfolioDocument,
   usePortfolioComments,
   usePortfolioDocuments,
   usePortfolioSubmissions,
-  usePortfolioTeachers,
   useSubmitPortfolioDocument,
 } from "@/hooks/usePortfolio";
 import { usePortfolioRealtime } from "@/hooks/usePortfolioRealtime";
@@ -71,10 +68,8 @@ function formatDate(value: string): string {
 }
 
 export default function StudentPortfolio() {
-  const { user } = useAuth();
   const documentsQuery = usePortfolioDocuments();
   const { data: submissions = [] } = usePortfolioSubmissions();
-  const { data: teachers = [] } = usePortfolioTeachers(user?.id);
   const createDocument = useCreatePortfolioDocument();
   const deleteDocument = useDeletePortfolioDocument();
   const submitDocument = useSubmitPortfolioDocument();
@@ -86,8 +81,6 @@ export default function StudentPortfolio() {
   const [listCollapsed, setListCollapsed] = useState(false);
   const [selectedDocumentId, setSelectedDocumentId] = useState<string | null>(null);
   const [selectedSubmissionId, setSelectedSubmissionId] = useState<string | null>(null);
-  const [selectedTeacherId, setSelectedTeacherId] = useState("");
-  const [submitOpen, setSubmitOpen] = useState(false);
   const [draft, setDraft] = useState<Draft | null>(null);
 
   const documents = useMemo(() => documentsQuery.data ?? [], [documentsQuery.data]);
@@ -130,15 +123,13 @@ export default function StudentPortfolio() {
   }, [selectedDocument]);
 
   useEffect(() => {
-    setSelectedSubmissionId(currentRevisionSubmission?.id ?? null);
-  }, [currentRevisionSubmission?.id, selectedDocumentId]);
-
-  useEffect(() => {
-    if (teachers.length === 1) setSelectedTeacherId(teachers[0].id);
-    else if (selectedTeacherId && !teachers.some((item) => item.id === selectedTeacherId)) {
-      setSelectedTeacherId("");
+    const requestedSubmissionId = searchParams.get("submission");
+    if (requestedSubmissionId && documentSubmissions.some((item) => item.id === requestedSubmissionId)) {
+      setSelectedSubmissionId(requestedSubmissionId);
+      return;
     }
-  }, [teachers, selectedTeacherId]);
+    setSelectedSubmissionId(currentRevisionSubmission?.id ?? null);
+  }, [currentRevisionSubmission?.id, selectedDocumentId, searchParams, documentSubmissions]);
 
   const resolveAssetUrl = useCallback(
     (assetId: string) => getPortfolioAssetSignedUrl(assetId),
@@ -188,18 +179,16 @@ export default function StudentPortfolio() {
 
   const submitDraft = async () => {
     if (!draft) return;
-    const teacher = teachers.find((item) => item.id === selectedTeacherId);
-    if (!teacher) return toast.error("제출할 선생님을 선택해 주세요.");
+    const nextVersion = (submissionCountByDoc.get(draft.id) ?? 0) + 1;
+    if (!window.confirm(`현재 저장된 내용을 v${nextVersion}으로 제출하시겠습니까?`)) return;
     try {
       const submitted = await submitDocument.mutateAsync({
         documentId: draft.id,
-        classId: teacher.classId,
         expectedRevision: draft.revision,
       });
       void notifyPush("portfolio_submitted", submitted.id);
-      setSubmitOpen(false);
       setSelectedSubmissionId(submitted.id);
-      toast.success(`${teacher.name} 선생님에게 v${submitted.version}으로 제출했습니다.`);
+      toast.success(`v${submitted.version}으로 제출했습니다.`);
     } catch (error) {
       toast.error(`제출하지 못했습니다: ${errorMessage(error)}`);
     }
@@ -380,7 +369,7 @@ export default function StudentPortfolio() {
                         >
                           <Pencil /> 편집
                         </Button>
-                        <Button size="sm" onClick={() => setSubmitOpen(true)} disabled={submitDocument.isPending}>
+                        <Button size="sm" onClick={() => void submitDraft()} disabled={submitDocument.isPending}>
                           <Send /> 제출
                         </Button>
                       </div>
@@ -432,46 +421,6 @@ export default function StudentPortfolio() {
         </ResizablePanel>
       </ResizablePanelGroup>
 
-      <Dialog open={submitOpen} onOpenChange={setSubmitOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>제출할 선생님 선택</DialogTitle>
-          </DialogHeader>
-          {teachers.length ? (
-            <div className="space-y-2">
-              {teachers.map((item) => (
-                <label
-                  key={item.id}
-                  className="flex cursor-pointer items-center gap-2 rounded-md border p-3 text-sm hover:bg-accent"
-                >
-                  <input
-                    type="radio"
-                    name="hub-submit-teacher"
-                    value={item.id}
-                    checked={selectedTeacherId === item.id}
-                    onChange={() => setSelectedTeacherId(item.id)}
-                  />
-                  {item.name} 선생님
-                </label>
-              ))}
-              {draft && (
-                <p className="text-xs text-muted-foreground">현재 저장된 내용을 v{(submissionCountByDoc.get(draft.id) ?? 0) + 1}로 제출합니다.</p>
-              )}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">제출할 수 있는 선생님이 없습니다.</p>
-          )}
-          <div className="flex justify-end gap-2">
-            <DialogClose asChild>
-              <Button variant="outline">취소</Button>
-            </DialogClose>
-            <Button onClick={() => void submitDraft()} disabled={!selectedTeacherId || submitDocument.isPending}>
-              {submitDocument.isPending ? <Loader2 className="animate-spin" /> : <Send />}
-              제출
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </AppShell>
   );
 }

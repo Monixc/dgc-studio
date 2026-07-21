@@ -17,11 +17,9 @@ import {
 import {
   usePortfolioDocuments,
   usePortfolioSubmissions,
-  usePortfolioTeachers,
   useSubmitPortfolioDocument,
   useUpdatePortfolioDocument,
 } from "@/hooks/usePortfolio";
-import { useAuth } from "@/hooks/useAuth";
 import type { JsonValue } from "@/integrations/supabase/types";
 import {
   PortfolioRevisionConflictError,
@@ -46,17 +44,13 @@ function errorMessage(error: unknown): string {
 export default function StudentPortfolioEditor() {
   const { documentId } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
   const documentsQuery = usePortfolioDocuments();
   const updateDocument = useUpdatePortfolioDocument();
   const submitDocument = useSubmitPortfolioDocument();
-  const { data: teachers = [] } = usePortfolioTeachers(user?.id);
   const { data: submissions = [] } = usePortfolioSubmissions({ documentId });
   const stored = documentsQuery.data?.find((item) => item.id === documentId);
   const submissionCount = submissions.length;
   const nextVersion = submissionCount + 1;
-  const [selectedTeacherId, setSelectedTeacherId] = useState("");
-  const [submitOpen, setSubmitOpen] = useState(false);
   const [exitOpen, setExitOpen] = useState(false);
   const [loadedId, setLoadedId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
@@ -80,13 +74,6 @@ export default function StudentPortfolioEditor() {
     setDirty(false);
     setConflicted(false);
   }, [loadedId, stored]);
-
-  useEffect(() => {
-    if (teachers.length === 1) setSelectedTeacherId(teachers[0].id);
-    else if (selectedTeacherId && !teachers.some((item) => item.id === selectedTeacherId)) {
-      setSelectedTeacherId("");
-    }
-  }, [teachers, selectedTeacherId]);
 
   const resolveAssetUrl = useCallback(
     (assetId: string) => getPortfolioAssetSignedUrl(assetId),
@@ -168,8 +155,7 @@ export default function StudentPortfolioEditor() {
   };
 
   const submit = async () => {
-    const teacher = teachers.find((item) => item.id === selectedTeacherId);
-    if (!teacher) return toast.error("제출할 선생님을 선택해 주세요.");
+    if (!window.confirm(`v${nextVersion}으로 제출하시겠습니까?`)) return;
     let targetRevision = revision;
     if (dirty) {
       const saved = await persist();
@@ -179,12 +165,10 @@ export default function StudentPortfolioEditor() {
     try {
       const submitted = await submitDocument.mutateAsync({
         documentId: documentId!,
-        classId: teacher.classId,
         expectedRevision: targetRevision,
       });
       void notifyPush("portfolio_submitted", submitted.id);
-      setSubmitOpen(false);
-      toast.success(`${teacher.name} 선생님에게 v${submitted.version}으로 제출했습니다.`);
+      toast.success(`v${submitted.version}으로 제출했습니다.`);
       navigate(`/student/portfolio?document=${encodeURIComponent(documentId ?? "")}`);
     } catch (error) {
       toast.error(`제출하지 못했습니다: ${errorMessage(error)}`);
@@ -248,7 +232,7 @@ export default function StudentPortfolioEditor() {
             저장
           </Button>
           <Button
-            onClick={() => setSubmitOpen(true)}
+            onClick={() => void submit()}
             disabled={conflicted || submitDocument.isPending || updateDocument.isPending}
           >
             {submitDocument.isPending ? <Loader2 className="animate-spin" /> : <Send />}
@@ -346,49 +330,6 @@ export default function StudentPortfolioEditor() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={submitOpen} onOpenChange={setSubmitOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>제출할 선생님 선택</DialogTitle>
-          </DialogHeader>
-          {teachers.length ? (
-            <div className="space-y-2">
-              {teachers.map((item) => (
-                <label
-                  key={item.id}
-                  className="flex cursor-pointer items-center gap-2 rounded-md border p-3 text-sm hover:bg-accent"
-                >
-                  <input
-                    type="radio"
-                    name="submit-teacher"
-                    value={item.id}
-                    checked={selectedTeacherId === item.id}
-                    onChange={() => setSelectedTeacherId(item.id)}
-                  />
-                  {item.name} 선생님
-                </label>
-              ))}
-              {submissionCount > 0 && (
-                <p className="text-xs text-muted-foreground">이번이 {nextVersion}번째 제출입니다.</p>
-              )}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground">제출할 수 있는 선생님이 없습니다.</p>
-          )}
-          <div className="flex justify-end gap-2">
-            <DialogClose asChild>
-              <Button variant="outline">취소</Button>
-            </DialogClose>
-            <Button
-              onClick={() => void submit()}
-              disabled={!selectedTeacherId || submitDocument.isPending || updateDocument.isPending}
-            >
-              {submitDocument.isPending ? <Loader2 className="animate-spin" /> : <Send />}
-              제출
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

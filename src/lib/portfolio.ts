@@ -46,41 +46,6 @@ export class PortfolioRevisionConflictError extends Error {
   }
 }
 
-export interface PortfolioTeacher {
-  /** 교사(=classes.created_by) id. 제출 시 teacher_id 로 기록됨. */
-  id: string;
-  name: string;
-  /** 이 교사와 공유하는 반 하나. 기존 submit RPC 가 class_id 를 요구하므로 대표 반을 넘긴다. */
-  classId: string;
-}
-
-/** 학생이 속한 반들의 담당 교사 목록(중복 제거). 반 대신 교사 단위로 제출할 때 사용. */
-export async function listPortfolioTeachers(studentId: string): Promise<PortfolioTeacher[]> {
-  const classes = await listPortfolioClasses(studentId);
-  if (!classes.length) return [];
-
-  const teacherIds = [...new Set(classes.map((row) => row.created_by))];
-  const { data: profiles, error } = await supabase
-    .from("profiles")
-    .select("id, display_name")
-    .in("id", teacherIds);
-  if (error) throw error;
-  const nameById = new Map(
-    (profiles ?? []).map((row) => [row.id as string, (row.display_name as string) || "선생님"]),
-  );
-
-  const byTeacher = new Map<string, PortfolioTeacher>();
-  for (const row of classes) {
-    if (byTeacher.has(row.created_by)) continue;
-    byTeacher.set(row.created_by, {
-      id: row.created_by,
-      name: nameById.get(row.created_by) ?? "선생님",
-      classId: row.id,
-    });
-  }
-  return [...byTeacher.values()];
-}
-
 export async function listPortfolioClasses(studentId: string): Promise<ClassRow[]> {
   const { data: memberships, error: membershipError } = await supabase
     .from("class_students")
@@ -218,12 +183,10 @@ export async function deletePortfolioDocument(documentId: string): Promise<void>
 
 export async function submitPortfolioDocument(
   documentId: string,
-  classId: string,
   expectedRevision: number,
 ): Promise<PortfolioSubmission> {
   const { data, error } = await supabase.rpc("submit_portfolio_document", {
     p_document_id: documentId,
-    p_class_id: classId,
     p_expected_revision: expectedRevision,
   });
   if (error) throw error;

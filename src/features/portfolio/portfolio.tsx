@@ -299,6 +299,20 @@ function AssetFileView({ node }: NodeViewProps) {
             download={fileName}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={(event) => {
+              event.preventDefault();
+              fetch(url)
+                .then((res) => res.blob())
+                .then((blob) => {
+                  const objectUrl = URL.createObjectURL(blob);
+                  const link = document.createElement("a");
+                  link.href = objectUrl;
+                  link.download = fileName;
+                  link.click();
+                  URL.revokeObjectURL(objectUrl);
+                })
+                .catch(() => window.open(url, "_blank", "noopener,noreferrer"));
+            }}
           >
             <Download aria-hidden /> 다운로드
           </a>

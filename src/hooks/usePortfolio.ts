@@ -5,8 +5,6 @@ import {
   deletePortfolioComment,
   deletePortfolioDocument,
   listPortfolioComments,
-  listPortfolioClasses,
-  listPortfolioTeachers,
   listPortfolioDocuments,
   listPortfolioSubmissions,
   submitPortfolioDocument,
@@ -18,22 +16,6 @@ import {
 
 export const PORTFOLIO_DOCUMENTS_KEY = ["portfolio", "documents"] as const;
 export const PORTFOLIO_SUBMISSIONS_KEY = ["portfolio", "submissions"] as const;
-
-export function usePortfolioClasses(studentId: string | undefined) {
-  return useQuery({
-    queryKey: ["portfolio", "classes", studentId],
-    queryFn: () => listPortfolioClasses(studentId!),
-    enabled: !!studentId,
-  });
-}
-
-export function usePortfolioTeachers(studentId: string | undefined) {
-  return useQuery({
-    queryKey: ["portfolio", "teachers", studentId],
-    queryFn: () => listPortfolioTeachers(studentId!),
-    enabled: !!studentId,
-  });
-}
 
 export function usePortfolioDocuments() {
   return useQuery({
@@ -97,13 +79,11 @@ export function useSubmitPortfolioDocument() {
   return useMutation({
     mutationFn: ({
       documentId,
-      classId,
       expectedRevision,
     }: {
       documentId: string;
-      classId: string;
       expectedRevision: number;
-    }) => submitPortfolioDocument(documentId, classId, expectedRevision),
+    }) => submitPortfolioDocument(documentId, expectedRevision),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: PORTFOLIO_SUBMISSIONS_KEY }),
   });
 }

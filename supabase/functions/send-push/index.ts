@@ -159,7 +159,7 @@ Deno.serve(async (req) => {
     recipientIds = [sub.student_id];
     title = "새 피드백";
     body = row.body.slice(0, 50);
-    url = `/student/portfolio?document=${sub.document_id}`;
+    url = `/student/portfolio?document=${sub.document_id}&submission=${row.submission_id}`;
   } else if (payload.event === "submission_feedback") {
     // 교사가 문제 제출에 첨삭 → 제출 학생에게 알림
     const { data: row } = await admin
@@ -177,7 +177,7 @@ Deno.serve(async (req) => {
     recipientIds = [sub.user_id];
     title = "문제 첨삭 도착";
     body = row.body.slice(0, 50);
-    url = `/solve/${sub.problem_id}`;
+    url = `/solve/${sub.problem_id}?feedback=1`;
   } else {
     return new Response("bad event", { status: 400 });
   }
