@@ -64,7 +64,11 @@ function toDraft(document: StoredDocument): Draft {
 }
 
 function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : "알 수 없는 오류가 발생했습니다.";
+  if (error instanceof Error) return error.message;
+  if (error && typeof error === "object" && "message" in error && typeof error.message === "string") {
+    return error.message;
+  }
+  return "알 수 없는 오류가 발생했습니다.";
 }
 
 function formatDate(value: string): string {
@@ -206,6 +210,7 @@ export default function StudentPortfolio() {
       setSelectedSubmissionId(submitted.id);
       toast.success(`v${submitted.version}으로 제출했습니다.`);
     } catch (error) {
+      console.error("portfolio submit failed", error);
       toast.error(`제출하지 못했습니다: ${errorMessage(error)}`);
     }
   };
@@ -382,10 +387,12 @@ export default function StudentPortfolio() {
   return (
     <AppShell menu={STUDENT_MENU} homePath="/student">
       <Tabs defaultValue="notes" className="flex h-full flex-col overflow-hidden">
-        <TabsList className="m-2 w-fit shrink-0 self-start">
-          <TabsTrigger value="problems">문제 첨삭</TabsTrigger>
-          <TabsTrigger value="notes">노트 첨삭</TabsTrigger>
-        </TabsList>
+        {isMobile && (
+          <TabsList className="m-2 w-fit shrink-0 self-start">
+            <TabsTrigger value="problems">문제 첨삭</TabsTrigger>
+            <TabsTrigger value="notes">노트 첨삭</TabsTrigger>
+          </TabsList>
+        )}
 
         <TabsContent value="problems" className="min-h-0 flex-1 overflow-y-auto data-[state=inactive]:hidden">
           <ProblemFeedbackList

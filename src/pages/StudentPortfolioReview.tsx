@@ -30,8 +30,12 @@ function formatDate(value: string) {
   });
 }
 
-function errorMessage(error: unknown) {
-  return error instanceof Error ? error.message : "알 수 없는 오류가 발생했습니다.";
+function errorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  if (error && typeof error === "object" && "message" in error && typeof error.message === "string") {
+    return error.message;
+  }
+  return "알 수 없는 오류가 발생했습니다.";
 }
 
 export default function StudentPortfolioReview() {
