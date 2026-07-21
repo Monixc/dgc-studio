@@ -274,17 +274,30 @@ export async function deletePortfolioAsset(asset: PortfolioAsset): Promise<void>
   if (storageError) throw storageError;
 }
 
-export async function getPortfolioAssetSignedUrl(assetId: string, expiresIn = 3600): Promise<string> {
+async function fetchAssetStoragePath(assetId: string): Promise<string> {
   const { data: asset, error: assetError } = await supabase
     .from("portfolio_assets")
     .select("storage_path")
     .eq("id", assetId)
     .single();
   if (assetError) throw assetError;
+  return asset.storage_path as string;
+}
+
+export async function getPortfolioAssetSignedUrl(assetId: string, expiresIn = 3600): Promise<string> {
+  let storagePath: string;
+  try {
+    storagePath = await fetchAssetStoragePath(assetId);
+  } catch (error) {
+    // 제출 직후 열람 시 세션 토큰 갱신과 겹치는 드문 경합으로 0 rows(PGRST116)가 뜰 수 있어 1회 재시도.
+    if ((error as { code?: string }).code !== "PGRST116") throw error;
+    await new Promise((resolve) => setTimeout(resolve, 600));
+    storagePath = await fetchAssetStoragePath(assetId);
+  }
 
   const { data, error } = await supabase.storage
     .from(PORTFOLIO_ASSETS_BUCKET)
-    .createSignedUrl(asset.storage_path as string, expiresIn);
+    .createSignedUrl(storagePath, expiresIn);
   if (error) throw error;
   return data.signedUrl;
 }
