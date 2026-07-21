@@ -11,6 +11,17 @@ import {
   type TypingStats,
 } from './types.js';
 
+/** 문학 코퍼스의 곡선 따옴표/대시를 표준 키보드 문자와 동일하게 취급 */
+const CHAR_EQUIVALENTS: Record<string, string> = {
+  '‘': "'", '’': "'", '‚': "'",
+  '“': '"', '”': '"', '„': '"',
+  '–': '-', '—': '-', '−': '-',
+};
+
+function charsMatch(typed: string, expected: string): boolean {
+  return (CHAR_EQUIVALENTS[typed] ?? typed) === (CHAR_EQUIVALENTS[expected] ?? expected);
+}
+
 export class TypingSession {
   private _text: string;
 
@@ -94,7 +105,7 @@ export class TypingSession {
     if (this.cursorIndex >= this.text.length) return;
 
     const expected = this.text[this.cursorIndex]!;
-    const correct = char === expected;
+    const correct = charsMatch(char, expected);
 
     this.charStatuses[this.cursorIndex] = correct ? 'correct' : 'incorrect';
     this.totalTyped++;

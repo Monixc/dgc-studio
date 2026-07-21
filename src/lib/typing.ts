@@ -1,3 +1,14 @@
+/** 문학 코퍼스의 곡선 따옴표/대시를 표준 키보드 문자와 동일하게 취급 */
+const CHAR_EQUIVALENTS: Record<string, string> = {
+  "‘": "'", "’": "'", "‚": "'",
+  "“": '"', "”": '"', "„": '"',
+  "–": "-", "—": "-", "−": "-",
+};
+
+export function charsMatch(typed: string, expected: string): boolean {
+  return (CHAR_EQUIVALENTS[typed] ?? typed) === (CHAR_EQUIVALENTS[expected] ?? expected);
+}
+
 export interface TypingResult {
   /** 한컴타자 스타일 분당 타수 (정타 글자 수 / 분) */
   taja: number;

@@ -10,6 +10,7 @@ import TypingAILab from "@/features/typing-ai-lab/TypingAILab";
 import { useAuth } from "@/hooks/useAuth";
 import {
   calculateTypingResult,
+  charsMatch,
   mergeTypingRanking,
   remainingLineIndent,
   wpmToTaja,
@@ -1576,7 +1577,7 @@ function PracticeMode({
     if (!snippet) return [] as Array<"correct" | "incorrect" | "pending">;
     return [...snippet.text].map((char, i) => {
       if (i >= typed.length) return "pending" as const;
-      return typed[i] === char ? "correct" as const : "incorrect" as const;
+      return charsMatch(typed[i]!, char) ? "correct" as const : "incorrect" as const;
     });
   }, [snippet, typed]);
   const currentCorrect = statuses.filter((s) => s === "correct").length;
@@ -1663,7 +1664,7 @@ function PracticeMode({
       setTyped(nextTyped);
       return;
     }
-    const correct = [...nextTyped].reduce((n, c, i) => n + Number(c === snippet.text[i]), 0);
+    const correct = [...nextTyped].reduce((n, c, i) => n + Number(charsMatch(c, snippet.text[i]!)), 0);
     setCorrectBefore((v) => v + correct);
     setTotalBefore((v) => v + nextTyped.length);
     setCompleted((v) => v + 1);
