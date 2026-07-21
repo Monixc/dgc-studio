@@ -43,7 +43,8 @@ export const STUDENT_MENU: Item[] = [
 ];
 
 // 모바일 하단 탭은 좁아서 학생은 핵심 메뉴만 노출. 나머지는 데스크톱 사이드바에서.
-const STUDENT_MOBILE_LABELS = ["내 수업", "포트폴리오", "포인트 상점"];
+const STUDENT_MOBILE_LABELS = ["포트폴리오", "포인트 상점"];
+const STUDENT_MOBILE_LABEL_OVERRIDES: Record<string, string> = { "포트폴리오": "첨삭 확인" };
 const MOBILE_HIDDEN_LABELS = ["타자 연습"];
 
 interface AppShellProps {
@@ -63,7 +64,9 @@ export default function AppShell({ children, menu = MENU, homePath = "/dashboard
   };
 
   const mobileMenu = menu === STUDENT_MENU
-    ? menu.flatMap((it) => it.children ?? [it]).filter((it) => STUDENT_MOBILE_LABELS.includes(it.label))
+    ? menu.flatMap((it) => it.children ?? [it])
+        .filter((it) => STUDENT_MOBILE_LABELS.includes(it.label))
+        .map((it) => (STUDENT_MOBILE_LABEL_OVERRIDES[it.label] ? { ...it, label: STUDENT_MOBILE_LABEL_OVERRIDES[it.label] } : it))
     : menu.filter((it) => !MOBILE_HIDDEN_LABELS.includes(it.label));
   const allItems: Item[] = [{ label: "대시보드", icon: LayoutDashboard, to: homePath }, ...mobileMenu];
 

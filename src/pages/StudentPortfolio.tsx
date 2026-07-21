@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
+  ChevronDown,
   FileText,
   GitCompare,
   Loader2,
@@ -13,8 +15,11 @@ import type { ImperativePanelHandle } from "react-resizable-panels";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import AppShell, { STUDENT_MENU } from "@/components/layout/AppShell";
+import { useAuth } from "@/hooks/useAuth";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   useCreatePortfolioDocument,
   useDeletePortfolioDocument,
@@ -24,7 +29,9 @@ import {
   useSubmitPortfolioDocument,
 } from "@/hooks/usePortfolio";
 import { usePortfolioRealtime } from "@/hooks/usePortfolioRealtime";
+import { useSubmissionFeedbackRealtime } from "@/hooks/useSubmissionFeedbackRealtime";
 import { getPortfolioAssetSignedUrl } from "@/lib/portfolio";
+import { listMyAllSubmissionFeedback, type MyProblemFeedbackItem } from "@/lib/studentManagement";
 import { notifyPush } from "@/lib/push";
 import { diffLines } from "@/lib/textDiff";
 import { cn } from "@/lib/utils";
@@ -68,6 +75,8 @@ function formatDate(value: string): string {
 }
 
 export default function StudentPortfolio() {
+  const { user } = useAuth();
+  const isMobile = useIsMobile();
   const documentsQuery = usePortfolioDocuments();
   const { data: submissions = [] } = usePortfolioSubmissions();
   const createDocument = useCreatePortfolioDocument();
@@ -76,9 +85,16 @@ export default function StudentPortfolio() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   usePortfolioRealtime();
+  useSubmissionFeedbackRealtime();
+  const problemFeedbackQuery = useQuery({
+    queryKey: ["my-submission-feedback", "all", user?.id],
+    queryFn: () => listMyAllSubmissionFeedback(user!.id),
+    enabled: !!user,
+  });
 
   const listPanelRef = useRef<ImperativePanelHandle>(null);
   const [listCollapsed, setListCollapsed] = useState(false);
+  const [mobileDocOpen, setMobileDocOpen] = useState(false);
   const [selectedDocumentId, setSelectedDocumentId] = useState<string | null>(null);
   const [selectedSubmissionId, setSelectedSubmissionId] = useState<string | null>(null);
   const [draft, setDraft] = useState<Draft | null>(null);
@@ -203,6 +219,60 @@ export default function StudentPortfolio() {
     )
     .map((comment) => ({ from: comment.start_position!, to: comment.end_position! }));
 
+  function renderDocumentRow(item: StoredDocument, opts?: { alwaysShowActions?: boolean; onAfterSelect?: () => void }) {
+    const active = item.id === selectedDocumentId;
+    const subCount = submissionCountByDoc.get(item.id) ?? 0;
+    const submitted = subCount > 0;
+    const actionCls = opts?.alwaysShowActions ? "" : "opacity-0 transition group-hover:opacity-100";
+    return (
+      <div
+        key={item.id}
+        className={cn(
+          "group flex items-center gap-1 rounded-md pr-1 transition hover:bg-accent",
+          active && "bg-accent",
+        )}
+      >
+        <button
+          type="button"
+          onClick={() => { selectDocument(item); opts?.onAfterSelect?.(); }}
+          className="min-w-0 flex-1 p-2 text-left text-sm"
+        >
+          <span className="flex min-w-0 items-center gap-1.5">
+            <span
+              className={cn(
+                "size-1.5 shrink-0 rounded-full",
+                submitted ? "bg-emerald-500" : "bg-muted-foreground/30",
+              )}
+              title={submitted ? `제출됨 · v${subCount}` : "미제출"}
+            />
+            <span className="truncate font-medium">{item.title || "제목 없음"}</span>
+          </span>
+          <span className="mt-0.5 block truncate pl-3 text-xs text-muted-foreground">
+            {formatDate(item.updated_at)}
+            {submitted && ` · 제출 v${subCount}`}
+          </span>
+        </button>
+        <button
+          type="button"
+          title="편집"
+          onClick={() => navigate(`/student/portfolio/${item.id}/edit`)}
+          className={cn("rounded p-1 hover:bg-black/10", actionCls)}
+        >
+          <Pencil className="size-3.5" />
+        </button>
+        <button
+          type="button"
+          title={submitted ? "제출 이력이 있어 삭제할 수 없습니다." : "삭제"}
+          disabled={submitted || deleteDocument.isPending}
+          onClick={() => removeDocument(item)}
+          className={cn("rounded p-1 hover:bg-black/10 disabled:opacity-20", actionCls)}
+        >
+          <Trash2 className="size-3.5" />
+        </button>
+      </div>
+    );
+  }
+
   if (documentsQuery.isLoading) {
     return (
       <AppShell menu={STUDENT_MENU} homePath="/student">
@@ -223,205 +293,259 @@ export default function StudentPortfolio() {
     );
   }
 
-  return (
-    <AppShell menu={STUDENT_MENU} homePath="/student">
-      <ResizablePanelGroup direction="horizontal" className="h-full overflow-hidden">
-        <ResizablePanel
-          ref={listPanelRef}
-          defaultSize={20}
-          minSize={14}
-          maxSize={35}
-          collapsible
-          collapsedSize={4}
-          onCollapse={() => setListCollapsed(true)}
-          onExpand={() => setListCollapsed(false)}
-          className="flex h-full flex-col bg-muted/20"
-        >
-          {listCollapsed ? (
-            <div className="flex flex-col items-center gap-1 py-2">
-              {documents.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => selectDocument(item)}
-                  title={item.title || "제목 없음"}
-                  className={cn(
-                    "rounded p-1.5",
-                    item.id === selectedDocumentId ? "bg-primary text-primary-foreground" : "hover:bg-accent",
-                  )}
-                >
-                  <FileText className="size-4" />
-                </button>
-              ))}
+  const viewerContent = (
+    <div className="flex h-full flex-col">
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        <div className="mx-auto max-w-3xl px-4 py-8 sm:px-8">
+          {!draft ? (
+            <div className="flex min-h-80 items-center justify-center text-sm text-muted-foreground">
+              읽을 포트폴리오를 선택해 주세요.
             </div>
           ) : (
             <>
-              <div className="flex items-center gap-1 border-b px-3 py-2">
-                <span className="text-sm font-semibold">내 노트</span>
-                <button
-                  type="button"
-                  onClick={createNewDocument}
-                  disabled={createDocument.isPending}
-                  title="문서 작성"
-                  className="ml-auto rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50"
-                >
-                  {createDocument.isPending ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
-                </button>
+              <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
+                <h2 className="text-2xl font-bold tracking-tight">{draft.title || "제목 없음"}</h2>
+                <div className="flex flex-wrap items-center gap-2">
+                  <select
+                    value={selectedSubmissionId ?? ""}
+                    onChange={(event) => setSelectedSubmissionId(event.target.value || null)}
+                    aria-label="버전 선택"
+                    className="h-8 rounded-md border-0 bg-muted px-2 text-xs text-muted-foreground"
+                  >
+                    {!currentRevisionSubmission && (
+                      <option value="">초안 (미제출)</option>
+                    )}
+                    {documentSubmissions.map((item) => (
+                      <option key={item.id} value={item.id}>
+                        v{item.version} · {formatDate(item.submitted_at)}
+                      </option>
+                    ))}
+                  </select>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => navigate(`/student/portfolio/${draft.id}/edit`)}
+                  >
+                    <Pencil /> 편집
+                  </Button>
+                  <Button size="sm" onClick={() => void submitDraft()} disabled={submitDocument.isPending}>
+                    <Send /> 제출
+                  </Button>
+                </div>
               </div>
-              <div className="flex-1 space-y-1 overflow-y-auto p-2">
-                {documents.length ? (
-                  documents.map((item) => {
-                    const active = item.id === selectedDocumentId;
-                    const subCount = submissionCountByDoc.get(item.id) ?? 0;
-                    const submitted = subCount > 0;
-                    return (
-                      <div
-                        key={item.id}
-                        className={cn(
-                          "group flex items-center gap-1 rounded-md pr-1 transition hover:bg-accent",
-                          active && "bg-accent",
-                        )}
-                      >
-                        <button
-                          type="button"
-                          onClick={() => selectDocument(item)}
-                          className="min-w-0 flex-1 p-2 text-left text-sm"
-                        >
-                          <span className="flex min-w-0 items-center gap-1.5">
-                            <span
-                              className={cn(
-                                "size-1.5 shrink-0 rounded-full",
-                                submitted ? "bg-emerald-500" : "bg-muted-foreground/30",
-                              )}
-                              title={submitted ? `제출됨 · v${subCount}` : "미제출"}
-                            />
-                            <span className="truncate font-medium">{item.title || "제목 없음"}</span>
-                          </span>
-                          <span className="mt-0.5 block truncate pl-3 text-xs text-muted-foreground">
-                            {formatDate(item.updated_at)}
-                            {submitted && ` · 제출 v${subCount}`}
-                          </span>
-                        </button>
-                        <button
-                          type="button"
-                          title="편집"
-                          onClick={() => navigate(`/student/portfolio/${item.id}/edit`)}
-                          className="rounded p-1 opacity-0 transition hover:bg-black/10 group-hover:opacity-100"
-                        >
-                          <Pencil className="size-3.5" />
-                        </button>
-                        <button
-                          type="button"
-                          title={submitted ? "제출 이력이 있어 삭제할 수 없습니다." : "삭제"}
-                          disabled={submitted || deleteDocument.isPending}
-                          onClick={() => removeDocument(item)}
-                          className="rounded p-1 opacity-0 transition hover:bg-black/10 disabled:opacity-20 group-hover:opacity-100"
-                        >
-                          <Trash2 className="size-3.5" />
-                        </button>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <p className="p-4 text-center text-sm text-muted-foreground">
-                    새 포트폴리오를 만들어 보세요.
-                  </p>
-                )}
-              </div>
+              {selectedSubmission ? (
+                <SubmissionView
+                  submission={selectedSubmission}
+                  previousSubmission={previousSubmission}
+                  commentRanges={commentRanges}
+                  resolveAssetUrl={resolveAssetUrl}
+                />
+              ) : (
+                <PortfolioViewer
+                  value={draft.content}
+                  resolveAssetUrl={resolveAssetUrl}
+                  className="min-h-80"
+                />
+              )}
             </>
           )}
-        </ResizablePanel>
+        </div>
+      </div>
+      {selectedSubmission && (comments?.length ?? 0) > 0 && (
+        <div className="h-56 shrink-0 overflow-y-auto border-t bg-muted/20">
+          <div className="sticky top-0 flex items-center gap-2 border-b bg-muted/20 px-4 py-2 text-sm font-semibold backdrop-blur">
+            <MessageSquare className="size-4" /> 선생님 피드백
+          </div>
+          <div className="mx-auto max-w-3xl space-y-3 p-4">
+            {comments!.map((comment) => (
+              <article key={comment.id} className="rounded-lg border bg-background p-3 text-sm">
+                {comment.anchor_type === "asset" && (
+                  <p className="mb-1 text-xs font-semibold text-primary">
+                    {comment.asset_index ? `이미지 #${comment.asset_index}` : "이미지 피드백"}
+                  </p>
+                )}
+                {comment.quoted_text && (
+                  <blockquote className="mb-2 border-l-2 border-primary pl-2 text-xs text-muted-foreground">
+                    “{comment.quoted_text}”
+                  </blockquote>
+                )}
+                <p className="whitespace-pre-wrap">{comment.body}</p>
+                <p className="mt-2 text-xs text-muted-foreground">{formatDate(comment.created_at)}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 
-        <ResizableHandle onToggle={toggleListPanel} collapsed={listCollapsed} />
+  return (
+    <AppShell menu={STUDENT_MENU} homePath="/student">
+      <Tabs defaultValue="notes" className="flex h-full flex-col overflow-hidden">
+        <TabsList className="m-2 w-fit shrink-0 self-start">
+          <TabsTrigger value="problems">문제 첨삭</TabsTrigger>
+          <TabsTrigger value="notes">노트 첨삭</TabsTrigger>
+        </TabsList>
 
-        <ResizablePanel defaultSize={80} className="min-w-0">
-          <div className="flex h-full flex-col">
-            <div className="min-h-0 flex-1 overflow-y-auto">
-              <div className="mx-auto max-w-3xl px-4 py-8 sm:px-8">
-                {!draft ? (
-                  <div className="flex min-h-80 items-center justify-center text-sm text-muted-foreground">
-                    읽을 포트폴리오를 선택해 주세요.
-                  </div>
-                ) : (
+        <TabsContent value="problems" className="min-h-0 flex-1 overflow-y-auto data-[state=inactive]:hidden">
+          <ProblemFeedbackList
+            items={problemFeedbackQuery.data ?? []}
+            isLoading={problemFeedbackQuery.isLoading}
+            onOpen={(problemId) => navigate(`/solve/${problemId}`)}
+          />
+        </TabsContent>
+
+        <TabsContent value="notes" className="min-h-0 flex-1 overflow-hidden data-[state=inactive]:hidden">
+          {isMobile ? (
+            <div className="flex h-full flex-col">
+              <div className="relative border-b bg-muted/20 p-2">
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setMobileDocOpen((o) => !o)}
+                    className="flex flex-1 items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm"
+                  >
+                    <FileText className="size-4 shrink-0 text-muted-foreground" />
+                    <span className="flex-1 truncate text-left">{selectedDocument?.title || "내 노트"}</span>
+                    <ChevronDown className={cn("size-4 shrink-0 transition-transform", mobileDocOpen && "rotate-180")} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={createNewDocument}
+                    disabled={createDocument.isPending}
+                    title="문서 작성"
+                    className="shrink-0 rounded p-2 text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50"
+                  >
+                    {createDocument.isPending ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
+                  </button>
+                </div>
+                {mobileDocOpen && (
                   <>
-                    <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
-                      <h2 className="text-2xl font-bold tracking-tight">{draft.title || "제목 없음"}</h2>
-                      <div className="flex items-center gap-2">
-                        <select
-                          value={selectedSubmissionId ?? ""}
-                          onChange={(event) => setSelectedSubmissionId(event.target.value || null)}
-                          aria-label="버전 선택"
-                          className="h-8 rounded-md border-0 bg-muted px-2 text-xs text-muted-foreground"
-                        >
-                          {!currentRevisionSubmission && (
-                            <option value="">초안 (미제출)</option>
-                          )}
-                          {documentSubmissions.map((item) => (
-                            <option key={item.id} value={item.id}>
-                              v{item.version} · {formatDate(item.submitted_at)}
-                            </option>
-                          ))}
-                        </select>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => navigate(`/student/portfolio/${draft.id}/edit`)}
-                        >
-                          <Pencil /> 편집
-                        </Button>
-                        <Button size="sm" onClick={() => void submitDraft()} disabled={submitDocument.isPending}>
-                          <Send /> 제출
-                        </Button>
-                      </div>
+                    <div className="fixed inset-0 z-40" onClick={() => setMobileDocOpen(false)} />
+                    <div className="absolute inset-x-2 top-full z-50 mt-1 max-h-[60vh] overflow-auto rounded-lg border bg-background p-1 shadow-lg">
+                      {documents.length ? (
+                        documents.map((item) => renderDocumentRow(item, { alwaysShowActions: true, onAfterSelect: () => setMobileDocOpen(false) }))
+                      ) : (
+                        <p className="p-4 text-center text-sm text-muted-foreground">
+                          새 포트폴리오를 만들어 보세요.
+                        </p>
+                      )}
                     </div>
-                    {selectedSubmission ? (
-                      <SubmissionView
-                        submission={selectedSubmission}
-                        previousSubmission={previousSubmission}
-                        commentRanges={commentRanges}
-                        resolveAssetUrl={resolveAssetUrl}
-                      />
-                    ) : (
-                      <PortfolioViewer
-                        value={draft.content}
-                        resolveAssetUrl={resolveAssetUrl}
-                        className="min-h-80"
-                      />
-                    )}
                   </>
                 )}
               </div>
+              <div className="min-h-0 flex-1 overflow-y-auto">{viewerContent}</div>
             </div>
-            {selectedSubmission && (comments?.length ?? 0) > 0 && (
-              <div className="h-56 shrink-0 overflow-y-auto border-t bg-muted/20">
-                <div className="sticky top-0 flex items-center gap-2 border-b bg-muted/20 px-4 py-2 text-sm font-semibold backdrop-blur">
-                  <MessageSquare className="size-4" /> 선생님 피드백
-                </div>
-                <div className="mx-auto max-w-3xl space-y-3 p-4">
-                  {comments!.map((comment) => (
-                    <article key={comment.id} className="rounded-lg border bg-background p-3 text-sm">
-                      {comment.anchor_type === "asset" && (
-                        <p className="mb-1 text-xs font-semibold text-primary">
-                          {comment.asset_index ? `이미지 #${comment.asset_index}` : "이미지 피드백"}
+          ) : (
+            <ResizablePanelGroup direction="horizontal" className="h-full overflow-hidden">
+              <ResizablePanel
+                ref={listPanelRef}
+                defaultSize={20}
+                minSize={14}
+                maxSize={35}
+                collapsible
+                collapsedSize={4}
+                onCollapse={() => setListCollapsed(true)}
+                onExpand={() => setListCollapsed(false)}
+                className="flex h-full flex-col bg-muted/20"
+              >
+                {listCollapsed ? (
+                  <div className="flex flex-col items-center gap-1 py-2">
+                    {documents.map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => selectDocument(item)}
+                        title={item.title || "제목 없음"}
+                        className={cn(
+                          "rounded p-1.5",
+                          item.id === selectedDocumentId ? "bg-primary text-primary-foreground" : "hover:bg-accent",
+                        )}
+                      >
+                        <FileText className="size-4" />
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex items-center gap-1 border-b px-3 py-2">
+                      <span className="text-sm font-semibold">내 노트</span>
+                      <button
+                        type="button"
+                        onClick={createNewDocument}
+                        disabled={createDocument.isPending}
+                        title="문서 작성"
+                        className="ml-auto rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50"
+                      >
+                        {createDocument.isPending ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
+                      </button>
+                    </div>
+                    <div className="flex-1 space-y-1 overflow-y-auto p-2">
+                      {documents.length ? (
+                        documents.map((item) => renderDocumentRow(item))
+                      ) : (
+                        <p className="p-4 text-center text-sm text-muted-foreground">
+                          새 포트폴리오를 만들어 보세요.
                         </p>
                       )}
-                      {comment.quoted_text && (
-                        <blockquote className="mb-2 border-l-2 border-primary pl-2 text-xs text-muted-foreground">
-                          “{comment.quoted_text}”
-                        </blockquote>
-                      )}
-                      <p className="whitespace-pre-wrap">{comment.body}</p>
-                      <p className="mt-2 text-xs text-muted-foreground">{formatDate(comment.created_at)}</p>
-                    </article>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </ResizablePanel>
-      </ResizablePanelGroup>
+                    </div>
+                  </>
+                )}
+              </ResizablePanel>
 
+              <ResizableHandle onToggle={toggleListPanel} collapsed={listCollapsed} />
+
+              <ResizablePanel defaultSize={80} className="min-w-0">
+                {viewerContent}
+              </ResizablePanel>
+            </ResizablePanelGroup>
+          )}
+        </TabsContent>
+      </Tabs>
     </AppShell>
+  );
+}
+
+function ProblemFeedbackList({
+  items,
+  isLoading,
+  onOpen,
+}: {
+  items: MyProblemFeedbackItem[];
+  isLoading: boolean;
+  onOpen: (problemId: string) => void;
+}) {
+  if (isLoading) {
+    return (
+      <div className="flex h-40 items-center justify-center text-sm text-muted-foreground">
+        <Loader2 className="mr-2 size-4 animate-spin" /> 불러오는 중…
+      </div>
+    );
+  }
+  if (!items.length) {
+    return (
+      <div className="flex h-40 items-center justify-center text-center text-sm text-muted-foreground">
+        아직 받은 문제 첨삭이 없습니다.
+      </div>
+    );
+  }
+  return (
+    <div className="mx-auto max-w-2xl space-y-3 p-4">
+      {items.map((item) => (
+        <button
+          key={item.id}
+          type="button"
+          onClick={() => onOpen(item.problemId)}
+          className="block w-full rounded-lg border bg-background p-3 text-left text-sm hover:bg-accent"
+        >
+          <div className="mb-1 flex items-center justify-between gap-2">
+            <span className="truncate font-medium">{item.problemTitle}</span>
+            <span className="shrink-0 text-xs text-muted-foreground">{formatDate(item.createdAt)}</span>
+          </div>
+          <p className="whitespace-pre-wrap text-muted-foreground">{item.body}</p>
+        </button>
+      ))}
+    </div>
   );
 }
 

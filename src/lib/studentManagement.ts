@@ -146,6 +146,44 @@ export async function createSubmissionComment(params: { submissionId: string; au
   return (data?.id as string) ?? null;
 }
 
+export interface MyProblemFeedbackItem {
+  id: string;
+  submissionId: string;
+  problemId: string;
+  problemTitle: string;
+  submittedAt: string;
+  body: string;
+  createdAt: string;
+}
+
+/** 학생 본인의 전체 문제 제출에 달린 교사 첨삭 전체(문제 무관, 최신순). */
+export async function listMyAllSubmissionFeedback(userId: string): Promise<MyProblemFeedbackItem[]> {
+  const submissions = await listStudentSubmissions(userId);
+  if (!submissions.length) return [];
+  const subById = new Map(submissions.map((s) => [s.id, s]));
+
+  const { data, error } = await supabase
+    .from("submission_comments")
+    .select("*")
+    .in("submission_id", submissions.map((s) => s.id))
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+
+  return ((data ?? []) as SubmissionComment[]).flatMap((c) => {
+    const sub = subById.get(c.submission_id);
+    if (!sub) return [];
+    return [{
+      id: c.id,
+      submissionId: c.submission_id,
+      problemId: sub.problem_id,
+      problemTitle: sub.problem_title,
+      submittedAt: sub.submitted_at,
+      body: c.body,
+      createdAt: c.created_at,
+    }];
+  });
+}
+
 /** 학생 본인이 이 문제에 제출한 것들에 달린 교사 첨삭 전체(최신순). */
 export async function listMySubmissionFeedback(userId: string, problemId: string): Promise<SubmissionComment[]> {
   const { data: subs, error: subsError } = await supabase
