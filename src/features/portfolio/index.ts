@@ -4,6 +4,7 @@ export { PortfolioViewer, type PortfolioViewerProps } from "./PortfolioViewer";
 export {
   PortfolioAssetImage,
   PortfolioExternalMedia,
+  assertSafeDocument,
   createPortfolioExtensions,
   getPortfolioPlainText,
   normalizePortfolioSelection,

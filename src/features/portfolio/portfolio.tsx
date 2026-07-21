@@ -508,7 +508,7 @@ export function createPortfolioExtensions(resolveAssetUrl?: ResolveAssetUrl): An
   ];
 }
 
-function assertSafeDocument(node: JSONContent): void {
+export function assertSafeDocument(node: JSONContent): void {
   if (node.type === "image" && !sanitizeImageUrl(String(node.attrs?.src ?? ""))) {
     throw new Error("이미지는 HTTPS URL만 사용할 수 있습니다.");
   }

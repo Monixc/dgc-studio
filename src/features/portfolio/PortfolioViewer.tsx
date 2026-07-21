@@ -1,10 +1,11 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Extension } from "@tiptap/core";
 import { Plugin } from "@tiptap/pm/state";
 import { Decoration, DecorationSet } from "@tiptap/pm/view";
 import { EditorContent, useEditor } from "@tiptap/react";
 import { cn } from "@/lib/utils";
 import {
+  assertSafeDocument,
   createPortfolioExtensions,
   normalizePortfolioSelection,
   type PortfolioCommentRange,
@@ -24,6 +25,8 @@ export interface PortfolioViewerProps {
   commentRanges?: readonly PortfolioCommentRange[];
   className?: string;
 }
+
+const EMPTY_DOC: PortfolioDocument = { type: "doc", content: [] };
 
 const CommentHighlights = Extension.create<{ ranges: readonly PortfolioCommentRange[] }>({
   name: "portfolioCommentHighlights",
@@ -57,6 +60,15 @@ const CommentHighlights = Extension.create<{ ranges: readonly PortfolioCommentRa
   },
 });
 
+function toSafeDocument(value: PortfolioDocument): PortfolioDocument | null {
+  try {
+    assertSafeDocument(value);
+    return value;
+  } catch {
+    return null;
+  }
+}
+
 export function PortfolioViewer({
   value,
   resolveAssetUrl,
@@ -70,6 +82,7 @@ export function PortfolioViewer({
   const selectionRef = useRef(onSelectionChange);
   selectionRef.current = onSelectionChange;
   const rangesKey = JSON.stringify(commentRanges);
+  const safeValue = useMemo(() => toSafeDocument(value), [value]);
 
   const editor = useEditor(
     {
@@ -77,7 +90,7 @@ export function PortfolioViewer({
         ...createPortfolioExtensions(resolveAssetUrl),
         CommentHighlights.configure({ ranges: commentRanges }),
       ],
-      content: value,
+      content: safeValue ?? EMPTY_DOC,
       editable: false,
       immediatelyRender: false,
       onSelectionUpdate: ({ editor: current }) => {
@@ -95,9 +108,14 @@ export function PortfolioViewer({
   );
 
   useEffect(() => {
-    if (!editor || JSON.stringify(editor.getJSON()) === JSON.stringify(value)) return;
-    editor.commands.setContent(value, { emitUpdate: false });
-  }, [editor, value]);
+    if (!editor) return;
+    if (!safeValue) {
+      editor.commands.setContent(EMPTY_DOC, { emitUpdate: false });
+      return;
+    }
+    if (JSON.stringify(editor.getJSON()) === JSON.stringify(safeValue)) return;
+    editor.commands.setContent(safeValue, { emitUpdate: false });
+  }, [editor, safeValue]);
 
   useEffect(() => {
     if (!editor) return;
@@ -110,7 +128,15 @@ export function PortfolioViewer({
           asset.dataset.assetId === selectedAssetId && imageNumber === selectedImageNumber,
         );
     });
-  }, [editor, selectedAssetId, selectedImageNumber, value]);
+  }, [editor, selectedAssetId, selectedImageNumber, safeValue]);
+
+  if (!safeValue) {
+    return (
+      <article className={cn("rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive", className)}>
+        이 노트에 허용되지 않은 링크·미디어가 있어 표시할 수 없습니다.
+      </article>
+    );
+  }
 
   return (
     <article
