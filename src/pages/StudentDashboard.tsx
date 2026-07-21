@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { BookOpen, Trophy, ChevronRight } from "lucide-react";
+import { BookOpen, Trophy, ChevronRight, Megaphone } from "lucide-react";
+import AnnouncementsPanel from "@/components/dashboard/AnnouncementsPanel";
 import { useAuth } from "@/hooks/useAuth";
 import { usePublishedProblems } from "@/hooks/useProblems";
 import { useAssignedProblems } from "@/hooks/useClasses";
@@ -91,6 +92,11 @@ export default function StudentDashboard() {
                 ))}
               </div>
             )}
+          </Bento>
+
+          {/* 공지사항 */}
+          <Bento className="md:col-span-4" icon={Megaphone} title="공지사항">
+            <AnnouncementsPanel readOnly />
           </Bento>
         </div>
       </div>

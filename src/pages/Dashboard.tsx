@@ -135,11 +135,6 @@ export default function Dashboard() {
             )}
           </Bento>
 
-          {/* 수업 시간표 — 편집 가능 캘린더 */}
-          <div id="schedule" className="md:col-span-4">
-            <ScheduleCalendar />
-          </div>
-
           {/* 공지 */}
           <Bento className="md:col-span-2" icon={Megaphone} title="공지사항" action={
             <Button size="sm" className="ml-auto" onClick={() => setAnnounceOpen(true)}>
@@ -148,6 +143,11 @@ export default function Dashboard() {
           }>
             <AnnouncementsPanel open={announceOpen} onOpenChange={setAnnounceOpen} />
           </Bento>
+
+          {/* 수업 시간표 — 편집 가능 캘린더 */}
+          <div id="schedule" className="md:col-span-4">
+            <ScheduleCalendar />
+          </div>
         </div>
       </div>
     </AppShell>

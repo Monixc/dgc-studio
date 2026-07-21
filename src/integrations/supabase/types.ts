@@ -160,10 +160,18 @@ export interface AcademicEvent {
   created_at: string;
 }
 
+export interface AnnouncementAttachment {
+  url: string;
+  name: string;
+  mimeType: string;
+  kind: "image" | "file";
+}
+
 export interface Announcement {
   id: string;
   title: string;
   body: string;
+  attachments: AnnouncementAttachment[];
   created_by: string;
   created_at: string;
 }
