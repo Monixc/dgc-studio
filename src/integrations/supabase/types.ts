@@ -210,6 +210,7 @@ export type TypingAiLabGrade = "SSS" | "SS" | "S" | "A" | "B" | "C" | "D";
 export interface TypingAiLabResult {
   id: string;
   user_id: string;
+  session_id: string;
   mode: "sprint" | "standard" | "research" | "learning" | "competition";
   elapsed_ms: number;
   accuracy: number;
@@ -221,6 +222,7 @@ export interface TypingAiLabResult {
   grade: TypingAiLabGrade;
   dataset_size: number;
   dataset: string[];
+  dataset_ids: string[];
   sentences: string[];
   created_at: string;
 }

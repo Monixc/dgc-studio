@@ -258,10 +258,10 @@ export function masteryTarget(difficulty: number): number {
   return Math.min(7, Math.max(3, difficulty + 2));
 }
 
-export function articleFor(word: WordDef): "" | "a" | "an" {
+export function articleFor(word: WordDef, phraseStart = word.word): "" | "a" | "an" {
   if (word.countability === "mass") return "";
   if (word.number === "plural") return "";
-  const w = word.word.toLowerCase();
+  const w = phraseStart.toLowerCase();
   if (["hour", "honest", "honor"].includes(w)) return "an";
   if (["university", "unique", "european", "one"].includes(w)) return "a";
   return ["a", "e", "i", "o", "u"].includes(w[0]!) ? "an" : "a";

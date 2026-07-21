@@ -31,6 +31,7 @@ MIN_WORDS = 5000
 TARGET_WORDS = 7500
 MIN_VERBS = 1400
 MIN_VERBS_PER_BAND = 200
+MIN_CURATED_FRAMES = 40
 WORD_RE = re.compile(r"^[a-z]+(?:-[a-z]+)?$")
 MASS_HINTS = {
     "water", "milk", "rice", "bread", "soup", "cheese", "meat", "coffee", "tea",
@@ -1094,6 +1095,21 @@ def build() -> None:
             for k in ("categories", "semanticTypes", "meaningKo", "countability", "number", "forms"):
                 if k in cw:
                     word_by_id[wid][k] = cw[k]
+
+    framed = [w for w in final_words if w.get("frame")]
+    if len(framed) < MIN_CURATED_FRAMES:
+        die(f"too few sentence frames: {len(framed)} < {MIN_CURATED_FRAMES}")
+    for verb in framed:
+        if not any(
+            r["to"] == verb["id"] and r["type"] == "CapableOf"
+            for r in relations
+        ):
+            die(f"frame has no capable subject: {verb['id']}")
+        if verb["frame"].get("objects") and not any(
+            r["from"] == verb["id"] and r["type"] == "ActsOn"
+            for r in relations
+        ):
+            die(f"frame has no valid object: {verb['id']}")
 
     # Write by difficulty
     OUT_DIR.mkdir(parents=True, exist_ok=True)

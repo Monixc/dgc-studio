@@ -46,6 +46,8 @@ export interface MatchPlayerRow {
   total_score: number | null;
   grade: string | null;
   dataset_size: number | null;
+  result_id: string | null;
+  datasetIds: string[];
   forfeit: boolean;
 }
 
@@ -55,6 +57,7 @@ export async function saveTypingAiLabResult(
 ): Promise<TypingAiLabResult> {
   const row = {
     user_id: userId,
+    session_id: result.sessionId,
     mode: result.mode === "competition" ? "competition" : "learning",
     elapsed_ms: result.elapsedMs,
     accuracy: result.score.accuracy,
@@ -66,12 +69,13 @@ export async function saveTypingAiLabResult(
     grade: result.score.grade,
     dataset_size: result.dataset.length,
     dataset: result.datasetWords,
+    dataset_ids: result.dataset,
     sentences: result.sentences.map((s) => s.text),
   };
 
   const { data, error } = await supabase
     .from("typing_ai_lab_results")
-    .insert(row)
+    .upsert(row, { onConflict: "user_id,session_id" })
     .select()
     .single();
   if (error) throw error;
@@ -126,6 +130,7 @@ export async function listWordStats(userId: string): Promise<WordStatRow[]> {
 
 export async function applySessionHits(
   hits: Record<string, number>,
+  sessionId: string,
 ): Promise<ApplyHitsRow[]> {
   const targets: Record<string, number> = {};
   for (const id of Object.keys(hits)) {
@@ -135,6 +140,7 @@ export async function applySessionHits(
   const { data, error } = await supabase.rpc("typing_ai_lab_apply_hits", {
     p_hits: hits,
     p_targets: targets,
+    p_session_id: sessionId,
   });
   if (error) throw error;
   return (data ?? []) as ApplyHitsRow[];
@@ -200,12 +206,33 @@ export async function getMatch(matchId: string): Promise<{
     .select("*")
     .eq("match_id", matchId);
   if (pErr) throw pErr;
+  const playerRows = (players ?? []) as MatchPlayerRow[];
+  const resultIds = playerRows.flatMap((player) =>
+    player.result_id ? [player.result_id] : [],
+  );
+  const datasets = new Map<string, string[]>();
+  if (resultIds.length > 0) {
+    const { data: results, error: resultError } = await supabase
+      .from("typing_ai_lab_results")
+      .select("id, dataset_ids")
+      .in("id", resultIds);
+    if (resultError) throw resultError;
+    for (const result of results ?? []) {
+      datasets.set(
+        result.id as string,
+        Array.isArray(result.dataset_ids) ? result.dataset_ids as string[] : [],
+      );
+    }
+  }
   return {
     match: match as MatchRow,
-    players: (players ?? []).map((p) => ({
-      ...(p as MatchPlayerRow),
-      pool_ids: Array.isArray((p as MatchPlayerRow).pool_ids)
-        ? (p as MatchPlayerRow).pool_ids
+    players: playerRows.map((player) => ({
+      ...player,
+      pool_ids: Array.isArray(player.pool_ids)
+        ? player.pool_ids
+        : [],
+      datasetIds: player.result_id
+        ? datasets.get(player.result_id) ?? []
         : [],
     })),
   };

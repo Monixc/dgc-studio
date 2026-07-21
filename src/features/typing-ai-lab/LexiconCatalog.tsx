@@ -30,7 +30,7 @@ export function filterCatalogWords(
     }
     if (filters.difficulty != null && word.difficulty !== filters.difficulty) return false;
     if (filters.pos != null && word.pos !== filters.pos) return false;
-    if (filters.status === "acquired" && count === 0) return false;
+    if (filters.status === "acquired" && (count === 0 || mastered)) return false;
     if (filters.status === "mastered" && !mastered) return false;
     if (filters.status === "unacquired" && count > 0) return false;
     return true;
@@ -57,8 +57,11 @@ export default function LexiconCatalog({
   const [status, setStatus] = useState<CatalogStatus>("all");
   const [page, setPage] = useState(1);
 
-  const acquiredCount = useMemo(
-    () => words.filter((word) => (mastery[word.id] ?? 0) > 0).length,
+  const learningCount = useMemo(
+    () => words.filter((word) => {
+      const count = mastery[word.id] ?? 0;
+      return count > 0 && count < masteryTarget(word.difficulty);
+    }).length,
     [words, mastery],
   );
   const masteredCount = useMemo(
@@ -100,13 +103,13 @@ export default function LexiconCatalog({
             </div>
             <h1 className="mt-2 text-3xl font-black italic">단어 도감</h1>
             <p className="mt-1 text-sm text-slate-400">
-              수집한 데이터셋을 확인하고 획득·숙련 상태를 모아보세요.
+              수집한 데이터셋의 학습 중·숙련 완료 상태를 확인하세요.
             </p>
           </div>
           <div className="grid grid-cols-3 gap-2 text-center text-xs">
             <Stat value={words.length} label="전체" />
-            <Stat value={acquiredCount} label="획득" color="text-amber-300" />
-            <Stat value={masteredCount} label="숙련" color="text-emerald-300" />
+            <Stat value={learningCount} label="학습 중" color="text-amber-300" />
+            <Stat value={masteredCount} label="숙련 완료" color="text-emerald-300" />
           </div>
         </div>
         <div className="mt-4">
@@ -136,14 +139,14 @@ export default function LexiconCatalog({
         </label>
         <div className="flex flex-wrap gap-2">
           <FilterSelect
-            ariaLabel="획득 상태"
+            ariaLabel="학습 상태"
             value={status}
             onChange={(value) => setStatus(value as CatalogStatus)}
             options={[
               ["all", "전체 상태"],
-              ["acquired", "내가 획득"],
+              ["acquired", "학습 중"],
               ["mastered", "숙련 완료"],
-              ["unacquired", "미획득"],
+              ["unacquired", "미학습"],
             ]}
           />
           <FilterSelect
@@ -208,7 +211,7 @@ export default function LexiconCatalog({
                       {acquired ? word.word : "????"}
                     </h2>
                     <p className="truncate text-sm text-slate-400">
-                      {acquired ? word.meaningKo : "미획득 데이터"}
+                      {acquired ? word.meaningKo : "미학습 데이터"}
                     </p>
                   </div>
                   <StatusBadge acquired={acquired} mastered={mastered} />
@@ -350,13 +353,13 @@ function StatusBadge({
   }
   if (acquired) {
     return (
-      <span title="획득" className="border border-amber-400/30 bg-amber-500/15 p-1.5 text-amber-300">
+      <span title="학습 중" className="border border-amber-400/30 bg-amber-500/15 p-1.5 text-amber-300">
         <Sparkles className="size-3.5" />
       </span>
     );
   }
   return (
-    <span title="미획득" className="border border-slate-700 bg-slate-950/60 p-1.5 text-slate-500">
+    <span title="미학습" className="border border-slate-700 bg-slate-950/60 p-1.5 text-slate-500">
       <Lock className="size-3.5" />
     </span>
   );

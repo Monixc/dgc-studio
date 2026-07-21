@@ -11,6 +11,7 @@ import {
   type MatchPlayerRow,
   type MatchRow,
 } from "@/lib/typing-ai-lab";
+import { computeScore, createRng, evaluateDataset } from "./game";
 
 export type CompetitionPhase =
   | "idle"
@@ -24,8 +25,10 @@ export interface OpponentProgress {
   userId: string;
   name: string;
   datasetSize: number;
+  datasetIds: string[];
   accuracy: number;
   totalPreview: number;
+  finalScore: number | null;
   online: boolean;
 }
 
@@ -33,6 +36,7 @@ interface ProgressPayload {
   userId: string;
   name: string;
   datasetSize: number;
+  datasetIds: string[];
   accuracy: number;
   totalPreview: number;
 }
@@ -113,8 +117,12 @@ export function useTypingAiCompetition(args: {
             userId: opp.user_id,
             name: opp.display_name || "상대",
             datasetSize: prev?.datasetSize ?? 0,
+            datasetIds: opp.datasetIds.length > 0
+              ? opp.datasetIds
+              : prev?.datasetIds ?? [],
             accuracy: prev?.accuracy ?? 100,
             totalPreview: prev?.totalPreview ?? 0,
+            finalScore: opp.total_score ?? prev?.finalScore ?? null,
             online,
           }));
         }
@@ -128,8 +136,10 @@ export function useTypingAiCompetition(args: {
           userId: p.userId,
           name: p.name,
           datasetSize: p.datasetSize,
+          datasetIds: p.datasetIds,
           accuracy: p.accuracy,
           totalPreview: p.totalPreview,
+          finalScore: prev?.finalScore ?? null,
           online: prev?.online ?? true,
         }));
       });
@@ -145,6 +155,23 @@ export function useTypingAiCompetition(args: {
         void getMatch(matchId).then(({ match: latest, players: pls }) => {
           setMatch(latest);
           setPlayers(pls);
+          const opp = pls.find((player) => player.user_id !== userId);
+          if (opp) {
+            setOpponent((prev) => ({
+              userId: opp.user_id,
+              name: opp.display_name || prev?.name || "상대",
+              datasetSize: opp.dataset_size ?? prev?.datasetSize ?? 0,
+              datasetIds: opp.datasetIds.length > 0
+                ? opp.datasetIds
+                : prev?.datasetIds ?? [],
+              accuracy: prev?.accuracy ?? 100,
+              totalPreview: opp.total_score ?? prev?.totalPreview ?? 0,
+              finalScore: latest.status === "finished"
+                ? opp.total_score
+                : prev?.finalScore ?? null,
+              online: prev?.online ?? true,
+            }));
+          }
           if (latest.status === "playing") setPhase((ph) => (ph === "countdown" ? "playing" : ph));
           if (latest.status === "finished") setPhase("finished");
           if (latest.status === "abandoned") setPhase("abandoned");
@@ -180,6 +207,8 @@ export function useTypingAiCompetition(args: {
         total_score: null,
         grade: null,
         dataset_size: null,
+        result_id: null,
+        datasetIds: [],
         forfeit: false,
       },
     ]);
@@ -187,8 +216,10 @@ export function useTypingAiCompetition(args: {
       userId: "test-opponent",
       name: "TEST-07",
       datasetSize: 0,
+      datasetIds: [],
       accuracy: 94,
       totalPreview: 0,
+      finalScore: null,
       online: true,
     });
     setError(null);
@@ -260,12 +291,52 @@ export function useTypingAiCompetition(args: {
     if (!match) return;
     if (match.id === TEST_MATCH_ID) {
       stopSimulation();
+      const rng = createRng((Number(match.seed) ^ 0x7f4a7c15) >>> 0);
+      const shuffled = [...poolIds];
+      for (let i = shuffled.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(rng() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j]!, shuffled[i]!];
+      }
+      let nextWord = 0;
+      let metrics = { density: 0, coverage: 0, inference: 0 };
       pollRef.current = window.setInterval(() => {
         setOpponent((prev) => prev && ({
           ...prev,
-          datasetSize: prev.datasetSize + (Math.random() > 0.45 ? 1 : 0),
-          accuracy: Math.max(82, Math.min(99, prev.accuracy + (Math.random() - 0.5) * 3)),
-          totalPreview: Math.round((prev.totalPreview + Math.random() * 2.4) * 10) / 10,
+          ...(() => {
+            const datasetIds = [...prev.datasetIds];
+            const accuracy = Math.max(
+              82,
+              Math.min(99, prev.accuracy + (rng() - 0.5) * 3),
+            );
+            if (rng() > 0.45 && nextWord < shuffled.length) {
+              datasetIds.push(shuffled[nextWord++]!);
+              const evaluation = evaluateDataset(
+                datasetIds,
+                accuracy,
+                poolIds.length,
+                Number(match.seed),
+              );
+              metrics = {
+                density: evaluation.density,
+                coverage: evaluation.coverage,
+                inference: evaluation.inferenceSuccess,
+              };
+            }
+            const score = computeScore({
+              accuracy,
+              datasetSize: datasetIds.length,
+              density: metrics.density,
+              coverage: metrics.coverage,
+              inference: metrics.inference,
+              poolSize: poolIds.length,
+            });
+            return {
+              datasetIds,
+              datasetSize: datasetIds.length,
+              accuracy,
+              totalPreview: score.total,
+            };
+          })(),
         }));
       }, 900);
       setPhase("playing");
@@ -273,7 +344,7 @@ export function useTypingAiCompetition(args: {
     }
     await startMatch(match.id);
     setPhase("playing");
-  }, [match, stopSimulation]);
+  }, [match, poolIds, stopSimulation]);
 
   const broadcastProgress = useCallback(
     (payload: Omit<ProgressPayload, "userId" | "name">) => {
@@ -297,13 +368,37 @@ export function useTypingAiCompetition(args: {
       if (match.id === TEST_MATCH_ID) {
         stopSimulation();
         cleanupChannel();
+        setOpponent((prev) => prev && ({
+          ...prev,
+          finalScore: prev.totalPreview,
+        }));
         setPhase("finished");
         return;
       }
       await finishMatch(match.id, args);
-      setPhase("finished");
+      const latest = await getMatch(match.id);
+      setMatch(latest.match);
+      setPlayers(latest.players);
+      const opp = latest.players.find((player) => player.user_id !== userId);
+      if (opp) {
+        setOpponent((prev) => ({
+          userId: opp.user_id,
+          name: opp.display_name || prev?.name || "상대",
+          datasetSize: opp.dataset_size ?? prev?.datasetSize ?? 0,
+          datasetIds: opp.datasetIds.length > 0
+            ? opp.datasetIds
+            : prev?.datasetIds ?? [],
+          accuracy: prev?.accuracy ?? 100,
+          totalPreview: opp.total_score ?? prev?.totalPreview ?? 0,
+          finalScore: latest.match.status === "finished"
+            ? opp.total_score
+            : null,
+          online: prev?.online ?? true,
+        }));
+      }
+      setPhase(latest.match.status === "finished" ? "finished" : "playing");
     },
-    [cleanupChannel, match, stopSimulation],
+    [cleanupChannel, match, stopSimulation, userId],
   );
 
   const leave = useCallback(async () => {

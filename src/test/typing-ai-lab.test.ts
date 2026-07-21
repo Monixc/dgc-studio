@@ -20,9 +20,12 @@ import {
 } from "@/features/typing-ai-lab/progression";
 import { filterCatalogWords } from "@/features/typing-ai-lab/LexiconCatalog";
 import {
+  buildSentenceCandidates,
+  competitionOutcome,
   computeScore,
   createGame,
   createRng,
+  evaluateDataset,
   finishSession,
   generateSentences,
   gradeFromTotal,
@@ -133,7 +136,7 @@ describe("progression unlock", () => {
 });
 
 describe("lexicon catalog filters", () => {
-  it("filters acquired, mastered, difficulty, and search", () => {
+  it("separates learning and mastered words", () => {
     const sample = WORDS.filter((word) => word.difficulty === 1).slice(0, 3);
     const mastery = {
       [sample[0]!.id]: 1,
@@ -142,7 +145,7 @@ describe("lexicon catalog filters", () => {
     const base = { query: "", difficulty: null, pos: null };
     expect(
       filterCatalogWords(sample, mastery, { ...base, status: "acquired" }),
-    ).toHaveLength(2);
+    ).toEqual([sample[0]]);
     expect(
       filterCatalogWords(sample, mastery, { ...base, status: "mastered" }),
     ).toEqual([sample[1]]);
@@ -354,6 +357,7 @@ describe("typing-ai-lab sentences", () => {
     expect(articleFor(WORD_BY_ID.apple!)).toBe("an");
     expect(articleFor(WORD_BY_ID.park!)).toBe("a");
     expect(articleFor(WORD_BY_ID.water!)).toBe("");
+    expect(articleFor(WORD_BY_ID.book!, "old")).toBe("an");
     expect(verbForm(WORD_BY_ID.eat!, WORD_BY_ID.child!)).toBe("eats");
 
     const noVerb = generateSentences(["teacher", "student", "school", "smart"], createRng(5), 40);
@@ -382,6 +386,16 @@ describe("typing-ai-lab sentences", () => {
     }
   });
 
+  it("enumerates candidates deterministically and reports generation capacity", () => {
+    const dataset = ["teacher", "student", "write", "book", "story"];
+    expect(buildSentenceCandidates(dataset)).toHaveLength(6);
+
+    const first = generateSentences(dataset, createRng(42));
+    const second = generateSentences(dataset, createRng(42));
+    expect(first.sentences).toEqual(second.sentences);
+    expect(first.successRate).toBe(0.5);
+  });
+
   it("returns empty generation for empty dataset", () => {
     const out = generateSentences([], createRng(1));
     expect(out.sentences).toHaveLength(0);
@@ -408,6 +422,21 @@ describe("typing-ai-lab score + mastery", () => {
     expect(a.dataset).toBeGreaterThan(b.dataset);
   });
 
+  it("uses one score range and explicit outcomes for both players", () => {
+    const evaluation = evaluateDataset(
+      ["teacher", "student", "write", "book", "story"],
+      94,
+      20,
+      7,
+    );
+    expect(evaluation.score.total).toBeGreaterThanOrEqual(0);
+    expect(evaluation.score.total).toBeLessThanOrEqual(100);
+    expect(competitionOutcome(80, 70)).toBe("win");
+    expect(competitionOutcome(70, 80)).toBe("loss");
+    expect(competitionOutcome(70, 70)).toBe("draw");
+    expect(competitionOutcome(70, null)).toBeNull();
+  });
+
   it("uses adaptive mastery targets 3~7", () => {
     expect(masteryTarget(1)).toBe(3);
     expect(masteryTarget(3)).toBe(5);
@@ -415,7 +444,12 @@ describe("typing-ai-lab score + mastery", () => {
   });
 
   it("finishes a short session into a report", () => {
-    let state = createGame({ seed: 11, now: 3_000_000, mode: "competition" });
+    let state = createGame({
+      sessionId: "00000000-0000-4000-8000-000000000011",
+      seed: 11,
+      now: 3_000_000,
+      mode: "competition",
+    });
     const rng = createRng(11);
     for (const slot of state.slots.slice(0, 5)) {
       const r = submitInput(state, slot.word, 3_000_000, rng);
@@ -425,5 +459,6 @@ describe("typing-ai-lab score + mastery", () => {
     expect(report.dataset.length).toBeGreaterThan(0);
     expect(report.edges.every((e) => e.fromId && e.toId)).toBe(true);
     expect(report.elapsedMs).toBe(10_000);
+    expect(report.sessionId).toBe(state.sessionId);
   });
 });

@@ -1,18 +1,18 @@
 {
   "version": "1.0.0",
-  "generatedAt": "2026-07-17T17:29:53.424188+00:00",
+  "generatedAt": "2026-07-18T15:04:25.509706+00:00",
   "minWords": 5000,
-  "wordCount": 7659,
-  "relationCount": 22791,
+  "wordCount": 7658,
+  "relationCount": 22813,
   "uniqueSurfaces": 7334,
   "posCounts": {
-    "noun": 5208,
+    "noun": 5207,
     "verb": 1791,
     "adj": 660
   },
   "difficultyCounts": {
     "1": 670,
-    "2": 1286,
+    "2": 1285,
     "3": 1923,
     "4": 1928,
     "5": 1852
@@ -39,6 +39,6 @@
     "Wiktionary en→ko (CC BY-SA 3.0 / GFDL) via open-dsl-dict",
     "curated seed from flow-py typing-ai-lab"
   ],
-  "curatedWordCount": 253,
-  "curatedFrameCount": 30
+  "curatedWordCount": 265,
+  "curatedFrameCount": 42
 }

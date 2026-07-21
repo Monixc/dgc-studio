@@ -2,7 +2,6 @@ import {
   CATEGORIES,
   DIRECTED,
   NEIGHBORS,
-  TEMPLATES,
   WORD_BY_ID,
   WORDS,
   articleFor,
@@ -33,6 +32,7 @@ export interface Slot {
 }
 
 export interface GameState {
+  sessionId: string;
   seed: number;
   mode: LabPlayMode;
   /** 허용 단어 id. null이면 전체 WORDS */
@@ -81,6 +81,7 @@ export interface GraphEdge {
 }
 
 export interface SessionResult {
+  sessionId: string;
   mode: LabPlayMode;
   dataset: string[];
   datasetWords: string[];
@@ -246,6 +247,7 @@ export function pickWord(
 }
 
 export interface CreateGameOptions {
+  sessionId?: string;
   seed: number;
   mode?: LabPlayMode;
   poolIds?: string[] | null;
@@ -259,6 +261,10 @@ export function createGame(opts: CreateGameOptions | number, nowArg?: number): G
     typeof opts === "number" ? { seed: opts, now: nowArg } : opts;
   const seed = options.seed;
   const now = options.now ?? Date.now();
+  const sessionId =
+    options.sessionId ??
+    globalThis.crypto?.randomUUID?.() ??
+    `${now}-${seed}-${Math.random().toString(36).slice(2)}`;
   const mode = options.mode ?? "learning";
   const poolIds = options.poolIds ?? null;
   const masteryCounts = options.masteryCounts;
@@ -268,6 +274,7 @@ export function createGame(opts: CreateGameOptions | number, nowArg?: number): G
   const recentSpawns: Array<{ wordId: string; at: number }> = [];
 
   const draft: GameState = {
+    sessionId,
     seed,
     mode,
     poolIds,
@@ -467,132 +474,119 @@ export function tryBuildSentence(
   templateId: string,
   rng: () => number,
 ): GeneratedSentence | null {
+  const candidates = buildSentenceCandidates(dataset).filter(
+    (sentence) => sentence.templateId === templateId,
+  );
+  return candidates.length > 0
+    ? candidates[Math.floor(rng() * candidates.length)]!
+    : null;
+}
+
+export function buildSentenceCandidates(dataset: string[]): GeneratedSentence[] {
   const words = dataset.map((id) => WORD_BY_ID[id]).filter(Boolean) as WordDef[];
   const verbs = words.filter((w) => w.pos === "verb" && w.frame);
   const nouns = words.filter((w) => w.pos === "noun");
   const adjs = words.filter((w) => w.pos === "adj");
-
-  if (templateId === "adj_noun") {
-    if (adjs.length === 0 || nouns.length === 0) return null;
-    const shuffledAdj = [...adjs].sort(() => rng() - 0.5);
-    for (const adj of shuffledAdj) {
-      const cands = nouns.filter(
-        (n) =>
-          matchesTypes(n, adj.semanticTypes) &&
-          hasDirected(adj.id, n.id, "Describes"),
-      );
-      if (cands.length === 0) continue;
-      const noun = cands[Math.floor(rng() * cands.length)]!;
-      const art = articleFor(noun);
-      const text = art ? `${art} ${adj.word} ${noun.word}` : `${adj.word} ${noun.word}`;
-      return { text, templateId, valid: true, score: 5 };
+  const candidates: GeneratedSentence[] = [];
+  const add = (sentence: GeneratedSentence) => {
+    if (!candidates.some((candidate) => candidate.text === sentence.text)) {
+      candidates.push(sentence);
     }
-    return null;
+  };
+
+  for (const adj of adjs) {
+    for (const noun of nouns) {
+      if (
+        !matchesTypes(noun, adj.semanticTypes) ||
+        !hasDirected(adj.id, noun.id, "Describes")
+      ) continue;
+      const article = articleFor(noun, adj.word);
+      add({
+        text: article
+          ? `${article} ${adj.word} ${noun.word}`
+          : `${adj.word} ${noun.word}`,
+        templateId: "adj_noun",
+        valid: true,
+        score: 5,
+      });
+    }
   }
 
-  if (verbs.length === 0) return null;
-  const verb = verbs[Math.floor(rng() * verbs.length)]!;
-  const frame = verb.frame!;
-  const subjects = nouns.filter(
-    (n) =>
-      matchesTypes(n, frame.subjects) &&
-      hasDirected(n.id, verb.id, "CapableOf"),
-  );
-  if (subjects.length === 0) return null;
-  const subject = subjects[Math.floor(rng() * subjects.length)]!;
-  const vForm = verbForm(verb, subject);
+  for (const verb of verbs) {
+    const frame = verb.frame!;
+    for (const subject of nouns) {
+      if (
+        !matchesTypes(subject, frame.subjects) ||
+        !hasDirected(subject.id, verb.id, "CapableOf")
+      ) continue;
+      const vForm = verbForm(verb, subject);
+      add({
+        text: `the ${subject.word} ${vForm}`,
+        templateId: "sv",
+        valid: true,
+        score: 6,
+      });
 
-  if (templateId === "sv") {
-    return {
-      text: `the ${subject.word} ${vForm}`,
-      templateId,
-      valid: true,
-      score: 6,
-    };
+      for (const object of nouns) {
+        if (
+          object.id === subject.id ||
+          !frame.objects ||
+          !matchesTypes(object, frame.objects) ||
+          !hasDirected(verb.id, object.id, "ActsOn")
+        ) continue;
+        add({
+          text: `the ${subject.word} ${vForm} ${renderNP(object, true)}`
+            .replace(/  +/g, " ")
+            .trim(),
+          templateId: "svo",
+          valid: true,
+          score: 10,
+        });
+      }
+
+      for (const place of nouns) {
+        if (
+          place.id === subject.id ||
+          !frame.locations ||
+          !matchesTypes(place, frame.locations) ||
+          !hasDirected(subject.id, place.id, "AtLocation")
+        ) continue;
+        const prep = [
+          "park", "forest", "ocean", "river", "lake",
+          "garden", "field", "pool", "beach",
+        ].includes(place.word) ? "in" : "at";
+        add({
+          text: `the ${subject.word} ${vForm} ${prep} the ${place.word}`,
+          templateId: "sv_loc",
+          valid: true,
+          score: 9,
+        });
+      }
+    }
   }
 
-  if (templateId === "sv_loc") {
-    const locs = frame.locations;
-    if (!locs || locs.length === 0) return null;
-    const places = nouns.filter(
-      (n) =>
-        n.id !== subject.id &&
-        matchesTypes(n, locs) &&
-        hasDirected(subject.id, n.id, "AtLocation"),
-    );
-    if (places.length === 0) return null;
-    const place = places[Math.floor(rng() * places.length)]!;
-    // in/at: place nouns use "in the" for open places, "at the" for buildings — simple heuristic
-    const prep = ["park", "forest", "ocean", "river", "lake", "garden", "field", "pool", "beach"].includes(place.word)
-      ? "in"
-      : "at";
-    return {
-      text: `the ${subject.word} ${vForm} ${prep} the ${place.word}`,
-      templateId,
-      valid: true,
-      score: 9,
-    };
-  }
-
-  if (templateId === "svo") {
-    const objs = frame.objects;
-    if (!objs || objs.length === 0) return null;
-    const objects = nouns.filter(
-      (n) =>
-        n.id !== subject.id &&
-        matchesTypes(n, objs) &&
-        hasDirected(verb.id, n.id, "ActsOn"),
-    );
-    if (objects.length === 0) return null;
-    const object = objects[Math.floor(rng() * objects.length)]!;
-    const objPhrase = renderNP(object, true);
-    return {
-      text: `the ${subject.word} ${vForm} ${objPhrase}`.replace(/  +/g, " ").trim(),
-      templateId,
-      valid: true,
-      score: 10,
-    };
-  }
-
-  return null;
+  return candidates.filter((sentence) => validateSentenceText(sentence, dataset));
 }
 
 export function generateSentences(
   dataset: string[],
   rng: () => number,
-  maxAttempts = MAX_SENTENCE_ATTEMPTS,
+  _legacyMaxAttempts = MAX_SENTENCE_ATTEMPTS,
 ): { sentences: GeneratedSentence[]; attempts: number; successRate: number } {
   if (dataset.length === 0) {
     return { sentences: [], attempts: 0, successRate: 0 };
   }
 
-  const hasVerb = dataset.some((id) => WORD_BY_ID[id]?.pos === "verb");
-  const pool = hasVerb
-    ? TEMPLATES
-    : TEMPLATES.filter((t) => t.kind === "adj_noun");
-
-  const sentences: GeneratedSentence[] = [];
-  const seen = new Set<string>();
-  let attempts = 0;
-  let successes = 0;
-
-  while (attempts < maxAttempts && sentences.length < 12) {
-    attempts += 1;
-    const template = pool[Math.floor(rng() * pool.length)]!;
-    const built = tryBuildSentence(dataset, template.id, rng);
-    if (!built) continue;
-    if (seen.has(built.text)) continue;
-    // 최종 검증: eat+park 같은 잔여 비문 차단
-    if (!validateSentenceText(built, dataset)) continue;
-    seen.add(built.text);
-    successes += 1;
-    sentences.push(built);
+  const candidates = buildSentenceCandidates(dataset);
+  for (let i = candidates.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(rng() * (i + 1));
+    [candidates[i], candidates[j]] = [candidates[j]!, candidates[i]!];
   }
-
+  const capacity = 12;
   return {
-    sentences,
-    attempts,
-    successRate: attempts > 0 ? successes / attempts : 0,
+    sentences: candidates.slice(0, capacity),
+    attempts: capacity,
+    successRate: Math.min(candidates.length, capacity) / capacity,
   };
 }
 
@@ -667,6 +661,61 @@ export function computeScore(args: {
   };
 }
 
+export function evaluateDataset(
+  dataset: string[],
+  accuracy: number,
+  poolSize: number,
+  seed: number,
+): Pick<
+  SessionResult,
+  "edges" | "density" | "coverage" | "sentences" | "inferenceSuccess" | "score"
+> {
+  const rng = createRng(seed ^ 0x9e3779b9);
+  const { density, coverage, edges: undirectedEdges } = graphMetrics(dataset);
+  const edgeList: GraphEdge[] = [];
+  const set = new Set(dataset);
+  for (const from of dataset) {
+    for (const edge of DIRECTED.get(from) ?? []) {
+      if (!set.has(edge.to)) continue;
+      edgeList.push({
+        fromId: from,
+        toId: edge.to,
+        from: WORD_BY_ID[from]!.word,
+        to: WORD_BY_ID[edge.to]!.word,
+        type: edge.type,
+        weight: edge.weight,
+      });
+    }
+  }
+  const { sentences, successRate } = generateSentences(dataset, rng);
+  return {
+    edges: edgeList.length > 0 ? edgeList : undirectedEdges,
+    density,
+    coverage,
+    sentences,
+    inferenceSuccess: successRate,
+    score: computeScore({
+      accuracy,
+      datasetSize: dataset.length,
+      density,
+      coverage,
+      inference: successRate,
+      poolSize,
+    }),
+  };
+}
+
+export type CompetitionOutcome = "win" | "loss" | "draw";
+
+export function competitionOutcome(
+  myScore: number,
+  opponentScore: number | null | undefined,
+): CompetitionOutcome | null {
+  if (opponentScore == null) return null;
+  if (myScore === opponentScore) return "draw";
+  return myScore > opponentScore ? "win" : "loss";
+}
+
 export function finishSession(state: GameState, now = Date.now()): SessionResult {
   const accuracy = accuracyPct(state);
   const poolSize = state.poolIds?.length ?? 40;
@@ -682,6 +731,7 @@ export function finishSession(state: GameState, now = Date.now()): SessionResult
       inference: 0,
     });
     return {
+      sessionId: state.sessionId,
       mode: state.mode,
       dataset: state.dataset,
       datasetWords: state.dataset.map((id) => WORD_BY_ID[id]!.word),
@@ -699,47 +749,22 @@ export function finishSession(state: GameState, now = Date.now()): SessionResult
     };
   }
 
-  const rng = createRng(state.seed ^ 0x9e3779b9);
-  const { density, coverage, edges: undirectedEdges } = graphMetrics(state.dataset);
-  const edgeList: GraphEdge[] = [];
-  const set = new Set(state.dataset);
-  for (const from of state.dataset) {
-    for (const e of DIRECTED.get(from) ?? []) {
-      if (!set.has(e.to)) continue;
-      edgeList.push({
-        fromId: from,
-        toId: e.to,
-        from: WORD_BY_ID[from]!.word,
-        to: WORD_BY_ID[e.to]!.word,
-        type: e.type,
-        weight: e.weight,
-      });
-    }
-  }
-  const edges = edgeList.length > 0 ? edgeList : undirectedEdges;
-  const { sentences, successRate } = generateSentences(state.dataset, rng);
-  const score = computeScore({
-    accuracy,
-    datasetSize: state.dataset.length,
-    density,
-    coverage,
-    inference: successRate,
-    poolSize,
-  });
+  const evaluation = evaluateDataset(state.dataset, accuracy, poolSize, state.seed);
 
   return {
+    sessionId: state.sessionId,
     mode: state.mode,
     dataset: state.dataset,
     datasetWords: state.dataset.map((id) => WORD_BY_ID[id]!.word),
     sessionHits: state.sessionHits,
-    edges,
-    density,
-    coverage,
+    edges: evaluation.edges,
+    density: evaluation.density,
+    coverage: evaluation.coverage,
     accuracy,
     comboPeak: state.combo,
-    sentences,
-    inferenceSuccess: successRate,
-    score,
+    sentences: evaluation.sentences,
+    inferenceSuccess: evaluation.inferenceSuccess,
+    score: evaluation.score,
     elapsedMs,
     poolSize,
   };

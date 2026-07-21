@@ -5169,6 +5169,353 @@
       "frequency": 6,
       "countability": "count",
       "number": "invariant"
+    },
+    {
+      "id": "make",
+      "word": "make",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "만들다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 1,
+      "frequency": 10,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "makes"
+      },
+      "frame": {
+        "subjects": [
+          "person",
+          "animate"
+        ],
+        "objects": [
+          "artifact",
+          "food",
+          "readable",
+          "writable"
+        ]
+      }
+    },
+    {
+      "id": "give",
+      "word": "give",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "주다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "gives"
+      },
+      "frame": {
+        "subjects": [
+          "person",
+          "animate"
+        ],
+        "objects": [
+          "artifact",
+          "food",
+          "readable",
+          "writable"
+        ]
+      }
+    },
+    {
+      "id": "take",
+      "word": "take",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "가져가다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 1,
+      "frequency": 10,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "takes"
+      },
+      "frame": {
+        "subjects": [
+          "person",
+          "animate"
+        ],
+        "objects": [
+          "artifact",
+          "food",
+          "readable",
+          "writable"
+        ]
+      }
+    },
+    {
+      "id": "say",
+      "word": "say",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "말하다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 1,
+      "frequency": 10,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "says"
+      },
+      "frame": {
+        "subjects": [
+          "person",
+          "animate"
+        ],
+        "objects": [
+          "readable",
+          "writable"
+        ]
+      }
+    },
+    {
+      "id": "work",
+      "word": "work",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "일하다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 1,
+      "frequency": 10,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "works"
+      },
+      "frame": {
+        "subjects": [
+          "person",
+          "animate"
+        ],
+        "locations": [
+          "place"
+        ]
+      }
+    },
+    {
+      "id": "meet",
+      "word": "meet",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "만나다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 1,
+      "frequency": 9,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "meets"
+      },
+      "frame": {
+        "subjects": [
+          "person",
+          "animate"
+        ],
+        "objects": [
+          "person",
+          "animate"
+        ]
+      }
+    },
+    {
+      "id": "choose",
+      "word": "choose",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "고르다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 2,
+      "frequency": 8,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "chooses"
+      },
+      "frame": {
+        "subjects": [
+          "person",
+          "animate"
+        ],
+        "objects": [
+          "artifact",
+          "food",
+          "readable"
+        ]
+      }
+    },
+    {
+      "id": "discuss",
+      "word": "discuss",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "논의하다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 2,
+      "frequency": 8,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "discusses"
+      },
+      "frame": {
+        "subjects": [
+          "person",
+          "animate"
+        ],
+        "objects": [
+          "readable",
+          "writable"
+        ]
+      }
+    },
+    {
+      "id": "mix",
+      "word": "mix",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "섞다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 2,
+      "frequency": 8,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "mixes"
+      },
+      "frame": {
+        "subjects": [
+          "person",
+          "animate"
+        ],
+        "objects": [
+          "food"
+        ]
+      }
+    },
+    {
+      "id": "heat",
+      "word": "heat",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "데우다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 2,
+      "frequency": 8,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "heats"
+      },
+      "frame": {
+        "subjects": [
+          "person",
+          "animate"
+        ],
+        "objects": [
+          "food"
+        ]
+      }
+    },
+    {
+      "id": "dance",
+      "word": "dance",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "춤추다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "dances"
+      },
+      "frame": {
+        "subjects": [
+          "person",
+          "animate"
+        ],
+        "locations": [
+          "place"
+        ]
+      }
+    },
+    {
+      "id": "laugh",
+      "word": "laugh",
+      "pos": "verb",
+      "categories": [
+        "action"
+      ],
+      "meaningKo": "웃다",
+      "semanticTypes": [
+        "action"
+      ],
+      "difficulty": 1,
+      "frequency": 8,
+      "countability": "count",
+      "number": "invariant",
+      "forms": {
+        "thirdPersonSingular": "laughs"
+      },
+      "frame": {
+        "subjects": [
+          "person",
+          "animate"
+        ]
+      }
     }
   ],
   "relations": [
@@ -8693,6 +9040,612 @@
       "to": "tree",
       "type": "RelatedTo",
       "weight": 0.7
+    },
+    {
+      "from": "teacher",
+      "to": "make",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "student",
+      "to": "make",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "doctor",
+      "to": "make",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "engineer",
+      "to": "make",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "chef",
+      "to": "make",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "teacher",
+      "to": "give",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "student",
+      "to": "give",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "doctor",
+      "to": "give",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "teacher",
+      "to": "take",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "student",
+      "to": "take",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "doctor",
+      "to": "take",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "child",
+      "to": "take",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "teacher",
+      "to": "say",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "student",
+      "to": "say",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "doctor",
+      "to": "say",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "writer",
+      "to": "say",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "teacher",
+      "to": "work",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "student",
+      "to": "work",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "scientist",
+      "to": "work",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "doctor",
+      "to": "work",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "engineer",
+      "to": "work",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "writer",
+      "to": "work",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "farmer",
+      "to": "work",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "nurse",
+      "to": "work",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "chef",
+      "to": "work",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "programmer",
+      "to": "work",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "researcher",
+      "to": "work",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "artist",
+      "to": "work",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "athlete",
+      "to": "work",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "musician",
+      "to": "work",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "baker",
+      "to": "work",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "gardener",
+      "to": "work",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "librarian",
+      "to": "work",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "teacher",
+      "to": "meet",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "student",
+      "to": "meet",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "doctor",
+      "to": "meet",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "child",
+      "to": "meet",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "teacher",
+      "to": "choose",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "student",
+      "to": "choose",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "doctor",
+      "to": "choose",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "child",
+      "to": "choose",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "teacher",
+      "to": "discuss",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "student",
+      "to": "discuss",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "doctor",
+      "to": "discuss",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "researcher",
+      "to": "discuss",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "teacher",
+      "to": "dance",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "student",
+      "to": "dance",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "child",
+      "to": "dance",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "artist",
+      "to": "dance",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "athlete",
+      "to": "dance",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "musician",
+      "to": "dance",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "teacher",
+      "to": "laugh",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "student",
+      "to": "laugh",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "child",
+      "to": "laugh",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "artist",
+      "to": "laugh",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "athlete",
+      "to": "laugh",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "musician",
+      "to": "laugh",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "chef",
+      "to": "mix",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "baker",
+      "to": "mix",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "chef",
+      "to": "heat",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "baker",
+      "to": "heat",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "make",
+      "to": "book",
+      "type": "ActsOn",
+      "weight": 0.85
+    },
+    {
+      "from": "make",
+      "to": "story",
+      "type": "ActsOn",
+      "weight": 0.85
+    },
+    {
+      "from": "make",
+      "to": "message",
+      "type": "ActsOn",
+      "weight": 0.85
+    },
+    {
+      "from": "make",
+      "to": "pizza",
+      "type": "ActsOn",
+      "weight": 0.85
+    },
+    {
+      "from": "give",
+      "to": "book",
+      "type": "ActsOn",
+      "weight": 0.85
+    },
+    {
+      "from": "give",
+      "to": "message",
+      "type": "ActsOn",
+      "weight": 0.85
+    },
+    {
+      "from": "give",
+      "to": "pizza",
+      "type": "ActsOn",
+      "weight": 0.85
+    },
+    {
+      "from": "take",
+      "to": "book",
+      "type": "ActsOn",
+      "weight": 0.85
+    },
+    {
+      "from": "take",
+      "to": "message",
+      "type": "ActsOn",
+      "weight": 0.85
+    },
+    {
+      "from": "take",
+      "to": "pizza",
+      "type": "ActsOn",
+      "weight": 0.85
+    },
+    {
+      "from": "say",
+      "to": "story",
+      "type": "ActsOn",
+      "weight": 0.85
+    },
+    {
+      "from": "say",
+      "to": "message",
+      "type": "ActsOn",
+      "weight": 0.85
+    },
+    {
+      "from": "meet",
+      "to": "teacher",
+      "type": "ActsOn",
+      "weight": 0.85
+    },
+    {
+      "from": "meet",
+      "to": "student",
+      "type": "ActsOn",
+      "weight": 0.85
+    },
+    {
+      "from": "meet",
+      "to": "doctor",
+      "type": "ActsOn",
+      "weight": 0.85
+    },
+    {
+      "from": "choose",
+      "to": "book",
+      "type": "ActsOn",
+      "weight": 0.85
+    },
+    {
+      "from": "choose",
+      "to": "story",
+      "type": "ActsOn",
+      "weight": 0.85
+    },
+    {
+      "from": "choose",
+      "to": "pizza",
+      "type": "ActsOn",
+      "weight": 0.85
+    },
+    {
+      "from": "discuss",
+      "to": "story",
+      "type": "ActsOn",
+      "weight": 0.85
+    },
+    {
+      "from": "discuss",
+      "to": "message",
+      "type": "ActsOn",
+      "weight": 0.85
+    },
+    {
+      "from": "mix",
+      "to": "pizza",
+      "type": "ActsOn",
+      "weight": 0.85
+    },
+    {
+      "from": "heat",
+      "to": "pizza",
+      "type": "ActsOn",
+      "weight": 0.85
+    },
+    {
+      "from": "teacher",
+      "to": "kitchen",
+      "type": "AtLocation",
+      "weight": 0.7
+    },
+    {
+      "from": "teacher",
+      "to": "park",
+      "type": "AtLocation",
+      "weight": 0.7
+    },
+    {
+      "from": "student",
+      "to": "kitchen",
+      "type": "AtLocation",
+      "weight": 0.7
+    },
+    {
+      "from": "doctor",
+      "to": "school",
+      "type": "AtLocation",
+      "weight": 0.7
+    },
+    {
+      "from": "doctor",
+      "to": "kitchen",
+      "type": "AtLocation",
+      "weight": 0.7
+    },
+    {
+      "from": "doctor",
+      "to": "park",
+      "type": "AtLocation",
+      "weight": 0.7
+    },
+    {
+      "from": "child",
+      "to": "kitchen",
+      "type": "AtLocation",
+      "weight": 0.7
+    },
+    {
+      "from": "chef",
+      "to": "school",
+      "type": "AtLocation",
+      "weight": 0.7
+    },
+    {
+      "from": "chef",
+      "to": "park",
+      "type": "AtLocation",
+      "weight": 0.7
+    },
+    {
+      "from": "artist",
+      "to": "school",
+      "type": "AtLocation",
+      "weight": 0.7
+    },
+    {
+      "from": "artist",
+      "to": "kitchen",
+      "type": "AtLocation",
+      "weight": 0.7
+    },
+    {
+      "from": "artist",
+      "to": "park",
+      "type": "AtLocation",
+      "weight": 0.7
+    },
+    {
+      "from": "athlete",
+      "to": "school",
+      "type": "AtLocation",
+      "weight": 0.7
+    },
+    {
+      "from": "athlete",
+      "to": "kitchen",
+      "type": "AtLocation",
+      "weight": 0.7
+    },
+    {
+      "from": "teacher",
+      "to": "feed",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "farmer",
+      "to": "feed",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "teacher",
+      "to": "wash",
+      "type": "CapableOf",
+      "weight": 0.8
+    },
+    {
+      "from": "student",
+      "to": "wash",
+      "type": "CapableOf",
+      "weight": 0.8
     }
   ],
   "templates": [

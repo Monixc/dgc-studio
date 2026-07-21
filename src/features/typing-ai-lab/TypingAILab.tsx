@@ -27,6 +27,7 @@ import {
   MIN_COMPETITION_WORDS,
   SESSION_MS,
   accuracyPct,
+  competitionOutcome,
   createGame,
   createRng,
   finishSession,
@@ -125,7 +126,6 @@ export default function TypingAILab({
   const [rankingLoading, setRankingLoading] = useState(false);
   const [mastery, setMastery] = useState<Record<string, number>>({});
   const [masteredIds, setMasteredIds] = useState<string[]>([]);
-  const [newlyMastered, setNewlyMastered] = useState<string[]>([]);
   const [statsLoading, setStatsLoading] = useState(true);
   const [lexiconStatus, setLexiconStatus] = useState<"loading" | "ready" | "error">("loading");
   const [lexiconError, setLexiconError] = useState<string | null>(null);
@@ -134,7 +134,7 @@ export default function TypingAILab({
   const inputRef = useRef<HTMLInputElement>(null);
   const rngRef = useRef<() => number>(() => Math.random());
   const finishedRef = useRef(false);
-  const savedRef = useRef(false);
+  const savedSessionsRef = useRef(new Set<string>());
   const progressTick = useRef(0);
   const masteryRef = useRef(mastery);
   masteryRef.current = mastery;
@@ -216,13 +216,11 @@ export default function TypingAILab({
 
   const resetRun = useCallback(() => {
     finishedRef.current = false;
-    savedRef.current = false;
     setSeed((Date.now() ^ (Math.random() * 0xffffffff)) >>> 0);
     setGame(null);
     setInput("");
     setResult(null);
     setSaveError(null);
-    setNewlyMastered([]);
     setTrainingStep(0);
     setCountdown(3);
     setExitConfirm(false);
@@ -252,7 +250,6 @@ export default function TypingAILab({
     if (lexiconStatus !== "ready") return;
     setPlayMode("learning");
     finishedRef.current = false;
-    savedRef.current = false;
     const band = unlockedBand(mastery);
     try {
       await ensureLexicon(band);
@@ -274,7 +271,6 @@ export default function TypingAILab({
     setGame(g);
     setInput("");
     setResult(null);
-    setNewlyMastered([]);
     setCountdown(3);
     setPhase("countdown");
   };
@@ -282,7 +278,6 @@ export default function TypingAILab({
   const startCompetitionPlay = useCallback(
     async (matchSeed: number, poolIds: string[]) => {
       finishedRef.current = false;
-      savedRef.current = false;
       setPlayMode("competition");
       setSeed(matchSeed >>> 0);
       const needBand = requiredBandForIds(poolIds);
@@ -390,8 +385,12 @@ export default function TypingAILab({
   }, [phase, trainingStep]);
 
   useEffect(() => {
-    if (phase !== "result" || !result || savedRef.current) return;
-    let cancelled = false;
+    if (
+      phase !== "result" ||
+      !result ||
+      savedSessionsRef.current.has(result.sessionId)
+    ) return;
+    savedSessionsRef.current.add(result.sessionId);
     setSaving(true);
     void (async () => {
       try {
@@ -407,28 +406,17 @@ export default function TypingAILab({
             grade: result.score.grade,
             datasetSize: result.dataset.length,
           });
-          if (!cancelled) {
-            savedRef.current = true;
-            setSaveError("saved");
-          }
+          setSaveError("saved");
           return;
         }
         if (result.mode === "learning") {
           const localApplied = applyHitsLocally(masteryRef.current, result.sessionHits);
           saveLocalMastery(userId, localApplied.next);
-          if (!cancelled) {
-            setMastery(localApplied.next);
-            setMasteredIds((prev) => [...new Set([...prev, ...localApplied.newlyMastered])]);
-            setNewlyMastered(localApplied.newlyMastered);
-          }
+          setMastery(localApplied.next);
+          setMasteredIds((prev) => [...new Set([...prev, ...localApplied.newlyMastered])]);
           try {
-            const applied = await applySessionHits(result.sessionHits);
-            if (!cancelled) {
-              setNewlyMastered(
-                applied.filter((r) => r.newly_mastered).map((r) => r.word_id),
-              );
-              await refreshStats();
-            }
+            await applySessionHits(result.sessionHits, result.sessionId);
+            await refreshStats();
           } catch {
             // DB 실패해도 로컬 누적은 유지
           }
@@ -446,19 +434,13 @@ export default function TypingAILab({
         } catch {
           if (result.mode === "competition") throw new Error("경쟁 결과 저장 실패");
         }
-        if (!cancelled) {
-          savedRef.current = true;
-          setSaveError("saved");
-        }
+        setSaveError("saved");
       } catch (err) {
-        if (!cancelled) setSaveError(err instanceof Error ? err.message : "저장 실패");
+        setSaveError(err instanceof Error ? err.message : "저장 실패");
       } finally {
-        if (!cancelled) setSaving(false);
+        setSaving(false);
       }
     })();
-    return () => {
-      cancelled = true;
-    };
   }, [phase, result, userId, refreshStats, competition]);
 
   useEffect(() => {
@@ -473,6 +455,7 @@ export default function TypingAILab({
       coverage * 100 * 0.15;
     competition.broadcastProgress({
       datasetSize: game.dataset.length,
+      datasetIds: game.dataset,
       accuracy: accuracyPct(game),
       totalPreview: Math.round(preview * 10) / 10,
     });
@@ -481,7 +464,6 @@ export default function TypingAILab({
   const retryCompetition = useCallback(async () => {
     const wasTest = competition.isTestMatch;
     finishedRef.current = false;
-    savedRef.current = false;
     setResult(null);
     setSaveError(null);
     setTrainingStep(0);
@@ -496,20 +478,11 @@ export default function TypingAILab({
 
   const opponentSentences = useMemo(() => {
     if (!result || result.mode !== "competition" || !competition.opponent) return [];
-    const pool =
-      competition.myPool.length >= MIN_COMPETITION_WORDS
-        ? competition.myPool
-        : competitionPoolIds;
-    if (pool.length === 0) return [];
+    const ids = competition.opponent.datasetIds;
+    if (ids.length === 0) return [];
     const rng = createRng(((competition.match?.seed ?? seed) ^ 0x9e3779b9) >>> 0);
-    const n = Math.min(pool.length, Math.max(3, competition.opponent.datasetSize));
-    const ids = [...pool];
-    for (let i = ids.length - 1; i > 0; i -= 1) {
-      const j = Math.floor(rng() * (i + 1));
-      [ids[i], ids[j]] = [ids[j]!, ids[i]!];
-    }
-    return generateSentences(ids.slice(0, n), rng).sentences.slice(0, 5);
-  }, [result, competition.opponent, competition.myPool, competition.match?.seed, competitionPoolIds, seed]);
+    return generateSentences(ids, rng).sentences.slice(0, 5);
+  }, [result, competition.opponent, competition.match?.seed, seed]);
 
   const loadRanking = async () => {
     setRankingLoading(true);
@@ -1015,7 +988,9 @@ export default function TypingAILab({
   if (phase === "result" && result) {
     const s = result.score;
     const isLearning = result.mode === "learning";
-    const lootIds = newlyMastered.length > 0 ? newlyMastered : result.dataset;
+    const lootIds = result.dataset;
+    const opponentScore = competition.opponent?.finalScore ?? null;
+    const outcome = competitionOutcome(s.total, opponentScore);
 
     if (isLearning) {
       return (
@@ -1026,7 +1001,7 @@ export default function TypingAILab({
                 <p className="text-[10px] font-black tracking-[0.3em] text-emerald-300/70">SESSION COMPLETE</p>
                 <h2 className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-3xl font-black italic">
                   <span>
-                    학습완료 <span className="text-emerald-400">{lootIds.length}</span>
+                    새로 숙련 완료 <span className="text-emerald-400">{lootIds.length}</span>
                   </span>
                   <span className="font-mono text-sm font-normal not-italic text-slate-400">
                     ACC {result.accuracy}% · {displayName}
@@ -1049,7 +1024,7 @@ export default function TypingAILab({
 
             <LabPanel className="p-4">
               <h3 className="mb-2 flex items-center gap-2 font-semibold">
-                <Zap className="size-4 text-emerald-400" /> 이번 세션 획득 ({lootIds.length})
+                <Zap className="size-4 text-emerald-400" /> 이번 세션 새로 숙련 완료 ({lootIds.length})
               </h3>
               <p className="mb-3 text-xs text-slate-500">
                 정타는 게임마다 누적됩니다. 난이도별 3~7회에 도달하면 획득됩니다.
@@ -1100,7 +1075,30 @@ export default function TypingAILab({
           {competition.opponent && (
             <LabPanel className="px-4 py-3 text-sm">
               상대 <b className="text-cyan-200">{competition.opponent.name}</b>
-              <span className="text-slate-500"> · Dataset {competition.opponent.datasetSize} · 예상 {competition.opponent.totalPreview}</span>
+              <span className="text-slate-500">
+                {" "}· Dataset {competition.opponent.datasetSize} ·{" "}
+                {opponentScore == null
+                  ? `예상 ${competition.opponent.totalPreview}`
+                  : `최종 ${opponentScore}`}
+              </span>
+            </LabPanel>
+          )}
+
+          {competition.opponent && (
+            <LabPanel className="flex items-center gap-3 px-4 py-4">
+              <Trophy className="size-6 text-amber-300" />
+              {outcome ? (
+                <div>
+                  <p className="text-xl font-black">
+                    {outcome === "win" ? "승리" : outcome === "loss" ? "패배" : "무승부"}
+                  </p>
+                  <p className="font-mono text-xs text-slate-400">
+                    {displayName} {s.total} : {opponentScore} {competition.opponent.name}
+                  </p>
+                </div>
+              ) : (
+                <p className="text-sm text-slate-400">상대 최종 결과를 기다리는 중…</p>
+              )}
             </LabPanel>
           )}
 
@@ -1109,7 +1107,7 @@ export default function TypingAILab({
             <ScoreCard label="Dataset" value={s.dataset} weight="20%" />
             <ScoreCard label="Density" value={s.density} weight="25%" />
             <ScoreCard label="Coverage" value={s.coverage} weight="15%" />
-            <ScoreCard label="Inference" value={s.inference} weight="20%" />
+            <ScoreCard label="Inference Capacity" value={s.inference} weight="20%" />
           </div>
 
           <div className="grid gap-3 lg:grid-cols-2">
@@ -1139,7 +1137,7 @@ export default function TypingAILab({
                 </ul>
               )}
               <p className="mt-3 text-xs text-slate-500">
-                Inference Success {Math.round(result.inferenceSuccess * 100)}%
+                Inference Capacity {Math.round(result.inferenceSuccess * 100)}%
               </p>
             </LabPanel>
           </div>
