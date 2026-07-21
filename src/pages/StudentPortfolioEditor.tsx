@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { useConfirm } from "@/hooks/use-confirm";
 import { PortfolioEditor } from "@/features/portfolio/PortfolioEditor";
 import { PortfolioViewer } from "@/features/portfolio/PortfolioViewer";
 import {
@@ -56,6 +57,7 @@ export default function StudentPortfolioEditor() {
   const submissionCount = submissions.length;
   const nextVersion = submissionCount + 1;
   const [exitOpen, setExitOpen] = useState(false);
+  const { confirm, dialog: confirmDialog } = useConfirm();
   const [loadedId, setLoadedId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [revision, setRevision] = useState(0);
@@ -159,7 +161,11 @@ export default function StudentPortfolioEditor() {
   };
 
   const submit = async () => {
-    if (!window.confirm(`v${nextVersion}으로 제출하시겠습니까?`)) return;
+    if (!(await confirm({
+      title: "포트폴리오 제출",
+      description: `v${nextVersion}으로 제출하시겠습니까?`,
+      confirmText: "제출",
+    }))) return;
     let targetRevision = revision;
     if (dirty) {
       const saved = await persist();
@@ -334,6 +340,7 @@ export default function StudentPortfolioEditor() {
           </div>
         </DialogContent>
       </Dialog>
+      {confirmDialog}
 
     </div>
   );

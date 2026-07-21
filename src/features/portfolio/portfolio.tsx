@@ -121,7 +121,10 @@ function AssetImageView({ node }: NodeViewProps) {
         setSrc(safe);
         setFailed(!safe);
       })
-      .catch(() => active && setFailed(true));
+      .catch((error) => {
+        console.error("portfolio asset resolve failed", assetId, error);
+        if (active) setFailed(true);
+      });
     return () => {
       active = false;
     };
@@ -227,7 +230,10 @@ function AssetFileView({ node }: NodeViewProps) {
         setUrl(value);
         setFailed(!value);
       })
-      .catch(() => active && setFailed(true));
+      .catch((error) => {
+        console.error("portfolio asset resolve failed", assetId, error);
+        if (active) setFailed(true);
+      });
     return () => {
       active = false;
     };

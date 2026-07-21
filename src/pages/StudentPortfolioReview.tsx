@@ -17,6 +17,7 @@ import {
   usePortfolioSubmissions,
 } from "@/hooks/usePortfolio";
 import { useAuth } from "@/hooks/useAuth";
+import { useConfirm } from "@/hooks/use-confirm";
 import { usePortfolioRealtime } from "@/hooks/usePortfolioRealtime";
 import { getPortfolioAssetSignedUrl } from "@/lib/portfolio";
 import { notifyPush } from "@/lib/push";
@@ -42,6 +43,7 @@ export default function StudentPortfolioReview() {
   const { studentId, submissionId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { confirm, dialog: confirmDialog } = useConfirm();
   usePortfolioRealtime();
   const submissionsQuery = usePortfolioSubmissions({ studentId });
   const submission = submissionsQuery.data?.find((item) => item.id === submissionId) ?? null;
@@ -138,7 +140,8 @@ export default function StudentPortfolioReview() {
   };
 
   const removeComment = async (commentId: string) => {
-    if (!submission || !window.confirm("이 피드백을 삭제하시겠습니까?")) return;
+    if (!submission) return;
+    if (!(await confirm({ title: "피드백 삭제", description: "이 피드백을 삭제하시겠습니까?", confirmText: "삭제", destructive: true }))) return;
     try {
       await deleteComment.mutateAsync({ commentId, submissionId: submission.id });
       if (focusedCommentId === commentId) setFocusedCommentId(null);
@@ -432,6 +435,7 @@ export default function StudentPortfolioReview() {
         </ResizablePanel>
         </ResizablePanelGroup>
       </div>
+      {confirmDialog}
     </div>
   );
 }

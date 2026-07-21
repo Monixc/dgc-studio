@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import AppShell, { STUDENT_MENU } from "@/components/layout/AppShell";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useConfirm } from "@/hooks/use-confirm";
 import { Button } from "@/components/ui/button";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -81,6 +82,7 @@ function formatDate(value: string): string {
 export default function StudentPortfolio() {
   const { user } = useAuth();
   const isMobile = useIsMobile();
+  const { confirm, dialog: confirmDialog } = useConfirm();
   const documentsQuery = usePortfolioDocuments();
   const { data: submissions = [] } = usePortfolioSubmissions();
   const createDocument = useCreatePortfolioDocument();
@@ -183,7 +185,12 @@ export default function StudentPortfolio() {
 
   const removeDocument = async (document: StoredDocument) => {
     if (submissions.some((item) => item.document_id === document.id)) return;
-    if (!window.confirm(`"${document.title || "제목 없음"}" 포트폴리오를 삭제하시겠습니까?`)) return;
+    if (!(await confirm({
+      title: "포트폴리오 삭제",
+      description: `"${document.title || "제목 없음"}" 포트폴리오를 삭제하시겠습니까?`,
+      confirmText: "삭제",
+      destructive: true,
+    }))) return;
     try {
       await deleteDocument.mutateAsync(document.id);
       if (selectedDocumentId === document.id) {
@@ -200,7 +207,11 @@ export default function StudentPortfolio() {
   const submitDraft = async () => {
     if (!draft) return;
     const nextVersion = (submissionCountByDoc.get(draft.id) ?? 0) + 1;
-    if (!window.confirm(`현재 저장된 내용을 v${nextVersion}으로 제출하시겠습니까?`)) return;
+    if (!(await confirm({
+      title: "포트폴리오 제출",
+      description: `현재 저장된 내용을 v${nextVersion}으로 제출하시겠습니까?`,
+      confirmText: "제출",
+    }))) return;
     try {
       const submitted = await submitDocument.mutateAsync({
         documentId: draft.id,
@@ -509,6 +520,7 @@ export default function StudentPortfolio() {
           )}
         </TabsContent>
       </Tabs>
+      {confirmDialog}
     </AppShell>
   );
 }
