@@ -24,7 +24,7 @@ import {
 } from "@/lib/typing-logs";
 import type { TypingPracticeMode } from "@/integrations/supabase/types";
 import { cn } from "@/lib/utils";
-import { createContentProvider } from "@tajarace/content";
+import { createContentProvider, ENGLISH_TEXTS, type PracticeContent } from "@tajarace/content";
 import {
   DEFAULT_RACE_LAPS,
   RACE_DISTANCE_CHARS,
@@ -59,7 +59,27 @@ type RaceType = "live" | "ghost";
 type Category = PracticeCategory;
 
 const SESSION_MS = 5 * 60 * 1000;
-const raceContentProvider = createContentProvider();
+
+function toRaceContent(item: PracticeContentItem): PracticeContent {
+  const difficulty =
+    item.difficulty === "easy" || item.difficulty === "medium" || item.difficulty === "hard"
+      ? item.difficulty
+      : "medium";
+  return { id: item.id, category: "english", title: item.title, text: item.text, difficulty };
+}
+
+// 레이싱 문장 풀: 실제 영문 타자 데이터셋(문학 11,000여 문장)에서 로드, 로드 전엔 내장 샘플로 대기.
+const raceEnglishPool: PracticeContent[] = [...ENGLISH_TEXTS];
+const raceContentProvider = createContentProvider(raceEnglishPool);
+void loadCategoryItems("english")
+  .then((items) => filterByUnit(items, "sentence"))
+  .then((items) => {
+    if (!items.length) return;
+    raceEnglishPool.length = 0;
+    raceEnglishPool.push(...items.map(toRaceContent));
+  })
+  .catch(() => undefined);
+
 const raceStorage = createLocalStorageAdapter("flowpy:tajarace");
 
 function applyTabIndent(
@@ -840,7 +860,11 @@ function RaceRound({
     } else if (event.key.length === 1) {
       event.preventDefault();
       controller.handleInput(event.key);
+    } else {
+      return;
     }
+    // 타자 표시가 50ms 레이스 틱만 따라가면 입력이 끊겨 보임 → 키 입력마다 즉시 반영.
+    setState({ ...controller.getState() });
   };
 
   return (
@@ -1208,7 +1232,10 @@ function GhostRaceRound({
     } else if (event.key.length === 1) {
       event.preventDefault();
       controller.handleInput(event.key);
+    } else {
+      return;
     }
+    setState({ ...controller.getState() });
   };
 
   return (
