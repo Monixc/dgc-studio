@@ -85,27 +85,18 @@ const GHOSTS: GhostOption[] = [
   { id: "ghost-rookie", name: "KeyRacer", wpm: 58, accuracy: 92, contentIndex: 2 },
 ];
 
-const RACER_NAMES: Record<string, string> = {
-  "bot-1": "Bot_Alpha",
-  "bot-2": "Bot_Beta",
-  "bot-3": "Bot_Gamma",
-};
-
 function loadTypingRanking(myId: string, myName: string): TypingRankingEntry[] {
-  const entries: TypingRankingEntry[] = GHOSTS.map((ghost) => ({
-    id: ghost.id,
-    name: ghost.name,
-    taja: wpmToTaja(ghost.wpm),
-  }));
+  const entries: TypingRankingEntry[] = [];
 
   try {
     const data = JSON.parse(localStorage.getItem("flowpy:tajarace") ?? "{}") as {
       raceResults?: Array<{ userId: string; wpm: number }>;
     };
     for (const result of data.raceResults ?? []) {
+      if (result.userId !== myId && result.userId.startsWith("bot-")) continue;
       entries.push({
         id: result.userId,
-        name: result.userId === myId ? myName : RACER_NAMES[result.userId] ?? result.userId,
+        name: result.userId === myId ? myName : result.userId,
         taja: wpmToTaja(result.wpm),
         isMe: result.userId === myId,
       });

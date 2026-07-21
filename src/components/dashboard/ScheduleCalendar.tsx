@@ -212,7 +212,7 @@ function WeekView({ cursor, eventsOn, onAdd, onEdit }: ViewProps) {
   const start = startOfWeek(cursor);
   const days = Array.from({ length: 7 }, (_, i) => addDays(start, i));
   return (
-    <div className="grid grid-cols-[repeat(auto-fill,minmax(119px,1fr))] gap-2">
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(119px,1fr))] gap-2">
       {days.map((d) => {
         const ds = fmt(d);
         return (
