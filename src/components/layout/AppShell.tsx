@@ -22,6 +22,7 @@ const MENU: Item[] = [
   { label: "반 관리", icon: Users, to: "/classes" },
   { label: "학생 관리", icon: GraduationCap, to: "/students" },
   { label: "문제 관리", icon: FileText, to: "/problems" },
+  { label: "교안 관리", icon: NotebookPen, to: "/lessons" },
   { label: "타자 연습", icon: Keyboard, to: "/practice/typing" },
   { label: "포인트 상점", icon: ShoppingBag, to: "/shop" },
 ];

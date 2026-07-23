@@ -19,6 +19,8 @@ import Solve from "@/pages/Solve";
 import TeacherShop from "@/pages/TeacherShop";
 import StudentShop from "@/pages/StudentShop";
 import Students from "@/pages/Students";
+import Lessons from "@/pages/Lessons";
+import LessonView from "@/pages/LessonView";
 import StudentSubmissionReview from "@/pages/StudentSubmissionReview";
 import NotFound from "@/pages/NotFound";
 
@@ -108,6 +110,14 @@ export default function App() {
               }
             />
             <Route
+              path="/lessons"
+              element={
+                <RequireRole role="teacher">
+                  <Lessons />
+                </RequireRole>
+              }
+            />
+            <Route
               path="/student"
               element={
                 <RequireRole role="student">
@@ -120,6 +130,14 @@ export default function App() {
               element={
                 <RequireRole role="student">
                   <MyClass />
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/student/lessons/:lessonId"
+              element={
+                <RequireRole role="student">
+                  <LessonView />
                 </RequireRole>
               }
             />

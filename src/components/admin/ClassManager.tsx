@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Plus, Trash2, Pencil, Check, Users, UserPlus, X, Coins, MonitorPlay, Bell, Circle, ChevronDown } from "lucide-react";
+import { Plus, Trash2, Pencil, Check, Users, UserPlus, X, Coins, MonitorPlay, Bell, Circle, ChevronDown, NotebookPen, Code2 } from "lucide-react";
 import type { ImperativePanelHandle } from "react-resizable-panels";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -11,6 +11,7 @@ import {
 } from "@/hooks/useClasses";
 import { useAllStudents, useClassStudentIds, useSetClassStudents } from "@/hooks/useClassStudents";
 import { useMyProblems } from "@/hooks/useProblems";
+import { useLessons, useClassLessonIds, useSetClassLessons } from "@/hooks/useLessons";
 import { useAwardPoints } from "@/hooks/usePoints";
 import { currentWeekSchedule } from "@/components/dashboard/ScheduleCalendar";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { cn } from "@/lib/utils";
 import AssignProblemsDialog from "@/components/admin/AssignProblemsDialog";
+import AssignLessonsDialog from "@/components/admin/AssignLessonsDialog";
 import EnrollStudentsDialog from "@/components/admin/EnrollStudentsDialog";
 import AwardPointsDialog from "@/components/admin/AwardPointsDialog";
 import { useOnlineUsers } from "@/hooks/usePresence";
@@ -53,6 +55,11 @@ export default function ClassManager() {
   const selected = classes.find((c) => c.id === selectedId) ?? null;
   const { data: assignedIds = [] } = useClassProblemIds(selected?.id);
   const setProblemsMut = useSetClassProblems();
+
+  const { data: lessons = [] } = useLessons(userId);
+  const { data: assignedLessonIds = [] } = useClassLessonIds(selected?.id);
+  const setLessonsMut = useSetClassLessons();
+  const [assignLessonsOpen, setAssignLessonsOpen] = useState(false);
 
   const { data: students = [] } = useAllStudents();
   const { data: enrolledIds = [] } = useClassStudentIds(selected?.id);
@@ -100,6 +107,7 @@ export default function ClassManager() {
   }
 
   const assignedProblems = problems.filter((p) => assignedIds.includes(p.id));
+  const assignedLessons = lessons.filter((l) => assignedLessonIds.includes(l.id));
   const enrolledStudents = students.filter((s) => enrolledIds.includes(s.id));
 
   async function setSchedule(dayOfWeek: number | null, time: string | null) {
@@ -118,6 +126,19 @@ export default function ClassManager() {
       await setProblemsMut.mutateAsync({
         classId: selected.id,
         problemIds: assignedIds.filter((id) => id !== problemId),
+      });
+    } catch (e: any) {
+      toast.error(e?.message ?? "실패");
+    }
+  }
+
+  async function removeLesson(lessonId: string) {
+    if (!selected) return;
+    if (!confirm("이 교안의 할당을 해제하시겠습니까?")) return;
+    try {
+      await setLessonsMut.mutateAsync({
+        classId: selected.id,
+        lessonIds: assignedLessonIds.filter((id) => id !== lessonId),
       });
     } catch (e: any) {
       toast.error(e?.message ?? "실패");
@@ -316,6 +337,60 @@ export default function ClassManager() {
                 ))}
               </div>
             )}
+
+            <div className="mb-2 mt-6 flex items-center justify-between">
+              <h3 className="text-sm font-semibold">할당된 교안 ({assignedLessons.length})</h3>
+              <Button size="sm" onClick={() => setAssignLessonsOpen(true)}>
+                <NotebookPen /> 교안 할당
+              </Button>
+            </div>
+            {assignedLessons.length === 0 ? (
+              <div className="flex h-16 items-center justify-center rounded-lg bg-muted/40 text-sm text-muted-foreground">
+                아직 할당된 교안이 없습니다.
+              </div>
+            ) : (
+              <div className="space-y-2 rounded-lg border p-3">
+                {assignedLessons.map((l) => (
+                  <div
+                    key={l.id}
+                    onClick={() => navigate("/lessons")}
+                    className="flex cursor-pointer items-center justify-between rounded-lg border p-3 text-sm hover:bg-accent"
+                  >
+                    <span className="flex min-w-0 items-center gap-2">
+                      <span className="truncate">{l.title || "(제목 없음)"}</span>
+                      <span className="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                        {l.content_type === "html" ? "HTML" : "MD"}
+                      </span>
+                      {l.code_practice && <Code2 className="size-3.5 shrink-0 text-primary" />}
+                    </span>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); removeLesson(l.id); }}
+                      title="할당 해제"
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="size-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <AssignLessonsDialog
+              open={assignLessonsOpen}
+              onOpenChange={setAssignLessonsOpen}
+              lessons={lessons}
+              assignedIds={assignedLessonIds}
+              onSave={async (ids) => {
+                if (!selected) return;
+                try {
+                  await setLessonsMut.mutateAsync({ classId: selected.id, lessonIds: ids });
+                  toast.success("배정 저장됨");
+                  setAssignLessonsOpen(false);
+                } catch (e: any) {
+                  toast.error(e?.message ?? "저장 실패");
+                }
+              }}
+            />
 
             <AssignProblemsDialog
               open={assignOpen}

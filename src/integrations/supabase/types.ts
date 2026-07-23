@@ -88,6 +88,33 @@ export interface ClassProblem {
   created_at: string;
 }
 
+export interface Lesson {
+  id: string;
+  title: string;
+  content_type: "md" | "html";
+  content: string;
+  /** 체크 시 학생 화면에 코드 IDE 병행 표시 */
+  code_practice: boolean;
+  starter_code: string;
+  folder_id: string | null;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface LessonFolder {
+  id: string;
+  name: string;
+  created_by: string;
+  created_at: string;
+}
+
+export interface ClassLesson {
+  class_id: string;
+  lesson_id: string;
+  created_at: string;
+}
+
 export interface ClassStudent {
   class_id: string;
   student_id: string;

@@ -9,15 +9,18 @@ import { listMySubmissions } from "@/lib/submissions";
 import type { ProblemCategory, Problem } from "@/integrations/supabase/types";
 
 interface Props {
-  title: string;
+  /** 비우면 제목 h1 미표시 (탭 등에서 제목을 대신 표시할 때) */
+  title?: string;
   category?: ProblemCategory;
   problems?: Problem[];
   /** solve 진입 시 사이드바/뒤로가기 범위 (예: "myclass"면 내 수업 할당 문제만). */
   solveScope?: string;
+  /** 제목 크기 등 커스텀 (기본 text-2xl) */
+  headingClassName?: string;
 }
 
 /** category 지정 시 발행된 문제 중 해당 카테고리만, problems 직접 지정 시 그 목록 그대로. */
-export default function PracticeList({ title, category, problems: fixedProblems, solveScope }: Props) {
+export default function PracticeList({ title, category, problems: fixedProblems, solveScope, headingClassName = "text-2xl" }: Props) {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { data: published = [], isLoading } = usePublishedProblems(!fixedProblems);
@@ -49,7 +52,7 @@ export default function PracticeList({ title, category, problems: fixedProblems,
 
   return (
     <div className="p-6">
-      <h1 className="mb-6 text-2xl font-bold">{title}</h1>
+      {title && <h1 className={`mb-6 font-bold ${headingClassName}`}>{title}</h1>}
       {isLoading && !fixedProblems ? (
         <p className="text-muted-foreground">불러오는 중…</p>
       ) : problems.length === 0 ? (
