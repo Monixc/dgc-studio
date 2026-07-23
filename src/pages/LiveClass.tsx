@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, PanelBottomOpen, PanelBottomClose, Circle } from "lucide-react";
+import { ArrowLeft, PanelLeftOpen, PanelLeftClose, Circle, Pencil } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useClasses } from "@/hooks/useClasses";
 import { useAllStudents, useClassStudentIds } from "@/hooks/useClassStudents";
@@ -13,6 +13,7 @@ import { listMySubmissions } from "@/lib/submissions";
 import FlowchartCanvas from "@/components/flow/FlowchartCanvas";
 import { normalizeStored } from "@/lib/flow-graph";
 import EditorPanel from "@/components/editor/EditorPanel";
+import { Markdown } from "@/components/Markdown";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -93,6 +94,7 @@ export default function LiveClass() {
                   studentId={id}
                   name={enrolled.find((s) => s.id === id)?.display_name ?? ""}
                   compact={watching.length > 2}
+                  single={watching.length === 1}
                   onClose={() => toggleWatch(id)}
                 />
               ))}
@@ -108,15 +110,19 @@ function StudentTile({
   studentId,
   name,
   compact,
+  single,
   onClose,
 }: {
   studentId: string;
   name: string;
   compact: boolean;
+  single: boolean;
   onClose: () => void;
 }) {
-  const feed = useLiveCodeFeed(studentId);
+  const { feed, submit, annotate } = useLiveCodeFeed(studentId);
   const [showProblem, setShowProblem] = useState(!compact);
+  const [annotating, setAnnotating] = useState(false);
+  const [annotateCode, setAnnotateCode] = useState<string | null>(null);
   const { run, running, stop } = usePyodide();
 
   // 학생이 아직 이번 세션에 브로드캐스트하지 않았으면 마지막 제출 코드를 기본값으로 보여준다.
@@ -143,6 +149,66 @@ function StudentTile({
 
   const display = feed ? { ...feed, isLive: true as const } : fallback;
   const isFlowchart = display?.category === "flowchart";
+  const canAnnotate = !!display?.isLive;
+
+  function toggleAnnotate() {
+    if (annotating) {
+      setAnnotating(false);
+      setAnnotateCode(null);
+    } else {
+      setAnnotateCode(display?.code ?? "");
+      setAnnotating(true);
+    }
+  }
+
+  const problemPane = display && (
+    <div
+      className={cn(
+        "flex min-h-0 flex-col overflow-auto",
+        single ? "w-2/5 shrink-0 border-r" : "max-h-56 border-b",
+      )}
+    >
+      {display.problemDescription ? (
+        <div className="p-2 text-xs">
+          <Markdown>{display.problemDescription}</Markdown>
+        </div>
+      ) : (
+        !isFlowchart && <div className="p-2 text-xs text-muted-foreground">설명 없음</div>
+      )}
+      {isFlowchart && (
+        <div className={cn("border-t", single ? "min-h-64 flex-1" : "h-48")}>
+          <FlowchartCanvas graph={normalizeStored(display.flowchart)} resetKey={display.problemId} />
+        </div>
+      )}
+    </div>
+  );
+
+  const editorArea = display && (
+    <div className="flex min-h-0 flex-1 flex-col">
+      {display.executionResult && display.executionResult.length > 0 && (
+        <div className="max-h-20 overflow-auto border-b bg-muted/20 p-2 font-mono text-[11px]">
+          <div className="mb-1 font-sans font-semibold text-muted-foreground">학생 실행 결과</div>
+          {display.executionResult.map((l, i) => (
+            <div key={i} className={cn(l.kind === "err" && "text-destructive")}>{l.text}</div>
+          ))}
+        </div>
+      )}
+      <div className="min-h-0 flex-1">
+        <EditorPanel
+          code={annotating ? annotateCode ?? "" : display.code}
+          readOnly={!annotating}
+          onCodeChange={(v) => {
+            if (!annotating) return;
+            setAnnotateCode(v);
+            annotate(v);
+          }}
+          running={running}
+          run={run}
+          stop={stop}
+        />
+      </div>
+    </div>
+  );
 
   return (
     <div className="flex min-h-0 flex-col overflow-hidden rounded-md border">
@@ -152,10 +218,35 @@ function StudentTile({
         {display && !display.isLive && (
           <span className="shrink-0 rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">최근 제출(실시간 아님)</span>
         )}
+        {submit && (
+          <span
+            className={cn(
+              "shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium",
+              submit.maxScore > 0 && submit.score >= submit.maxScore
+                ? "bg-emerald-100 text-emerald-700"
+                : "bg-amber-100 text-amber-700",
+            )}
+            title={`제출: ${submit.problemTitle}`}
+          >
+            제출 {submit.passed}/{submit.total} · {submit.score}/{submit.maxScore}점
+          </span>
+        )}
         <div className="ml-auto flex items-center gap-1">
+          {canAnnotate && (
+            <button
+              onClick={toggleAnnotate}
+              title={annotating ? "첨삭 종료" : "첨삭 (학생 코드에 직접 입력)"}
+              className={cn(
+                "rounded px-1 text-xs",
+                annotating ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <Pencil className="size-3.5" />
+            </button>
+          )}
           {display && (
             <button onClick={() => setShowProblem((v) => !v)} title="문제 펼치기/접기" className="text-muted-foreground hover:text-foreground">
-              {showProblem ? <PanelBottomClose className="size-3.5" /> : <PanelBottomOpen className="size-3.5" />}
+              {showProblem ? <PanelLeftClose className="size-3.5" /> : <PanelLeftOpen className="size-3.5" />}
             </button>
           )}
           <button onClick={onClose} title="그만 보기" className="text-xs text-muted-foreground hover:text-foreground">
@@ -169,28 +260,10 @@ function StudentTile({
           아직 문제를 풀고 있지 않습니다.
         </div>
       ) : (
-        <>
-          {showProblem && (
-            <div className={cn("overflow-auto border-b", isFlowchart ? "h-48" : "max-h-24 p-2 text-xs text-muted-foreground")}>
-              {isFlowchart ? (
-                <FlowchartCanvas graph={normalizeStored(display.flowchart)} resetKey={display.problemId} />
-              ) : (
-                display.problemDescription || "설명 없음"
-              )}
-            </div>
-          )}
-          {display.executionResult && display.executionResult.length > 0 && (
-            <div className="max-h-20 overflow-auto border-b bg-muted/20 p-2 font-mono text-[11px]">
-              <div className="mb-1 font-sans font-semibold text-muted-foreground">학생 실행 결과</div>
-              {display.executionResult.map((l, i) => (
-                <div key={i} className={cn(l.kind === "err" && "text-destructive")}>{l.text}</div>
-              ))}
-            </div>
-          )}
-          <div className="min-h-0 flex-1">
-            <EditorPanel code={display.code} onCodeChange={() => {}} readOnly running={running} run={run} stop={stop} />
-          </div>
-        </>
+        <div className={cn("flex min-h-0 flex-1", single ? "flex-row" : "flex-col")}>
+          {showProblem && problemPane}
+          {editorArea}
+        </div>
       )}
     </div>
   );

@@ -118,7 +118,8 @@ export default function Solve() {
   }, [feedbackOpen]);
 
   // 선생님 "수업하기" 라이브 뷰용 실시간 브로드캐스트 (교사가 볼 때만 의미 있음, 저장 없음)
-  useBroadcastLiveCode(
+  // 교사 첨삭 수신 시 학생 에디터에 바로 반영.
+  const { sendSubmit } = useBroadcastLiveCode(
     user?.id,
     problem
       ? {
@@ -130,7 +131,8 @@ export default function Solve() {
           flowchart: problem.flowchart,
           executionResult: runResult,
         }
-      : null
+      : null,
+    { onAnnotate: (v) => { setCode(v); setRunResult(undefined); } },
   );
 
   async function handleSubmit() {
@@ -151,6 +153,15 @@ export default function Solve() {
       await submitSolution({ problemId: problem.id, userId: user.id, code, blockImage, summary });
       await refetchSubmissions();
       setResult(summary);
+      sendSubmit({
+        problemId: problem.id,
+        problemTitle: problem.title,
+        passed: summary.passed,
+        total: summary.total,
+        score: summary.score,
+        maxScore: summary.maxScore,
+        at: Date.now(),
+      });
       toast.success(`${summary.passed}/${summary.total} 통과 · ${summary.score}/${summary.maxScore}점`);
     } catch (e: any) {
       toast.error(e?.message ?? "제출 실패");
