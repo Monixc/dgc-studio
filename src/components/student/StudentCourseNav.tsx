@@ -1,10 +1,9 @@
 import { useState, type ReactNode } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { BookOpen, FileCode, FileText, ChevronRight, ChevronDown, ClipboardList, Circle } from "lucide-react";
+import { BookOpen, FileCode, FileText, ChevronRight, ChevronDown, ClipboardList, Circle, Home } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useAssignedLessons, useLessonProblems } from "@/hooks/useLessons";
 import { useAssignedProblems } from "@/hooks/useClasses";
-import AppShell, { STUDENT_MENU } from "@/components/layout/AppShell";
 import { cn } from "@/lib/utils";
 import type { Lesson } from "@/integrations/supabase/types";
 
@@ -129,14 +128,26 @@ export function StudentCourseNav() {
   );
 }
 
-/** 학생 수업 셸: 앱 사이드바 + 좌측 코스 네비 + 본문. */
+/** 학생 수업 셸: 풀스크린(메인 사이드메뉴 없음) — 좌측 코스 네비 + 본문. Solve 화면과 동일 성격. */
 export function CourseShell({ children }: { children: ReactNode }) {
+  const navigate = useNavigate();
   return (
-    <AppShell menu={STUDENT_MENU} homePath="/student">
-      <div className="flex h-full min-h-0 flex-col md:flex-row">
+    <div className="flex h-dvh flex-col">
+      <header className="flex items-center gap-2 border-b bg-background px-3 py-2">
+        <button
+          type="button"
+          onClick={() => navigate("/student")}
+          title="홈으로"
+          className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm hover:bg-accent"
+        >
+          <Home className="size-4" /> 홈
+        </button>
+        <span className="font-semibold">내 수업</span>
+      </header>
+      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
         <StudentCourseNav />
         <main className="min-h-0 flex-1 overflow-auto">{children}</main>
       </div>
-    </AppShell>
+    </div>
   );
 }
