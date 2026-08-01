@@ -775,7 +775,7 @@ export default function TypingAILab({
               {playMode === "competition" ? (
                 <ScatteredWordBoard slots={game.slots} seed={seed} />
               ) : (
-                <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                <div className="grid h-72 grid-cols-3 gap-2 sm:h-80 sm:gap-3">
                   {game.slots.map((slot) => {
                     const def = slot.wordId ? WORD_BY_ID[slot.wordId] : null;
                     const empty = Boolean(slot.refillAt);
@@ -783,7 +783,7 @@ export default function TypingAILab({
                       <div
                         key={slot.id}
                         className={cn(
-                          "relative flex min-h-28 flex-col items-center justify-center overflow-hidden border px-2 py-4 text-center transition sm:min-h-36",
+                          "relative flex h-full flex-col items-center justify-center overflow-hidden border px-2 py-4 text-center transition",
                           empty
                             ? "border-transparent bg-slate-950/35 text-transparent"
                             : "border-cyan-300/20 bg-[#03111d]/90 text-zinc-100 shadow-[inset_0_1px_rgba(255,255,255,.04)]",
