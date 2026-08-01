@@ -176,6 +176,7 @@ export default function KnowledgeGraph({
           {nodes.map((node) => {
             const word = WORD_BY_ID[node.id]!;
             const selected = active === node.id;
+            const isNeighbor = !!neighborIds && neighborIds.has(node.id) && !selected;
             const dimmed = neighborIds && !neighborIds.has(node.id);
             const radius = Math.min(8, 3.2 + Math.sqrt(node.degree) * 0.9);
             return (
@@ -223,6 +224,23 @@ export default function KnowledgeGraph({
                     </text>
                     <text x={18} y={11} fill="#94a3b8" fontSize={9}>
                       {word.meaningKo}
+                    </text>
+                  </>
+                )}
+                {isNeighbor && (
+                  <>
+                    <rect
+                      x={8}
+                      y={-9}
+                      width={Math.max(40, word.word.length * 7 + 12)}
+                      height={17}
+                      fill="#03111d"
+                      fillOpacity={0.85}
+                      stroke="#164e63"
+                      strokeOpacity={0.6}
+                    />
+                    <text x={14} y={3} fill="#a5f3fc" fontSize={10} fontWeight={500}>
+                      {word.word}
                     </text>
                   </>
                 )}
