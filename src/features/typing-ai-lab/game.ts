@@ -645,12 +645,13 @@ export function computeScore(args: {
   const inferenceScore = Math.min(100, args.inference * 100);
   const accuracyScore = Math.min(100, args.accuracy);
 
+  // 문장(추론) 비중 상향: 문장을 많이 만들수록 유리
   const total =
-    accuracyScore * 0.2 +
-    datasetScore * 0.2 +
-    densityScore * 0.25 +
+    accuracyScore * 0.15 +
+    datasetScore * 0.15 +
+    densityScore * 0.2 +
     coverageScore * 0.15 +
-    inferenceScore * 0.2;
+    inferenceScore * 0.35;
 
   const rounded = Math.round(total * 10) / 10;
   return {

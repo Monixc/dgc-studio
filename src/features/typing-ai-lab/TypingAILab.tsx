@@ -138,10 +138,8 @@ export default function TypingAILab({
   const progressTick = useRef(0);
   const masteryRef = useRef(mastery);
   masteryRef.current = mastery;
-  const competitionPoolIds = useMemo(() => {
-    if (masteredIds.length >= MIN_COMPETITION_WORDS) return masteredIds;
-    return learningPoolIds(mastery);
-  }, [masteredIds, mastery]);
+  // 경쟁은 학습완료(숙련) 단어만 사용 — dataset이 학습완료 단어를 넘지 않도록
+  const competitionPoolIds = useMemo(() => masteredIds, [masteredIds]);
 
   const competition = useTypingAiCompetition({
     userId,
@@ -555,7 +553,7 @@ export default function TypingAILab({
   /* ── Menu ── */
   if (phase === "menu") {
     const lexiconBusy = lexiconStatus !== "ready" || statsLoading;
-    const canCompete = !lexiconBusy;
+    const canCompete = !lexiconBusy && masteredIds.length >= MIN_COMPETITION_WORDS;
     return (
       <Shell onExit={onExit} status={statusLabel} title="AI TYPING LAB">
         <div className="mx-auto flex min-h-[calc(100vh-72px)] max-w-5xl flex-col justify-center gap-5 px-4 py-8">
@@ -608,7 +606,11 @@ export default function TypingAILab({
               icon={Swords}
               badge="PVP"
               title="실시간 경쟁"
-              description={`빠른 매칭 2인전 · 사용 가능 단어 ${competitionPoolIds.length}개`}
+              description={
+                masteredIds.length >= MIN_COMPETITION_WORDS
+                  ? `빠른 매칭 2인전 · 학습완료 ${masteredIds.length}단어`
+                  : `학습완료 ${masteredIds.length}/${MIN_COMPETITION_WORDS}개부터 참가 가능`
+              }
               accent="blue"
               disabled={!canCompete}
               onClick={() => {
@@ -1103,11 +1105,11 @@ export default function TypingAILab({
           )}
 
           <div className="grid gap-2 sm:grid-cols-5">
-            <ScoreCard label="Accuracy" value={s.accuracy} weight="20%" />
-            <ScoreCard label="Dataset" value={s.dataset} weight="20%" />
-            <ScoreCard label="Density" value={s.density} weight="25%" />
+            <ScoreCard label="Accuracy" value={s.accuracy} weight="15%" />
+            <ScoreCard label="Dataset" value={s.dataset} weight="15%" />
+            <ScoreCard label="Density" value={s.density} weight="20%" />
             <ScoreCard label="Coverage" value={s.coverage} weight="15%" />
-            <ScoreCard label="Inference Capacity" value={s.inference} weight="20%" />
+            <ScoreCard label="Inference Capacity" value={s.inference} weight="35%" />
           </div>
 
           <div className="grid gap-3 lg:grid-cols-2">
