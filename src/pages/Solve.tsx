@@ -25,8 +25,9 @@ import { cn } from "@/lib/utils";
 import { Markdown } from "@/components/Markdown";
 import { RotateCcw } from "lucide-react";
 
-export default function Solve() {
-  const { problemId } = useParams();
+export default function Solve({ embedded = false, problemId: problemIdProp }: { embedded?: boolean; problemId?: string } = {}) {
+  const params = useParams();
+  const problemId = problemIdProp ?? params.problemId;
   const navigate = useNavigate();
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
@@ -176,11 +177,13 @@ export default function Solve() {
   if (!problem) return <div className="flex min-h-screen items-center justify-center text-muted-foreground">문제를 찾을 수 없습니다.</div>;
 
   return (
-    <div className="flex h-screen flex-col">
+    <div className={cn("flex flex-col", embedded ? "h-full" : "h-screen")}>
       <header className="flex items-center gap-2 border-b p-3">
-        <Button size="icon" variant="ghost" onClick={() => navigate(lessonScopeId ? `/student/lessons/${lessonScopeId}` : isMyClass ? "/myclass" : `/practice/${problem.category}`)} title="목록으로">
-          <ArrowLeft />
-        </Button>
+        {!embedded && (
+          <Button size="icon" variant="ghost" onClick={() => navigate(lessonScopeId ? `/student/lessons/${lessonScopeId}` : isMyClass ? "/myclass" : `/practice/${problem.category}`)} title="목록으로">
+            <ArrowLeft />
+          </Button>
+        )}
         <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold uppercase text-primary-foreground">
           {isMyClass && classNames.length > 0 ? classNames.join(", ") : problem.category}
         </span>
@@ -203,7 +206,8 @@ export default function Solve() {
       </header>
 
       <div className="flex min-h-0 flex-1 overflow-hidden">
-        {/* 문제 목록 사이드 패널 */}
+        {/* 문제 목록 사이드 패널 (임베드 시엔 코스 네비가 대신) */}
+        {!embedded && (
         <aside className="w-56 shrink-0 overflow-auto border-r">
           {problemSections.map((section) => (
             <div key={section.folderId ?? "unfiled"}>
@@ -241,6 +245,7 @@ export default function Solve() {
             </div>
           ))}
         </aside>
+        )}
 
         <div
           className={cn(

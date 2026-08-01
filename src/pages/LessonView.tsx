@@ -5,6 +5,7 @@ import { usePyodide } from "@/hooks/usePyodide";
 import EditorPanel from "@/components/editor/EditorPanel";
 import { Markdown } from "@/components/Markdown";
 import { CourseShell } from "@/components/student/StudentCourseNav";
+import Solve from "@/pages/Solve";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import type { Lesson } from "@/integrations/supabase/types";
 
@@ -27,10 +28,19 @@ function LessonContent({ lesson }: { lesson: Lesson }) {
 }
 
 export default function LessonView() {
-  const { lessonId } = useParams();
+  const { lessonId, problemId } = useParams();
   const { data: lesson, isLoading, isError } = useLesson(lessonId);
   const { run, running, stop } = usePyodide();
   const [code, setCode] = useState<string | null>(null);
+
+  // 하위 문제 선택 시: 같은 페이지 본문에서 문제 풀이 임베드 렌더
+  if (problemId) {
+    return (
+      <CourseShell>
+        <Solve embedded problemId={problemId} />
+      </CourseShell>
+    );
+  }
 
   let inner: React.ReactNode;
   if (isLoading) {

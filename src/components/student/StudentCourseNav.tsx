@@ -22,7 +22,7 @@ function LessonSubProblems({ lessonId, activeProblemId }: { lessonId: string; ac
         <li key={p.id}>
           <button
             type="button"
-            onClick={() => navigate(`/solve/${p.id}?scope=lesson:${lessonId}`)}
+            onClick={() => navigate(`/student/lessons/${lessonId}/problems/${p.id}`)}
             className={cn(
               "flex w-full items-center gap-2 rounded-md py-1.5 pl-9 pr-2 text-left text-sm hover:bg-accent",
               activeProblemId === p.id && "bg-accent font-medium",
@@ -37,7 +37,15 @@ function LessonSubProblems({ lessonId, activeProblemId }: { lessonId: string; ac
   );
 }
 
-function LessonNavItem({ lesson, activeLessonId }: { lesson: Lesson; activeLessonId?: string }) {
+function LessonNavItem({
+  lesson,
+  activeLessonId,
+  activeProblemId,
+}: {
+  lesson: Lesson;
+  activeLessonId?: string;
+  activeProblemId?: string;
+}) {
   const navigate = useNavigate();
   const active = lesson.id === activeLessonId;
   const { data: problemIds = [] } = useLessonProblemIds(lesson.id);
@@ -57,12 +65,12 @@ function LessonNavItem({ lesson, activeLessonId }: { lesson: Lesson; activeLesso
             type="button"
             onClick={() => setOpen((o) => !o)}
             title="하위 문제 펼치기/접기"
-            className="shrink-0 rounded p-1 text-muted-foreground hover:text-foreground"
+            className="flex size-6 shrink-0 items-center justify-center rounded text-muted-foreground hover:text-foreground"
           >
             {open ? <ChevronDown className="size-3.5" /> : <ChevronRight className="size-3.5" />}
           </button>
         ) : (
-          <span className="size-[26px] shrink-0" aria-hidden />
+          <span className="size-6 shrink-0" aria-hidden />
         )}
         <button
           type="button"
@@ -79,7 +87,7 @@ function LessonNavItem({ lesson, activeLessonId }: { lesson: Lesson; activeLesso
           </span>
         </button>
       </div>
-      {open && hasProblems && <LessonSubProblems lessonId={lesson.id} />}
+      {open && hasProblems && <LessonSubProblems lessonId={lesson.id} activeProblemId={activeProblemId} />}
     </li>
   );
 }
@@ -102,7 +110,7 @@ export function StudentCourseNav() {
       ) : (
         <ul className="mb-2">
           {lessons.map((l) => (
-            <LessonNavItem key={l.id} lesson={l} activeLessonId={lessonId} />
+            <LessonNavItem key={l.id} lesson={l} activeLessonId={lessonId} activeProblemId={problemId} />
           ))}
         </ul>
       )}

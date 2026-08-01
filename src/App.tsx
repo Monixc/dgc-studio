@@ -142,6 +142,14 @@ export default function App() {
               }
             />
             <Route
+              path="/student/lessons/:lessonId/problems/:problemId"
+              element={
+                <RequireRole role="student">
+                  <LessonView />
+                </RequireRole>
+              }
+            />
+            <Route
               path="/practice/flowchart"
               element={
                 <RequireRole role="student">
