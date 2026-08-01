@@ -1,9 +1,10 @@
 import { useState, type ReactNode } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { BookOpen, FileCode, FileText, ChevronRight, ChevronDown, ClipboardList, Circle, Home } from "lucide-react";
+import { BookOpen, FileCode, FileText, ChevronRight, ChevronDown, ClipboardList, Circle, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useAssignedLessons, useLessonProblems, useLessonProblemIds } from "@/hooks/useLessons";
 import { useAssignedProblems } from "@/hooks/useClasses";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { Lesson } from "@/integrations/supabase/types";
 
@@ -139,16 +140,11 @@ export function CourseShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   return (
     <div className="flex h-dvh flex-col">
-      <header className="flex items-center gap-2 border-b bg-background px-3 py-2">
-        <button
-          type="button"
-          onClick={() => navigate("/student")}
-          title="홈으로"
-          className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm hover:bg-accent"
-        >
-          <Home className="size-4" /> 홈
-        </button>
-        <span className="font-semibold">내 수업</span>
+      <header className="flex items-center gap-2 border-b bg-background p-3">
+        <Button size="icon" variant="ghost" onClick={() => navigate("/student")} title="홈으로">
+          <ArrowLeft />
+        </Button>
+        <h1 className="font-semibold">내 수업</h1>
       </header>
       <div className="flex min-h-0 flex-1 flex-col md:flex-row">
         <StudentCourseNav />
