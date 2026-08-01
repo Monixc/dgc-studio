@@ -60,6 +60,8 @@ export default function LessonManager() {
   const [editingFolderId, setEditingFolderId] = useState<string | null>(null);
   const [folderName, setFolderName] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
+  // true면 현재 교안의 파일 교체, false면 새 교안 생성
+  const replaceRef = useRef(false);
 
   const selected = lessons.find((l) => l.id === selectedId) ?? null;
 
@@ -97,10 +99,12 @@ export default function LessonManager() {
   async function onFilePicked(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     e.target.value = "";
+    const replace = replaceRef.current;
+    replaceRef.current = false;
     if (!file) return;
     const text = await file.text();
-    // 파일 교체: 이미 선택된 HTML 교안이 있으면 그 내용만 바꿈
-    if (selected?.content_type === "html" && draft) {
+    // "파일 교체"로 열었을 때만 현재 교안 내용 교체. 그 외엔 항상 새 교안 생성.
+    if (replace && selected?.content_type === "html" && draft) {
       setDraft({ ...draft, content: text });
       toast.message("파일 내용을 불러왔어요. ‘저장’을 눌러 반영하세요.");
       return;
@@ -233,7 +237,7 @@ export default function LessonManager() {
           <Button size="sm" variant="outline" onClick={createMd} disabled={createMut.isPending}>
             <Plus className="size-4" /> MD
           </Button>
-          <Button size="sm" variant="outline" onClick={() => fileRef.current?.click()} disabled={createMut.isPending}>
+          <Button size="sm" variant="outline" onClick={() => { replaceRef.current = false; fileRef.current?.click(); }} disabled={createMut.isPending}>
             <Upload className="size-4" /> HTML
           </Button>
           <input ref={fileRef} type="file" accept=".html,.htm,text/html" className="hidden" onChange={onFilePicked} />
@@ -321,7 +325,7 @@ export default function LessonManager() {
                 {preview ? <><Pencil className="size-4" /> 편집</> : <><Eye className="size-4" /> 미리보기</>}
               </Button>
               {selected.content_type === "html" && (
-                <Button size="sm" variant="outline" onClick={() => fileRef.current?.click()}>
+                <Button size="sm" variant="outline" onClick={() => { replaceRef.current = true; fileRef.current?.click(); }}>
                   <Upload className="size-4" /> 파일 교체
                 </Button>
               )}
