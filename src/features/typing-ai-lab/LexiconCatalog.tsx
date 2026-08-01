@@ -87,6 +87,7 @@ export default function LexiconCatalog({
   );
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const visible = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const acquiredCount = learningCount + masteredCount; // 획득(count>0) = 학습 중 + 숙련 완료
   const collectPct = words.length ? (acquiredCount / words.length) * 100 : 0;
 
   useEffect(() => setPage(1), [query, difficulty, pos, status]);
