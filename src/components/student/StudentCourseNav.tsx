@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { BookOpen, FileCode, FileText, ChevronRight, ChevronDown, ClipboardList, Circle, ArrowLeft } from "lucide-react";
+import { BookOpen, FileCode, FileText, ChevronRight, ChevronDown, ClipboardList, Circle, ArrowLeft, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useAssignedLessons, useLessonProblems, useLessonProblemIds } from "@/hooks/useLessons";
 import { useAssignedProblems } from "@/hooks/useClasses";
@@ -143,19 +143,29 @@ export function StudentCourseNav() {
   );
 }
 
-/** 학생 수업 셸: 풀스크린(메인 사이드메뉴 없음) — 좌측 코스 네비 + 본문. Solve 화면과 동일 성격. */
+/** 학생 수업 셸: 풀스크린(메인 사이드메뉴 없음) — 좌측 코스 네비(접기 가능) + 본문. Solve 화면과 동일 성격. */
 export function CourseShell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
+  const [navOpen, setNavOpen] = useState(true);
   return (
     <div className="flex h-dvh flex-col">
       <header className="flex items-center gap-2 border-b bg-background p-3">
         <Button size="icon" variant="ghost" onClick={() => navigate("/student")} title="홈으로">
           <ArrowLeft />
         </Button>
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={() => setNavOpen((v) => !v)}
+          title={navOpen ? "목록 접기" : "목록 펼치기"}
+          aria-label={navOpen ? "목록 접기" : "목록 펼치기"}
+        >
+          {navOpen ? <PanelLeftClose /> : <PanelLeftOpen />}
+        </Button>
         <h1 className="font-semibold">내 수업</h1>
       </header>
       <div className="flex min-h-0 flex-1 flex-col md:flex-row">
-        <StudentCourseNav />
+        {navOpen && <StudentCourseNav />}
         <main className="min-h-0 flex-1 overflow-auto">{children}</main>
       </div>
     </div>
