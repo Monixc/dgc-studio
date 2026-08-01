@@ -2,7 +2,7 @@ import { useState, type ReactNode } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { BookOpen, FileCode, FileText, ChevronRight, ChevronDown, ClipboardList, Circle, Home } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useAssignedLessons, useLessonProblems } from "@/hooks/useLessons";
+import { useAssignedLessons, useLessonProblems, useLessonProblemIds } from "@/hooks/useLessons";
 import { useAssignedProblems } from "@/hooks/useClasses";
 import { cn } from "@/lib/utils";
 import type { Lesson } from "@/integrations/supabase/types";
@@ -39,6 +39,8 @@ function LessonSubProblems({ lessonId, activeProblemId }: { lessonId: string; ac
 function LessonNavItem({ lesson, activeLessonId }: { lesson: Lesson; activeLessonId?: string }) {
   const navigate = useNavigate();
   const active = lesson.id === activeLessonId;
+  const { data: problemIds = [] } = useLessonProblemIds(lesson.id);
+  const hasProblems = problemIds.length > 0;
   const [open, setOpen] = useState(active);
 
   return (
@@ -49,14 +51,18 @@ function LessonNavItem({ lesson, activeLessonId }: { lesson: Lesson; activeLesso
           active && "bg-accent",
         )}
       >
-        <button
-          type="button"
-          onClick={() => setOpen((o) => !o)}
-          title="하위 문제 펼치기/접기"
-          className="shrink-0 rounded p-1 text-muted-foreground hover:text-foreground"
-        >
-          {open ? <ChevronDown className="size-3.5" /> : <ChevronRight className="size-3.5" />}
-        </button>
+        {hasProblems ? (
+          <button
+            type="button"
+            onClick={() => setOpen((o) => !o)}
+            title="하위 문제 펼치기/접기"
+            className="shrink-0 rounded p-1 text-muted-foreground hover:text-foreground"
+          >
+            {open ? <ChevronDown className="size-3.5" /> : <ChevronRight className="size-3.5" />}
+          </button>
+        ) : (
+          <span className="size-[26px] shrink-0" aria-hidden />
+        )}
         <button
           type="button"
           onClick={() => navigate(`/student/lessons/${lesson.id}`)}
@@ -72,7 +78,7 @@ function LessonNavItem({ lesson, activeLessonId }: { lesson: Lesson; activeLesso
           </span>
         </button>
       </div>
-      {open && <LessonSubProblems lessonId={lesson.id} />}
+      {open && hasProblems && <LessonSubProblems lessonId={lesson.id} />}
     </li>
   );
 }
