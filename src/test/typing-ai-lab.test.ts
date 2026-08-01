@@ -167,7 +167,8 @@ describe("typing-ai-lab spawn", () => {
     const a = createGame({ seed: 42, now: 1_000_000 });
     const b = createGame({ seed: 42, now: 1_000_000 });
     expect(a.slots.map((s) => s.wordId)).toEqual(b.slots.map((s) => s.wordId));
-    expect(a.slots).toHaveLength(25);
+    expect(a.slots).toHaveLength(3); // 학습 모드 기본: 카드 3개
+    expect(createGame({ seed: 42, now: 1_000_000, mode: "competition" }).slots).toHaveLength(25);
   });
 
   it("penalizes words already on screen and in dataset", () => {
@@ -267,7 +268,7 @@ describe("typing-ai-lab spawn", () => {
       poolIds: pool.map((w) => w.id),
       masteryCounts: mastery,
     });
-    expect(game.slots).toHaveLength(25);
+    expect(game.slots).toHaveLength(3);
     for (const slot of game.slots) {
       const def = WORD_BY_ID[slot.wordId]!;
       expect(mastery[slot.wordId] ?? 0).toBeLessThan(masteryTarget(def.difficulty));

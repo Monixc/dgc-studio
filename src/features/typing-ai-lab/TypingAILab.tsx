@@ -770,12 +770,12 @@ export default function TypingAILab({
             <LabPanel className="p-2.5 sm:p-3">
               <div className="mb-2 flex items-center justify-between px-1">
                 <span className="text-[10px] font-black tracking-[0.25em] text-cyan-300/60">WORD BOARD</span>
-                <span className="text-[10px] text-slate-500">{game.slots.filter((s) => !s.refillAt).length}/25 ACTIVE</span>
+                <span className="text-[10px] text-slate-500">{game.slots.filter((s) => !s.refillAt).length}/{game.slots.length} ACTIVE</span>
               </div>
               {playMode === "competition" ? (
                 <ScatteredWordBoard slots={game.slots} seed={seed} />
               ) : (
-                <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-5 sm:gap-2">
+                <div className="grid grid-cols-3 gap-2 sm:gap-3">
                   {game.slots.map((slot) => {
                     const def = slot.wordId ? WORD_BY_ID[slot.wordId] : null;
                     const empty = Boolean(slot.refillAt);
@@ -783,16 +783,16 @@ export default function TypingAILab({
                       <div
                         key={slot.id}
                         className={cn(
-                          "relative flex min-h-[3.5rem] flex-col items-center justify-center overflow-hidden border px-1.5 py-1.5 text-center transition sm:min-h-16",
+                          "relative flex min-h-28 flex-col items-center justify-center overflow-hidden border px-2 py-4 text-center transition sm:min-h-36",
                           empty
                             ? "border-transparent bg-slate-950/35 text-transparent"
                             : "border-cyan-300/20 bg-[#03111d]/90 text-zinc-100 shadow-[inset_0_1px_rgba(255,255,255,.04)]",
                         )}
                       >
                         {!empty && <CornerMarks />}
-                        <span className="text-sm font-bold tracking-wide">{empty ? "·" : slot.word}</span>
+                        <span className="text-xl font-bold tracking-wide sm:text-2xl">{empty ? "·" : slot.word}</span>
                         {def && !empty && (
-                          <span className="mt-0.5 max-w-full truncate text-[10px] text-slate-500">{def.meaningKo}</span>
+                          <span className="mt-1 max-w-full truncate text-xs text-slate-500 sm:text-sm">{def.meaningKo}</span>
                         )}
                       </div>
                     );

@@ -15,6 +15,8 @@ import {
 } from "./content";
 
 export const SLOT_COUNT = 25;
+/** 학습 모드는 큰 카드 3개만 노출 */
+export const LEARNING_SLOT_COUNT = 3;
 export const SESSION_MS = 180_000;
 export const REFILL_MS = 500;
 export const RECENT_SPAWN_MS = 10_000;
@@ -293,7 +295,8 @@ export function createGame(opts: CreateGameOptions | number, nowArg?: number): G
     lastAcquired: [],
   };
 
-  for (let i = 0; i < SLOT_COUNT; i++) {
+  const slotCount = mode === "learning" ? LEARNING_SLOT_COUNT : SLOT_COUNT;
+  for (let i = 0; i < slotCount; i++) {
     const word = pickWord(draft, onScreen, now, rng, masteryCounts);
     onScreen.add(word.id);
     recentSpawns.push({ wordId: word.id, at: now });
