@@ -30,7 +30,9 @@ export default function Solve() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
-  const isMyClass = searchParams.get("scope") === "myclass";
+  const scope = searchParams.get("scope") ?? "";
+  const isMyClass = scope === "myclass";
+  const lessonScopeId = scope.startsWith("lesson:") ? scope.slice("lesson:".length) : null;
   const { data: problem, isLoading } = useProblem(problemId);
   const { data: published = [] } = usePublishedProblems(!isMyClass);
   const { data: assigned = [] } = useAssignedProblems(isMyClass ? user?.id : undefined);
@@ -176,7 +178,7 @@ export default function Solve() {
   return (
     <div className="flex h-screen flex-col">
       <header className="flex items-center gap-2 border-b p-3">
-        <Button size="icon" variant="ghost" onClick={() => navigate(isMyClass ? "/myclass" : `/practice/${problem.category}`)} title="목록으로">
+        <Button size="icon" variant="ghost" onClick={() => navigate(lessonScopeId ? `/student/lessons/${lessonScopeId}` : isMyClass ? "/myclass" : `/practice/${problem.category}`)} title="목록으로">
           <ArrowLeft />
         </Button>
         <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold uppercase text-primary-foreground">

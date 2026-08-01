@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-import type { Lesson } from "@/integrations/supabase/types";
+import type { Lesson, Problem } from "@/integrations/supabase/types";
 
 export const LESSONS_KEY = ["lessons"] as const;
 
@@ -86,6 +86,44 @@ export async function setClassLessons(classId: string, lessonIds: string[]): Pro
       .in("lesson_id", toRemove);
     if (error) throw error;
   }
+}
+
+/** 교안에 첨부된 문제 id 목록(순서대로). */
+export async function listLessonProblemIds(lessonId: string): Promise<string[]> {
+  const { data, error } = await supabase
+    .from("lesson_problems")
+    .select("problem_id, position")
+    .eq("lesson_id", lessonId)
+    .order("position", { ascending: true });
+  if (error) throw error;
+  return (data ?? []).map((r) => r.problem_id as string);
+}
+
+/** 교안 첨부 문제를 problemIds(순서) 로 교체. */
+export async function setLessonProblems(lessonId: string, problemIds: string[]): Promise<void> {
+  const { error: delErr } = await supabase.from("lesson_problems").delete().eq("lesson_id", lessonId);
+  if (delErr) throw delErr;
+  if (problemIds.length === 0) return;
+  const { error } = await supabase
+    .from("lesson_problems")
+    .insert(problemIds.map((problem_id, i) => ({ lesson_id: lessonId, problem_id, position: i })));
+  if (error) throw error;
+}
+
+/** 학생/교사: 교안에 첨부된 문제를 순서대로 반환. */
+export async function listLessonProblems(lessonId: string): Promise<Problem[]> {
+  const { data: rows, error } = await supabase
+    .from("lesson_problems")
+    .select("problem_id, position")
+    .eq("lesson_id", lessonId)
+    .order("position", { ascending: true });
+  if (error) throw error;
+  const ids = (rows ?? []).map((r) => r.problem_id as string);
+  if (ids.length === 0) return [];
+  const { data: probs, error: pErr } = await supabase.from("problems").select("*").in("id", ids);
+  if (pErr) throw pErr;
+  const byId = new Map((probs ?? []).map((p) => [(p as Problem).id, p as Problem]));
+  return ids.map((id) => byId.get(id)).filter(Boolean) as Problem[];
 }
 
 /** 학생: 본인이 속한 반에 배정된 교안 전체(중복 제거). listAssignedProblems 패턴. */

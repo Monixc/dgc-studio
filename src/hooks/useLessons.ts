@@ -9,6 +9,9 @@ import {
   listClassLessonIds,
   setClassLessons,
   listAssignedLessons,
+  listLessonProblemIds,
+  setLessonProblems,
+  listLessonProblems,
   type NewLesson,
 } from "@/lib/lessons";
 
@@ -68,6 +71,32 @@ export function useSetClassLessons() {
       setClassLessons(classId, lessonIds),
     onSuccess: (_, { classId }) =>
       qc.invalidateQueries({ queryKey: [...LESSONS_KEY, "class", classId] }),
+  });
+}
+
+export function useLessonProblemIds(lessonId: string | undefined) {
+  return useQuery({
+    queryKey: [...LESSONS_KEY, "problems", lessonId],
+    queryFn: () => listLessonProblemIds(lessonId!),
+    enabled: !!lessonId,
+  });
+}
+
+export function useSetLessonProblems() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ lessonId, problemIds }: { lessonId: string; problemIds: string[] }) =>
+      setLessonProblems(lessonId, problemIds),
+    onSuccess: (_, { lessonId }) =>
+      qc.invalidateQueries({ queryKey: [...LESSONS_KEY, "problems", lessonId] }),
+  });
+}
+
+export function useLessonProblems(lessonId: string | undefined) {
+  return useQuery({
+    queryKey: [...LESSONS_KEY, "problem-list", lessonId],
+    queryFn: () => listLessonProblems(lessonId!),
+    enabled: !!lessonId,
   });
 }
 

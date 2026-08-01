@@ -1,13 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Plus, Upload, Trash2, FileText, FileCode, Code2, Eye, Pencil, Folder, FolderPlus, Check } from "lucide-react";
+import { Plus, Upload, Trash2, FileText, FileCode, Code2, Eye, Pencil, Folder, FolderPlus, Check, ClipboardList, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import {
   useLessons,
   useCreateLesson,
   useUpdateLesson,
   useDeleteLesson,
+  useLessonProblemIds,
+  useSetLessonProblems,
 } from "@/hooks/useLessons";
+import { useMyProblems } from "@/hooks/useProblems";
+import AssignProblemsDialog from "@/components/admin/AssignProblemsDialog";
 import {
   useLessonFolders,
   useCreateLessonFolder,
@@ -52,6 +56,8 @@ export default function LessonManager() {
   const createFolderMut = useCreateLessonFolder();
   const renameFolderMut = useRenameLessonFolder();
   const deleteFolderMut = useDeleteLessonFolder();
+  const { data: myProblems = [] } = useMyProblems(userId);
+  const setLessonProbsMut = useSetLessonProblems();
 
   const [activeFolder, setActiveFolder] = useState<string>(ALL);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -59,11 +65,25 @@ export default function LessonManager() {
   const [preview, setPreview] = useState(false);
   const [editingFolderId, setEditingFolderId] = useState<string | null>(null);
   const [folderName, setFolderName] = useState("");
+  const [attachOpen, setAttachOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   // true면 현재 교안의 파일 교체, false면 새 교안 생성
   const replaceRef = useRef(false);
 
   const selected = lessons.find((l) => l.id === selectedId) ?? null;
+  const { data: attachedIds = [] } = useLessonProblemIds(selected?.id);
+  const attachedProblems = attachedIds
+    .map((id) => myProblems.find((p) => p.id === id))
+    .filter(Boolean) as typeof myProblems;
+
+  async function detachProblem(id: string) {
+    if (!selected) return;
+    try {
+      await setLessonProbsMut.mutateAsync({ lessonId: selected.id, problemIds: attachedIds.filter((x) => x !== id) });
+    } catch (e: any) {
+      toast.error(e?.message ?? "실패");
+    }
+  }
 
   useEffect(() => {
     setDraft(selected ? toDraft(selected) : null);
@@ -379,6 +399,56 @@ export default function LessonManager() {
               />
             </div>
           )}
+
+          {/* 이 교안에 붙는 문제 (학생은 교안 열면 콘텐츠 → 이 문제들 순서대로 풂) */}
+          <div className="mt-4">
+            <div className="mb-2 flex items-center justify-between">
+              <p className="flex items-center gap-1.5 text-sm font-semibold">
+                <ClipboardList className="size-4 text-muted-foreground" /> 문제 ({attachedProblems.length})
+              </p>
+              <Button size="sm" variant="outline" onClick={() => setAttachOpen(true)}>
+                <Plus className="size-4" /> 문제 붙이기
+              </Button>
+            </div>
+            {attachedProblems.length === 0 ? (
+              <div className="rounded-lg bg-muted/40 p-3 text-xs text-muted-foreground">
+                이 교안에 붙은 문제가 없습니다. 학생은 교안 내용만 봅니다.
+              </div>
+            ) : (
+              <ol className="space-y-1.5">
+                {attachedProblems.map((p, i) => (
+                  <li key={p.id} className="flex items-center gap-2 rounded-lg border p-2.5 text-sm">
+                    <span className="w-5 shrink-0 text-center text-xs text-muted-foreground">{i + 1}</span>
+                    <span className="min-w-0 flex-1 truncate">{p.title || "(제목 없음)"}</span>
+                    {!p.is_published && (
+                      <span className="shrink-0 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] text-amber-700">
+                        미발행 — 학생이 못 봄
+                      </span>
+                    )}
+                    <button onClick={() => detachProblem(p.id)} title="떼기" className="text-muted-foreground hover:text-foreground">
+                      <X className="size-3.5" />
+                    </button>
+                  </li>
+                ))}
+              </ol>
+            )}
+          </div>
+
+          <AssignProblemsDialog
+            open={attachOpen}
+            onOpenChange={setAttachOpen}
+            problems={myProblems}
+            assignedIds={attachedIds}
+            onSave={async (ids) => {
+              try {
+                await setLessonProbsMut.mutateAsync({ lessonId: selected.id, problemIds: ids });
+                toast.success("문제 저장됨");
+                setAttachOpen(false);
+              } catch (e: any) {
+                toast.error(e?.message ?? "저장 실패");
+              }
+            }}
+          />
         </div>
       )}
     </div>

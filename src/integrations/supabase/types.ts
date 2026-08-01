@@ -109,6 +109,13 @@ export interface LessonFolder {
   created_at: string;
 }
 
+export interface LessonProblem {
+  lesson_id: string;
+  problem_id: string;
+  position: number;
+  created_at: string;
+}
+
 export interface ClassLesson {
   class_id: string;
   lesson_id: string;
