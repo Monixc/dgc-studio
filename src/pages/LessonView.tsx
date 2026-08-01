@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useLesson } from "@/hooks/useLessons";
 import { usePyodide } from "@/hooks/usePyodide";
@@ -9,17 +9,20 @@ import Solve from "@/pages/Solve";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import type { Lesson } from "@/integrations/supabase/types";
 
+/** HTML 교안: blob URL로 로드해 iframe 자체를 base로 삼음(목차 #앵커·상대경로가 앱 라우터로 새지 않도록). */
+function LessonHtml({ lesson }: { lesson: Lesson }) {
+  const [url, setUrl] = useState<string>();
+  useEffect(() => {
+    const u = URL.createObjectURL(new Blob([lesson.content], { type: "text/html" }));
+    setUrl(u);
+    return () => URL.revokeObjectURL(u);
+  }, [lesson.content]);
+  if (!url) return null;
+  return <iframe title={lesson.title} className="h-full w-full bg-white" sandbox="allow-scripts" src={url} />;
+}
+
 function LessonContent({ lesson }: { lesson: Lesson }) {
-  if (lesson.content_type === "html") {
-    return (
-      <iframe
-        title={lesson.title}
-        className="h-full w-full bg-white"
-        sandbox="allow-scripts"
-        srcDoc={lesson.content}
-      />
-    );
-  }
+  if (lesson.content_type === "html") return <LessonHtml lesson={lesson} />;
   return (
     <div className="h-full overflow-auto p-5">
       <Markdown>{lesson.content}</Markdown>

@@ -35,6 +35,18 @@ interface Draft {
   folder_id: string | null;
 }
 
+/** HTML 미리보기 — blob URL 로드로 목차 링크가 앱 라우터로 새지 않게. */
+function HtmlPreview({ html, className }: { html: string; className?: string }) {
+  const [url, setUrl] = useState<string>();
+  useEffect(() => {
+    const u = URL.createObjectURL(new Blob([html], { type: "text/html" }));
+    setUrl(u);
+    return () => URL.revokeObjectURL(u);
+  }, [html]);
+  if (!url) return null;
+  return <iframe title="교안 미리보기" className={className} sandbox="allow-scripts" src={url} />;
+}
+
 function toDraft(l: Lesson): Draft {
   return {
     title: l.title,
@@ -372,7 +384,7 @@ export default function LessonManager() {
           {preview ? (
             <div className="flex-1 overflow-auto rounded-lg border p-4">
               {selected.content_type === "html" ? (
-                <iframe title="교안 미리보기" className="h-[60vh] w-full" sandbox="allow-scripts" srcDoc={draft.content} />
+                <HtmlPreview html={draft.content} className="h-[60vh] w-full" />
               ) : (
                 <Markdown>{draft.content}</Markdown>
               )}
