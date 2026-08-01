@@ -184,9 +184,11 @@ export default function Solve({ embedded = false, problemId: problemIdProp }: { 
             <ArrowLeft />
           </Button>
         )}
-        <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold uppercase text-primary-foreground">
-          {isMyClass && classNames.length > 0 ? classNames.join(", ") : problem.category}
-        </span>
+        {!embedded && (
+          <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold uppercase text-primary-foreground">
+            {isMyClass && classNames.length > 0 ? classNames.join(", ") : problem.category}
+          </span>
+        )}
         <h1 className="text-lg font-semibold">{problem.title}</h1>
         <Button
           size="icon"
