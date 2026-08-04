@@ -34,8 +34,9 @@ export default function TeacherSubmissions({ problemId }: { problemId: string })
           <div className="space-y-2">
             {subs.map((s) => (
               <div key={s.id} className="rounded-lg border">
-                <button
-                  className="flex w-full items-center justify-between p-3 text-left"
+                <Button
+                  variant="ghost"
+                  className="flex h-auto w-full items-center justify-between p-3 text-left font-normal"
                   onClick={() => setExpanded(expanded === s.id ? null : s.id)}
                 >
                   <div>
@@ -50,7 +51,7 @@ export default function TeacherSubmissions({ problemId }: { problemId: string })
                     </span>
                     <ChevronDown className={cn("size-4 transition", expanded === s.id && "rotate-180")} />
                   </div>
-                </button>
+                </Button>
                 {expanded === s.id && (
                   <div className="border-t p-3">
                     <div className="mb-2 space-y-1">

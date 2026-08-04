@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Markdown } from "@/components/Markdown";
 import { cn } from "@/lib/utils";
@@ -37,13 +38,14 @@ function DescriptionField({
     <div className={cn(fill && "flex h-full min-h-0 flex-col")}>
       <div className="flex items-center justify-between">
         {showLabel ? <Label>문제 설명</Label> : <span />}
-        <button
+        <Button
           type="button"
+          variant="link"
           onClick={() => setPreview((p) => !p)}
-          className="text-xs text-muted-foreground underline underline-offset-2"
+          className="h-auto p-0 text-xs text-muted-foreground underline underline-offset-2"
         >
           {preview ? "편집" : "미리보기"}
-        </button>
+        </Button>
       </div>
       {preview ? (
         <div className={cn("overflow-auto rounded-md border p-2", bodyClassName)}>
@@ -118,15 +120,15 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-2 border-b p-3">
         <Input value={title} onChange={(e) => setTitle(e.target.value)} className="max-w-xs" placeholder="문제 제목" />
-        <select
+        <Select
           value={category}
           onChange={(e) => setCategory(e.target.value as ProblemCategory)}
-          className="h-9 rounded-md border bg-background px-2 text-sm"
+          className="w-auto"
         >
           {(Object.keys(PROBLEM_CATEGORY_LABEL) as ProblemCategory[]).map((c) => (
             <option key={c} value={c}>{PROBLEM_CATEGORY_LABEL[c]}</option>
           ))}
-        </select>
+        </Select>
         <div className="ml-auto flex gap-2">
           <Button onClick={() => save()} disabled={updateMut.isPending}>
             <Save /> 저장

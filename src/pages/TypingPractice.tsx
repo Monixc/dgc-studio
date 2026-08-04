@@ -296,11 +296,11 @@ function TypingModeHome({
         <button
           type="button"
           onClick={() => onSelect("racing")}
-          className="group flex min-h-52 flex-col justify-between rounded-2xl bg-cover bg-center p-6 text-left text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:col-span-2"
+          className="group flex min-h-52 flex-col justify-between rounded-none bg-cover bg-center p-6 text-left text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:col-span-2"
           style={{ backgroundImage: "linear-gradient(rgb(9 9 11 / 55%), rgb(9 9 11 / 82%)), url('/racing/typing-racing-hero.png')" }}
         >
           <div className="flex items-start justify-between">
-            <span className="rounded-xl bg-white/10 p-3"><Flag className="size-6" /></span>
+            <span className="rounded-none bg-white/10 p-3"><Flag className="size-6" /></span>
             <ChevronRight className="size-5 text-white/50 transition group-hover:translate-x-1" />
           </div>
           <div>
@@ -324,7 +324,7 @@ function TypingModeHome({
         />
       </section>
 
-      <aside className="rounded-2xl border bg-card p-5 shadow-sm">
+      <aside className="rounded-none border bg-card p-5 shadow-sm">
         <div className="mb-4 flex items-center gap-2">
           <Gauge className="size-5 text-primary" />
           <h2 className="font-semibold">타자 속도 랭킹</h2>
@@ -334,7 +334,7 @@ function TypingModeHome({
             <div
               key={entry.id}
               className={cn(
-                "flex items-center gap-3 rounded-xl border px-3 py-2.5",
+                "flex items-center gap-3 rounded-none border px-3 py-2.5",
                 entry.isMe && "border-primary bg-primary/5",
               )}
             >
@@ -370,7 +370,7 @@ function ModeCard({
       type="button"
       onClick={onClick}
       className={cn(
-        "group flex min-h-44 flex-col justify-between rounded-2xl border bg-card bg-cover bg-center p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-primary hover:shadow-md",
+        "group flex min-h-44 flex-col justify-between rounded-none border bg-card bg-cover bg-center p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-primary hover:shadow-md",
         backgroundImage && "border-cyan-300/25 text-white",
       )}
       style={backgroundImage ? {
@@ -379,7 +379,7 @@ function ModeCard({
     >
       <div className="flex items-start justify-between">
         <span className={cn(
-          "rounded-xl bg-primary/10 p-3 text-primary",
+          "rounded-none bg-primary/10 p-3 text-primary",
           backgroundImage && "border border-cyan-200/20 bg-cyan-300/15 text-cyan-100 backdrop-blur-sm",
         )}><Icon className="size-5" /></span>
         <ChevronRight className={cn(
@@ -421,7 +421,7 @@ function TeacherTypingLogs() {
   }, [load]);
 
   return (
-    <section className="mt-5 rounded-2xl border bg-card p-5 shadow-sm">
+    <section className="mt-5 rounded-none border bg-card p-5 shadow-sm">
       <header className="mb-4 flex items-center gap-2">
         <History className="size-5 text-primary" />
         <div>
@@ -441,7 +441,7 @@ function TeacherTypingLogs() {
       </header>
 
       {error ? (
-        <p className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
+        <p className="rounded-none border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
           로그를 불러오지 못했습니다. DB 마이그레이션 적용 여부를 확인하세요.
         </p>
       ) : loading && logs.length === 0 ? (
@@ -453,7 +453,7 @@ function TeacherTypingLogs() {
           {logs.map((log) => (
             <div
               key={log.id}
-              className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border px-3 py-2.5 text-sm"
+              className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-none border px-3 py-2.5 text-sm"
             >
               <span className="font-semibold">[{log.student_name}]</span>
               <span>

@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useConfirm } from "@/hooks/use-confirm";
 import { PortfolioEditor } from "@/features/portfolio/PortfolioEditor";
 import { PortfolioViewer } from "@/features/portfolio/PortfolioViewer";
@@ -259,28 +260,28 @@ export default function StudentPortfolioEditor() {
         </div>
         <nav className="flex gap-1 px-3" aria-label="편집 모드">
           {MODES.map((item) => (
-            <button
+            <Button
               key={item.value}
-              type="button"
+              variant="ghost"
               onClick={() => changeMode(item.value)}
               className={cn(
-                "border-b-2 px-3 py-2 text-sm text-muted-foreground",
+                "h-auto rounded-none border-b-2 px-3 py-2 text-sm font-normal text-muted-foreground hover:bg-transparent",
                 mode === item.value && "border-primary font-semibold text-foreground",
               )}
             >
               {item.label}
-            </button>
+            </Button>
           ))}
         </nav>
       </header>
 
       <main className="min-h-0 flex-1">
         {mode === "plain" ? (
-          <textarea
+          <Textarea
             autoFocus
             value={plainText}
             aria-label="일반 텍스트 내용"
-            className="h-full w-full resize-none border-0 bg-white p-5 font-mono text-sm leading-7 outline-none sm:p-8"
+            className="h-full w-full resize-none rounded-none border-0 bg-white p-5 font-mono text-sm leading-7 shadow-none focus-visible:ring-0 sm:p-8"
             onChange={(event) => {
               setPlainText(event.target.value);
               setDirty(true);
@@ -288,10 +289,10 @@ export default function StudentPortfolioEditor() {
           />
         ) : mode === "markdown" ? (
           <div className="grid h-full min-h-0 md:grid-cols-2">
-            <textarea
+            <Textarea
               value={markdown}
               aria-label="Markdown 내용"
-              className="min-h-[45vh] w-full resize-none border-0 bg-slate-950 p-5 font-mono text-sm leading-7 text-slate-100 outline-none md:min-h-0 md:border-r"
+              className="min-h-[45vh] w-full resize-none rounded-none border-0 bg-slate-950 p-5 font-mono text-sm leading-7 text-slate-100 shadow-none focus-visible:ring-0 md:min-h-0 md:border-r"
               onChange={(event) => {
                 setMarkdown(event.target.value);
                 setDirty(true);

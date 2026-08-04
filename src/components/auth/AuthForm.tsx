@@ -5,6 +5,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { cn } from "@/lib/utils";
 
 interface Props {
   initialMode?: "login" | "signup";
@@ -46,12 +48,22 @@ export default function AuthForm({ initialMode = "login", onSuccess }: Props) {
   return (
     <form onSubmit={onSubmit} className="space-y-3">
       <div className="flex rounded-md bg-muted p-1 text-sm">
-        <button type="button" onClick={() => setMode("login")} className={`flex-1 rounded py-1 ${mode === "login" ? "bg-background shadow" : "text-muted-foreground"}`}>
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => setMode("login")}
+          className={cn("h-auto flex-1 rounded py-1 font-normal", mode === "login" ? "bg-background shadow" : "text-muted-foreground")}
+        >
           로그인
-        </button>
-        <button type="button" onClick={() => setMode("signup")} className={`flex-1 rounded py-1 ${mode === "signup" ? "bg-background shadow" : "text-muted-foreground"}`}>
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => setMode("signup")}
+          className={cn("h-auto flex-1 rounded py-1 font-normal", mode === "signup" ? "bg-background shadow" : "text-muted-foreground")}
+        >
           회원가입
-        </button>
+        </Button>
       </div>
 
       <div className="space-y-1.5">
@@ -66,7 +78,7 @@ export default function AuthForm({ initialMode = "login", onSuccess }: Props) {
       {mode === "signup" && (
         <>
           <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" checked={isTeacher} onChange={(e) => setIsTeacher(e.target.checked)} />
+            <Checkbox checked={isTeacher} onChange={(e) => setIsTeacher(e.target.checked)} />
             선생님으로 가입
           </label>
           {isTeacher && (

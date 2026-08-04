@@ -3,6 +3,7 @@ import { ArrowLeft, MessageSquare, Send, X } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import type { Profile } from "@/integrations/supabase/types";
 import type { useChat } from "@/hooks/useChat";
 import { cn } from "@/lib/utils";
@@ -81,16 +82,16 @@ export default function ChatPanel({
       >
         <header className="flex h-14 shrink-0 items-center gap-2 border-b px-3">
           {active ? (
-            <button onClick={() => setActiveId(null)} className="rounded p-1 hover:bg-accent" title="목록">
+            <Button variant="ghost" size="icon" onClick={() => setActiveId(null)} title="목록">
               <ArrowLeft className="size-5" />
-            </button>
+            </Button>
           ) : (
             <MessageSquare className="size-5 text-primary" />
           )}
           <span className="flex-1 truncate font-semibold">{active ? active.display_name || "상대" : "채팅"}</span>
-          <button onClick={onClose} className="rounded p-1 hover:bg-accent" title="닫기">
+          <Button variant="ghost" size="icon" onClick={onClose} title="닫기">
             <X className="size-5" />
-          </button>
+          </Button>
         </header>
 
         {!active ? (
@@ -101,23 +102,22 @@ export default function ChatPanel({
               recipients.map((r) => {
                 const unread = unreadFrom.get(r.id) ?? 0;
                 return (
-                  <button
+                  <Button
                     key={r.id}
+                    variant="ghost"
                     onClick={() => openThread(r.id)}
-                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left hover:bg-accent"
+                    className="w-full justify-start gap-2 px-3 py-2.5 h-auto font-normal"
                   >
                     <span className="min-w-0 flex-1">
                       <span className="flex items-center gap-2">
                         <span className="truncate font-medium">{r.display_name || "(이름 없음)"}</span>
                         {unread > 0 && (
-                          <span className="rounded-full bg-primary px-1.5 text-[10px] font-semibold text-primary-foreground">
-                            {unread}
-                          </span>
+                          <Badge className="px-1.5 text-[10px]">{unread}</Badge>
                         )}
                       </span>
                       <span className="block truncate text-xs text-muted-foreground">{lastWith.get(r.id) ?? "대화를 시작해 보세요."}</span>
                     </span>
-                  </button>
+                  </Button>
                 );
               })
             )}

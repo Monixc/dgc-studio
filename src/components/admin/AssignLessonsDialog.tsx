@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Code2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 import type { Lesson } from "@/integrations/supabase/types";
 
 interface Props {
@@ -40,11 +42,11 @@ export default function AssignLessonsDialog({ open, onOpenChange, lessons, assig
           ) : (
             lessons.map((l) => (
               <label key={l.id} className="flex cursor-pointer items-center gap-2 rounded-md p-1.5 text-sm hover:bg-accent">
-                <input type="checkbox" checked={checked.has(l.id)} onChange={() => toggle(l.id)} className="size-4" />
+                <Checkbox checked={checked.has(l.id)} onChange={() => toggle(l.id)} />
                 <span className="truncate">{l.title || "(제목 없음)"}</span>
-                <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                <Badge variant="muted" className="text-[10px]">
                   {l.content_type === "html" ? "HTML" : "MD"}
-                </span>
+                </Badge>
                 {l.code_practice && <Code2 className="size-3.5 text-primary" />}
               </label>
             ))

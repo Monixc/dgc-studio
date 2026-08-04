@@ -2,6 +2,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, Check, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useConfirm } from "@/hooks/use-confirm";
 import { useAllStudents } from "@/hooks/useClassStudents";
 import {
   useShopItems, useCreateShopItem, useUpdateShopItem, useDeleteShopItem,
@@ -26,6 +27,7 @@ export default function ShopManager() {
   const updateMut = useUpdateShopItem();
   const deleteMut = useDeleteShopItem();
   const decideMut = useDecideShopOrder();
+  const { confirm, dialog: confirmDialog } = useConfirm();
 
   const [editing, setEditing] = useState<ShopItem | null>(null);
   const [open, setOpen] = useState(false);
@@ -76,7 +78,7 @@ export default function ShopManager() {
   }
 
   async function remove(id: string) {
-    if (!confirm("이 상품을 삭제할까요?")) return;
+    if (!(await confirm({ description: "이 상품을 삭제할까요?", destructive: true }))) return;
     try {
       await deleteMut.mutateAsync(id);
     } catch (e: any) {
@@ -108,7 +110,7 @@ export default function ShopManager() {
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {items.map((item) => (
-            <div key={item.id} className="rounded-xl border bg-card p-3 shadow-sm">
+            <div key={item.id} className="rounded-none border bg-card p-3 shadow-sm">
               <div className="aspect-square w-full overflow-hidden rounded-lg bg-muted">
                 {item.image_url && (
                   <img src={item.image_url} alt={item.name} className="h-full w-full object-cover" />
@@ -131,7 +133,7 @@ export default function ShopManager() {
 
       <h2 className="mb-2 mt-8 text-lg font-semibold">구매 요청</h2>
       {pendingOrders.length === 0 ? (
-        <div className="flex h-40 w-full items-center justify-center rounded-xl border border-dashed bg-muted/30 text-sm text-muted-foreground">
+        <div className="flex h-40 w-full items-center justify-center rounded-none border border-dashed bg-muted/30 text-sm text-muted-foreground">
           대기 중인 구매 요청이 없습니다.
         </div>
       ) : (
@@ -205,6 +207,7 @@ export default function ShopManager() {
           </div>
         </DialogContent>
       </Dialog>
+      {confirmDialog}
     </div>
   );
 }

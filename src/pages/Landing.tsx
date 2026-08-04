@@ -13,13 +13,15 @@ import {
   Coins,
 } from "lucide-react";
 import AuthDropdown from "@/components/auth/AuthDropdown";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
-const PRIMARY = "hsl(var(--primary))";
-const PRIMARY_FG = "hsl(var(--primary-foreground))";
-const BORDER = "hsl(var(--border))";
-const FOREGROUND = "hsl(var(--foreground))";
-const MUTED_FG = "hsl(var(--muted-foreground))";
-const BACKGROUND = "hsl(var(--background))";
+const PRIMARY = "var(--primary)";
+const PRIMARY_FG = "var(--primary-foreground)";
+const BORDER = "var(--border)";
+const FOREGROUND = "var(--foreground)";
+const MUTED_FG = "var(--muted-foreground)";
+const BACKGROUND = "var(--background)";
 
 const QUICK_LINKS: { id: string; label: string; icon: React.ReactNode }[] = [
   { id: "flowchart", label: "순서도", icon: <Workflow className="size-3.5" /> },
@@ -69,24 +71,22 @@ export default function Landing() {
             코드부터 상점까지, 배움의 모든 순간을 한 곳에서
           </h1>
           <div className="mt-8 flex justify-center">
-            <button
-              onClick={() => setAuthState("signup")}
-              className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-            >
+            <Button onClick={() => setAuthState("signup")} className="gap-2 px-6 py-3">
               학습 시작하기 <ArrowRight className="size-4" />
-            </button>
+            </Button>
           </div>
 
           <div className="mt-14 flex flex-wrap justify-center gap-2">
             {QUICK_LINKS.map(({ id, label, icon }) => (
-              <button
+              <Button
                 key={id}
+                variant="outline"
                 onClick={() => scrollToSection(id)}
-                className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium text-muted-foreground transition hover:border-foreground/30 hover:text-foreground"
+                className="h-auto gap-1.5 px-3 py-1.5 text-xs font-medium text-muted-foreground hover:border-foreground/30 hover:bg-transparent hover:text-foreground"
               >
                 {icon}
                 {label}
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -165,12 +165,9 @@ export default function Landing() {
           <section className="border-t px-6 py-20 text-center">
             <h2 className="text-balance text-2xl font-black tracking-tight [word-break:keep-all] sm:text-3xl">지금 바로 시작해보세요</h2>
             <div className="mt-6 flex justify-center">
-              <button
-                onClick={() => setAuthState("signup")}
-                className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-              >
+              <Button onClick={() => setAuthState("signup")} className="gap-2 px-6 py-3">
                 학습 시작하기 <ArrowRight className="size-4" />
-              </button>
+              </Button>
             </div>
           </section>
         </Reveal>
@@ -255,7 +252,7 @@ function FeatureSection({
 
 function IdeDemo() {
   return (
-    <div className="mx-auto max-w-md overflow-hidden rounded-2xl border bg-foreground font-mono text-sm text-background shadow-sm">
+    <div className="mx-auto max-w-md overflow-hidden border bg-foreground font-mono text-sm text-background shadow-sm">
       <div className="flex items-center gap-2 border-b border-background/10 px-4 py-2 text-xs text-background/50">
         <span className="size-2 rounded-full bg-background/40" />
         solution.py
@@ -274,120 +271,134 @@ function IdeDemo() {
 
 function BlockDemo() {
   return (
-    <div className="mx-auto max-w-md rounded-2xl border bg-card p-5">
-      <div className="rounded-xl border bg-muted/40 p-3">
-        <div className="flex items-center gap-2 rounded-lg border bg-background px-3 py-2 font-mono text-sm">
-          <span className="font-semibold">반복하기</span>
-          <span className="text-muted-foreground">5 번</span>
-        </div>
-        <div className="ml-4 mt-2 space-y-2 border-l-2 pl-3">
-          <div className="rounded-lg border bg-background px-3 py-2 font-mono text-sm">
-            화면에 출력하기 <span className="text-muted-foreground">"전진!"</span>
+    <Card className="mx-auto max-w-md">
+      <CardContent className="p-5">
+        <div className="rounded-none border bg-muted/40 p-3">
+          <div className="flex items-center gap-2 rounded-lg border bg-background px-3 py-2 font-mono text-sm">
+            <span className="font-semibold">반복하기</span>
+            <span className="text-muted-foreground">5 번</span>
           </div>
-          <div className="rounded-lg border bg-background px-3 py-2 font-mono text-sm">
-            앞으로 <span className="text-muted-foreground">10</span> 만큼 움직이기
+          <div className="ml-4 mt-2 space-y-2 border-l-2 pl-3">
+            <div className="rounded-lg border bg-background px-3 py-2 font-mono text-sm">
+              화면에 출력하기 <span className="text-muted-foreground">"전진!"</span>
+            </div>
+            <div className="rounded-lg border bg-background px-3 py-2 font-mono text-sm">
+              앞으로 <span className="text-muted-foreground">10</span> 만큼 움직이기
+            </div>
           </div>
         </div>
-      </div>
-      <div className="mt-3 flex items-center gap-1 text-xs text-muted-foreground">
-        <ArrowRight className="size-3" /> 자동 변환
-      </div>
-      <pre className="mt-2 overflow-x-auto rounded-xl bg-foreground px-4 py-3 font-mono text-xs text-background">
+        <div className="mt-3 flex items-center gap-1 text-xs text-muted-foreground">
+          <ArrowRight className="size-3" /> 자동 변환
+        </div>
+        <pre className="mt-2 overflow-x-auto rounded-none bg-foreground px-4 py-3 font-mono text-xs text-background">
 for _ in range(5):{"\n"}    print("전진!"){"\n"}    move(10)
-      </pre>
-    </div>
+        </pre>
+      </CardContent>
+    </Card>
   );
 }
 
 function TypingDemo() {
   return (
-    <div className="mx-auto max-w-md rounded-2xl border bg-card p-5">
-      <p className="rounded-lg border bg-background px-3 py-2 font-mono text-sm">
-        <span>print(</span>
-        <span>"hello"</span>
-        <span className="border-r-2 border-primary">)</span>
-        <span className="text-muted-foreground">.upper()</span>
-      </p>
-      <div className="mt-4 space-y-2">
-        <div className="flex items-center gap-2 text-xs">
-          <span className="w-8 text-muted-foreground">나</span>
-          <div className="h-2 flex-1 rounded-full bg-muted">
-            <div className="h-2 w-4/5 rounded-full bg-primary" />
+    <Card className="mx-auto max-w-md">
+      <CardContent className="p-5">
+        <p className="rounded-lg border bg-background px-3 py-2 font-mono text-sm">
+          <span>print(</span>
+          <span>"hello"</span>
+          <span className="border-r-2 border-primary">)</span>
+          <span className="text-muted-foreground">.upper()</span>
+        </p>
+        <div className="mt-4 space-y-2">
+          <div className="flex items-center gap-2 text-xs">
+            <span className="w-8 text-muted-foreground">나</span>
+            <div className="h-2 flex-1 rounded-full bg-muted">
+              <div className="h-2 w-4/5 rounded-full bg-primary" />
+            </div>
+            <span className="w-16 text-right font-mono tabular-nums">62 WPM</span>
           </div>
-          <span className="w-16 text-right font-mono tabular-nums">62 WPM</span>
-        </div>
-        <div className="flex items-center gap-2 text-xs">
-          <span className="w-8 text-muted-foreground">봇</span>
-          <div className="h-2 flex-1 rounded-full bg-muted">
-            <div className="h-2 w-3/5 rounded-full bg-muted-foreground/50" />
+          <div className="flex items-center gap-2 text-xs">
+            <span className="w-8 text-muted-foreground">봇</span>
+            <div className="h-2 flex-1 rounded-full bg-muted">
+              <div className="h-2 w-3/5 rounded-full bg-muted-foreground/50" />
+            </div>
+            <span className="w-16 text-right font-mono tabular-nums">48 WPM</span>
           </div>
-          <span className="w-16 text-right font-mono tabular-nums">48 WPM</span>
         </div>
-      </div>
-      <div className="mt-4 flex items-center justify-between border-t pt-3 text-xs text-muted-foreground">
-        <span>실시간 랭킹</span>
-        <span className="font-mono tabular-nums">1위 · 71 WPM</span>
-      </div>
-    </div>
+        <div className="mt-4 flex items-center justify-between border-t pt-3 text-xs text-muted-foreground">
+          <span>실시간 랭킹</span>
+          <span className="font-mono tabular-nums">1위 · 71 WPM</span>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
 function NoteDemo() {
   return (
     <div className="mx-auto max-w-md">
-      <div className="rounded-2xl border bg-card p-5">
-        <p className="text-xs text-muted-foreground">이번 주 프로젝트 노트</p>
-        <p className="mt-2 text-sm leading-relaxed">
-          반복문을 활용해 별 찍기 패턴을 만들어봤다.{" "}
-          <span className="rounded bg-primary/10 px-0.5 underline decoration-primary decoration-2 underline-offset-2">
-            처음엔 무한 루프에 빠져서 한참 애먹었지만
-          </span>{" "}
-          범위를 다시 확인하고 나서 정상 동작했다.
-        </p>
-        <span className="mt-3 inline-flex items-center gap-1.5 rounded-full border px-2 py-1 text-xs text-muted-foreground">
-          📎 별찍기.png
-        </span>
-      </div>
-      <div className="mt-3 flex items-start gap-2 rounded-xl border bg-card p-3 text-sm">
-        <MessageSquare className="mt-0.5 size-4 shrink-0 text-primary" />
-        <div>
-          <p>
-            <span className="font-semibold">3–4번째 줄</span> · 어디서 왜 막혔는지 조금 더 적어볼까요?
+      <Card>
+        <CardContent className="p-5">
+          <p className="text-xs text-muted-foreground">이번 주 프로젝트 노트</p>
+          <p className="mt-2 text-sm leading-relaxed">
+            반복문을 활용해 별 찍기 패턴을 만들어봤다.{" "}
+            <span className="rounded bg-primary/10 px-0.5 underline decoration-primary decoration-2 underline-offset-2">
+              처음엔 무한 루프에 빠져서 한참 애먹었지만
+            </span>{" "}
+            범위를 다시 확인하고 나서 정상 동작했다.
           </p>
-          <p className="mt-1 text-xs text-muted-foreground">김선생 · 방금 · 알림 전송됨</p>
-        </div>
-      </div>
+          <span className="mt-3 inline-flex items-center gap-1.5 rounded-full border px-2 py-1 text-xs text-muted-foreground">
+            📎 별찍기.png
+          </span>
+        </CardContent>
+      </Card>
+      <Card className="mt-3">
+        <CardContent className="flex items-start gap-2 p-3 text-sm">
+          <MessageSquare className="mt-0.5 size-4 shrink-0 text-primary" />
+          <div>
+            <p>
+              <span className="font-semibold">3–4번째 줄</span> · 어디서 왜 막혔는지 조금 더 적어볼까요?
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">김선생 · 방금 · 알림 전송됨</p>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
 
 function ShopDemo() {
   return (
-    <div className="mx-auto max-w-md rounded-2xl border bg-card p-5">
-      <div className="flex items-center justify-between text-sm">
-        <span className="font-semibold">상점</span>
-        <span className="font-mono tabular-nums text-muted-foreground">내 포인트 · 340P</span>
-      </div>
-      <div className="mt-4 grid grid-cols-2 gap-3">
-        <div className="rounded-xl border p-3 text-center">
-          <div className="mx-auto mb-2 flex size-9 items-center justify-center rounded-full border bg-background text-primary">
-            <Gift className="size-4" />
-          </div>
-          <p className="text-sm font-medium">교실 청소 면제권</p>
-          <p className="mt-1 font-mono text-xs tabular-nums text-muted-foreground">120P</p>
-          <button className="mt-2 w-full rounded-full border px-3 py-1 text-xs font-medium hover:bg-muted">구매 요청</button>
+    <Card className="mx-auto max-w-md">
+      <CardContent className="p-5">
+        <div className="flex items-center justify-between text-sm">
+          <span className="font-semibold">상점</span>
+          <span className="font-mono tabular-nums text-muted-foreground">내 포인트 · 340P</span>
         </div>
-        <div className="rounded-xl border p-3 text-center">
-          <div className="mx-auto mb-2 flex size-9 items-center justify-center rounded-full border bg-background text-primary">
-            <Coins className="size-4" />
-          </div>
-          <p className="text-sm font-medium">간식 쿠폰</p>
-          <p className="mt-1 font-mono text-xs tabular-nums text-muted-foreground">80P</p>
-          <button className="mt-2 w-full rounded-full border px-3 py-1 text-xs font-medium hover:bg-muted">구매 요청</button>
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          <Card>
+            <CardContent className="p-3 text-center">
+              <div className="mx-auto mb-2 flex size-9 items-center justify-center rounded-full border bg-background text-primary">
+                <Gift className="size-4" />
+              </div>
+              <p className="text-sm font-medium">교실 청소 면제권</p>
+              <p className="mt-1 font-mono text-xs tabular-nums text-muted-foreground">120P</p>
+              <Button variant="outline" className="mt-2 h-auto w-full px-3 py-1 text-xs font-medium hover:bg-muted">구매 요청</Button>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-3 text-center">
+              <div className="mx-auto mb-2 flex size-9 items-center justify-center rounded-full border bg-background text-primary">
+                <Coins className="size-4" />
+              </div>
+              <p className="text-sm font-medium">간식 쿠폰</p>
+              <p className="mt-1 font-mono text-xs tabular-nums text-muted-foreground">80P</p>
+              <Button variant="outline" className="mt-2 h-auto w-full px-3 py-1 text-xs font-medium hover:bg-muted">구매 요청</Button>
+            </CardContent>
+          </Card>
         </div>
-      </div>
-      <p className="mt-3 text-xs text-muted-foreground">구매 요청은 선생님 승인 후 지급됩니다.</p>
-    </div>
+        <p className="mt-3 text-xs text-muted-foreground">구매 요청은 선생님 승인 후 지급됩니다.</p>
+      </CardContent>
+    </Card>
   );
 }
 

@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useFolders } from "@/hooks/useProblemFolders";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import type { Problem } from "@/integrations/supabase/types";
 
 interface Props {
@@ -67,8 +68,7 @@ export default function AssignProblemsDialog({ open, onOpenChange, problems, ass
             Array.from(groups.entries()).map(([folderId, items]) => (
               <div key={folderId}>
                 <label className="mb-1 flex cursor-pointer items-center gap-2 text-xs font-semibold text-muted-foreground">
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     checked={items.every((p) => checked.has(p.id))}
                     onChange={() => toggleGroup(items)}
                     className="size-3.5"
@@ -78,11 +78,9 @@ export default function AssignProblemsDialog({ open, onOpenChange, problems, ass
                 <div className="space-y-1">
                   {items.map((p) => (
                     <label key={p.id} className="flex cursor-pointer items-center gap-2 rounded-md p-1.5 text-sm hover:bg-accent">
-                      <input
-                        type="checkbox"
+                      <Checkbox
                         checked={checked.has(p.id)}
                         onChange={() => toggle(p.id)}
-                        className="size-4"
                       />
                       <span className="truncate">{p.title || "(제목 없음)"}</span>
                     </label>

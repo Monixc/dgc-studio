@@ -26,6 +26,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { LayoutGrid, FileCode, ChevronUp, ChevronDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { usePrompt } from "@/hooks/use-prompt";
 import { cn } from "@/lib/utils";
 
 const PALETTE: { type: NodeType; label: string; defaultLabel: string }[] = [
@@ -59,6 +60,7 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [paletteOpen, setPaletteOpen] = useState(true);
   const setNodesRef = useRef<ReturnType<typeof useNodesState>[1] | null>(null);
+  const { prompt, dialog: promptDialog } = usePrompt();
 
   const onLabelChange = useCallback((id: string, label: string) => {
     setNodesRef.current?.((ns) => ns.map((n) => (n.id === id ? { ...n, data: { ...n.data, label } } : n)));
@@ -272,13 +274,13 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
   const selectedStyle = (nodes.find((n) => n.id === selectedId)?.data as FlowNodeData | undefined)?.style;
 
   const onEdgeDoubleClick = useCallback(
-    (_: unknown, edge: Edge) => {
+    async (_: unknown, edge: Edge) => {
       if (!editable) return;
-      const label = window.prompt("간선 라벨 (예: 참 / 거짓)", typeof edge.label === "string" ? edge.label : "");
+      const label = await prompt("간선 라벨 (예: 참 / 거짓)", typeof edge.label === "string" ? edge.label : "");
       if (label === null) return;
       setEdges((eds) => eds.map((e) => (e.id === edge.id ? { ...e, label } : e)));
     },
-    [editable, setEdges]
+    [editable, prompt, setEdges]
   );
 
   const doAutoLayout = () => {
@@ -366,6 +368,7 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
         <Background />
         <Controls showInteractive={false} />
       </ReactFlow>
+      {promptDialog}
     </div>
   );
 }

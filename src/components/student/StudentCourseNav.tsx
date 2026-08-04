@@ -20,17 +20,18 @@ function LessonSubProblems({ lessonId, activeProblemId }: { lessonId: string; ac
     <ul>
       {problems.map((p, i) => (
         <li key={p.id}>
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={() => navigate(`/student/lessons/${lessonId}/problems/${p.id}`)}
             className={cn(
-              "flex w-full items-center gap-2 rounded-md py-1.5 pl-9 pr-2 text-left text-sm hover:bg-accent",
-              activeProblemId === p.id && "bg-accent font-medium",
+              "h-auto w-full justify-start gap-2 py-1.5 pl-9 pr-2 font-normal",
+              activeProblemId === p.id && "bg-accent text-foreground font-medium",
             )}
           >
             <span className="w-4 shrink-0 text-center text-xs text-muted-foreground">{i + 1}</span>
             <span className="min-w-0 flex-1 truncate">{p.title || "(제목 없음)"}</span>
-          </button>
+          </Button>
         </li>
       ))}
     </ul>
@@ -61,21 +62,24 @@ function LessonNavItem({
         )}
       >
         {hasProblems ? (
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={() => setOpen((o) => !o)}
             title="하위 문제 펼치기/접기"
-            className="flex size-6 shrink-0 items-center justify-center rounded text-muted-foreground hover:text-foreground"
+            className="size-6 shrink-0 rounded text-muted-foreground hover:text-foreground"
           >
             {open ? <ChevronDown className="size-3.5" /> : <ChevronRight className="size-3.5" />}
-          </button>
+          </Button>
         ) : (
           <span className="size-6 shrink-0" aria-hidden />
         )}
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={() => navigate(`/student/lessons/${lesson.id}`)}
-          className="flex min-w-0 flex-1 items-center gap-2 py-1.5 text-left"
+          className="h-auto min-w-0 flex-1 justify-start gap-2 py-1.5 font-normal"
         >
           {lesson.content_type === "html" ? (
             <FileCode className="size-4 shrink-0 text-muted-foreground" />
@@ -85,7 +89,7 @@ function LessonNavItem({
           <span className={cn("min-w-0 flex-1 truncate", active && "font-semibold")}>
             {lesson.title || "(제목 없음)"}
           </span>
-        </button>
+        </Button>
       </div>
       {open && hasProblems && <LessonSubProblems lessonId={lesson.id} activeProblemId={activeProblemId} />}
     </li>
@@ -123,17 +127,18 @@ export function StudentCourseNav() {
           <ul>
             {standalone.map((p) => (
               <li key={p.id}>
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={() => navigate(`/solve/${p.id}?scope=myclass`)}
                   className={cn(
-                    "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent",
-                    problemId === p.id && "bg-accent font-medium",
+                    "h-auto w-full justify-start gap-2 px-2 py-1.5 font-normal",
+                    problemId === p.id && "bg-accent text-foreground font-medium",
                   )}
                 >
                   <Circle className="size-2 shrink-0 fill-muted text-muted" />
                   <span className="min-w-0 flex-1 truncate">{p.title || "(제목 없음)"}</span>
-                </button>
+                </Button>
               </li>
             ))}
           </ul>

@@ -10,6 +10,9 @@ import { useOnlineUsers } from "@/hooks/usePresence";
 import { listRecentSubmissions } from "@/lib/submissions";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import AppShell from "@/components/layout/AppShell";
 import ScheduleCalendar, { todayEventCount } from "@/components/dashboard/ScheduleCalendar";
 import AnnouncementsPanel from "@/components/dashboard/AnnouncementsPanel";
@@ -51,7 +54,7 @@ export default function Dashboard() {
       <div className="p-6">
         <div className="grid auto-rows-[minmax(0,auto)] grid-cols-1 gap-4 md:grid-cols-4">
           {/* 인사말 히어로 */}
-          <div className="flex flex-col justify-between rounded-2xl bg-zinc-900 p-6 text-white md:col-span-4">
+          <div className="flex flex-col justify-between rounded-none bg-zinc-900 p-6 text-white md:col-span-4">
             <div className="flex gap-1.5">
               <span className="size-3 rounded-full bg-red-400" />
               <span className="size-3 rounded-full bg-yellow-400" />
@@ -64,18 +67,19 @@ export default function Dashboard() {
               </p>
             </div>
             <div className="mt-6 flex gap-2">
-              <button
+              <Button
                 onClick={() => nav("/problems")}
                 className="rounded-full bg-white px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-white/90"
               >
                 제출 확인하기
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="outline"
                 onClick={() => document.getElementById("schedule")?.scrollIntoView({ behavior: "smooth" })}
-                className="rounded-full border border-white/30 px-4 py-2 text-sm hover:bg-white/10"
+                className="rounded-full border-white/30 bg-transparent px-4 py-2 text-sm text-white hover:bg-white/10 hover:text-white"
               >
                 시간표 보기
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -87,10 +91,10 @@ export default function Dashboard() {
               <div className="flex flex-wrap gap-2">
                 {onlineStudents.map((u) => (
                   <span key={u.id} className="relative flex items-center gap-2 rounded-full border bg-background py-1 pl-1 pr-3 text-sm">
-                    <span className="relative flex size-6 items-center justify-center rounded-full bg-zinc-900 text-[11px] font-semibold text-white">
-                      {u.name.trim().charAt(0).toUpperCase()}
+                    <Avatar className="relative size-6 overflow-visible">
+                      <AvatarFallback className="rounded-full bg-zinc-900 text-[11px]">{u.name.trim().charAt(0).toUpperCase()}</AvatarFallback>
                       <span className="absolute -bottom-0.5 -right-0.5 size-2 rounded-full border border-background bg-orange-500" />
-                    </span>
+                    </Avatar>
                     {u.name}
                   </span>
                 ))}
@@ -100,7 +104,7 @@ export default function Dashboard() {
 
           {/* 최근 제출 */}
           <Bento className="md:col-span-2 md:row-span-2" icon={CheckCircle2} title="최근 제출" action={
-            <button onClick={() => nav("/problems")} className="text-xs text-muted-foreground hover:text-foreground">전체 보기</button>
+            <Button variant="ghost" size="sm" onClick={() => nav("/problems")} className="h-auto p-0 text-xs font-normal text-muted-foreground hover:bg-transparent hover:text-foreground">전체 보기</Button>
           }>
             {recent.length === 0 ? (
               <p className="text-sm text-muted-foreground">아직 제출이 없습니다.</p>
@@ -109,11 +113,11 @@ export default function Dashboard() {
                 {recent.slice(0, 5).map((s) => {
                   const perfect = s.passed_tests === s.total_tests && s.total_tests > 0;
                   return (
-                    <button
+                    <Button
                       key={s.id}
-                      type="button"
+                      variant="ghost"
                       onClick={() => nav(`/students/${s.user_id}/problems/${s.problem_id}`)}
-                      className="flex w-full items-center justify-between border-b py-2.5 text-left text-sm last:border-0 hover:bg-accent/50"
+                      className="h-auto w-full items-center justify-between rounded-none border-b py-2.5 text-left text-sm font-normal last:border-0 hover:bg-accent/50"
                     >
                       <div className="min-w-0">
                         <div className="truncate font-medium">{titleOf(s.problem_id)}</div>
@@ -128,7 +132,7 @@ export default function Dashboard() {
                         </div>
                         <div className="text-xs text-muted-foreground">{timeAgo(s.submitted_at)}</div>
                       </div>
-                    </button>
+                    </Button>
                   );
                 })}
               </div>
@@ -165,15 +169,17 @@ function Bento({
   children: React.ReactNode;
 }) {
   return (
-    <div className={cn("rounded-2xl border bg-card p-4", className)}>
-      <div className="mb-3 flex items-center gap-2 text-sm font-semibold">
-        <Icon className="size-4" />
-        {title}
-        {badge && <span className="ml-auto rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">{badge}</span>}
-        {action}
-      </div>
-      {children}
-    </div>
+    <Card className={className}>
+      <CardContent className="p-4">
+        <div className="mb-3 flex items-center gap-2 text-sm font-semibold">
+          <Icon className="size-4" />
+          {title}
+          {badge && <Badge variant="muted" className="ml-auto">{badge}</Badge>}
+          {action}
+        </div>
+        {children}
+      </CardContent>
+    </Card>
   );
 }
 

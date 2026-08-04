@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthForm from "./AuthForm";
 import { Button } from "@/components/ui/button";
+import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover";
 
 type AuthMode = null | "login" | "signup";
 
@@ -20,6 +21,7 @@ export default function AuthDropdown({
   const open = openState !== undefined ? openState : internalOpen;
   const setOpen = onOpenStateChange ?? setInternalOpen;
   const navigate = useNavigate();
+  const anchorRef = useRef<HTMLDivElement>(null);
 
   const close = () => setOpen(null);
   const onSuccess = () => {
@@ -28,26 +30,30 @@ export default function AuthDropdown({
   };
 
   return (
-    <div className="relative">
-      {trigger ? (
-        <div onClick={() => setOpen("signup")}>{trigger}</div>
-      ) : (
-        <div className="flex gap-2">
-          <Button variant="ghost" onClick={() => setOpen("login")}>
-            로그인
-          </Button>
-          <Button onClick={() => setOpen("signup")}>회원가입</Button>
+    <Popover open={open !== null} onOpenChange={(v) => !v && close()}>
+      <PopoverAnchor asChild>
+        <div className="relative" ref={anchorRef}>
+          {trigger ? (
+            <div onClick={() => setOpen("signup")}>{trigger}</div>
+          ) : (
+            <div className="flex gap-2">
+              <Button variant="ghost" onClick={() => setOpen("login")}>
+                로그인
+              </Button>
+              <Button onClick={() => setOpen("signup")}>회원가입</Button>
+            </div>
+          )}
         </div>
-      )}
-
-      {open && (
-        <>
-          <div className="fixed inset-0 z-40" onMouseDown={close} />
-          <div className="absolute right-0 top-full z-50 mt-2 w-72 rounded-lg border bg-background p-4 shadow-lg">
-            <AuthForm initialMode={open} onSuccess={onSuccess} />
-          </div>
-        </>
-      )}
-    </div>
+      </PopoverAnchor>
+      <PopoverContent
+        align="end"
+        className="w-72"
+        onInteractOutside={(e) => {
+          if (anchorRef.current?.contains(e.target as Node)) e.preventDefault();
+        }}
+      >
+        <AuthForm key={open} initialMode={open ?? "login"} onSuccess={onSuccess} />
+      </PopoverContent>
+    </Popover>
   );
 }

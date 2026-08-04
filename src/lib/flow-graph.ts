@@ -307,7 +307,7 @@ export function toRFEdges(graph: FlowGraph): Edge[] {
     type: e.pathType ?? "smoothstep",
     markerEnd: { type: MarkerType.ArrowClosed },
     labelStyle: { fontSize: 11, fontWeight: 600 },
-    labelBgStyle: { fill: "hsl(var(--background))" },
+    labelBgStyle: { fill: "var(--background)" },
   }));
 }
 

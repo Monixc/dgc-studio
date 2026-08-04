@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Plus, Upload, Trash2, FileText, FileCode, Code2, Eye, Pencil, Folder, FolderPlus, Check, ClipboardList, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useConfirm } from "@/hooks/use-confirm";
 import {
   useLessons,
   useCreateLesson,
@@ -20,6 +21,15 @@ import {
 } from "@/hooks/useLessonFolders";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarGroupAction,
+  SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarMenuAction, SidebarInset,
+  SidebarTrigger, SidebarRail, SidebarSeparator, useSidebar,
+} from "@/components/ui/sidebar";
+import { Badge } from "@/components/ui/badge";
 import { Markdown } from "@/components/Markdown";
 import { cn } from "@/lib/utils";
 import type { Lesson } from "@/integrations/supabase/types";
@@ -77,6 +87,7 @@ export default function LessonManager() {
   const [preview, setPreview] = useState(false);
   const [editingFolderId, setEditingFolderId] = useState<string | null>(null);
   const [folderName, setFolderName] = useState("");
+  const { confirm, dialog: confirmDialog } = useConfirm();
   const [attachOpen, setAttachOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   // true면 현재 교안의 파일 교체, false면 새 교안 생성
@@ -164,7 +175,7 @@ export default function LessonManager() {
   }
 
   async function remove(id: string) {
-    if (!confirm("이 교안을 삭제할까요? 반 배정도 함께 해제됩니다.")) return;
+    if (!(await confirm({ description: "이 교안을 삭제할까요? 반 배정도 함께 해제됩니다.", destructive: true }))) return;
     try {
       await deleteMut.mutateAsync(id);
       if (selectedId === id) setSelectedId(null);
@@ -196,7 +207,7 @@ export default function LessonManager() {
   }
 
   async function removeFolder(id: string) {
-    if (!confirm("폴더를 삭제할까요? 안의 교안은 ‘미분류’로 이동합니다.")) return;
+    if (!(await confirm({ description: "폴더를 삭제할까요? 안의 교안은 ‘미분류’로 이동합니다.", destructive: true }))) return;
     try {
       await deleteFolderMut.mutateAsync(id);
       if (activeFolder === id) setActiveFolder(ALL);
@@ -211,126 +222,115 @@ export default function LessonManager() {
   function folderRow(id: string, label: string, count: number, opts?: { folder?: boolean }) {
     const editing = editingFolderId === id;
     return (
-      <div
-        key={id}
-        onClick={() => setActiveFolder(id)}
-        className={cn(
-          "group flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent",
-          activeFolder === id && "bg-accent font-medium",
-        )}
-      >
-        <Folder className="size-4 shrink-0 text-muted-foreground" />
+      <SidebarMenuItem key={id}>
         {editing ? (
-          <Input
-            autoFocus
-            value={folderName}
-            onChange={(e) => setFolderName(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && saveFolderName(id)}
-            onClick={(e) => e.stopPropagation()}
-            className="h-6 flex-1"
-          />
-        ) : (
-          <span className="flex-1 truncate">{label}</span>
-        )}
-        {!editing && <span className="text-xs text-muted-foreground">{count}</span>}
-        {opts?.folder &&
-          (editing ? (
-            <button onClick={(e) => { e.stopPropagation(); saveFolderName(id); }} title="저장">
+          <div className="flex items-center gap-2 rounded-md p-2">
+            <Folder className="size-4 shrink-0 text-muted-foreground" />
+            <Input
+              autoFocus
+              value={folderName}
+              onChange={(e) => setFolderName(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && saveFolderName(id)}
+              className="h-6 flex-1"
+            />
+            <Button variant="ghost" size="icon" className="size-6 shrink-0" onClick={() => saveFolderName(id)} title="저장">
               <Check className="size-3.5" />
-            </button>
-          ) : (
-            <>
-              <button
-                className="opacity-0 group-hover:opacity-100"
-                onClick={(e) => { e.stopPropagation(); setEditingFolderId(id); setFolderName(label); }}
-                title="이름 수정"
-              >
-                <Pencil className="size-3.5 text-muted-foreground hover:text-foreground" />
-              </button>
-              <button
-                className="opacity-0 group-hover:opacity-100"
-                onClick={(e) => { e.stopPropagation(); removeFolder(id); }}
-                title="폴더 삭제"
-              >
-                <Trash2 className="size-3.5 text-muted-foreground hover:text-foreground" />
-              </button>
-            </>
-          ))}
-      </div>
+            </Button>
+          </div>
+        ) : (
+          <>
+            <SidebarMenuButton isActive={activeFolder === id} onClick={() => setActiveFolder(id)} tooltip={label}>
+              <Folder />
+              <span className="flex-1 truncate">{label}</span>
+              <span className="text-xs text-muted-foreground">{count}</span>
+            </SidebarMenuButton>
+            {opts?.folder && (
+              <>
+                <SidebarMenuAction
+                  showOnHover
+                  className="right-7"
+                  onClick={() => { setEditingFolderId(id); setFolderName(label); }}
+                  title="이름 수정"
+                >
+                  <Pencil className="size-3.5" />
+                </SidebarMenuAction>
+                <SidebarMenuAction showOnHover onClick={() => removeFolder(id)} title="폴더 삭제">
+                  <Trash2 className="size-3.5" />
+                </SidebarMenuAction>
+              </>
+            )}
+          </>
+        )}
+      </SidebarMenuItem>
     );
   }
 
   return (
-    <div className="flex h-full">
-      {/* 사이드바: 폴더 + 교안 목록 */}
-      <aside className="flex w-64 shrink-0 flex-col border-r bg-muted/20">
-        <div className="flex flex-wrap items-center gap-1 border-b p-2">
-          <span className="mr-auto text-sm font-semibold">교안</span>
-          <Button size="sm" variant="outline" onClick={createMd} disabled={createMut.isPending}>
-            <Plus className="size-4" /> MD
-          </Button>
-          <Button size="sm" variant="outline" onClick={() => { replaceRef.current = false; fileRef.current?.click(); }} disabled={createMut.isPending}>
-            <Upload className="size-4" /> HTML
-          </Button>
-          <input ref={fileRef} type="file" accept=".html,.htm,text/html" className="hidden" onChange={onFilePicked} />
-        </div>
-
-        {/* 폴더 */}
-        <div className="border-b p-1">
-          <div className="flex items-center px-2 py-1">
-            <span className="mr-auto text-xs font-semibold text-muted-foreground">폴더</span>
-            <button onClick={addFolder} title="새 폴더" className="text-muted-foreground hover:text-foreground">
-              <FolderPlus className="size-4" />
-            </button>
+    <>
+    <SidebarProvider className="h-full min-h-0 items-stretch">
+      <Sidebar collapsible="icon" className="border-r">
+        <SidebarHeader className="border-b group-data-[collapsible=icon]:items-center">
+          <div className="flex items-center gap-1">
+            <SidebarTrigger />
+            <span className="text-sm font-semibold group-data-[collapsible=icon]:hidden">교안</span>
           </div>
-          {folderRow(ALL, "전체", lessons.length)}
-          {folders.map((f) => folderRow(f.id, f.name || "(이름 없음)", countIn(f.id), { folder: true }))}
-          {folderRow(NONE, "미분류", countIn(null))}
-        </div>
+          <div className="flex flex-wrap gap-1 group-data-[collapsible=icon]:hidden">
+            <Button size="sm" variant="outline" onClick={createMd} disabled={createMut.isPending}>
+              <Plus className="size-4" /> MD
+            </Button>
+            <Button size="sm" variant="outline" onClick={() => { replaceRef.current = false; fileRef.current?.click(); }} disabled={createMut.isPending}>
+              <Upload className="size-4" /> HTML
+            </Button>
+          </div>
+          <Input ref={fileRef} type="file" accept=".html,.htm,text/html" className="hidden" onChange={onFilePicked} />
+        </SidebarHeader>
 
-        {/* 교안 목록 */}
-        <div className="flex-1 overflow-auto p-1">
-          {isLoading ? (
-            <p className="p-2 text-sm text-muted-foreground">불러오는 중…</p>
-          ) : filtered.length === 0 ? (
-            <p className="p-2 text-sm text-muted-foreground">교안이 없습니다.</p>
-          ) : (
-            filtered.map((l) => (
-              <div
-                key={l.id}
-                onClick={() => setSelectedId(l.id)}
-                className={cn(
-                  "group flex cursor-pointer items-center gap-2 rounded-md p-2 text-sm hover:bg-accent",
-                  selectedId === l.id && "bg-accent",
-                )}
-              >
-                {l.content_type === "html" ? (
-                  <FileCode className="size-4 shrink-0 text-muted-foreground" />
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>폴더</SidebarGroupLabel>
+            <SidebarGroupAction onClick={addFolder} title="새 폴더">
+              <FolderPlus />
+            </SidebarGroupAction>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {folderRow(ALL, "전체", lessons.length)}
+                {folders.map((f) => folderRow(f.id, f.name || "(이름 없음)", countIn(f.id), { folder: true }))}
+                {folderRow(NONE, "미분류", countIn(null))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+
+          <SidebarSeparator />
+
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {isLoading ? (
+                  <p className="p-2 text-sm text-muted-foreground">불러오는 중…</p>
+                ) : filtered.length === 0 ? (
+                  <p className="p-2 text-sm text-muted-foreground">교안이 없습니다.</p>
                 ) : (
-                  <FileText className="size-4 shrink-0 text-muted-foreground" />
+                  filtered.map((l) => (
+                    <LessonMenuItem key={l.id} lesson={l} isActive={selectedId === l.id} onSelect={setSelectedId} onDelete={remove} />
+                  ))
                 )}
-                <span className="flex-1 truncate">{l.title || "(제목 없음)"}</span>
-                {l.code_practice && <Code2 className="size-3.5 shrink-0 text-primary" />}
-                <button
-                  className="opacity-0 group-hover:opacity-100"
-                  onClick={(e) => { e.stopPropagation(); remove(l.id); }}
-                  title="삭제"
-                >
-                  <Trash2 className="size-4 text-muted-foreground hover:text-foreground" />
-                </button>
-              </div>
-            ))
-          )}
-        </div>
-      </aside>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+      <SidebarRail />
 
+      <SidebarInset className="overflow-auto">
       {/* 편집 */}
       {!selected || !draft ? (
         <div className="flex flex-1 items-center justify-center p-6 text-center text-sm text-muted-foreground">
+          <div className="flex items-center gap-2 md:hidden"><SidebarTrigger /></div>
           왼쪽에서 교안을 선택하거나 새로 만드세요.
         </div>
       ) : (
         <div className="flex min-w-0 flex-1 flex-col overflow-auto p-4">
+          <div className="mb-2 flex items-center gap-2 md:hidden"><SidebarTrigger /></div>
           <div className="mb-3 flex flex-wrap items-center gap-2">
             <Input
               className="h-9 max-w-xs font-semibold"
@@ -338,11 +338,9 @@ export default function LessonManager() {
               onChange={(e) => setDraft({ ...draft, title: e.target.value })}
               placeholder="교안 제목"
             />
-            <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium">
-              {selected.content_type === "html" ? "HTML" : "Markdown"}
-            </span>
-            <select
-              className="h-9 rounded-md border border-input bg-background px-2 text-sm"
+            <Badge variant="muted">{selected.content_type === "html" ? "HTML" : "Markdown"}</Badge>
+            <Select
+              className="h-9 w-auto"
               value={draft.folder_id ?? ""}
               onChange={(e) => setDraft({ ...draft, folder_id: e.target.value || null })}
               title="폴더"
@@ -351,7 +349,7 @@ export default function LessonManager() {
               {folders.map((f) => (
                 <option key={f.id} value={f.id}>{f.name || "(이름 없음)"}</option>
               ))}
-            </select>
+            </Select>
             <div className="ml-auto flex items-center gap-2">
               <Button size="sm" variant="ghost" onClick={() => setPreview((p) => !p)}>
                 {preview ? <><Pencil className="size-4" /> 편집</> : <><Eye className="size-4" /> 미리보기</>}
@@ -368,9 +366,7 @@ export default function LessonManager() {
           </div>
 
           <label className="mb-3 flex cursor-pointer items-center gap-2 rounded-lg border p-3 text-sm">
-            <input
-              type="checkbox"
-              className="size-4"
+            <Checkbox
               checked={draft.code_practice}
               onChange={(e) => setDraft({ ...draft, code_practice: e.target.checked })}
             />
@@ -390,8 +386,8 @@ export default function LessonManager() {
               )}
             </div>
           ) : (
-            <textarea
-              className="min-h-[40vh] flex-1 rounded-lg border bg-background p-3 font-mono text-sm"
+            <Textarea
+              className="min-h-[40vh] flex-1 resize-none font-mono text-sm"
               value={draft.content}
               onChange={(e) => setDraft({ ...draft, content: e.target.value })}
               placeholder={selected.content_type === "html" ? "HTML 원본…" : "# 마크다운으로 작성"}
@@ -402,8 +398,8 @@ export default function LessonManager() {
           {draft.code_practice && (
             <div className="mt-3">
               <p className="mb-1 text-xs font-semibold text-muted-foreground">시작 코드 (선택)</p>
-              <textarea
-                className="min-h-24 w-full rounded-lg border bg-background p-3 font-mono text-sm"
+              <Textarea
+                className="min-h-24 w-full resize-none font-mono text-sm"
                 value={draft.starter_code}
                 onChange={(e) => setDraft({ ...draft, starter_code: e.target.value })}
                 placeholder="# 학생 IDE에 미리 채워둘 코드"
@@ -437,9 +433,9 @@ export default function LessonManager() {
                         미발행 — 학생이 못 봄
                       </span>
                     )}
-                    <button onClick={() => detachProblem(p.id)} title="떼기" className="text-muted-foreground hover:text-foreground">
+                    <Button variant="ghost" size="icon" className="size-6 text-muted-foreground hover:text-foreground" onClick={() => detachProblem(p.id)} title="떼기">
                       <X className="size-3.5" />
-                    </button>
+                    </Button>
                   </li>
                 ))}
               </ol>
@@ -463,6 +459,39 @@ export default function LessonManager() {
           />
         </div>
       )}
-    </div>
+      </SidebarInset>
+    </SidebarProvider>
+    {confirmDialog}
+    </>
+  );
+}
+
+function LessonMenuItem({
+  lesson, isActive, onSelect, onDelete,
+}: {
+  lesson: Lesson;
+  isActive: boolean;
+  onSelect: (id: string) => void;
+  onDelete: (id: string) => void;
+}) {
+  const { isMobile, setOpenMobile } = useSidebar();
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        isActive={isActive}
+        tooltip={lesson.title || "(제목 없음)"}
+        onClick={() => {
+          onSelect(lesson.id);
+          if (isMobile) setOpenMobile(false);
+        }}
+      >
+        {lesson.content_type === "html" ? <FileCode /> : <FileText />}
+        <span className="flex-1 truncate">{lesson.title || "(제목 없음)"}</span>
+        {lesson.code_practice && <Code2 className="size-3.5 shrink-0 text-primary" />}
+      </SidebarMenuButton>
+      <SidebarMenuAction showOnHover onClick={() => onDelete(lesson.id)} title="삭제">
+        <Trash2 className="size-3.5" />
+      </SidebarMenuAction>
+    </SidebarMenuItem>
   );
 }

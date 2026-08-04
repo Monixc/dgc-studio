@@ -21,6 +21,7 @@ import { normalizeStored } from "@/lib/flow-graph";
 import EditorPanel, { type ConsoleLine } from "@/components/editor/EditorPanel";
 import BlockWorkspacePanel, { type BlockWorkspacePanelHandle } from "@/features/block-coding/BlockWorkspacePanel";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Markdown } from "@/components/Markdown";
 import { RotateCcw } from "lucide-react";
@@ -200,9 +201,9 @@ export default function Solve({ embedded = false, problemId: problemIdProp }: { 
         >
           <MessageSquare />
           {feedback.length > 0 && (
-            <span className="absolute right-0 top-0 flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+            <Badge className="absolute right-0 top-0 flex size-4 items-center justify-center border-0 p-0 text-[10px] font-bold">
               {feedback.length}
-            </span>
+            </Badge>
           )}
         </Button>
       </header>
@@ -222,11 +223,12 @@ export default function Solve({ embedded = false, problemId: problemIdProp }: { 
                 const submission = bestSubmissionByProblem.get(p.id);
                 const isCorrect = !!submission && submission.max_score > 0 && submission.score >= submission.max_score;
                 return (
-                  <button
+                  <Button
                     key={p.id}
+                    variant="ghost"
                     onClick={() => navigate(`/solve/${p.id}${isMyClass ? "?scope=myclass" : ""}`)}
                     className={cn(
-                      "flex w-full items-center gap-2 border-b p-2.5 text-left text-sm hover:bg-accent",
+                      "h-auto w-full justify-start rounded-none gap-2 border-b p-2.5 text-left text-sm",
                       p.id === problem.id && "bg-accent"
                     )}
                   >
@@ -241,7 +243,7 @@ export default function Solve({ embedded = false, problemId: problemIdProp }: { 
                     >
                       {submission ? `${submission.score}/${submission.max_score}점` : "미제출"}
                     </span>
-                  </button>
+                  </Button>
                 );
               })}
             </div>

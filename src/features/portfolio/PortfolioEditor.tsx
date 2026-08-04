@@ -25,6 +25,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { DrawingDialog } from "./DrawingDialog";
 import {
@@ -421,8 +422,8 @@ export function PortfolioEditor({
           <DialogHeader>
             <DialogTitle>Markdown 가져오기</DialogTitle>
           </DialogHeader>
-          <textarea
-            className="min-h-64 w-full rounded-md border bg-background p-3 font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          <Textarea
+            className="min-h-64 w-full resize-none font-mono text-sm"
             value={markdown}
             aria-label="Markdown"
             onChange={(event) => setMarkdown(event.target.value)}

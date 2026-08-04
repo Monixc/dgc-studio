@@ -1,9 +1,9 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Plus, Trash2, Pencil, Check, Users, UserPlus, X, Coins, MonitorPlay, Bell, Circle, ChevronDown, NotebookPen, Code2 } from "lucide-react";
-import type { ImperativePanelHandle } from "react-resizable-panels";
+import { Plus, Trash2, Pencil, Check, Users, UserPlus, X, Coins, MonitorPlay, Bell, Circle, NotebookPen, Code2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useConfirm } from "@/hooks/use-confirm";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
   useClasses, useCreateClass, useRenameClass, useDeleteClass, useUpdateClassSchedule,
@@ -16,7 +16,14 @@ import { useAwardPoints } from "@/hooks/usePoints";
 import { currentWeekSchedule } from "@/components/dashboard/ScheduleCalendar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import { Select } from "@/components/ui/select";
+import {
+  SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupContent,
+  SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarMenuAction, SidebarInset, SidebarTrigger, SidebarRail,
+  useSidebar,
+} from "@/components/ui/sidebar";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import AssignProblemsDialog from "@/components/admin/AssignProblemsDialog";
 import AssignLessonsDialog from "@/components/admin/AssignLessonsDialog";
@@ -42,15 +49,7 @@ export default function ClassManager() {
   const [nameInput, setNameInput] = useState("");
   const [assignOpen, setAssignOpen] = useState(false);
   const isMobile = useIsMobile();
-  const [mobileListOpen, setMobileListOpen] = useState(false);
-
-  const listPanelRef = useRef<ImperativePanelHandle>(null);
-  const [listCollapsed, setListCollapsed] = useState(false);
-
-  function toggleListPanel() {
-    if (listCollapsed) listPanelRef.current?.expand();
-    else listPanelRef.current?.collapse();
-  }
+  const { confirm, dialog: confirmDialog } = useConfirm();
 
   const selected = classes.find((c) => c.id === selectedId) ?? null;
   const { data: assignedIds = [] } = useClassProblemIds(selected?.id);
@@ -96,7 +95,7 @@ export default function ClassManager() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("이 반을 삭제할까요? 배정된 문제 연결도 함께 삭제됩니다.")) return;
+    if (!(await confirm({ description: "이 반을 삭제할까요? 배정된 문제 연결도 함께 삭제됩니다.", destructive: true }))) return;
     try {
       await deleteMut.mutateAsync(id);
       if (selectedId === id) setSelectedId(null);
@@ -121,7 +120,7 @@ export default function ClassManager() {
 
   async function removeProblem(problemId: string) {
     if (!selected) return;
-    if (!confirm("이 문제의 할당을 해제하시겠습니까?")) return;
+    if (!(await confirm("이 문제의 할당을 해제하시겠습니까?"))) return;
     try {
       await setProblemsMut.mutateAsync({
         classId: selected.id,
@@ -134,7 +133,7 @@ export default function ClassManager() {
 
   async function removeLesson(lessonId: string) {
     if (!selected) return;
-    if (!confirm("이 교안의 할당을 해제하시겠습니까?")) return;
+    if (!(await confirm("이 교안의 할당을 해제하시겠습니까?"))) return;
     try {
       await setLessonsMut.mutateAsync({
         classId: selected.id,
@@ -147,7 +146,7 @@ export default function ClassManager() {
 
   async function removeStudent(studentId: string) {
     if (!selected) return;
-    if (!confirm("이 학생의 등록을 해제하시겠습니까?")) return;
+    if (!(await confirm("이 학생의 등록을 해제하시겠습니까?"))) return;
     try {
       await setStudentsMut.mutateAsync({
         classId: selected.id,
@@ -156,46 +155,6 @@ export default function ClassManager() {
     } catch (e: any) {
       toast.error(e?.message ?? "실패");
     }
-  }
-
-  function renderClassRow(c: (typeof classes)[number], opts?: { alwaysShowActions?: boolean; onAfterSelect?: () => void }) {
-    const actionCls = opts?.alwaysShowActions ? "" : "opacity-0 group-hover:opacity-100";
-    return (
-      <div
-        key={c.id}
-        onClick={() => { setSelectedId(c.id); opts?.onAfterSelect?.(); }}
-        className={cn(
-          "group flex cursor-pointer items-center gap-2 rounded-md p-2 text-sm hover:bg-accent",
-          selectedId === c.id && "bg-accent"
-        )}
-      >
-        <Users className="size-4 shrink-0 text-muted-foreground" />
-        {editingId === c.id ? (
-          <Input
-            autoFocus
-            value={nameInput}
-            onChange={(e) => setNameInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && saveEdit(c.id)}
-            onClick={(e) => e.stopPropagation()}
-            className="h-7"
-          />
-        ) : (
-          <span className="flex-1 truncate">{c.name || "(이름 없음)"}</span>
-        )}
-        {editingId === c.id ? (
-          <button onClick={(e) => { e.stopPropagation(); saveEdit(c.id); }} title="저장">
-            <Check className="size-4" />
-          </button>
-        ) : (
-          <button className={actionCls} onClick={(e) => { e.stopPropagation(); startEdit(c.id, c.name); }} title="이름 수정">
-            <Pencil className="size-4" />
-          </button>
-        )}
-        <button className={actionCls} onClick={(e) => { e.stopPropagation(); handleDelete(c.id); }} title="삭제">
-          <Trash2 className="size-4" />
-        </button>
-      </div>
-    );
   }
 
   const detail = !selected ? (
@@ -207,8 +166,8 @@ export default function ClassManager() {
       <div className="mb-6 flex flex-wrap items-center gap-2 rounded-lg border p-3">
               <Bell className="size-4 shrink-0 text-muted-foreground" />
               <span className="text-sm font-medium">수업 시간</span>
-              <select
-                className="rounded-md border bg-background px-2 py-1 text-sm"
+              <Select
+                className="h-8 w-auto"
                 value={selected.schedule_day_of_week ?? ""}
                 onChange={(e) => setSchedule(e.target.value === "" ? null : Number(e.target.value), selected.schedule_time)}
               >
@@ -216,43 +175,43 @@ export default function ClassManager() {
                 {DAY_LABELS.map((d, i) => (
                   <option key={i} value={i}>{d}요일</option>
                 ))}
-              </select>
-              <input
+              </Select>
+              <Input
                 type="time"
-                className="rounded-md border bg-background px-2 py-1 text-sm"
+                className="h-8 w-auto"
                 value={selected.schedule_time?.slice(0, 5) ?? ""}
                 onChange={(e) => setSchedule(selected.schedule_day_of_week, e.target.value || null)}
               />
               <span className="text-xs text-muted-foreground">설정 시 시작 30분 전 학생에게 알림이 갑니다.</span>
 
-              <div className="relative ml-auto">
-                <Button size="sm" variant="outline" onClick={() => setImportOpen((o) => !o)}>
-                  시간표에서 가져오기
-                </Button>
-                {importOpen && (
-                  <>
-                    <div className="fixed inset-0 z-40" onClick={() => setImportOpen(false)} />
-                    <div className="absolute right-0 z-50 mt-1 w-56 rounded-lg border bg-background p-1 shadow-lg">
-                      {weekSchedule.length === 0 ? (
-                        <p className="p-2 text-xs text-muted-foreground">이번 주 시간표에 등록된 수업이 없습니다.</p>
-                      ) : (
-                        weekSchedule.map((s, i) => (
-                          <button
-                            key={i}
-                            onClick={() => {
-                              setSchedule(s.dayOfWeek, s.time);
-                              setImportOpen(false);
-                            }}
-                            className="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent"
-                          >
-                            <span className="truncate">{s.title}</span>
-                            <span className="ml-2 shrink-0 text-xs text-muted-foreground">{DAY_LABELS[s.dayOfWeek]} {s.time}</span>
-                          </button>
-                        ))
-                      )}
-                    </div>
-                  </>
-                )}
+              <div className="ml-auto">
+                <Popover open={importOpen} onOpenChange={setImportOpen}>
+                  <PopoverTrigger asChild>
+                    <Button size="sm" variant="outline">
+                      시간표에서 가져오기
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent align="end" className="w-56 p-1">
+                    {weekSchedule.length === 0 ? (
+                      <p className="p-2 text-xs text-muted-foreground">이번 주 시간표에 등록된 수업이 없습니다.</p>
+                    ) : (
+                      weekSchedule.map((s, i) => (
+                        <Button
+                          key={i}
+                          variant="ghost"
+                          onClick={() => {
+                            setSchedule(s.dayOfWeek, s.time);
+                            setImportOpen(false);
+                          }}
+                          className="flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-sm font-normal"
+                        >
+                          <span className="truncate">{s.title}</span>
+                          <span className="ml-2 shrink-0 text-xs text-muted-foreground">{DAY_LABELS[s.dayOfWeek]} {s.time}</span>
+                        </Button>
+                      ))
+                    )}
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
 
@@ -277,20 +236,24 @@ export default function ClassManager() {
                         </span>
                       )}
                       {s.display_name || "(이름 없음)"}
-                      <button
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-5 text-muted-foreground hover:text-foreground"
                         onClick={() => setAwardTarget({ id: s.id, name: s.display_name || "(이름 없음)" })}
                         title="포인트 부여"
-                        className="text-muted-foreground hover:text-foreground"
                       >
                         <Coins className="size-3.5" />
-                      </button>
-                      <button
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-5 text-muted-foreground hover:text-foreground"
                         onClick={() => removeStudent(s.id)}
                         title="등록 해제"
-                        className="text-muted-foreground hover:text-foreground"
                       >
                         <X className="size-3.5" />
-                      </button>
+                      </Button>
                     </span>
                   ))}
                 </div>
@@ -325,13 +288,15 @@ export default function ClassManager() {
                       <span className={cn("text-xs", p.is_published ? "text-emerald-600" : "text-muted-foreground")}>
                         {p.is_published ? "발행됨" : "미발행"}
                       </span>
-                      <button
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-6 text-muted-foreground hover:text-foreground"
                         onClick={(e) => { e.stopPropagation(); removeProblem(p.id); }}
                         title="할당 해제"
-                        className="text-muted-foreground hover:text-foreground"
                       >
                         <X className="size-3.5" />
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 ))}
@@ -358,18 +323,20 @@ export default function ClassManager() {
                   >
                     <span className="flex min-w-0 items-center gap-2">
                       <span className="truncate">{l.title || "(제목 없음)"}</span>
-                      <span className="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                      <Badge variant="muted" className="shrink-0 px-1.5 py-0.5 text-[10px]">
                         {l.content_type === "html" ? "HTML" : "MD"}
-                      </span>
+                      </Badge>
                       {l.code_practice && <Code2 className="size-3.5 shrink-0 text-primary" />}
                     </span>
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="size-6 text-muted-foreground hover:text-foreground"
                       onClick={(e) => { e.stopPropagation(); removeLesson(l.id); }}
                       title="할당 해제"
-                      className="text-muted-foreground hover:text-foreground"
                     >
                       <X className="size-3.5" />
-                    </button>
+                    </Button>
                   </div>
                 ))}
               </div>
@@ -439,103 +406,125 @@ export default function ClassManager() {
           </div>
   );
 
-  if (isMobile) {
-    return (
-      <div className="flex h-full flex-col">
-        <div className="relative border-b bg-muted/20 p-2">
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => setMobileListOpen((o) => !o)}
-              className="flex flex-1 items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm"
-            >
-              <Users className="size-4 shrink-0 text-muted-foreground" />
-              <span className="flex-1 truncate text-left">{selected ? selected.name || "(이름 없음)" : "반 목록"}</span>
-              <ChevronDown className={cn("size-4 shrink-0 transition-transform", mobileListOpen && "rotate-180")} />
-            </button>
-            <button
-              className="shrink-0 rounded p-2 text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50"
-              onClick={handleCreate}
-              disabled={createMut.isPending}
-              title="새 반"
-            >
-              <Plus className="size-4" />
-            </button>
-          </div>
-          {mobileListOpen && (
-            <>
-              <div className="fixed inset-0 z-40" onClick={() => setMobileListOpen(false)} />
-              <div className="absolute inset-x-2 top-full z-50 mt-1 max-h-[60vh] overflow-auto rounded-lg border bg-background p-1 shadow-lg">
+  return (
+    <>
+    <SidebarProvider className="h-full min-h-0 items-stretch">
+      <Sidebar collapsible="icon" className="border-r">
+        <SidebarHeader className="flex-row items-center gap-1 border-b group-data-[collapsible=icon]:justify-center">
+          <SidebarTrigger />
+          <span className="whitespace-nowrap text-sm font-semibold group-data-[collapsible=icon]:hidden">반 목록</span>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="ml-auto size-7 group-data-[collapsible=icon]:ml-0"
+            onClick={handleCreate}
+            disabled={createMut.isPending}
+            title="새 반"
+          >
+            <Plus className="size-4" />
+          </Button>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
                 {isLoading ? (
                   <p className="p-2 text-sm text-muted-foreground">불러오는 중…</p>
                 ) : classes.length === 0 ? (
                   <p className="p-2 text-sm text-muted-foreground">“새 반”으로 시작하세요.</p>
                 ) : (
-                  classes.map((c) => renderClassRow(c, { alwaysShowActions: true, onAfterSelect: () => setMobileListOpen(false) }))
+                  classes.map((c) => (
+                    <ClassMenuItem
+                      key={c.id}
+                      c={c}
+                      isActive={selectedId === c.id}
+                      isEditing={editingId === c.id}
+                      nameInput={nameInput}
+                      onNameInputChange={setNameInput}
+                      onSelect={setSelectedId}
+                      onSaveEdit={saveEdit}
+                      onStartEdit={startEdit}
+                      onDelete={handleDelete}
+                    />
+                  ))
                 )}
-              </div>
-            </>
-          )}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+      <SidebarRail />
+
+      <SidebarInset className="overflow-auto">
+        {isMobile && (
+          <div className="flex items-center gap-2 border-b bg-muted/20 p-2">
+            <SidebarTrigger />
+            <Users className="size-4 shrink-0 text-muted-foreground" />
+            <span className="truncate text-sm font-medium">{selected ? selected.name || "(이름 없음)" : "반 목록"}</span>
+          </div>
+        )}
+        {detail}
+      </SidebarInset>
+    </SidebarProvider>
+    {confirmDialog}
+    </>
+  );
+}
+
+function ClassMenuItem({
+  c, isActive, isEditing, nameInput, onNameInputChange, onSelect, onSaveEdit, onStartEdit, onDelete,
+}: {
+  c: { id: string; name: string };
+  isActive: boolean;
+  isEditing: boolean;
+  nameInput: string;
+  onNameInputChange: (v: string) => void;
+  onSelect: (id: string) => void;
+  onSaveEdit: (id: string) => void;
+  onStartEdit: (id: string, name: string) => void;
+  onDelete: (id: string) => void;
+}) {
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  if (isEditing) {
+    return (
+      <SidebarMenuItem>
+        <div className="flex items-center gap-2 rounded-md p-2">
+          <Users className="size-4 shrink-0 text-muted-foreground" />
+          <Input
+            autoFocus
+            value={nameInput}
+            onChange={(e) => onNameInputChange(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && onSaveEdit(c.id)}
+            className="h-7"
+          />
+          <Button variant="ghost" size="icon" className="size-7 shrink-0" onClick={() => onSaveEdit(c.id)} title="저장">
+            <Check className="size-4" />
+          </Button>
         </div>
-        <div className="flex-1 overflow-auto">{detail}</div>
-      </div>
+      </SidebarMenuItem>
     );
   }
 
   return (
-    <ResizablePanelGroup direction="horizontal" className="h-full overflow-hidden">
-      <ResizablePanel
-        ref={listPanelRef}
-        defaultSize={17}
-        minSize={14}
-        maxSize={35}
-        collapsible
-        collapsedSize={5}
-        onCollapse={() => setListCollapsed(true)}
-        onExpand={() => setListCollapsed(false)}
-        className="flex h-full flex-col bg-muted/20"
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        isActive={isActive}
+        tooltip={c.name || "(이름 없음)"}
+        onClick={() => {
+          onSelect(c.id);
+          if (isMobile) setOpenMobile(false);
+        }}
       >
-        {!listCollapsed && (
-          <div className="flex items-center gap-1 border-b p-2">
-            <span className="whitespace-nowrap text-sm font-semibold">반 목록</span>
-            <button
-              className="ml-auto rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50"
-              onClick={handleCreate}
-              disabled={createMut.isPending}
-              title="새 반"
-            >
-              <Plus className="size-4" />
-            </button>
-          </div>
-        )}
-        <div className="flex-1 overflow-auto p-1">
-          {listCollapsed ? (
-            <div className="flex flex-col items-center gap-1 py-1">
-              {classes.map((c) => (
-                <button
-                  key={c.id}
-                  onClick={() => setSelectedId(c.id)}
-                  title={c.name || "(이름 없음)"}
-                  className={cn("rounded p-1.5 hover:bg-accent", selectedId === c.id && "bg-accent")}
-                >
-                  <Users className="size-4 text-muted-foreground" />
-                </button>
-              ))}
-            </div>
-          ) : isLoading ? (
-            <p className="p-2 text-sm text-muted-foreground">불러오는 중…</p>
-          ) : classes.length === 0 ? (
-            <p className="p-2 text-sm text-muted-foreground">“새 반”으로 시작하세요.</p>
-          ) : (
-            classes.map((c) => renderClassRow(c))
-          )}
-        </div>
-      </ResizablePanel>
-
-      <ResizableHandle onToggle={toggleListPanel} collapsed={listCollapsed} />
-
-      <ResizablePanel defaultSize={83} className="overflow-auto">
-        {detail}
-      </ResizablePanel>
-    </ResizablePanelGroup>
+        <Users />
+        <span>{c.name || "(이름 없음)"}</span>
+      </SidebarMenuButton>
+      <SidebarMenuAction showOnHover className="right-7" onClick={() => onStartEdit(c.id, c.name)} title="이름 수정">
+        <Pencil className="size-3.5" />
+      </SidebarMenuAction>
+      <SidebarMenuAction showOnHover onClick={() => onDelete(c.id)} title="삭제">
+        <Trash2 className="size-3.5" />
+      </SidebarMenuAction>
+    </SidebarMenuItem>
   );
 }

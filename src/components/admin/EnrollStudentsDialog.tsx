@@ -3,6 +3,7 @@ import { useAllStudents } from "@/hooks/useClassStudents";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface Props {
   open: boolean;
@@ -44,11 +45,9 @@ export default function EnrollStudentsDialog({ open, onOpenChange, enrolledIds, 
           ) : (
             filtered.map((s) => (
               <label key={s.id} className="flex cursor-pointer items-center gap-2 rounded-md p-1.5 text-sm hover:bg-accent">
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={checked.has(s.id)}
                   onChange={() => toggle(s.id)}
-                  className="size-4"
                 />
                 <span className="truncate">{s.display_name || "(이름 없음)"}</span>
               </label>

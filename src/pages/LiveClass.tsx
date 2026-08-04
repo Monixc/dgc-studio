@@ -64,18 +64,19 @@ export default function LiveClass() {
               const isOnline = onlineIds.has(s.id);
               const isWatching = watching.includes(s.id);
               return (
-                <button
+                <Button
                   key={s.id}
+                  variant="ghost"
                   disabled={!isOnline}
                   onClick={() => toggleWatch(s.id)}
                   className={cn(
-                    "mb-1 flex w-full items-center gap-2 rounded-md p-2 text-left text-sm hover:bg-accent disabled:cursor-not-allowed disabled:opacity-40",
+                    "mb-1 h-auto w-full justify-start gap-2 p-2 text-left text-sm font-normal disabled:cursor-not-allowed disabled:opacity-40",
                     isWatching && "bg-accent"
                   )}
                 >
                   <Circle className={cn("size-2 shrink-0", isOnline ? "fill-emerald-500 text-emerald-500" : "fill-muted text-muted")} />
                   <span className="truncate">{s.display_name || "(이름 없음)"}</span>
-                </button>
+                </Button>
               );
             })
           )}
@@ -233,25 +234,27 @@ function StudentTile({
         )}
         <div className="ml-auto flex items-center gap-1">
           {canAnnotate && (
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={toggleAnnotate}
               title={annotating ? "첨삭 종료" : "첨삭 (학생 코드에 직접 입력)"}
               className={cn(
-                "rounded px-1 text-xs",
-                annotating ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
+                "size-6",
+                annotating ? "bg-primary text-primary-foreground hover:bg-primary/90" : "text-muted-foreground hover:text-foreground",
               )}
             >
               <Pencil className="size-3.5" />
-            </button>
+            </Button>
           )}
           {display && (
-            <button onClick={() => setShowProblem((v) => !v)} title="문제 펼치기/접기" className="text-muted-foreground hover:text-foreground">
+            <Button variant="ghost" size="icon" onClick={() => setShowProblem((v) => !v)} title="문제 펼치기/접기" className="size-6 text-muted-foreground hover:text-foreground">
               {showProblem ? <PanelLeftClose className="size-3.5" /> : <PanelLeftOpen className="size-3.5" />}
-            </button>
+            </Button>
           )}
-          <button onClick={onClose} title="그만 보기" className="text-xs text-muted-foreground hover:text-foreground">
+          <Button variant="ghost" size="icon" onClick={onClose} title="그만 보기" className="size-6 text-xs text-muted-foreground hover:text-foreground">
             ✕
-          </button>
+          </Button>
         </div>
       </div>
 

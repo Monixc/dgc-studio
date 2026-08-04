@@ -2,6 +2,8 @@ import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Coins, MessageCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import { usePublishedProblems } from "@/hooks/useProblems";
 import { useProblemsRealtime } from "@/hooks/useProblemsRealtime";
@@ -58,14 +60,15 @@ export default function PracticeList({ title, category, problems: fixedProblems,
       ) : problems.length === 0 ? (
         <p className="text-muted-foreground">아직 문제가 없습니다.</p>
       ) : (
-        <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
+        <Card className="overflow-hidden">
+          <CardContent className="p-0">
           {problems.map((p) => {
             const status = statusByProblem.get(p.id);
             return (
-              <button
+              <Button
                 key={p.id}
-                type="button"
-                className="flex w-full items-center gap-3 border-t px-4 py-3 text-left transition first:border-t-0 hover:bg-accent/50"
+                variant="ghost"
+                className="w-full justify-start gap-3 rounded-none border-t px-4 py-3 font-normal first:border-t-0 hover:bg-accent/50"
                 onClick={() => navigate(`/solve/${p.id}${solveScope ? `?scope=${solveScope}` : ""}`)}
               >
                 <div className="truncate font-medium">{p.title || "(제목 없음)"}</div>
@@ -89,10 +92,11 @@ export default function PracticeList({ title, category, problems: fixedProblems,
                     <MessageCircle className="size-4 shrink-0 text-muted-foreground" />
                   </span>
                 )}
-              </button>
+              </Button>
             );
           })}
-        </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   );

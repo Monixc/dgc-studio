@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 // ponytail: 수업 일정 localStorage 저장. 멀티기기/학생 공유 필요하면 classes 테이블로 이관.
@@ -92,29 +93,31 @@ export default function ScheduleCalendar({ className }: { className?: string }) 
       : `${cursor.getFullYear()}년 ${cursor.getMonth() + 1}월`;
 
   return (
-    <div className={cn("flex flex-col rounded-xl border bg-card p-4 shadow-sm", className)}>
+    <Card className={cn("flex flex-col", className)}>
+      <CardContent className="p-4">
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <span className="text-sm font-semibold">수업 시간표</span>
         <span className="ml-1 text-sm text-muted-foreground">{label}</span>
         <div className="ml-auto flex items-center gap-1">
-          <button className="rounded p-1 hover:bg-accent" onClick={() => step(-1)}>
+          <Button variant="ghost" size="icon" className="size-7" onClick={() => step(-1)}>
             <ChevronLeft className="size-4" />
-          </button>
-          <button className="rounded px-2 py-1 text-xs hover:bg-accent" onClick={() => setCursor(new Date())}>
+          </Button>
+          <Button variant="ghost" size="sm" className="h-7 px-2 text-xs" onClick={() => setCursor(new Date())}>
             오늘
-          </button>
-          <button className="rounded p-1 hover:bg-accent" onClick={() => step(1)}>
+          </Button>
+          <Button variant="ghost" size="icon" className="size-7" onClick={() => step(1)}>
             <ChevronRight className="size-4" />
-          </button>
+          </Button>
           <div className="ml-2 flex overflow-hidden rounded-lg border text-xs">
             {(["week", "month"] as const).map((v) => (
-              <button
+              <Button
                 key={v}
+                variant="ghost"
+                className={cn("h-auto rounded-none px-3 py-1 font-normal", view === v ? "bg-accent text-foreground font-medium" : "")}
                 onClick={() => setView(v)}
-                className={cn("px-3 py-1", view === v ? "bg-primary text-primary-foreground" : "hover:bg-accent")}
               >
                 {v === "week" ? "1주일" : "30일"}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -141,25 +144,26 @@ export default function ScheduleCalendar({ className }: { className?: string }) 
                 onKeyDown={(e) => e.key === "Enter" && save()}
               />
               <div className="flex gap-2">
-                <input
+                <Input
                   type="date"
                   value={draft.date}
                   onChange={(e) => setDraft({ ...draft, date: e.target.value })}
-                  className="flex h-9 flex-1 rounded-md border border-input bg-background px-3 text-sm"
+                  className="flex-1"
                 />
-                <input
+                <Input
                   type="time"
                   value={draft.time}
                   onChange={(e) => setDraft({ ...draft, time: e.target.value })}
-                  className="flex h-9 rounded-md border border-input bg-background px-3 text-sm"
                 />
               </div>
               <div className="flex gap-2">
                 {CAL_COLORS.map((c) => (
-                  <button
+                  <Button
                     key={c}
+                    variant="ghost"
+                    size="icon"
                     onClick={() => setDraft({ ...draft, color: c })}
-                    className={cn("size-6 rounded-full", draft.color === c && "ring-2 ring-foreground ring-offset-2")}
+                    className={cn("size-6 rounded-full p-0", draft.color === c && "ring-2 ring-foreground ring-offset-2")}
                     style={{ backgroundColor: c }}
                   />
                 ))}
@@ -180,7 +184,8 @@ export default function ScheduleCalendar({ className }: { className?: string }) 
           )}
         </DialogContent>
       </Dialog>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -193,18 +198,19 @@ interface ViewProps {
 
 function Chip({ e, onEdit }: { e: CalEvent; onEdit: (e: CalEvent) => void }) {
   return (
-    <button
+    <Button
+      variant="ghost"
       onClick={(ev) => {
         ev.stopPropagation();
         onEdit(e);
       }}
-      className="flex w-full items-center gap-1 truncate rounded px-1.5 py-0.5 text-left text-xs text-white"
+      className="h-auto w-full items-center justify-start gap-1 truncate rounded px-1.5 py-0.5 text-left text-xs font-normal text-white hover:text-white"
       style={{ backgroundColor: e.color }}
       title={`${e.time} ${e.title}`}
     >
       {e.time && <span className="opacity-90">{e.time}</span>}
       <span className="truncate">{e.title}</span>
-    </button>
+    </Button>
   );
 }
 

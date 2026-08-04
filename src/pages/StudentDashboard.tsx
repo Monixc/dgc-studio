@@ -10,6 +10,8 @@ import { useQuery } from "@tanstack/react-query";
 import { listMySubmissions } from "@/lib/submissions";
 import { cn } from "@/lib/utils";
 import AppShell, { STUDENT_MENU } from "@/components/layout/AppShell";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 function greetingFor(hour: number) {
   if (hour < 12) return "좋은 아침이에요";
@@ -44,10 +46,10 @@ export default function StudentDashboard() {
     <AppShell menu={STUDENT_MENU} homePath="/student">
       <div className="p-6">
         <div className="grid auto-rows-[minmax(0,auto)] grid-cols-1 gap-4 md:grid-cols-4">
-          <div className="flex flex-col justify-between rounded-2xl bg-zinc-900 p-6 text-white md:col-span-4">
+          <div className="flex flex-col justify-between rounded-none bg-zinc-900 p-6 text-white md:col-span-4">
             <div className="flex gap-1.5"><span className="size-3 rounded-full bg-red-400" /><span className="size-3 rounded-full bg-yellow-400" /><span className="size-3 rounded-full bg-green-400" /></div>
             <div className="mt-6"><h1 className="text-2xl font-bold">{greetingFor(new Date().getHours())}, {name}님.</h1><p className="mt-2 text-sm text-white/70">오늘 풀어볼 문제 {assigned.length}개, 누적 제출 {submissions.length}회가 있어요.</p></div>
-            <div className="mt-6"><button onClick={() => nav("/myclass")} className="rounded-full bg-white px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-white/90">문제 풀러 가기</button></div>
+            <div className="mt-6"><Button onClick={() => nav("/myclass")} className="bg-white text-zinc-900 hover:bg-white/90">문제 풀러 가기</Button></div>
           </div>
           {/* 학습 현황: 이어서 풀기 */}
           <Bento className="md:col-span-2 md:row-span-2" icon={BookOpen} title="학습 현황 · 이어서 풀기">
@@ -108,12 +110,14 @@ function Bento({
   className, icon: Icon, title, children,
 }: { className?: string; icon: React.ComponentType<{ className?: string }>; title: string; children: React.ReactNode }) {
   return (
-    <div className={cn("rounded-xl border bg-card p-4 shadow-sm", className)}>
-      <div className="mb-3 flex items-center gap-2 text-sm font-semibold">
-        <Icon className="size-4 text-primary" />
-        {title}
-      </div>
-      {children}
-    </div>
+    <Card className={className}>
+      <CardContent className="p-4">
+        <div className="mb-3 flex items-center gap-2 text-sm font-semibold">
+          <Icon className="size-4 text-primary" />
+          {title}
+        </div>
+        {children}
+      </CardContent>
+    </Card>
   );
 }

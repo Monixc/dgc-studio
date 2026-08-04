@@ -69,9 +69,9 @@ export default function AnnouncementsPanel({
               <div className="flex items-start justify-between gap-2">
                 <span className="font-medium">{a.title}</span>
                 {!readOnly && (
-                  <button onClick={() => deleteMut.mutate(a.id)} className="text-muted-foreground hover:text-destructive">
+                  <Button variant="ghost" size="icon" className="size-6 text-muted-foreground hover:text-destructive" onClick={() => deleteMut.mutate(a.id)}>
                     <Trash2 className="size-3.5" />
-                  </button>
+                  </Button>
                 )}
               </div>
               {a.body && <Markdown className="mt-1 text-muted-foreground">{a.body}</Markdown>}
@@ -121,9 +121,9 @@ export default function AnnouncementsPanel({
                   <span key={index} className="flex items-center gap-1.5 rounded-md border bg-muted/50 px-2 py-1 text-xs">
                     {att.kind === "image" ? <ImagePlus className="size-3.5" /> : <Paperclip className="size-3.5" />}
                     <span className="max-w-32 truncate">{att.name}</span>
-                    <button onClick={() => setAttachments((prev) => prev.filter((_, i) => i !== index))}>
+                    <Button variant="ghost" size="icon" className="size-6" onClick={() => setAttachments((prev) => prev.filter((_, i) => i !== index))}>
                       <X className="size-3" />
-                    </button>
+                    </Button>
                   </span>
                 ))}
               </div>

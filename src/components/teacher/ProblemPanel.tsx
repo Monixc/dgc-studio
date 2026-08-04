@@ -3,6 +3,7 @@ import { Plus, Trash2, Globe, EyeOff, Circle } from "lucide-react";
 import { useMyProblems, useCreateProblem, useDeleteProblem, useUpdateProblem } from "@/hooks/useProblems";
 import { useProblemsRealtime } from "@/hooks/useProblemsRealtime";
 import { Button } from "@/components/ui/button";
+import { useConfirm } from "@/hooks/use-confirm";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -17,6 +18,7 @@ export default function ProblemPanel({ userId, selectedId, onSelect }: Props) {
   const createMut = useCreateProblem();
   const deleteMut = useDeleteProblem();
   const updateMut = useUpdateProblem();
+  const { confirm, dialog: confirmDialog } = useConfirm();
 
   async function handleCreate() {
     try {
@@ -29,7 +31,7 @@ export default function ProblemPanel({ userId, selectedId, onSelect }: Props) {
 
   async function handleDelete(id: string, e: React.MouseEvent) {
     e.stopPropagation();
-    if (!confirm("이 문제를 삭제할까요?")) return;
+    if (!(await confirm({ description: "이 문제를 삭제할까요?", destructive: true }))) return;
     try {
       await deleteMut.mutateAsync(id);
       if (selectedId === id) onSelect(null);
@@ -73,16 +75,17 @@ export default function ProblemPanel({ userId, selectedId, onSelect }: Props) {
             >
               <Circle className={cn("size-2 shrink-0", p.is_published ? "fill-emerald-500 text-emerald-500" : "fill-muted-foreground/40 text-muted-foreground/40")} />
               <span className="flex-1 truncate">{p.title || "(제목 없음)"}</span>
-              <button className="opacity-0 group-hover:opacity-100" onClick={(e) => togglePublish(p.id, !p.is_published, e)} title="발행 전환">
+              <Button variant="ghost" size="icon" className="size-6 opacity-0 group-hover:opacity-100" onClick={(e) => togglePublish(p.id, !p.is_published, e)} title="발행 전환">
                 {p.is_published ? <EyeOff className="size-4" /> : <Globe className="size-4" />}
-              </button>
-              <button className="opacity-0 group-hover:opacity-100" onClick={(e) => handleDelete(p.id, e)} title="삭제">
+              </Button>
+              <Button variant="ghost" size="icon" className="size-6 opacity-0 group-hover:opacity-100" onClick={(e) => handleDelete(p.id, e)} title="삭제">
                 <Trash2 className="size-4" />
-              </button>
+              </Button>
             </div>
           ))
         )}
       </div>
+      {confirmDialog}
     </div>
   );
 }

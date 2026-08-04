@@ -2,16 +2,24 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { Plus, Trash2, Folder, FolderPlus, ChevronRight, ChevronDown, Circle, Globe, EyeOff, Send, CheckSquare } from "lucide-react";
-import type { ImperativePanelHandle, ImperativePanelGroupHandle } from "react-resizable-panels";
+import type { ImperativePanelHandle } from "react-resizable-panels";
 import { useAuth } from "@/hooks/useAuth";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useConfirm } from "@/hooks/use-confirm";
 import { useMyProblems, useCreateProblem, useDeleteProblem, useUpdateProblem } from "@/hooks/useProblems";
 import { useProblemsRealtime } from "@/hooks/useProblemsRealtime";
 import { useFolders, useCreateFolder, useDeleteFolder, useUpdateFolderColor } from "@/hooks/useProblemFolders";
 import { resolveFolderCategory } from "@/lib/problemFolders";
 import ProblemEditor from "@/components/teacher/ProblemEditor";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import {
+  SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupContent,
+  SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarMenuAction, SidebarInset, SidebarTrigger, SidebarRail,
+  sidebarMenuButtonVariants, useSidebar,
+} from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import type { ProblemFolder } from "@/integrations/supabase/types";
 
@@ -36,10 +44,9 @@ export default function ProblemManager() {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
+  const { confirm, dialog: confirmDialog } = useConfirm();
   const [bulkMode, setBulkMode] = useState(false);
   const [bulkSelected, setBulkSelected] = useState<Set<string>>(new Set());
-  const isMobile = useIsMobile();
-  const [mobileFolderOpen, setMobileFolderOpen] = useState(false);
   const [mobileListOpen, setMobileListOpen] = useState(false);
 
   useEffect(() => {
@@ -47,13 +54,12 @@ export default function ProblemManager() {
     if (openId) setSelectedId(openId);
   }, [location.state]);
 
-  const panelGroupRef = useRef<ImperativePanelGroupHandle>(null);
-  const folderPanelRef = useRef<ImperativePanelHandle>(null);
   const listPanelRef = useRef<ImperativePanelHandle>(null);
-  const [folderCollapsed, setFolderCollapsed] = useState(false);
   const [listCollapsed, setListCollapsed] = useState(false);
-  const lastFolderSizeRef = useRef(17);
-  const lastListSizeRef = useRef(15);
+  function toggleListPanel() {
+    if (listCollapsed) listPanelRef.current?.expand();
+    else listPanelRef.current?.collapse();
+  }
 
   const filtered = activeFolder === ALL ? problems : problems.filter((p) => p.folder_id === activeFolder);
 
@@ -78,27 +84,6 @@ export default function ProblemManager() {
     }
   }
 
-  // 패널 하나를 접거나 펼 때 라이브러리가 남는 공간을 다른 패널에 비례 배분하면서,
-  // 이미 접혀 있던 옆 패널까지 임계값을 넘겨 같이 펼쳐버리는 문제가 있었음.
-  // 그래서 두 패널 크기를 항상 명시적으로 계산해 setLayout으로 한 번에 고정한다.
-  function applyPanelLayout(nextFolderCollapsed: boolean, nextListCollapsed: boolean) {
-    const folderSize = nextFolderCollapsed ? 5 : lastFolderSizeRef.current;
-    const listSize = nextListCollapsed ? 5 : lastListSizeRef.current;
-    panelGroupRef.current?.setLayout([folderSize, listSize, 100 - folderSize - listSize]);
-  }
-
-  function toggleFolderPanel() {
-    const next = !folderCollapsed;
-    setFolderCollapsed(next);
-    applyPanelLayout(next, listCollapsed);
-  }
-
-  function toggleListPanel() {
-    const next = !listCollapsed;
-    setListCollapsed(next);
-    applyPanelLayout(folderCollapsed, next);
-  }
-
   async function handleColorChange(id: string, color: string) {
     try {
       await updateFolderColorMut.mutateAsync({ id, color });
@@ -108,7 +93,7 @@ export default function ProblemManager() {
   }
 
   async function handleDeleteFolder(id: string) {
-    if (!confirm("이 폴더를 삭제할까요? 하위 폴더도 함께 삭제됩니다.")) return;
+    if (!(await confirm({ description: "이 폴더를 삭제할까요? 하위 폴더도 함께 삭제됩니다.", destructive: true }))) return;
     try {
       await deleteFolderMut.mutateAsync(id);
       if (activeFolder === id) setActiveFolder(ALL);
@@ -125,8 +110,6 @@ export default function ProblemManager() {
       const category = resolveFolderCategory(folderId, folders);
       const p = await createProblemMut.mutateAsync({ userId, category, folderId });
       setSelectedId(p.id);
-      setFolderCollapsed(true);
-      applyPanelLayout(true, listCollapsed);
     } catch (e: any) {
       toast.error(e?.message ?? "생성 실패");
     }
@@ -134,7 +117,7 @@ export default function ProblemManager() {
 
   async function handleDeleteProblem(id: string, e: React.MouseEvent) {
     e.stopPropagation();
-    if (!confirm("이 문제를 삭제할까요?")) return;
+    if (!(await confirm({ description: "이 문제를 삭제할까요?", destructive: true }))) return;
     try {
       await deleteProblemMut.mutateAsync(id);
       if (selectedId === id) setSelectedId(null);
@@ -169,7 +152,7 @@ export default function ProblemManager() {
 
   async function handleBulkDelete() {
     if (bulkSelected.size === 0) return toast.info("선택된 문제가 없습니다.");
-    if (!confirm(`선택한 문제 ${bulkSelected.size}개를 삭제할까요?`)) return;
+    if (!(await confirm({ description: `선택한 문제 ${bulkSelected.size}개를 삭제할까요?`, destructive: true }))) return;
     try {
       await Promise.all([...bulkSelected].map((id) => deleteProblemMut.mutateAsync(id)));
       if (selectedId && bulkSelected.has(selectedId)) setSelectedId(null);
@@ -210,32 +193,6 @@ export default function ProblemManager() {
     }
   }
 
-  function renderFolderList(onSelect: (id: string) => void) {
-    return (
-      <>
-        <FolderItem label="전체" active={activeFolder === ALL} onClick={() => onSelect(ALL)} />
-        {childrenOf(null).map((f) => (
-          <FolderTreeNode
-            key={f.id}
-            folder={f}
-            depth={0}
-            childrenOf={childrenOf}
-            expanded={expanded}
-            onToggleExpand={toggleExpand}
-            activeFolder={activeFolder}
-            onSelect={onSelect}
-            onAddChild={handleAddChild}
-            onDelete={handleDeleteFolder}
-            onColorChange={handleColorChange}
-            dragOverId={dragOverId}
-            setDragOverId={setDragOverId}
-            onDrop={handleDropOnFolder}
-          />
-        ))}
-      </>
-    );
-  }
-
   function renderProblemRow(p: (typeof filtered)[number], opts?: { alwaysShowActions?: boolean; onAfterSelect?: () => void }) {
     const actionCls = opts?.alwaysShowActions ? "" : "opacity-0 group-hover:opacity-100";
     return (
@@ -251,8 +208,7 @@ export default function ProblemManager() {
         )}
       >
         {bulkMode && (
-          <input
-            type="checkbox"
+          <Checkbox
             checked={bulkSelected.has(p.id)}
             onChange={() => toggleBulkSelect(p.id)}
             onClick={(e) => e.stopPropagation()}
@@ -263,246 +219,224 @@ export default function ProblemManager() {
         <span className="flex-1 truncate">{p.title || "(제목 없음)"}</span>
         {!bulkMode && (
           <>
-            <button className={actionCls} onClick={(e) => togglePublish(p.id, !p.is_published, e)} title="발행 전환">
+            <Button variant="ghost" size="icon" className={cn("size-6", actionCls)} onClick={(e) => togglePublish(p.id, !p.is_published, e)} title="발행 전환">
               {p.is_published ? <EyeOff className="size-4" /> : <Globe className="size-4" />}
-            </button>
-            <button className={actionCls} onClick={(e) => handleDeleteProblem(p.id, e)} title="삭제">
+            </Button>
+            <Button variant="ghost" size="icon" className={cn("size-6", actionCls)} onClick={(e) => handleDeleteProblem(p.id, e)} title="삭제">
               <Trash2 className="size-4" />
-            </button>
+            </Button>
           </>
         )}
       </div>
     );
   }
 
-  if (isMobile) {
-    const activeFolderName = activeFolder === ALL ? "전체" : folders.find((f) => f.id === activeFolder)?.name ?? "폴더";
-    const selectedProblem = filtered.find((p) => p.id === selectedId);
-    return (
-      <div className="flex h-full flex-col">
-        <div className="flex items-center gap-1 border-b bg-muted/20 p-2">
-          <div className="relative flex-1">
-            <button
-              onClick={() => { setMobileFolderOpen((o) => !o); setMobileListOpen(false); }}
-              className="flex w-full items-center gap-2 rounded-md border bg-background px-2 py-2 text-sm"
+  const problemListPanel = (
+    <>
+      <div className="flex items-center gap-1 border-b p-2">
+        <span className="whitespace-nowrap text-sm font-semibold">문제 목록</span>
+        {!bulkMode ? (
+          <div className="ml-auto flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-7 text-muted-foreground hover:text-foreground"
+              onClick={handleCreateProblem}
+              disabled={createProblemMut.isPending}
+              title="문제 추가"
             >
-              <Folder className="size-4 shrink-0 text-muted-foreground" />
-              <span className="flex-1 truncate text-left">{activeFolderName}</span>
-              <ChevronDown className={cn("size-4 shrink-0 transition-transform", mobileFolderOpen && "rotate-180")} />
-            </button>
-            {mobileFolderOpen && (
-              <>
-                <div className="fixed inset-0 z-40" onClick={() => setMobileFolderOpen(false)} />
-                <div className="absolute inset-x-0 top-full z-50 mt-1 max-h-[60vh] overflow-auto rounded-lg border bg-background p-1 shadow-lg">
-                  {renderFolderList((id) => { setActiveFolder(id); setMobileFolderOpen(false); })}
-                </div>
-              </>
-            )}
-          </div>
-
-          <div className="relative flex-1">
-            <button
-              onClick={() => { setMobileListOpen((o) => !o); setMobileFolderOpen(false); }}
-              className="flex w-full items-center gap-2 rounded-md border bg-background px-2 py-2 text-sm"
+              <Plus className="size-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-7 text-muted-foreground hover:text-foreground"
+              onClick={toggleBulkMode}
+              title="일괄 선택"
             >
-              <span className="flex-1 truncate text-left">{selectedProblem ? (selectedProblem.title || "(제목 없음)") : "문제 목록"}</span>
-              <ChevronDown className={cn("size-4 shrink-0 transition-transform", mobileListOpen && "rotate-180")} />
-            </button>
-            {mobileListOpen && (
-              <>
-                <div className="fixed inset-0 z-40" onClick={() => setMobileListOpen(false)} />
-                <div className="absolute inset-x-0 top-full z-50 mt-1 max-h-[60vh] overflow-auto rounded-lg border bg-background p-1 shadow-lg">
-                  <div className="flex items-center justify-end border-b p-1">
-                    <button
-                      className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50"
-                      onClick={handleCreateProblem}
-                      disabled={createProblemMut.isPending}
-                      title="문제 추가"
-                    >
-                      <Plus className="size-4" />
-                    </button>
-                  </div>
-                  {isLoading ? (
-                    <p className="p-2 text-sm text-muted-foreground">불러오는 중…</p>
-                  ) : filtered.length === 0 ? (
-                    <p className="p-2 text-sm text-muted-foreground">“문제 추가”로 시작하세요.</p>
-                  ) : (
-                    filtered.map((p) => renderProblemRow(p, { alwaysShowActions: true, onAfterSelect: () => setMobileListOpen(false) }))
-                  )}
-                </div>
-              </>
-            )}
+              <CheckSquare className="size-4" />
+            </Button>
           </div>
-        </div>
-
-        <div className="flex-1 overflow-hidden">
-          {selectedId ? (
-            <ProblemEditor key={selectedId} problemId={selectedId} />
-          ) : (
-            <div className="flex h-full items-center justify-center p-6 text-center text-muted-foreground">
-              위에서 문제를 선택하거나 “문제 추가”를 누르세요.
-            </div>
-          )}
-        </div>
+        ) : (
+          <span className="ml-auto text-xs text-muted-foreground">{bulkSelected.size}개 선택됨</span>
+        )}
       </div>
-    );
-  }
+      <div className="flex-1 overflow-auto p-1">
+        {isLoading ? (
+          <p className="p-2 text-sm text-muted-foreground">불러오는 중…</p>
+        ) : filtered.length === 0 ? (
+          <p className="p-2 text-sm text-muted-foreground">“문제 추가”로 시작하세요.</p>
+        ) : (
+          filtered.map((p) => renderProblemRow(p))
+        )}
+      </div>
+      {bulkMode && (
+        <div className="flex flex-col gap-1 border-t p-2">
+          <Button variant="outline" className="w-full" onClick={toggleSelectAll}>
+            {bulkSelected.size === filtered.length ? "전체 해제" : "전체 선택"}
+          </Button>
+          <div className="flex flex-wrap gap-1">
+            <Button variant="destructive" className="min-w-24 flex-1" onClick={handleBulkDelete} disabled={deleteProblemMut.isPending}>
+              <Trash2 /> 선택 삭제 ({bulkSelected.size})
+            </Button>
+            <Button variant="secondary" className="min-w-24 flex-1" onClick={handleBulkPublishSelected} disabled={updateProblemMut.isPending}>
+              <Send /> 선택 발행
+            </Button>
+          </div>
+          <Button variant="ghost" className="w-full" onClick={toggleBulkMode}>
+            취소
+          </Button>
+        </div>
+      )}
+    </>
+  );
+
+  const editorPanel = selectedId ? (
+    <ProblemEditor key={selectedId} problemId={selectedId} />
+  ) : (
+    <div className="flex h-full items-center justify-center p-6 text-center text-muted-foreground">
+      왼쪽에서 문제를 선택하거나 “문제 추가”를 누르세요.
+    </div>
+  );
+
+  const selectedProblem = filtered.find((p) => p.id === selectedId);
 
   return (
-    <ResizablePanelGroup ref={panelGroupRef} direction="horizontal" className="h-full overflow-hidden">
-      <ResizablePanel
-        ref={folderPanelRef}
-        defaultSize={17}
-        minSize={14}
-        maxSize={35}
-        collapsible
-        collapsedSize={5}
-        onResize={(size) => { if (size > 5.5) lastFolderSizeRef.current = size; }}
-        onCollapse={() => setFolderCollapsed(true)}
-        onExpand={() => setFolderCollapsed(false)}
-        className="flex h-full flex-col bg-muted/20"
-      >
-        {!folderCollapsed && (
-          <div className="flex items-center border-b p-2">
-            <span className="whitespace-nowrap text-sm font-semibold">폴더</span>
-          </div>
-        )}
-        <div className="flex-1 overflow-auto p-1">
-          {folderCollapsed ? (
-            <div className="flex flex-col items-center gap-1 py-1">
-              <button
-                onClick={() => setActiveFolder(ALL)}
-                title="전체"
-                className={cn("rounded p-1.5 hover:bg-accent", activeFolder === ALL && "bg-accent")}
-              >
-                <Folder className="size-4 text-muted-foreground" />
-              </button>
-              {folders.map((f) => (
-                <button
-                  key={f.id}
-                  onClick={() => setActiveFolder(f.id)}
-                  title={f.name}
-                  className={cn("rounded p-1.5 hover:bg-accent", activeFolder === f.id && "bg-accent")}
-                >
-                  <Folder className={cn("size-4", !f.color && "text-muted-foreground")} style={f.color ? { color: f.color, fill: f.color, fillOpacity: 0.2 } : undefined} />
-                </button>
-              ))}
-            </div>
-          ) : (
-            renderFolderList(setActiveFolder)
-          )}
-        </div>
-      </ResizablePanel>
+    <>
+    <SidebarProvider className="h-full min-h-0 items-stretch">
+      <Sidebar collapsible="icon" className="border-r">
+        <SidebarHeader className="flex-row items-center gap-1 border-b group-data-[collapsible=icon]:justify-center">
+          <SidebarTrigger />
+          <span className="whitespace-nowrap text-sm font-semibold group-data-[collapsible=icon]:hidden">폴더</span>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <FolderItem label="전체" active={activeFolder === ALL} onClick={() => setActiveFolder(ALL)} />
+                {childrenOf(null).map((f) => (
+                  <FolderTreeNode
+                    key={f.id}
+                    folder={f}
+                    depth={0}
+                    childrenOf={childrenOf}
+                    expanded={expanded}
+                    onToggleExpand={toggleExpand}
+                    activeFolder={activeFolder}
+                    onSelect={setActiveFolder}
+                    onAddChild={handleAddChild}
+                    onDelete={handleDeleteFolder}
+                    onColorChange={handleColorChange}
+                    dragOverId={dragOverId}
+                    setDragOverId={setDragOverId}
+                    onDrop={handleDropOnFolder}
+                  />
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+      <SidebarRail />
 
-      <ResizableHandle onToggle={toggleFolderPanel} collapsed={folderCollapsed} />
-
-      <ResizablePanel
-        ref={listPanelRef}
-        defaultSize={15}
-        minSize={14}
-        maxSize={40}
-        collapsible
-        collapsedSize={5}
-        onResize={(size) => { if (size > 5.5) lastListSizeRef.current = size; }}
-        onCollapse={() => setListCollapsed(true)}
-        onExpand={() => setListCollapsed(false)}
-        className="flex h-full flex-col bg-muted/20"
-      >
-        {!listCollapsed && (
-          <div className="flex items-center gap-1 border-b p-2">
-            <span className="whitespace-nowrap text-sm font-semibold">문제 목록</span>
-            {!bulkMode ? (
-              <div className="ml-auto flex items-center gap-1">
-                <button
-                  className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50"
+      <SidebarInset className="overflow-hidden">
+        {/* 모바일: 폴더는 사이드바 시트로, 문제 목록은 드롭다운으로 */}
+        <div className="flex items-center gap-1 border-b bg-muted/20 p-2 md:hidden">
+          <SidebarTrigger />
+          <Popover open={mobileListOpen} onOpenChange={setMobileListOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="flex flex-1 items-center gap-2 justify-start font-normal">
+                <span className="flex-1 truncate text-left">{selectedProblem ? (selectedProblem.title || "(제목 없음)") : "문제 목록"}</span>
+                <ChevronDown className={cn("size-4 shrink-0 transition-transform", mobileListOpen && "rotate-180")} />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="start" className="w-72 max-h-[60vh] overflow-auto p-1">
+              <div className="flex items-center justify-end border-b p-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="size-7 text-muted-foreground hover:text-foreground"
                   onClick={handleCreateProblem}
                   disabled={createProblemMut.isPending}
                   title="문제 추가"
                 >
                   <Plus className="size-4" />
-                </button>
-                <button
-                  className="rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground"
-                  onClick={toggleBulkMode}
-                  title="일괄 선택"
-                >
-                  <CheckSquare className="size-4" />
-                </button>
+                </Button>
+              </div>
+              {isLoading ? (
+                <p className="p-2 text-sm text-muted-foreground">불러오는 중…</p>
+              ) : filtered.length === 0 ? (
+                <p className="p-2 text-sm text-muted-foreground">“문제 추가”로 시작하세요.</p>
+              ) : (
+                filtered.map((p) => renderProblemRow(p, { alwaysShowActions: true, onAfterSelect: () => setMobileListOpen(false) }))
+              )}
+            </PopoverContent>
+          </Popover>
+        </div>
+        <div className="flex-1 overflow-hidden md:hidden">{editorPanel}</div>
+
+        {/* 데스크톱: 문제 목록 + 에디터 리사이즈 패널 */}
+        <ResizablePanelGroup direction="horizontal" className="hidden h-full overflow-hidden md:flex">
+          <ResizablePanel
+            ref={listPanelRef}
+            defaultSize={18}
+            minSize={14}
+            maxSize={40}
+            collapsible
+            collapsedSize={5}
+            onCollapse={() => setListCollapsed(true)}
+            onExpand={() => setListCollapsed(false)}
+            className="flex h-full flex-col bg-muted/20"
+          >
+            {listCollapsed ? (
+              <div className="flex flex-col items-center gap-2 py-2">
+                {filtered.map((p) => (
+                  <Button
+                    key={p.id}
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setSelectedId(p.id)}
+                    title={p.title || "(제목 없음)"}
+                    className={cn("size-8", selectedId === p.id && "bg-accent")}
+                  >
+                    <Circle className={cn("size-2.5", p.is_published ? "fill-emerald-500 text-emerald-500" : "fill-muted-foreground/40 text-muted-foreground/40")} />
+                  </Button>
+                ))}
               </div>
             ) : (
-              <span className="ml-auto text-xs text-muted-foreground">{bulkSelected.size}개 선택됨</span>
+              problemListPanel
             )}
-          </div>
-        )}
-        <div className="flex-1 overflow-auto p-1">
-          {listCollapsed ? (
-            <div className="flex flex-col items-center gap-2 py-2">
-              {filtered.map((p) => (
-                <button
-                  key={p.id}
-                  onClick={() => setSelectedId(p.id)}
-                  title={p.title || "(제목 없음)"}
-                  className={cn("rounded p-1.5 hover:bg-accent", selectedId === p.id && "bg-accent")}
-                >
-                  <Circle className={cn("size-2.5", p.is_published ? "fill-emerald-500 text-emerald-500" : "fill-muted-foreground/40 text-muted-foreground/40")} />
-                </button>
-              ))}
-            </div>
-          ) : isLoading ? (
-            <p className="p-2 text-sm text-muted-foreground">불러오는 중…</p>
-          ) : filtered.length === 0 ? (
-            <p className="p-2 text-sm text-muted-foreground">“문제 추가”로 시작하세요.</p>
-          ) : (
-            filtered.map((p) => renderProblemRow(p))
-          )}
-        </div>
-        {!listCollapsed && bulkMode && (
-          <div className="flex flex-col gap-1 border-t p-2">
-            <Button variant="outline" className="w-full" onClick={toggleSelectAll}>
-              {bulkSelected.size === filtered.length ? "전체 해제" : "전체 선택"}
-            </Button>
-            <div className="flex flex-wrap gap-1">
-              <Button variant="destructive" className="min-w-24 flex-1" onClick={handleBulkDelete} disabled={deleteProblemMut.isPending}>
-                <Trash2 /> 선택 삭제 ({bulkSelected.size})
-              </Button>
-              <Button variant="secondary" className="min-w-24 flex-1" onClick={handleBulkPublishSelected} disabled={updateProblemMut.isPending}>
-                <Send /> 선택 발행
-              </Button>
-            </div>
-            <Button variant="ghost" className="w-full" onClick={toggleBulkMode}>
-              취소
-            </Button>
-          </div>
-        )}
-      </ResizablePanel>
+          </ResizablePanel>
 
-      <ResizableHandle onToggle={toggleListPanel} collapsed={listCollapsed} />
+          <ResizableHandle onToggle={toggleListPanel} collapsed={listCollapsed} />
 
-      <ResizablePanel defaultSize={60} className="overflow-hidden">
-        {selectedId ? (
-          <ProblemEditor key={selectedId} problemId={selectedId} />
-        ) : (
-          <div className="flex h-full items-center justify-center text-muted-foreground">
-            왼쪽에서 문제를 선택하거나 “문제 추가”를 누르세요.
-          </div>
-        )}
-      </ResizablePanel>
-    </ResizablePanelGroup>
+          <ResizablePanel defaultSize={82} className="overflow-hidden">
+            {editorPanel}
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      </SidebarInset>
+    </SidebarProvider>
+    {confirmDialog}
+    </>
   );
 }
 
 function FolderItem({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+  const { isMobile, setOpenMobile } = useSidebar();
   return (
-    <div
-      onClick={onClick}
-      className={cn(
-        "flex cursor-pointer items-center gap-1 rounded-md p-2 text-sm hover:bg-accent",
-        active && "bg-accent"
-      )}
-    >
-      <Folder className="size-4 shrink-0 text-muted-foreground" />
-      <span className="flex-1 truncate">{label}</span>
-    </div>
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        isActive={active}
+        tooltip={label}
+        onClick={() => {
+          onClick();
+          if (isMobile) setOpenMobile(false);
+        }}
+      >
+        <Folder />
+        <span className="flex-1 truncate">{label}</span>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
   );
 }
 
@@ -527,6 +461,7 @@ function FolderTreeNode({
   const kids = childrenOf(folder.id);
   const isExpanded = expanded.has(folder.id);
   const isDefault = !!folder.category;
+  const { isMobile, setOpenMobile } = useSidebar();
 
   const [creating, setCreating] = useState(false);
   const [draftName, setDraftName] = useState("");
@@ -552,23 +487,27 @@ function FolderTreeNode({
   }, [folder.id, onColorChange]);
 
   return (
-    <div>
+    <>
+    <SidebarMenuItem>
       <div
-        onClick={() => onSelect(folder.id)}
+        onClick={() => {
+          onSelect(folder.id);
+          if (isMobile) setOpenMobile(false);
+        }}
         onDragOver={(e) => { e.preventDefault(); setDragOverId(folder.id); }}
         onDragLeave={() => setDragOverId((id) => (id === folder.id ? null : id))}
         onDrop={(e) => onDrop(folder.id, e)}
         style={{ paddingLeft: depth * 14 }}
         className={cn(
-          "group flex cursor-pointer items-center gap-1 rounded-md p-2 text-sm hover:bg-accent",
-          activeFolder === folder.id && "bg-accent",
+          sidebarMenuButtonVariants({ isActive: activeFolder === folder.id }),
+          "group cursor-pointer",
           dragOverId === folder.id && "ring-2 ring-primary"
         )}
       >
         {kids.length > 0 ? (
-          <button onClick={(e) => { e.stopPropagation(); onToggleExpand(folder.id); }} className="shrink-0 text-muted-foreground">
+          <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); onToggleExpand(folder.id); }} className="size-5 shrink-0 text-muted-foreground">
             {isExpanded ? <ChevronDown className="size-3.5" /> : <ChevronRight className="size-3.5" />}
-          </button>
+          </Button>
         ) : (
           <span className="w-3.5 shrink-0" />
         )}
@@ -592,28 +531,27 @@ function FolderTreeNode({
           />
         </label>
         <span className={cn("flex-1 truncate", isDefault && "font-medium")}>{folder.name}</span>
-        <button
-          className="flex size-5 shrink-0 items-center justify-center opacity-0 group-hover:opacity-100"
-          onClick={(e) => { e.stopPropagation(); setCreating(true); }}
-          title="하위 폴더 추가"
-        >
-          <FolderPlus className="size-3.5" />
-        </button>
-        {!isDefault && (
-          <button
-            className="flex size-5 shrink-0 items-center justify-center opacity-0 group-hover:opacity-100"
-            onClick={(e) => { e.stopPropagation(); onDelete(folder.id); }}
-            title="폴더 삭제"
-          >
-            <Trash2 className="size-3.5" />
-          </button>
-        )}
       </div>
-      {creating && (
+      <SidebarMenuAction
+        showOnHover
+        className={cn("right-1", !isDefault && "right-7")}
+        onClick={() => setCreating(true)}
+        title="하위 폴더 추가"
+      >
+        <FolderPlus className="size-3.5" />
+      </SidebarMenuAction>
+      {!isDefault && (
+        <SidebarMenuAction showOnHover onClick={() => onDelete(folder.id)} title="폴더 삭제">
+          <Trash2 className="size-3.5" />
+        </SidebarMenuAction>
+      )}
+    </SidebarMenuItem>
+    {creating && (
+      <SidebarMenuItem>
         <div style={{ paddingLeft: (depth + 1) * 14 }} className="flex items-center gap-1 p-2">
           <span className="w-3.5 shrink-0" />
           <Folder className="size-4 shrink-0 text-muted-foreground" />
-          <input
+          <Input
             autoFocus
             value={draftName}
             onChange={(e) => setDraftName(e.target.value)}
@@ -624,28 +562,29 @@ function FolderTreeNode({
             }}
             onBlur={submitCreate}
             placeholder="새 폴더 이름"
-            className="h-6 flex-1 rounded border bg-background px-1 text-sm outline-none"
+            className="h-6 flex-1"
           />
         </div>
-      )}
-      {isExpanded && kids.map((k) => (
-        <FolderTreeNode
-          key={k.id}
-          folder={k}
-          depth={depth + 1}
-          childrenOf={childrenOf}
-          expanded={expanded}
-          onToggleExpand={onToggleExpand}
-          activeFolder={activeFolder}
-          onSelect={onSelect}
-          onAddChild={onAddChild}
-          onDelete={onDelete}
-          onColorChange={onColorChange}
-          dragOverId={dragOverId}
-          setDragOverId={setDragOverId}
-          onDrop={onDrop}
-        />
-      ))}
-    </div>
+      </SidebarMenuItem>
+    )}
+    {isExpanded && kids.map((k) => (
+      <FolderTreeNode
+        key={k.id}
+        folder={k}
+        depth={depth + 1}
+        childrenOf={childrenOf}
+        expanded={expanded}
+        onToggleExpand={onToggleExpand}
+        activeFolder={activeFolder}
+        onSelect={onSelect}
+        onAddChild={onAddChild}
+        onDelete={onDelete}
+        onColorChange={onColorChange}
+        dragOverId={dragOverId}
+        setDragOverId={setDragOverId}
+        onDrop={onDrop}
+      />
+    ))}
+    </>
   );
 }

@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Select } from "@/components/ui/select";
 
 export interface DrawingDialogProps {
   open: boolean;
@@ -165,9 +166,11 @@ export function DrawingDialog({ open, onOpenChange, onSave }: DrawingDialogProps
 
         <div className="flex flex-wrap items-center gap-2" aria-label="그리기 도구">
           {COLORS.map((item) => (
-            <button
+            <Button
               key={item}
               type="button"
+              variant="ghost"
+              size="icon"
               aria-label={`펜 색상 ${item}`}
               aria-pressed={!eraser && color === item}
               className="size-8 rounded-full border-2 border-background ring-1 ring-border aria-pressed:ring-2 aria-pressed:ring-primary"
@@ -220,14 +223,14 @@ export function DrawingDialog({ open, onOpenChange, onSave }: DrawingDialogProps
           {error && <p className="mr-auto text-sm text-destructive" role="alert">{error}</p>}
           <label className="text-sm">
             <span className="sr-only">내보내기 형식</span>
-            <select
-              className="h-9 rounded-md border bg-background px-2"
+            <Select
+              className="h-9 w-auto pr-7"
               value={format}
               onChange={(event) => setFormat(event.target.value as "image/webp" | "image/png")}
             >
               <option value="image/webp">WebP</option>
               <option value="image/png">PNG</option>
-            </select>
+            </Select>
           </label>
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             취소

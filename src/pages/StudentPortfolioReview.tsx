@@ -215,20 +215,21 @@ export default function StudentPortfolioReview() {
       <div className="border-b px-3 py-2 text-xs font-semibold text-muted-foreground">제출 버전</div>
       <div className="flex gap-2 overflow-x-auto p-2 lg:block lg:flex-1 lg:overflow-y-auto">
         {versions.map((version) => (
-          <button
+          <Button
             key={version.id}
             type="button"
+            variant="ghost"
             onClick={() => navigate(`/students/${studentId}/portfolio/${version.id}`)}
             className={cn(
-              "min-w-36 rounded-md p-2 text-left text-xs lg:mb-1 lg:w-full lg:min-w-0",
-              version.id === submission.id
-                ? "bg-primary text-primary-foreground"
-                : "hover:bg-accent",
+              "h-auto min-w-36 justify-start rounded-md p-2 text-left text-xs lg:mb-1 lg:w-full lg:min-w-0",
+              version.id === submission.id && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
             )}
           >
-            <span className="block font-semibold">v{version.version}</span>
-            <span className="block opacity-75">{formatDate(version.submitted_at)}</span>
-          </button>
+            <span className="flex flex-col items-start">
+              <span className="block font-semibold">v{version.version}</span>
+              <span className="block opacity-75">{formatDate(version.submitted_at)}</span>
+            </span>
+          </Button>
         ))}
       </div>
     </aside>
@@ -368,39 +369,42 @@ export default function StudentPortfolioReview() {
         )}
       >
         <div className="flex rounded-md border p-0.5 text-xs">
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={() => {
               setAnchorType("document");
               setSelectedAssetId(null);
               setSelectedImageNumber(null);
             }}
-            className={cn("flex-1 rounded px-2 py-1.5", anchorType === "document" && "bg-primary text-primary-foreground")}
+            className={cn("h-auto flex-1 rounded px-2 py-1.5", anchorType === "document" && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground")}
           >
             문서 전체
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="ghost"
             onClick={() => selection && setAnchorType("range")}
             disabled={!selection}
             className={cn(
-              "flex-1 rounded px-2 py-1.5 disabled:cursor-not-allowed disabled:opacity-40",
-              anchorType === "range" && "bg-primary text-primary-foreground",
+              "h-auto flex-1 rounded px-2 py-1.5 disabled:cursor-not-allowed disabled:opacity-40",
+              anchorType === "range" && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
             )}
           >
             선택 영역
-          </button>
+          </Button>
           {selectedAssetId && (
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => setAnchorType("asset")}
               className={cn(
-                "flex-1 rounded px-2 py-1.5",
-                anchorType === "asset" && "bg-primary text-primary-foreground",
+                "h-auto flex-1 rounded px-2 py-1.5",
+                anchorType === "asset" && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
               )}
             >
               선택 이미지
-            </button>
+            </Button>
           )}
         </div>
         {anchorType === "range" && selection && (

@@ -49,14 +49,14 @@
 }
 
 .portfolio-editor .ProseMirror blockquote {
-  border-left: 3px solid hsl(var(--border));
+  border-left: 3px solid var(--border);
   padding-left: 1rem;
-  color: hsl(var(--muted-foreground));
+  color: var(--muted-foreground);
 }
 
 .portfolio-editor .ProseMirror code {
   border-radius: 0.25rem;
-  background: hsl(var(--muted));
+  background: var(--muted);
   padding: 0.125rem 0.25rem;
   font-size: 0.9em;
 }
@@ -64,7 +64,7 @@
 .portfolio-editor .ProseMirror pre {
   overflow-x: auto;
   border-radius: 0.5rem;
-  background: hsl(var(--muted));
+  background: var(--muted);
   padding: 0.875rem;
 }
 
@@ -74,7 +74,7 @@
 }
 
 .portfolio-editor .ProseMirror a {
-  color: hsl(var(--primary));
+  color: var(--primary);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
@@ -99,12 +99,12 @@
 
 .portfolio-assets-clickable .portfolio-asset:hover img,
 .portfolio-asset-feedback-selected img {
-  outline: 3px solid hsl(var(--primary) / 0.45);
+  outline: 3px solid color-mix(in oklch, var(--primary) 45%, transparent);
   outline-offset: 3px;
 }
 
 .portfolio-asset-feedback-selected img {
-  outline-color: hsl(var(--primary));
+  outline-color: var(--primary);
 }
 
 .portfolio-file-blocks-host pre.portfolio-feedback-target {
@@ -122,19 +122,19 @@
   right: 0.375rem;
   padding: 0.125rem 0.4rem;
   border-radius: 9999px;
-  background: hsl(var(--muted));
-  color: hsl(var(--muted-foreground));
+  background: var(--muted);
+  color: var(--muted-foreground);
   font: 600 0.75rem/1.25rem ui-sans-serif, system-ui, sans-serif;
 }
 
 .portfolio-assets-clickable .portfolio-feedback-target:hover,
 .portfolio-feedback-target.portfolio-asset-feedback-selected {
-  outline: 3px solid hsl(var(--primary) / 0.45);
+  outline: 3px solid color-mix(in oklch, var(--primary) 45%, transparent);
   outline-offset: 2px;
 }
 
 .portfolio-feedback-target.portfolio-asset-feedback-selected {
-  outline-color: hsl(var(--primary));
+  outline-color: var(--primary);
 }
 
 .portfolio-media {
@@ -160,9 +160,9 @@
   min-height: 8rem;
   place-items: center;
   margin: 1rem 0;
-  border: 1px dashed hsl(var(--border));
+  border: 1px dashed var(--border);
   border-radius: 0.5rem;
-  color: hsl(var(--muted-foreground));
+  color: var(--muted-foreground);
 }
 
 .portfolio-file-wrap {
@@ -174,9 +174,9 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
-  border: 1px solid hsl(var(--border));
+  border: 1px solid var(--border);
   border-radius: 0.5rem;
-  background: hsl(var(--muted) / 0.4);
+  background: color-mix(in oklch, var(--muted) 40%, transparent);
 }
 
 .portfolio-file-action {
@@ -185,9 +185,9 @@
   gap: 0.375rem;
   flex-shrink: 0;
   padding: 0.375rem 0.75rem;
-  border: 1px solid hsl(var(--border));
+  border: 1px solid var(--border);
   border-radius: 0.5rem;
-  background: hsl(var(--background));
+  background: var(--background);
   font-size: 0.8125rem;
   font-weight: 500;
   cursor: pointer;
@@ -202,9 +202,9 @@
   overflow-x: auto;
   margin-top: 0.5rem;
   padding: 0.75rem 1rem;
-  border: 1px solid hsl(var(--border));
+  border: 1px solid var(--border);
   border-radius: 0.5rem;
-  background: hsl(var(--background));
+  background: var(--background);
 }
 
 .portfolio-file-blocks-host pre.blocks {
@@ -222,8 +222,8 @@
   height: 2.25rem;
   flex-shrink: 0;
   border-radius: 0.5rem;
-  background: hsl(var(--background));
-  color: hsl(var(--muted-foreground));
+  background: var(--background);
+  color: var(--muted-foreground);
 }
 
 .portfolio-file-body {
@@ -242,7 +242,7 @@
 
 .portfolio-file-meta {
   font-size: 0.75rem;
-  color: hsl(var(--muted-foreground));
+  color: var(--muted-foreground);
 }
 
 .portfolio-file-download {
@@ -252,9 +252,9 @@
   flex-shrink: 0;
   padding: 0.375rem 0.75rem;
   border-radius: 0.5rem;
-  background: hsl(var(--primary));
+  background: var(--primary);
   /* !important: 일반 링크 규칙(.portfolio-editor .ProseMirror a)이 색을 덮어써 다크 온 다크가 됨 */
-  color: hsl(var(--primary-foreground)) !important;
+  color: var(--primary-foreground) !important;
   font-size: 0.8125rem;
   font-weight: 500;
   text-decoration: none !important;

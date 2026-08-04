@@ -54,9 +54,9 @@ export default function AcademicEventsPanel({ readOnly = false }: { readOnly?: b
                 {ev.title}
               </span>
               {!readOnly && (
-                <button onClick={() => deleteMut.mutate(ev.id)} className="text-muted-foreground hover:text-destructive">
+                <Button variant="ghost" size="icon" className="size-6 text-muted-foreground hover:text-destructive" onClick={() => deleteMut.mutate(ev.id)}>
                   <Trash2 className="size-3.5" />
-                </button>
+                </Button>
               )}
             </div>
           ))}

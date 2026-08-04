@@ -4,6 +4,7 @@ import Editor from "@monaco-editor/react";
 import { Play, Square } from "lucide-react";
 import type { RunOptions, RunResult } from "@/hooks/usePyodide";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
 export interface ConsoleLine {
@@ -87,11 +88,11 @@ export default function EditorPanel({ code, onCodeChange, readOnly, running, run
       <div className="grid grid-cols-2 gap-px border-t bg-border" style={{ height: 180 }}>
         <div className="flex flex-col bg-background">
           <div className="border-b px-2 py-1 text-xs font-semibold text-muted-foreground">입력 (stdin)</div>
-          <textarea
+          <Textarea
             value={stdin}
             onChange={(e) => setStdin(e.target.value)}
             placeholder="input() 이 읽을 값을 줄 단위로 입력"
-            className="flex-1 resize-none bg-background p-2 font-mono text-xs outline-none"
+            className="flex-1 resize-none rounded-none border-0 bg-background p-2 font-mono text-xs"
           />
         </div>
         <div className="flex min-h-0 flex-col bg-background">

@@ -19,6 +19,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useConfirm } from "@/hooks/use-confirm";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Select } from "@/components/ui/select";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -248,10 +251,10 @@ export default function StudentPortfolio() {
           active && "bg-accent",
         )}
       >
-        <button
-          type="button"
+        <Button
+          variant="ghost"
           onClick={() => { selectDocument(item); opts?.onAfterSelect?.(); }}
-          className="min-w-0 flex-1 p-2 text-left text-sm"
+          className="h-auto min-w-0 flex-1 flex-col items-stretch justify-start gap-0 p-2 text-left text-sm font-normal"
         >
           <span className="flex min-w-0 items-center gap-1.5">
             <span
@@ -267,24 +270,26 @@ export default function StudentPortfolio() {
             {formatDate(item.updated_at)}
             {submitted && ` · 제출 v${subCount}`}
           </span>
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
           title="편집"
           onClick={() => navigate(`/student/portfolio/${item.id}/edit`)}
-          className={cn("rounded p-1 hover:bg-black/10", actionCls)}
+          className={cn("size-6", actionCls)}
         >
           <Pencil className="size-3.5" />
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
           title={submitted ? "제출 이력이 있어 삭제할 수 없습니다." : "삭제"}
           disabled={submitted || deleteDocument.isPending}
           onClick={() => removeDocument(item)}
-          className={cn("rounded p-1 hover:bg-black/10 disabled:opacity-20", actionCls)}
+          className={cn("size-6 disabled:opacity-20", actionCls)}
         >
           <Trash2 className="size-3.5" />
-        </button>
+        </Button>
       </div>
     );
   }
@@ -302,9 +307,11 @@ export default function StudentPortfolio() {
   if (documentsQuery.isError) {
     return (
       <AppShell menu={STUDENT_MENU} homePath="/student">
-        <div className="m-3 rounded-xl border border-destructive/40 p-6 text-destructive">
-          포트폴리오를 불러오지 못했습니다: {errorMessage(documentsQuery.error)}
-        </div>
+        <Card className="m-3 border-destructive/40 text-destructive">
+          <CardContent className="pt-6">
+            포트폴리오를 불러오지 못했습니다: {errorMessage(documentsQuery.error)}
+          </CardContent>
+        </Card>
       </AppShell>
     );
   }
@@ -322,11 +329,11 @@ export default function StudentPortfolio() {
               <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
                 <h2 className="text-2xl font-bold tracking-tight">{draft.title || "제목 없음"}</h2>
                 <div className="flex flex-wrap items-center gap-2">
-                  <select
+                  <Select
                     value={selectedSubmissionId ?? ""}
                     onChange={(event) => setSelectedSubmissionId(event.target.value || null)}
                     aria-label="버전 선택"
-                    className="h-8 rounded-md border-0 bg-muted px-2 text-xs text-muted-foreground"
+                    className="h-8 w-auto border-0 bg-muted px-2 text-xs text-muted-foreground"
                   >
                     {!currentRevisionSubmission && (
                       <option value="">초안 (미제출)</option>
@@ -336,7 +343,7 @@ export default function StudentPortfolio() {
                         v{item.version} · {formatDate(item.submitted_at)}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                   <Button
                     size="sm"
                     variant="outline"
@@ -418,29 +425,18 @@ export default function StudentPortfolio() {
             <div className="flex h-full flex-col">
               <div className="relative border-b bg-muted/20 p-2">
                 <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={() => setMobileDocOpen((o) => !o)}
-                    className="flex flex-1 items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm"
-                  >
-                    <FileText className="size-4 shrink-0 text-muted-foreground" />
-                    <span className="flex-1 truncate text-left">{selectedDocument?.title || "내 노트"}</span>
-                    <ChevronDown className={cn("size-4 shrink-0 transition-transform", mobileDocOpen && "rotate-180")} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={createNewDocument}
-                    disabled={createDocument.isPending}
-                    title="문서 작성"
-                    className="shrink-0 rounded p-2 text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50"
-                  >
-                    {createDocument.isPending ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
-                  </button>
-                </div>
-                {mobileDocOpen && (
-                  <>
-                    <div className="fixed inset-0 z-40" onClick={() => setMobileDocOpen(false)} />
-                    <div className="absolute inset-x-2 top-full z-50 mt-1 max-h-[60vh] overflow-auto rounded-lg border bg-background p-1 shadow-lg">
+                  <Popover open={mobileDocOpen} onOpenChange={setMobileDocOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="flex flex-1 items-center gap-2 justify-start font-normal"
+                      >
+                        <FileText className="size-4 shrink-0 text-muted-foreground" />
+                        <span className="flex-1 truncate text-left">{selectedDocument?.title || "내 노트"}</span>
+                        <ChevronDown className={cn("size-4 shrink-0 transition-transform", mobileDocOpen && "rotate-180")} />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent align="start" className="w-[calc(100vw-2rem)] max-h-[60vh] overflow-auto p-1">
                       {documents.length ? (
                         documents.map((item) => renderDocumentRow(item, { alwaysShowActions: true, onAfterSelect: () => setMobileDocOpen(false) }))
                       ) : (
@@ -448,9 +444,19 @@ export default function StudentPortfolio() {
                           새 포트폴리오를 만들어 보세요.
                         </p>
                       )}
-                    </div>
-                  </>
-                )}
+                    </PopoverContent>
+                  </Popover>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={createNewDocument}
+                    disabled={createDocument.isPending}
+                    title="문서 작성"
+                    className="shrink-0"
+                  >
+                    {createDocument.isPending ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
+                  </Button>
+                </div>
               </div>
               <div className="min-h-0 flex-1 overflow-y-auto">{viewerContent}</div>
             </div>
@@ -470,33 +476,35 @@ export default function StudentPortfolio() {
                 {listCollapsed ? (
                   <div className="flex flex-col items-center gap-1 py-2">
                     {documents.map((item) => (
-                      <button
+                      <Button
                         key={item.id}
-                        type="button"
+                        variant="ghost"
+                        size="icon"
                         onClick={() => selectDocument(item)}
                         title={item.title || "제목 없음"}
                         className={cn(
-                          "rounded p-1.5",
-                          item.id === selectedDocumentId ? "bg-primary text-primary-foreground" : "hover:bg-accent",
+                          "size-8",
+                          item.id === selectedDocumentId && "bg-primary text-primary-foreground hover:bg-primary",
                         )}
                       >
                         <FileText className="size-4" />
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 ) : (
                   <>
                     <div className="flex items-center gap-1 border-b px-3 py-2">
                       <span className="text-sm font-semibold">내 노트</span>
-                      <button
-                        type="button"
+                      <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={createNewDocument}
                         disabled={createDocument.isPending}
                         title="문서 작성"
-                        className="ml-auto rounded p-1 text-muted-foreground hover:bg-accent hover:text-foreground disabled:opacity-50"
+                        className="ml-auto size-7"
                       >
                         {createDocument.isPending ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
-                      </button>
+                      </Button>
                     </div>
                     <div className="flex-1 space-y-1 overflow-y-auto p-2">
                       {documents.length ? (
@@ -551,18 +559,18 @@ function ProblemFeedbackList({
   return (
     <div className="mx-auto max-w-2xl space-y-3 p-4">
       {items.map((item) => (
-        <button
+        <Button
           key={item.id}
-          type="button"
+          variant="outline"
           onClick={() => onOpen(item.problemId)}
-          className="block w-full rounded-lg border bg-background p-3 text-left text-sm hover:bg-accent"
+          className="h-auto w-full flex-col items-stretch justify-start p-3 text-left text-sm font-normal"
         >
           <div className="mb-1 flex items-center justify-between gap-2">
             <span className="truncate font-medium">{item.problemTitle}</span>
             <span className="shrink-0 text-xs text-muted-foreground">{formatDate(item.createdAt)}</span>
           </div>
           <p className="whitespace-pre-wrap text-muted-foreground">{item.body}</p>
-        </button>
+        </Button>
       ))}
     </div>
   );
@@ -597,38 +605,38 @@ function SubmissionView({
           제출 v{submission.version} · {formatDate(submission.submitted_at)}
         </p>
         {previousSubmission && (
-          <button
-            type="button"
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => setShowDiff((value) => !value)}
-            className={cn(
-              "inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium transition",
-              showDiff ? "bg-primary text-primary-foreground" : "hover:bg-accent",
-            )}
+            className={cn(showDiff && "bg-primary text-primary-foreground hover:bg-primary")}
           >
             <GitCompare className="size-3.5" /> v{previousSubmission.version} 비교
-          </button>
+          </Button>
         )}
       </div>
       {showDiff && previousSubmission ? (
-        <div className="overflow-x-auto rounded-lg border bg-muted/30 p-3 font-mono text-xs">
-          <p className="mb-2 font-sans text-muted-foreground">
-            v{previousSubmission.version} → v{submission.version} 변경분
-          </p>
-          {diff.map((op, index) => (
-            <div
-              key={index}
-              className={cn(
-                "whitespace-pre-wrap px-2",
-                op.type === "add" && "bg-green-500/15 text-green-700 dark:text-green-400",
-                op.type === "remove" && "bg-red-500/15 text-red-700 line-through dark:text-red-400",
-                op.type === "same" && "text-muted-foreground",
-              )}
-            >
-              {op.type === "add" ? "+ " : op.type === "remove" ? "− " : "  "}
-              {op.text || " "}
-            </div>
-          ))}
-        </div>
+        <Card className="overflow-x-auto bg-muted/30 font-mono text-xs">
+          <CardContent className="p-3">
+            <p className="mb-2 font-sans text-muted-foreground">
+              v{previousSubmission.version} → v{submission.version} 변경분
+            </p>
+            {diff.map((op, index) => (
+              <div
+                key={index}
+                className={cn(
+                  "whitespace-pre-wrap px-2",
+                  op.type === "add" && "bg-green-500/15 text-green-700 dark:text-green-400",
+                  op.type === "remove" && "bg-red-500/15 text-red-700 line-through dark:text-red-400",
+                  op.type === "same" && "text-muted-foreground",
+                )}
+              >
+                {op.type === "add" ? "+ " : op.type === "remove" ? "− " : "  "}
+                {op.text || " "}
+              </div>
+            ))}
+          </CardContent>
+        </Card>
       ) : (
         <PortfolioViewer
           value={toEditorDocument(submission.content_json)}

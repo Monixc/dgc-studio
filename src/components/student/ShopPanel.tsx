@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { usePointsRanking } from "@/hooks/usePoints";
 import { useShopItems, useMyShopOrders, useRequestPurchase } from "@/hooks/useShop";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 const STATUS_LABEL = { pending: "대기중", approved: "구매완료", rejected: "거절됨" } as const;
@@ -50,7 +51,7 @@ export default function ShopPanel() {
             const soldOut = item.stock < 1;
             const notEnough = balance < item.cost;
             return (
-              <div key={item.id} className="rounded-xl border bg-card p-3 shadow-sm">
+              <Card key={item.id} className="p-3 shadow-sm">
                 <div className="aspect-square w-full overflow-hidden rounded-lg bg-muted">
                   {item.image_url && (
                     <img src={item.image_url} alt={item.name} className="h-full w-full object-cover" />
@@ -67,7 +68,7 @@ export default function ShopPanel() {
                   <ShoppingCart className="size-3.5" />
                   {pending ? "요청 중" : soldOut ? "품절" : notEnough ? "포인트 부족" : "구매 요청"}
                 </Button>
-              </div>
+              </Card>
             );
           })}
         </div>
@@ -83,7 +84,7 @@ export default function ShopPanel() {
           {myOrders.map((o) => {
             const item = itemOf(o.item_id);
             return (
-              <div key={o.id} className="rounded-xl border bg-card p-3 shadow-sm">
+              <Card key={o.id} className="p-3 shadow-sm">
                 <div className="aspect-square w-full overflow-hidden rounded-lg bg-muted">
                   {item?.image_url && (
                     <img src={item.image_url} alt={item.name} className="h-full w-full object-cover" />
@@ -100,7 +101,7 @@ export default function ShopPanel() {
                 >
                   {STATUS_LABEL[o.status]}
                 </div>
-              </div>
+              </Card>
             );
           })}
         </div>
