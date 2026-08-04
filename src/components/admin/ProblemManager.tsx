@@ -295,8 +295,11 @@ export default function ProblemManager() {
   const editorPanel = selectedId ? (
     <ProblemEditor key={selectedId} problemId={selectedId} />
   ) : (
-    <div className="flex h-full items-center justify-center p-6 text-center text-muted-foreground">
-      왼쪽에서 문제를 선택하거나 “문제 추가”를 누르세요.
+    <div className="flex h-full flex-col items-center justify-center gap-3 p-6 text-center text-muted-foreground">
+      <p>왼쪽에서 문제를 선택하거나 새로 만드세요.</p>
+      <Button variant="outline" onClick={handleCreateProblem} disabled={createProblemMut.isPending}>
+        <Plus className="size-4" /> 새 문제 만들기
+      </Button>
     </div>
   );
 
