@@ -272,6 +272,16 @@ export default function LessonManager() {
         <SidebarHeader className="border-b group-data-[collapsible=icon]:items-center">
           <div className="flex items-center gap-1">
             <span className="text-sm font-semibold group-data-[collapsible=icon]:hidden">교안</span>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="ml-auto size-7 group-data-[collapsible=icon]:ml-0"
+              onClick={createMd}
+              disabled={createMut.isPending}
+              title="MD 교안 추가"
+            >
+              <Plus className="size-4" />
+            </Button>
           </div>
           <div className="flex flex-wrap gap-1 group-data-[collapsible=icon]:hidden">
             <Button size="sm" variant="outline" onClick={createMd} disabled={createMut.isPending}>

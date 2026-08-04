@@ -163,6 +163,29 @@ export default function ClassManager() {
     </div>
   ) : (
     <div className={isMobile ? "p-4" : "p-6"}>
+      <div className="mb-4 flex items-center gap-2">
+        {editingId === selected.id ? (
+          <>
+            <Input
+              autoFocus
+              value={nameInput}
+              onChange={(e) => setNameInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && saveEdit(selected.id)}
+              className="h-9 max-w-xs text-xl font-bold"
+            />
+            <Button variant="ghost" size="icon" onClick={() => saveEdit(selected.id)} title="저장">
+              <Check className="size-4" />
+            </Button>
+          </>
+        ) : (
+          <>
+            <h2 className="text-xl font-bold">{selected.name || "(이름 없음)"}</h2>
+            <Button variant="ghost" size="icon" onClick={() => startEdit(selected.id, selected.name)} title="이름 수정">
+              <Pencil className="size-4" />
+            </Button>
+          </>
+        )}
+      </div>
       <div className="mb-6 flex flex-wrap items-center gap-2 rounded-lg border p-3">
               <Bell className="size-4 shrink-0 text-muted-foreground" />
               <span className="text-sm font-medium">수업 시간</span>

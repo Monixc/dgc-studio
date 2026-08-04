@@ -234,6 +234,7 @@ export default function ProblemManager() {
   const problemListPanel = (
     <>
       <div className="flex items-center gap-1 border-b p-2">
+        <SidebarTrigger className="hidden md:flex" />
         <span className="whitespace-nowrap text-sm font-semibold">문제 목록</span>
         {!bulkMode ? (
           <div className="ml-auto flex items-center gap-1">
@@ -375,7 +376,6 @@ export default function ProblemManager() {
         <div className="flex-1 overflow-hidden md:hidden">{editorPanel}</div>
 
         {/* 데스크톱: 문제 목록 + 에디터 리사이즈 패널 */}
-        <SidebarTrigger className="m-2 hidden shrink-0 md:flex" />
         <ResizablePanelGroup direction="horizontal" className="hidden min-h-0 flex-1 overflow-hidden md:flex">
           <ResizablePanel
             ref={listPanelRef}
