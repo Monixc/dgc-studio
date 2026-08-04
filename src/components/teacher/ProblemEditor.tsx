@@ -129,11 +129,9 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
             <option key={c} value={c}>{PROBLEM_CATEGORY_LABEL[c]}</option>
           ))}
         </Select>
-        <div className="ml-auto flex gap-2">
-          <Button onClick={() => save()} disabled={updateMut.isPending}>
-            <Save /> 저장
-          </Button>
-        </div>
+        <Button onClick={() => save()} disabled={updateMut.isPending}>
+          <Save /> 저장
+        </Button>
       </div>
 
       {category === "flowchart" ? (
