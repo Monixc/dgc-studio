@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   ChevronDown,
@@ -6,13 +6,11 @@ import {
   GitCompare,
   Loader2,
   MessageSquare,
-  PanelLeft,
   Pencil,
   Plus,
   Send,
   Trash2,
 } from "lucide-react";
-import type { ImperativePanelHandle } from "react-resizable-panels";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import AppShell, { STUDENT_MENU } from "@/components/layout/AppShell";
@@ -23,7 +21,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select } from "@/components/ui/select";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import {
+  SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupContent,
+  SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarMenuAction, SidebarInset, SidebarTrigger, SidebarRail,
+  useSidebar,
+} from "@/components/ui/sidebar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   useCreatePortfolioDocument,
@@ -102,8 +104,6 @@ export default function StudentPortfolio() {
     enabled: !!user,
   });
 
-  const listPanelRef = useRef<ImperativePanelHandle>(null);
-  const [listCollapsed, setListCollapsed] = useState(false);
   const [mobileDocOpen, setMobileDocOpen] = useState(false);
   const [selectedDocumentId, setSelectedDocumentId] = useState<string | null>(null);
   const [selectedSubmissionId, setSelectedSubmissionId] = useState<string | null>(null);
@@ -161,11 +161,6 @@ export default function StudentPortfolio() {
     (assetId: string) => getPortfolioAssetSignedUrl(assetId),
     [],
   );
-
-  const toggleListPanel = () => {
-    if (listCollapsed) listPanelRef.current?.expand();
-    else listPanelRef.current?.collapse();
-  };
 
   const selectDocument = (document: StoredDocument) => {
     setSelectedDocumentId(document.id);
@@ -292,6 +287,25 @@ export default function StudentPortfolio() {
           <Trash2 className="size-3.5" />
         </Button>
       </div>
+    );
+  }
+
+  function renderSidebarDocumentRow(item: StoredDocument) {
+    const active = item.id === selectedDocumentId;
+    const subCount = submissionCountByDoc.get(item.id) ?? 0;
+    const submitted = subCount > 0;
+    return (
+      <DocumentMenuItem
+        key={item.id}
+        item={item}
+        active={active}
+        submitted={submitted}
+        subCount={subCount}
+        onSelect={() => selectDocument(item)}
+        onEdit={() => navigate(`/student/portfolio/${item.id}/edit`)}
+        onDelete={() => removeDocument(item)}
+        deletePending={deleteDocument.isPending}
+      />
     );
   }
 
@@ -462,84 +476,107 @@ export default function StudentPortfolio() {
               <div className="min-h-0 flex-1 overflow-y-auto">{viewerContent}</div>
             </div>
           ) : (
-            <ResizablePanelGroup direction="horizontal" className="h-full overflow-hidden">
-              <ResizablePanel
-                ref={listPanelRef}
-                defaultSize={20}
-                minSize={14}
-                maxSize={35}
-                collapsible
-                collapsedSize={4}
-                onCollapse={() => setListCollapsed(true)}
-                onExpand={() => setListCollapsed(false)}
-                className="flex h-full flex-col bg-muted/20"
-              >
-                {listCollapsed ? (
-                  <div className="flex flex-col items-center gap-1 py-2">
-                    {documents.map((item) => (
-                      <Button
-                        key={item.id}
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => selectDocument(item)}
-                        title={item.title || "제목 없음"}
-                        className={cn(
-                          "size-8",
-                          item.id === selectedDocumentId && "bg-primary text-primary-foreground hover:bg-primary",
+            <SidebarProvider className="h-full min-h-0 items-stretch">
+              <Sidebar collapsible="icon" className="border-r">
+                <SidebarHeader className="flex-row items-center gap-1 border-b group-data-[collapsible=icon]:justify-center">
+                  <SidebarTrigger />
+                  <span className="whitespace-nowrap text-sm font-semibold group-data-[collapsible=icon]:hidden">내 노트</span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={createNewDocument}
+                    disabled={createDocument.isPending}
+                    title="문서 작성"
+                    className="ml-auto size-7 group-data-[collapsible=icon]:ml-0"
+                  >
+                    {createDocument.isPending ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
+                  </Button>
+                </SidebarHeader>
+                <SidebarContent>
+                  <SidebarGroup>
+                    <SidebarGroupContent>
+                      <SidebarMenu>
+                        {documents.length ? (
+                          documents.map((item) => renderSidebarDocumentRow(item))
+                        ) : (
+                          <p className="p-2 text-sm text-muted-foreground group-data-[collapsible=icon]:hidden">
+                            "문서 작성"으로 시작하세요.
+                          </p>
                         )}
-                      >
-                        <FileText className="size-4" />
-                      </Button>
-                    ))}
-                  </div>
-                ) : (
-                  <>
-                    <div className="flex items-center gap-1 border-b px-3 py-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={toggleListPanel}
-                        title="목록 접기"
-                        className="size-7"
-                      >
-                        <PanelLeft className="size-4" />
-                      </Button>
-                      <span className="text-sm font-semibold">내 노트</span>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={createNewDocument}
-                        disabled={createDocument.isPending}
-                        title="문서 작성"
-                        className="ml-auto size-7"
-                      >
-                        {createDocument.isPending ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
-                      </Button>
-                    </div>
-                    <div className="flex-1 space-y-1 overflow-y-auto p-2">
-                      {documents.length ? (
-                        documents.map((item) => renderDocumentRow(item))
-                      ) : (
-                        <p className="p-2 text-sm text-muted-foreground">
-                          "문서 작성"으로 시작하세요.
-                        </p>
-                      )}
-                    </div>
-                  </>
-                )}
-              </ResizablePanel>
+                      </SidebarMenu>
+                    </SidebarGroupContent>
+                  </SidebarGroup>
+                </SidebarContent>
+              </Sidebar>
+              <SidebarRail />
 
-              <ResizableHandle onToggle={toggleListPanel} collapsed={listCollapsed} />
-
-              <ResizablePanel defaultSize={80} className="min-w-0">
+              <SidebarInset className="min-w-0">
                 {viewerContent}
-              </ResizablePanel>
-            </ResizablePanelGroup>
+              </SidebarInset>
+            </SidebarProvider>
           )}
         </TabsContent>
       </Tabs>
       {confirmDialog}
     </AppShell>
+  );
+}
+
+function DocumentMenuItem({
+  item, active, submitted, subCount, onSelect, onEdit, onDelete, deletePending,
+}: {
+  item: StoredDocument;
+  active: boolean;
+  submitted: boolean;
+  subCount: number;
+  onSelect: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+  deletePending: boolean;
+}) {
+  const { isMobile, setOpenMobile } = useSidebar();
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        isActive={active}
+        tooltip={item.title || "제목 없음"}
+        className="h-auto py-2"
+        onClick={() => {
+          onSelect();
+          if (isMobile) setOpenMobile(false);
+        }}
+      >
+        <FileText className="size-4 shrink-0" />
+        <span className="min-w-0 flex-1 group-data-[collapsible=icon]:hidden">
+          <span className="flex items-center gap-1.5">
+            <span
+              className={cn(
+                "size-1.5 shrink-0 rounded-full",
+                submitted ? "bg-emerald-500" : "bg-muted-foreground/30",
+              )}
+              title={submitted ? `제출됨 · v${subCount}` : "미제출"}
+            />
+            <span className="truncate font-medium">{item.title || "제목 없음"}</span>
+          </span>
+          <span className="mt-0.5 block truncate pl-3 text-xs text-muted-foreground">
+            {formatDate(item.updated_at)}
+            {submitted && ` · 제출 v${subCount}`}
+          </span>
+        </span>
+      </SidebarMenuButton>
+      <SidebarMenuAction showOnHover className="right-7" onClick={onEdit} title="편집">
+        <Pencil className="size-3.5" />
+      </SidebarMenuAction>
+      <SidebarMenuAction
+        showOnHover
+        onClick={onDelete}
+        disabled={submitted || deletePending}
+        title={submitted ? "제출 이력이 있어 삭제할 수 없습니다." : "삭제"}
+        className="disabled:pointer-events-none disabled:opacity-20"
+      >
+        <Trash2 className="size-3.5" />
+      </SidebarMenuAction>
+    </SidebarMenuItem>
   );
 }
 
