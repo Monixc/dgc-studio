@@ -113,11 +113,11 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
     }
   }
 
-  if (isLoading) return <div className="flex h-full items-center justify-center text-muted-foreground">불러오는 중…</div>;
-  if (!problem) return <div className="flex h-full items-center justify-center text-muted-foreground">문제를 찾을 수 없습니다.</div>;
+  if (isLoading) return <div className="flex h-full flex-1 items-center justify-center text-muted-foreground">불러오는 중…</div>;
+  if (!problem) return <div className="flex h-full flex-1 items-center justify-center text-muted-foreground">문제를 찾을 수 없습니다.</div>;
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-1 flex-col">
       <div className="flex items-center gap-2 border-b p-3">
         <Input value={title} onChange={(e) => setTitle(e.target.value)} className="max-w-xs" placeholder="문제 제목" />
         <Select
