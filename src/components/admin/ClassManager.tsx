@@ -437,7 +437,7 @@ export default function ClassManager() {
     <>
     <SidebarProvider className="h-full min-h-0 items-stretch">
       <Sidebar collapsible="icon" className="border-r">
-        <SidebarHeader className="flex-row items-center gap-1 border-b group-data-[collapsible=icon]:justify-center">
+        <SidebarHeader className="min-h-[45px] flex-row items-center gap-1 border-b group-data-[collapsible=icon]:justify-center">
           <span className="whitespace-nowrap text-sm font-semibold group-data-[collapsible=icon]:hidden">반 목록</span>
           <Button
             variant="ghost"
@@ -545,7 +545,7 @@ function ClassMenuItem({
         }}
       >
         <Users />
-        <span>{c.name || "(이름 없음)"}</span>
+        <span className="group-data-[collapsible=icon]:hidden">{c.name || "(이름 없음)"}</span>
       </SidebarMenuButton>
       <SidebarMenuAction showOnHover className="right-7" onClick={() => onStartEdit(c.id, c.name)} title="이름 수정">
         <Pencil className="size-3.5" />

@@ -185,7 +185,7 @@ export default function StudentManager() {
   return (
     <SidebarProvider className="h-full min-h-0 items-stretch">
       <Sidebar collapsible="icon" className="border-r">
-        <SidebarHeader className="min-h-[45px] border-b">
+        <SidebarHeader className="min-h-[45px] border-b group-data-[collapsible=icon]:justify-center">
           <div className="flex items-center gap-1 group-data-[collapsible=icon]:justify-center">
             <UserRound className="hidden size-4 shrink-0 text-muted-foreground group-data-[collapsible=icon]:block" />
             <h1 className="text-base font-bold group-data-[collapsible=icon]:hidden">학생 관리</h1>
