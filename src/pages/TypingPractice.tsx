@@ -1437,10 +1437,7 @@ function PracticeCategoryMenu({
     <main className="min-h-screen bg-background px-3 py-4 sm:px-6 sm:py-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
         <div className="mb-6 flex items-center justify-between">
-          <div>
-            <p className="text-[10px] font-bold tracking-[0.24em] text-primary">TYPING PRACTICE</p>
-            <h1 className="mt-1 text-2xl font-black tracking-tight sm:text-3xl">연습할 콘텐츠를 선택하세요</h1>
-          </div>
+          <p className="text-[10px] font-bold tracking-[0.24em] text-primary">TYPING PRACTICE</p>
           <Button variant="ghost" onClick={onExit} className="gap-2 text-muted-foreground">
             <ArrowLeft className="size-4" /> 돌아가기
           </Button>
@@ -1467,17 +1464,10 @@ function PracticeCategoryMenu({
               <h2 className="mt-1 text-3xl font-black sm:text-4xl">영문 타자</h2>
               <p className="mt-2 max-w-xl text-sm opacity-60">고전 문학 11,000여 문장과 문단으로 자연스럽게 영문 타자를 연습합니다.</p>
             </div>
-            <ChevronRight className="size-7 shrink-0 opacity-35 transition group-hover:translate-x-1 group-hover:opacity-80" />
           </div>
         </button>
 
-        <div className="mb-3 mt-7 flex items-end justify-between">
-          <div>
-            <p className="text-[10px] font-bold tracking-[0.22em] text-primary/60">CODE TRAINING</p>
-            <h2 className="mt-1 text-lg font-bold">코드 타자</h2>
-          </div>
-          <span className="text-xs text-muted-foreground">언어별 300개 이상 스니펫</span>
-        </div>
+        <p className="mb-3 mt-7 text-[10px] font-bold tracking-[0.22em] text-primary/60">CODE TRAINING</p>
 
         <div className="grid grid-cols-2 gap-3 sm:auto-rows-[9rem]">
           {code.map((item) => {
@@ -1498,7 +1488,7 @@ function PracticeCategoryMenu({
                   <span className="text-[9px] font-bold uppercase tracking-wider opacity-50">{item.extension}</span>
                 </div>
                 <div className="relative z-10">
-                  <h3 className="text-sm font-black">{item.label}</h3>
+                  <h3 className={cn("font-black", item.id === "python" ? "text-2xl" : "text-sm")}>{item.label}</h3>
                   <p className="mt-1 text-xs opacity-70">{item.description}</p>
                 </div>
               </button>
