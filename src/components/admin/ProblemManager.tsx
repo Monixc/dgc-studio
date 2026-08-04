@@ -106,8 +106,11 @@ export default function ProblemManager() {
     if (!(await confirm({ description: "이 폴더를 삭제할까요? 하위 폴더도 함께 삭제됩니다.", destructive: true }))) return;
     try {
       const folder = folders.find((f) => f.id === id);
+      // 삭제 대상이 현재 보고 있는 폴더 자신이거나 조상이면(하위 폴더까지 함께 지워지므로)
+      // activeFolder가 사라진 폴더를 가리키는 좀비 상태가 되지 않게 미리 확인.
+      const affected = folderPath(activeFolder).some((f) => f.id === id);
       await deleteFolderMut.mutateAsync(id);
-      if (activeFolder === id) {
+      if (affected) {
         setActiveFolder(folder?.parent_id ?? childrenOf(null).find((f) => f.id !== id)?.id ?? ALL);
       }
     } catch (e: any) {
@@ -573,11 +576,16 @@ function FolderTreeNode({
         )}
       >
         {kids.length > 0 ? (
-          <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); onToggleExpand(folder.id); }} className="size-5 shrink-0 text-muted-foreground">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={(e) => { e.stopPropagation(); onToggleExpand(folder.id); }}
+            className="size-5 shrink-0 text-muted-foreground group-data-[collapsible=icon]:hidden"
+          >
             {isExpanded ? <ChevronDown className="size-3.5" /> : <ChevronRight className="size-3.5" />}
           </Button>
         ) : depth > 0 ? (
-          <span className="w-3.5 shrink-0" />
+          <span className="w-3.5 shrink-0 group-data-[collapsible=icon]:hidden" />
         ) : null}
         <FolderColorSwatch color={folder.color} onChange={(color) => onColorChange(folder.id, color)} />
         <span className={cn("flex-1 truncate group-data-[collapsible=icon]:hidden", isDefault && "font-medium")}>{folder.name}</span>

@@ -230,7 +230,7 @@ SidebarFooter.displayName = "SidebarFooter";
 
 const SidebarSeparator = React.forwardRef<React.ElementRef<typeof Separator>, React.ComponentProps<typeof Separator>>(
   ({ className, ...props }, ref) => (
-    <Separator ref={ref} className={cn("h-0.5 w-full bg-border", className)} {...props} />
+    <Separator ref={ref} className={cn("h-0.5 w-full bg-border group-data-[collapsible=icon]:hidden", className)} {...props} />
   )
 );
 SidebarSeparator.displayName = "SidebarSeparator";

@@ -19,7 +19,8 @@ export function useLessonFolders(userId: string | undefined) {
 export function useCreateLessonFolder() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: ({ userId, name }: { userId: string; name: string }) => createLessonFolder(userId, name),
+    mutationFn: ({ userId, name, parentId }: { userId: string; name: string; parentId?: string | null }) =>
+      createLessonFolder(userId, name, parentId ?? null),
     onSuccess: () => qc.invalidateQueries({ queryKey: LESSON_FOLDERS_KEY }),
   });
 }

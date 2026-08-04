@@ -106,6 +106,7 @@ export interface LessonFolder {
   id: string;
   name: string;
   color: string | null;
+  parent_id: string | null;
   created_by: string;
   created_at: string;
 }

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Plus, Upload, Trash2, FileText, FileCode, Code2, Eye, Pencil, Folder, FolderPlus, Check, ClipboardList, X } from "lucide-react";
+import { Plus, Upload, Trash2, FileText, FileCode, Code2, Eye, Pencil, Folder, FolderPlus, Check, ClipboardList, X, ChevronRight, ChevronDown } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useConfirm } from "@/hooks/use-confirm";
 import {
@@ -36,7 +36,6 @@ import { Markdown } from "@/components/Markdown";
 import { cn } from "@/lib/utils";
 import type { Lesson, LessonFolder } from "@/integrations/supabase/types";
 
-const ALL = "__all__";
 const NONE = "__none__";
 const LESSON_DND_TYPE = "text/flowpy-lesson-id";
 
@@ -85,7 +84,8 @@ export default function LessonManager() {
   const { data: myProblems = [] } = useMyProblems(userId);
   const setLessonProbsMut = useSetLessonProblems();
 
-  const [activeFolder, setActiveFolder] = useState<string>(ALL);
+  const [activeFolder, setActiveFolder] = useState<string>(NONE);
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [draft, setDraft] = useState<Draft | null>(null);
   const [preview, setPreview] = useState(false);
@@ -129,10 +129,32 @@ export default function LessonManager() {
       draft.starter_code !== selected.starter_code ||
       (draft.folder_id ?? null) !== (selected.folder_id ?? null));
 
-  const newFolderId = activeFolder === ALL || activeFolder === NONE ? null : activeFolder;
+  const newFolderId = activeFolder === NONE ? null : activeFolder;
   const filtered = lessons.filter((l) =>
-    activeFolder === ALL ? true : activeFolder === NONE ? !l.folder_id : l.folder_id === activeFolder,
+    activeFolder === NONE ? !l.folder_id : l.folder_id === activeFolder,
   );
+
+  const childrenOf = (parentId: string | null) => folders.filter((f) => f.parent_id === parentId);
+  const rootFolders = folders.filter((f) => f.parent_id === null);
+
+  function folderPath(id: string): LessonFolder[] {
+    const path: LessonFolder[] = [];
+    let cur = folders.find((f) => f.id === id);
+    while (cur) {
+      path.unshift(cur);
+      cur = folders.find((f) => f.id === cur!.parent_id);
+    }
+    return path;
+  }
+
+  function toggleExpand(id: string) {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
 
   async function createMd() {
     try {
@@ -247,11 +269,25 @@ export default function LessonManager() {
     }
   }
 
-  async function removeFolder(id: string) {
-    if (!(await confirm({ description: "폴더를 삭제할까요? 안의 교안은 ‘미분류’로 이동합니다.", destructive: true }))) return;
+  async function handleAddChild(parentId: string, name: string) {
+    if (!name.trim()) return;
     try {
+      await createFolderMut.mutateAsync({ userId, name: name.trim(), parentId });
+      setExpanded((prev) => new Set(prev).add(parentId));
+    } catch (e: any) {
+      toast.error(e?.message ?? "생성 실패");
+    }
+  }
+
+  async function removeFolder(id: string) {
+    if (!(await confirm({ description: "폴더를 삭제할까요? 하위 폴더도 함께 삭제되고, 안의 교안은 ‘미분류’로 이동합니다.", destructive: true }))) return;
+    try {
+      const folder = folders.find((f) => f.id === id);
+      // 삭제 대상이 현재 보고 있는 폴더 자신이거나 조상이면(하위 폴더까지 함께 지워지므로)
+      // activeFolder가 사라진 폴더를 가리키는 좀비 상태가 되지 않게 미리 확인.
+      const affected = activeFolder !== NONE && folderPath(activeFolder).some((f) => f.id === id);
       await deleteFolderMut.mutateAsync(id);
-      if (activeFolder === id) setActiveFolder(ALL);
+      if (affected) setActiveFolder(folder?.parent_id ?? NONE);
     } catch (e: any) {
       toast.error(e?.message ?? "삭제 실패");
     }
@@ -367,8 +403,30 @@ export default function LessonManager() {
             </SidebarGroupAction>
             <SidebarGroupContent>
               <SidebarMenu>
-                {folderRow(ALL, "전체", lessons.length)}
-                {folders.map((f) => folderRow(f.id, f.name || "(이름 없음)", countIn(f.id), { folder: f, dropTarget: f.id }))}
+                {rootFolders.map((f) => (
+                  <LessonFolderTreeNode
+                    key={f.id}
+                    folder={f}
+                    depth={0}
+                    childrenOf={childrenOf}
+                    expanded={expanded}
+                    onToggleExpand={toggleExpand}
+                    activeFolder={activeFolder}
+                    onSelect={setActiveFolder}
+                    onAddChild={handleAddChild}
+                    onDelete={removeFolder}
+                    onColorChange={(id, color) => updateColorMut.mutate({ id, color })}
+                    editingFolderId={editingFolderId}
+                    folderName={folderName}
+                    setFolderName={setFolderName}
+                    onStartRename={(id, name) => { setEditingFolderId(id); setFolderName(name); }}
+                    onSaveRename={saveFolderName}
+                    countIn={countIn}
+                    dragOverId={dragOverId}
+                    setDragOverId={setDragOverId}
+                    onDrop={handleDropOnFolder}
+                  />
+                ))}
                 {folderRow(NONE, "미분류", countIn(null), { dropTarget: null })}
               </SidebarMenu>
             </SidebarGroupContent>
@@ -380,12 +438,17 @@ export default function LessonManager() {
             <SidebarGroupLabel>
               {bulkSelected.size > 0 ? (
                 `${bulkSelected.size}개 선택됨`
-              ) : activeFolder === ALL ? (
-                "전체"
               ) : activeFolder === NONE ? (
                 "미분류"
               ) : (
-                folders.find((f) => f.id === activeFolder)?.name || "(이름 없음)"
+                <span className="flex min-w-0 items-center gap-1 truncate">
+                  {folderPath(activeFolder).map((f, i) => (
+                    <span key={f.id} className="flex min-w-0 items-center gap-1 truncate">
+                      {i > 0 && <ChevronRight className="size-3 shrink-0" />}
+                      <span className="truncate">{f.name}</span>
+                    </span>
+                  ))}
+                </span>
               )}
             </SidebarGroupLabel>
             <SidebarGroupAction
@@ -618,5 +681,162 @@ function LessonMenuItem({
         <Trash2 className="size-3.5" />
       </SidebarMenuAction>
     </SidebarMenuItem>
+  );
+}
+
+function LessonFolderTreeNode({
+  folder, depth, childrenOf, expanded, onToggleExpand, activeFolder, onSelect, onAddChild, onDelete, onColorChange,
+  editingFolderId, folderName, setFolderName, onStartRename, onSaveRename, countIn, dragOverId, setDragOverId, onDrop,
+}: {
+  folder: LessonFolder;
+  depth: number;
+  childrenOf: (parentId: string | null) => LessonFolder[];
+  expanded: Set<string>;
+  onToggleExpand: (id: string) => void;
+  activeFolder: string;
+  onSelect: (id: string) => void;
+  onAddChild: (parentId: string, name: string) => void;
+  onDelete: (id: string) => void;
+  onColorChange: (id: string, color: string) => void;
+  editingFolderId: string | null;
+  folderName: string;
+  setFolderName: (v: string) => void;
+  onStartRename: (id: string, name: string) => void;
+  onSaveRename: (id: string) => void;
+  countIn: (fid: string | null) => number;
+  dragOverId: string | null;
+  setDragOverId: (v: string | null | ((prev: string | null) => string | null)) => void;
+  onDrop: (folderId: string, e: React.DragEvent) => void;
+}) {
+  const kids = childrenOf(folder.id);
+  const isExpanded = expanded.has(folder.id);
+  const editing = editingFolderId === folder.id;
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  const [creating, setCreating] = useState(false);
+  const [draftName, setDraftName] = useState("");
+
+  function submitCreate() {
+    const name = draftName.trim();
+    setCreating(false);
+    setDraftName("");
+    if (name) onAddChild(folder.id, name);
+  }
+
+  return (
+    <>
+    <SidebarMenuItem>
+      {editing ? (
+        <div style={depth > 0 ? { paddingLeft: depth * 14 } : undefined} className="flex items-center gap-2 rounded-md p-2">
+          <FolderColorSwatch color={folder.color} onChange={(color) => onColorChange(folder.id, color)} />
+          <Input
+            autoFocus
+            value={folderName}
+            onChange={(e) => setFolderName(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && onSaveRename(folder.id)}
+            className="h-6 flex-1"
+          />
+          <Button variant="ghost" size="icon" className="size-6 shrink-0" onClick={() => onSaveRename(folder.id)} title="저장">
+            <Check className="size-3.5" />
+          </Button>
+        </div>
+      ) : (
+        <div
+          onClick={() => {
+            onSelect(folder.id);
+            if (isMobile) setOpenMobile(false);
+          }}
+          onDragOver={(e) => { e.preventDefault(); setDragOverId(folder.id); }}
+          onDragLeave={() => setDragOverId((id) => (id === folder.id ? null : id))}
+          onDrop={(e) => onDrop(folder.id, e)}
+          style={depth > 0 ? { paddingLeft: depth * 14 } : undefined}
+          className={cn(
+            sidebarMenuButtonVariants({ isActive: activeFolder === folder.id }),
+            "group cursor-pointer",
+            dragOverId === folder.id && "ring-2 ring-primary"
+          )}
+        >
+          {kids.length > 0 ? (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={(e) => { e.stopPropagation(); onToggleExpand(folder.id); }}
+              className="size-5 shrink-0 text-muted-foreground group-data-[collapsible=icon]:hidden"
+            >
+              {isExpanded ? <ChevronDown className="size-3.5" /> : <ChevronRight className="size-3.5" />}
+            </Button>
+          ) : depth > 0 ? (
+            <span className="w-3.5 shrink-0 group-data-[collapsible=icon]:hidden" />
+          ) : null}
+          <FolderColorSwatch color={folder.color} onChange={(color) => onColorChange(folder.id, color)} />
+          <span className="flex-1 truncate font-medium group-data-[collapsible=icon]:hidden">{folder.name || "(이름 없음)"}</span>
+          <span className="text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">{countIn(folder.id)}</span>
+        </div>
+      )}
+      {!editing && (
+        <>
+          <SidebarMenuAction
+            showOnHover
+            className="right-[52px]"
+            onClick={() => onStartRename(folder.id, folder.name)}
+            title="이름 수정"
+          >
+            <Pencil className="size-3.5" />
+          </SidebarMenuAction>
+          <SidebarMenuAction showOnHover className="right-7" onClick={() => setCreating(true)} title="하위 폴더 추가">
+            <FolderPlus className="size-3.5" />
+          </SidebarMenuAction>
+          <SidebarMenuAction showOnHover onClick={() => onDelete(folder.id)} title="폴더 삭제">
+            <Trash2 className="size-3.5" />
+          </SidebarMenuAction>
+        </>
+      )}
+    </SidebarMenuItem>
+    {creating && (
+      <SidebarMenuItem>
+        <div style={{ paddingLeft: (depth + 1) * 14 }} className="flex items-center gap-1 p-2">
+          <span className="w-3.5 shrink-0" />
+          <Folder className="size-4 shrink-0 text-muted-foreground" />
+          <Input
+            autoFocus
+            value={draftName}
+            onChange={(e) => setDraftName(e.target.value)}
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") submitCreate();
+              if (e.key === "Escape") { setCreating(false); setDraftName(""); }
+            }}
+            onBlur={submitCreate}
+            placeholder="새 폴더 이름"
+            className="h-6 flex-1"
+          />
+        </div>
+      </SidebarMenuItem>
+    )}
+    {isExpanded && kids.map((k) => (
+      <LessonFolderTreeNode
+        key={k.id}
+        folder={k}
+        depth={depth + 1}
+        childrenOf={childrenOf}
+        expanded={expanded}
+        onToggleExpand={onToggleExpand}
+        activeFolder={activeFolder}
+        onSelect={onSelect}
+        onAddChild={onAddChild}
+        onDelete={onDelete}
+        onColorChange={onColorChange}
+        editingFolderId={editingFolderId}
+        folderName={folderName}
+        setFolderName={setFolderName}
+        onStartRename={onStartRename}
+        onSaveRename={onSaveRename}
+        countIn={countIn}
+        dragOverId={dragOverId}
+        setDragOverId={setDragOverId}
+        onDrop={onDrop}
+      />
+    ))}
+    </>
   );
 }

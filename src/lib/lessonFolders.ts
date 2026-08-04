@@ -13,10 +13,10 @@ export async function listLessonFolders(userId: string): Promise<LessonFolder[]>
   return (data ?? []) as LessonFolder[];
 }
 
-export async function createLessonFolder(userId: string, name: string): Promise<LessonFolder> {
+export async function createLessonFolder(userId: string, name: string, parentId: string | null = null): Promise<LessonFolder> {
   const { data, error } = await supabase
     .from("lesson_folders")
-    .insert({ name, created_by: userId })
+    .insert({ name, created_by: userId, parent_id: parentId })
     .select()
     .single();
   if (error) throw error;
