@@ -129,7 +129,7 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
             <option key={c} value={c}>{PROBLEM_CATEGORY_LABEL[c]}</option>
           ))}
         </Select>
-        <Button onClick={() => save()} disabled={updateMut.isPending}>
+        <Button className="ml-auto" onClick={() => save()} disabled={updateMut.isPending}>
           <Save /> 저장
         </Button>
       </div>
