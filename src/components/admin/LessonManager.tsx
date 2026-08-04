@@ -241,8 +241,8 @@ export default function LessonManager() {
           <>
             <SidebarMenuButton isActive={activeFolder === id} onClick={() => setActiveFolder(id)} tooltip={label}>
               <Folder />
-              <span className="flex-1 truncate">{label}</span>
-              <span className="text-xs text-muted-foreground">{count}</span>
+              <span className="flex-1 truncate group-data-[collapsible=icon]:hidden">{label}</span>
+              <span className="text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">{count}</span>
             </SidebarMenuButton>
             {opts?.folder && (
               <>
@@ -484,8 +484,8 @@ function LessonMenuItem({
         }}
       >
         {lesson.content_type === "html" ? <FileCode /> : <FileText />}
-        <span className="flex-1 truncate">{lesson.title || "(제목 없음)"}</span>
-        {lesson.code_practice && <Code2 className="size-3.5 shrink-0 text-primary" />}
+        <span className="flex-1 truncate group-data-[collapsible=icon]:hidden">{lesson.title || "(제목 없음)"}</span>
+        {lesson.code_practice && <Code2 className="size-3.5 shrink-0 text-primary group-data-[collapsible=icon]:hidden" />}
       </SidebarMenuButton>
       <SidebarMenuAction showOnHover onClick={() => onDelete(lesson.id)} title="삭제">
         <Trash2 className="size-3.5" />

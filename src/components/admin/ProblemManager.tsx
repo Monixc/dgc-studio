@@ -461,7 +461,7 @@ function ProblemMenuItem({
         )}
         <FileText className={cn("hidden size-4 shrink-0 group-data-[collapsible=icon]:block", problem.is_published ? "text-emerald-500" : "text-muted-foreground")} />
         <Circle strokeWidth={0} className={cn("!size-2 shrink-0 group-data-[collapsible=icon]:hidden", problem.is_published ? "fill-emerald-500" : "fill-muted-foreground/40")} />
-        <span className="flex-1 truncate">{problem.title || "(제목 없음)"}</span>
+        <span className="flex-1 truncate group-data-[collapsible=icon]:hidden">{problem.title || "(제목 없음)"}</span>
       </SidebarMenuButton>
       {!bulkMode && (
         <>
@@ -567,7 +567,7 @@ function FolderTreeNode({
             className="sr-only"
           />
         </label>
-        <span className={cn("flex-1 truncate", isDefault && "font-medium")}>{folder.name}</span>
+        <span className={cn("flex-1 truncate group-data-[collapsible=icon]:hidden", isDefault && "font-medium")}>{folder.name}</span>
       </div>
       <SidebarMenuAction
         showOnHover
