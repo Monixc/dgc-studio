@@ -131,7 +131,6 @@ export default function StudentPortfolioEditor() {
       } catch (error) {
         toast.error(`문서를 정리하지 못했습니다: ${errorMessage(error)}`);
       }
-      toast("저장하지 않아 새 문서를 만들지 않았습니다.");
       navigate("/student/portfolio");
       return;
     }
