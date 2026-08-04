@@ -265,7 +265,7 @@ export default function StudentPortfolioEditor() {
               variant="ghost"
               onClick={() => changeMode(item.value)}
               className={cn(
-                "h-auto rounded-none border-b-2 px-3 py-2 text-sm font-normal text-muted-foreground hover:bg-transparent",
+                "h-auto rounded-none border-b-2 border-transparent px-3 py-2 text-sm font-normal text-muted-foreground hover:bg-transparent",
                 mode === item.value && "border-primary font-semibold text-foreground",
               )}
             >
@@ -317,7 +317,7 @@ export default function StudentPortfolioEditor() {
               resolveAssetUrl={resolveAssetUrl}
               onUploadFile={uploadAsset}
               onError={(error) => toast.error(error.message)}
-              className="mx-auto min-h-full max-w-5xl rounded-none"
+              className="mx-auto min-h-full w-[90%] max-w-none rounded-none"
             />
           </div>
         )}

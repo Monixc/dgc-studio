@@ -174,7 +174,7 @@ export function CourseShell({ children }: { children: ReactNode }) {
     <AppShell menu={STUDENT_MENU} homePath="/student">
       <SidebarProvider className="h-full min-h-0 items-stretch">
         <Sidebar collapsible="icon" className="border-r">
-          <SidebarHeader className="flex-row items-center gap-1 border-b group-data-[collapsible=icon]:justify-center">
+          <SidebarHeader className="min-h-[45px] flex-row items-center gap-1 border-b group-data-[collapsible=icon]:justify-center">
             <BookOpen className="hidden size-4 shrink-0 text-muted-foreground group-data-[collapsible=icon]:block" />
             <span className="whitespace-nowrap text-sm font-semibold group-data-[collapsible=icon]:hidden">내 수업</span>
           </SidebarHeader>

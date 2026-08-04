@@ -348,10 +348,10 @@ export default function StudentPortfolio() {
                     value={selectedSubmissionId ?? ""}
                     onChange={(event) => setSelectedSubmissionId(event.target.value || null)}
                     aria-label="버전 선택"
-                    className="h-8 w-auto border-0 bg-muted px-2 text-xs text-muted-foreground"
+                    className="h-8 w-auto border-0 bg-muted pl-2 pr-8 text-xs text-muted-foreground"
                   >
                     {!currentRevisionSubmission && (
-                      <option value="">초안 (미제출)</option>
+                      <option value="">문서 (미제출)</option>
                     )}
                     {documentSubmissions.map((item) => (
                       <option key={item.id} value={item.id}>
