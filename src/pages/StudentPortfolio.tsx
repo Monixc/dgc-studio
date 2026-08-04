@@ -19,7 +19,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useConfirm } from "@/hooks/use-confirm";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Select } from "@/components/ui/select";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import {
   SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupContent,
@@ -344,19 +344,22 @@ export default function StudentPortfolio() {
                 <h2 className="text-2xl font-bold tracking-tight">{draft.title || "제목 없음"}</h2>
                 <div className="flex flex-wrap items-center gap-2">
                   <Select
-                    value={selectedSubmissionId ?? ""}
-                    onChange={(event) => setSelectedSubmissionId(event.target.value || null)}
-                    aria-label="버전 선택"
-                    className="h-8 w-auto border-0 bg-muted pl-2 pr-8 text-xs text-muted-foreground"
+                    value={selectedSubmissionId ?? "__doc__"}
+                    onValueChange={(v) => setSelectedSubmissionId(v === "__doc__" ? null : v)}
                   >
-                    {!currentRevisionSubmission && (
-                      <option value="">문서 (미제출)</option>
-                    )}
-                    {documentSubmissions.map((item) => (
-                      <option key={item.id} value={item.id}>
-                        v{item.version} · {formatDate(item.submitted_at)}
-                      </option>
-                    ))}
+                    <SelectTrigger aria-label="버전 선택" className="h-8 w-auto border-0 bg-muted pl-2 pr-8 text-xs text-muted-foreground">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {!currentRevisionSubmission && (
+                        <SelectItem value="__doc__">문서 (미제출)</SelectItem>
+                      )}
+                      {documentSubmissions.map((item) => (
+                        <SelectItem key={item.id} value={item.id}>
+                          v{item.version} · {formatDate(item.submitted_at)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
                   </Select>
                   <Button
                     size="sm"

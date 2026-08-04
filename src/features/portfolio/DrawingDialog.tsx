@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Select } from "@/components/ui/select";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 export interface DrawingDialogProps {
   open: boolean;
@@ -221,17 +221,15 @@ export function DrawingDialog({ open, onOpenChange, onSave }: DrawingDialogProps
 
         <div className="flex items-center justify-end gap-2">
           {error && <p className="mr-auto text-sm text-destructive" role="alert">{error}</p>}
-          <label className="text-sm">
-            <span className="sr-only">내보내기 형식</span>
-            <Select
-              className="h-9 w-auto pr-7"
-              value={format}
-              onChange={(event) => setFormat(event.target.value as "image/webp" | "image/png")}
-            >
-              <option value="image/webp">WebP</option>
-              <option value="image/png">PNG</option>
-            </Select>
-          </label>
+          <Select value={format} onValueChange={(v) => setFormat(v as "image/webp" | "image/png")}>
+            <SelectTrigger className="h-9 w-auto" aria-label="내보내기 형식">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="image/webp">WebP</SelectItem>
+              <SelectItem value="image/png">PNG</SelectItem>
+            </SelectContent>
+          </Select>
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             취소
           </Button>

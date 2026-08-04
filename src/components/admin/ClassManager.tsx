@@ -16,7 +16,7 @@ import { useAwardPoints } from "@/hooks/usePoints";
 import { currentWeekSchedule } from "@/components/dashboard/ScheduleCalendar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import {
   SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupContent,
   SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarMenuAction, SidebarInset, SidebarTrigger, SidebarRail,
@@ -190,14 +190,18 @@ export default function ClassManager() {
               <Bell className="size-4 shrink-0 text-muted-foreground" />
               <span className="text-sm font-medium">수업 시간</span>
               <Select
-                className="h-8 w-auto"
-                value={selected.schedule_day_of_week ?? ""}
-                onChange={(e) => setSchedule(e.target.value === "" ? null : Number(e.target.value), selected.schedule_time)}
+                value={selected.schedule_day_of_week != null ? String(selected.schedule_day_of_week) : "__none__"}
+                onValueChange={(v) => setSchedule(v === "__none__" ? null : Number(v), selected.schedule_time)}
               >
-                <option value="">요일 선택</option>
-                {DAY_LABELS.map((d, i) => (
-                  <option key={i} value={i}>{d}요일</option>
-                ))}
+                <SelectTrigger className="h-8 w-auto">
+                  <SelectValue placeholder="요일 선택" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none__">요일 선택</SelectItem>
+                  {DAY_LABELS.map((d, i) => (
+                    <SelectItem key={i} value={String(i)}>{d}요일</SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
               <Input
                 type="time"

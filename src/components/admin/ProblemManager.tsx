@@ -57,6 +57,16 @@ export default function ProblemManager() {
   const childrenOf = (parentId: string | null) => folders.filter((f) => f.parent_id === parentId);
   const rootFolders = useMemo(() => folders.filter((f) => f.parent_id === null), [folders]);
 
+  function folderPath(id: string): ProblemFolder[] {
+    const path: ProblemFolder[] = [];
+    let cur = folders.find((f) => f.id === id);
+    while (cur) {
+      path.unshift(cur);
+      cur = folders.find((f) => f.id === cur!.parent_id);
+    }
+    return path;
+  }
+
   // 문제는 항상 순서도/파이썬/블럭코딩 중 하나에 속함 — "전체" 필터 없이 첫 대분류를 기본 선택.
   useEffect(() => {
     if (activeFolder === ALL && rootFolders[0]) setActiveFolder(rootFolders[0].id);
@@ -319,7 +329,18 @@ export default function ProblemManager() {
 
           <SidebarGroup>
             <SidebarGroupLabel>
-              {bulkSelected.size > 0 ? `${bulkSelected.size}개 선택됨` : "문제 목록"}
+              {bulkSelected.size > 0 ? (
+                `${bulkSelected.size}개 선택됨`
+              ) : (
+                <span className="flex min-w-0 items-center gap-1 truncate">
+                  {folderPath(activeFolder).map((f, i) => (
+                    <span key={f.id} className="flex min-w-0 items-center gap-1 truncate">
+                      {i > 0 && <ChevronRight className="size-3 shrink-0" />}
+                      <span className="truncate">{f.name}</span>
+                    </span>
+                  ))}
+                </span>
+              )}
             </SidebarGroupLabel>
             {!bulkMode ? (
               <>

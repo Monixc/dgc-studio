@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Plus, Upload, Trash2, FileText, FileCode, Code2, Eye, Pencil, Folder, FolderPlus, Check, ClipboardList, X } from "lucide-react";
+import { Plus, Upload, Trash2, FileText, FileCode, Code2, Eye, Pencil, Folder, FolderPlus, Check, ClipboardList, X, ChevronRight } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useConfirm } from "@/hooks/use-confirm";
 import {
@@ -23,7 +23,7 @@ import {
 import { FolderColorSwatch } from "@/components/admin/FolderColorSwatch";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -305,7 +305,19 @@ export default function LessonManager() {
           <SidebarSeparator />
 
           <SidebarGroup>
-            <SidebarGroupLabel>교안 목록</SidebarGroupLabel>
+            <SidebarGroupLabel>
+              <span className="flex min-w-0 items-center gap-1 truncate">
+                <span className="truncate">교안</span>
+                {activeFolder !== ALL && (
+                  <>
+                    <ChevronRight className="size-3 shrink-0" />
+                    <span className="truncate">
+                      {activeFolder === NONE ? "미분류" : folders.find((f) => f.id === activeFolder)?.name || "(이름 없음)"}
+                    </span>
+                  </>
+                )}
+              </span>
+            </SidebarGroupLabel>
             <SidebarGroupAction
               className="group-data-[collapsible=icon]:hidden"
               onClick={createMd}
@@ -358,15 +370,18 @@ export default function LessonManager() {
             />
             <Badge variant="muted">{selected.content_type === "html" ? "HTML" : "Markdown"}</Badge>
             <Select
-              className="h-9 w-auto"
-              value={draft.folder_id ?? ""}
-              onChange={(e) => setDraft({ ...draft, folder_id: e.target.value || null })}
-              title="폴더"
+              value={draft.folder_id ?? "__none__"}
+              onValueChange={(v) => setDraft({ ...draft, folder_id: v === "__none__" ? null : v })}
             >
-              <option value="">미분류</option>
-              {folders.map((f) => (
-                <option key={f.id} value={f.id}>{f.name || "(이름 없음)"}</option>
-              ))}
+              <SelectTrigger className="h-9 w-auto" title="폴더">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">미분류</SelectItem>
+                {folders.map((f) => (
+                  <SelectItem key={f.id} value={f.id}>{f.name || "(이름 없음)"}</SelectItem>
+                ))}
+              </SelectContent>
             </Select>
             <div className="ml-auto flex items-center gap-2">
               <Button size="sm" variant="ghost" onClick={() => setPreview((p) => !p)}>

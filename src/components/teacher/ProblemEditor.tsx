@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Select } from "@/components/ui/select";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Markdown } from "@/components/Markdown";
 import { cn } from "@/lib/utils";
@@ -120,14 +120,15 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
     <div className="flex h-full flex-1 flex-col">
       <div className="flex items-center gap-2 border-b p-3">
         <Input value={title} onChange={(e) => setTitle(e.target.value)} className="max-w-xs" placeholder="문제 제목" />
-        <Select
-          value={category}
-          onChange={(e) => setCategory(e.target.value as ProblemCategory)}
-          className="w-auto"
-        >
-          {(Object.keys(PROBLEM_CATEGORY_LABEL) as ProblemCategory[]).map((c) => (
-            <option key={c} value={c}>{PROBLEM_CATEGORY_LABEL[c]}</option>
-          ))}
+        <Select value={category} onValueChange={(v) => setCategory(v as ProblemCategory)}>
+          <SelectTrigger className="w-auto">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {(Object.keys(PROBLEM_CATEGORY_LABEL) as ProblemCategory[]).map((c) => (
+              <SelectItem key={c} value={c}>{PROBLEM_CATEGORY_LABEL[c]}</SelectItem>
+            ))}
+          </SelectContent>
         </Select>
         <Button className="ml-auto" onClick={() => save()} disabled={updateMut.isPending}>
           <Save /> 저장
