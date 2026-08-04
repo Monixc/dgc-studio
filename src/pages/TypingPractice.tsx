@@ -267,7 +267,7 @@ export default function TypingPractice() {
 
   return (
     <AppShell menu={menu} homePath={homePath}>
-      <div className="mx-auto max-w-5xl space-y-5 p-4 md:p-6">
+      <div className="space-y-5 p-4 md:p-6">
         <TypingModeHome ranking={ranking} onSelect={setMode} />
         {role === "teacher" && <TeacherTypingLogs />}
       </div>
