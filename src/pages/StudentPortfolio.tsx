@@ -175,8 +175,7 @@ export default function StudentPortfolio() {
         contentJson: { type: "doc", content: [{ type: "paragraph" }] } as JsonValue,
         contentText: "",
       });
-      toast.success("새 포트폴리오를 만들었습니다.");
-      navigate(`/student/portfolio/${created.id}/edit`);
+      navigate(`/student/portfolio/${created.id}/edit`, { state: { isNew: true } });
     } catch (error) {
       toast.error(`포트폴리오를 만들지 못했습니다: ${errorMessage(error)}`);
     }
@@ -334,7 +333,7 @@ export default function StudentPortfolio() {
   const viewerContent = (
     <div className="flex h-full flex-col">
       <div className="min-h-0 flex-1 overflow-y-auto">
-        <div className="mx-auto max-w-3xl px-4 py-8 sm:px-8">
+        <div className="mx-auto max-w-3xl px-4 py-4 sm:px-6">
           {!draft ? (
             <div className="flex min-h-80 items-center justify-center text-sm text-muted-foreground">
               읽을 포트폴리오를 선택해 주세요.

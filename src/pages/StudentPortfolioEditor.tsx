@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
 import { Loader2, LogOut, Save, Send } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -17,6 +17,7 @@ import {
   type PortfolioDocument,
 } from "@/features/portfolio/portfolio";
 import {
+  useDeletePortfolioDocument,
   usePortfolioDocuments,
   usePortfolioSubmissions,
   useSubmitPortfolioDocument,
@@ -50,14 +51,18 @@ function errorMessage(error: unknown): string {
 export default function StudentPortfolioEditor() {
   const { documentId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isNewDocument = (location.state as { isNew?: boolean } | null)?.isNew ?? false;
   const documentsQuery = usePortfolioDocuments();
   const updateDocument = useUpdatePortfolioDocument();
   const submitDocument = useSubmitPortfolioDocument();
+  const deleteDocument = useDeletePortfolioDocument();
   const { data: submissions = [] } = usePortfolioSubmissions({ documentId });
   const stored = documentsQuery.data?.find((item) => item.id === documentId);
   const submissionCount = submissions.length;
   const nextVersion = submissionCount + 1;
   const [exitOpen, setExitOpen] = useState(false);
+  const [everSaved, setEverSaved] = useState(false);
   const { confirm, dialog: confirmDialog } = useConfirm();
   const [loadedId, setLoadedId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
@@ -119,6 +124,20 @@ export default function StudentPortfolioEditor() {
     navigate(`/student/portfolio?document=${encodeURIComponent(documentId ?? "")}`);
   };
 
+  const handleExit = async () => {
+    if (isNewDocument && !everSaved && documentId) {
+      try {
+        await deleteDocument.mutateAsync(documentId);
+      } catch (error) {
+        toast.error(`문서를 정리하지 못했습니다: ${errorMessage(error)}`);
+      }
+      toast("저장하지 않아 새 문서를 만들지 않았습니다.");
+      navigate("/student/portfolio");
+      return;
+    }
+    goBack();
+  };
+
   /** 저장하고 갱신된 revision 반환. 실패 시 null. 네비게이션은 호출자 몫. */
   const persist = async (): Promise<number | null> => {
     if (!documentId || conflicted) return null;
@@ -141,6 +160,7 @@ export default function StudentPortfolioEditor() {
       setRevision(updated.revision);
       setContent(updated.content_json as PortfolioDocument);
       setDirty(false);
+      setEverSaved(true);
       return updated.revision;
     } catch (error) {
       if (error instanceof PortfolioRevisionConflictError) {
@@ -328,14 +348,16 @@ export default function StudentPortfolioEditor() {
           <DialogHeader>
             <DialogTitle>편집을 종료하시겠습니까?</DialogTitle>
           </DialogHeader>
-          {dirty && (
+          {isNewDocument && !everSaved ? (
+            <p className="text-sm text-destructive">저장하지 않으면 이 문서는 만들어지지 않습니다.</p>
+          ) : dirty && (
             <p className="text-sm text-destructive">저장하지 않은 변경사항은 사라집니다.</p>
           )}
           <div className="flex justify-end gap-2">
             <DialogClose asChild>
               <Button variant="outline">취소</Button>
             </DialogClose>
-            <Button variant="destructive" onClick={goBack}>
+            <Button variant="destructive" onClick={() => void handleExit()}>
               <LogOut /> 종료
             </Button>
           </div>
