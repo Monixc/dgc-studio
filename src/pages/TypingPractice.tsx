@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  ArrowLeft, Atom, BookOpenText, Braces, CheckCircle2, ChevronRight, CodeXml, Database,
+  ArrowLeft, Atom, BookOpen, Braces, CheckCircle2, ChevronRight, CodeXml, Database,
   FileCode2, FileType2, Flag, FlaskConical, Gauge, Ghost, History, Keyboard, Moon, Palette,
   Radio, RefreshCw, RotateCcw, Target, Terminal, Timer, Trophy, Zap,
 } from "lucide-react";
@@ -192,7 +192,7 @@ function getRaceSnippetView(
 
 const CATEGORIES = CATEGORY_META;
 const PRACTICE_CATEGORY_ICON: Record<Category, typeof Keyboard> = {
-  english: BookOpenText,
+  english: BookOpen,
   python: FileCode2,
   lua: Moon,
   javascript: Braces,
@@ -1518,7 +1518,6 @@ function PracticeMode({
   const [snippet, setSnippet] = useState<PracticeContentItem | null>(null);
   const [loadState, setLoadState] = useState<"loading" | "ready" | "error">("loading");
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [poolSize, setPoolSize] = useState(0);
   const [typed, setTyped] = useState("");
   const [correctBefore, setCorrectBefore] = useState(0);
   const [totalBefore, setTotalBefore] = useState(0);
@@ -1556,7 +1555,6 @@ function PracticeMode({
       const items = await loadCategoryItems(nextCategory, force);
       const filtered = nextCategory === "english" ? filterByUnit(items, unit) : items;
       bagRef.current.setPool(filtered);
-      setPoolSize(filtered.length);
       const first = bagRef.current.next();
       if (!first) throw new Error("콘텐츠가 비어 있습니다");
       setSnippet(first);
@@ -1789,14 +1787,34 @@ function PracticeMode({
           )}
           <div className="flex items-center gap-2">
             <ActiveCategoryIcon className="size-5" />
-            <div>
-              <h1 className="text-sm font-bold">{categoryMeta?.label} 타자 연습</h1>
-              <p className={cn("text-[10px]", codeMode ? "text-zinc-500" : "text-muted-foreground")}>
-                {poolSize.toLocaleString()}개 연습 데이터
-              </p>
-            </div>
+            <h1 className="text-sm font-bold">{categoryMeta?.label} 타자 연습</h1>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            {category === "english" && (
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-muted-foreground">모드</span>
+                {([
+                  ["sentence", "문장"],
+                  ["paragraph", "짧은 문단"],
+                  ["all", "전체"],
+                ] as const).map(([id, label]) => (
+                  <Button
+                    key={id}
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    disabled={startedAt !== null}
+                    onClick={() => setProseUnit(id)}
+                    className={cn(
+                      "h-auto rounded-none border px-3 py-1 font-normal",
+                      proseUnit === id ? "bg-accent text-foreground font-medium" : "text-muted-foreground",
+                    )}
+                  >
+                    {label}
+                  </Button>
+                ))}
+              </div>
+            )}
             <Button
               type="button"
               variant="ghost"
@@ -1825,32 +1843,6 @@ function PracticeMode({
           </div>
         </header>
 
-        {category === "english" && (
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-muted-foreground">연습 단위</span>
-            {([
-              ["sentence", "문장"],
-              ["paragraph", "짧은 문단"],
-              ["all", "전체"],
-            ] as const).map(([id, label]) => (
-              <Button
-                key={id}
-                type="button"
-                variant="ghost"
-                size="sm"
-                disabled={startedAt !== null}
-                onClick={() => setProseUnit(id)}
-                className={cn(
-                  "h-auto rounded-none border px-3 py-1 font-normal",
-                  proseUnit === id ? "bg-accent text-foreground font-medium" : "text-muted-foreground",
-                )}
-              >
-                {label}
-              </Button>
-            ))}
-          </div>
-        )}
-
         <div className={cn(
           "overflow-hidden",
           codeMode ? "rounded-xl bg-[#0d1117] shadow-sm" : "rounded-none border bg-muted/30",
@@ -1868,7 +1860,7 @@ function PracticeMode({
             !codeMode && "divide-x divide-border",
           )}>
             <Stat tone={codeMode ? "code" : "default"} icon={Timer} label="남은 시간" value={formatTime(remainingMs)} />
-            <Stat tone={codeMode ? "code" : "default"} icon={Gauge} label="타수" value={`${stats.taja}타`} />
+            <Stat tone={codeMode ? "code" : "default"} icon={Zap} label="타수" value={`${stats.taja}타`} />
             <Stat tone={codeMode ? "code" : "default"} icon={Target} label="정확도" value={`${stats.accuracy}%`} />
             <Stat tone={codeMode ? "code" : "default"} icon={CheckCircle2} label="완료" value={`${completed}개`} />
             <Stat tone={codeMode ? "code" : "default"} icon={Trophy} label="최고 기록" value={`${best}타`} className="col-span-2 sm:col-span-1" />
