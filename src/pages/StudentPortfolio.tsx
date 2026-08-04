@@ -479,7 +479,6 @@ export default function StudentPortfolio() {
             <SidebarProvider className="h-full min-h-0 items-stretch">
               <Sidebar collapsible="icon" className="border-r">
                 <SidebarHeader className="flex-row items-center gap-1 border-b group-data-[collapsible=icon]:justify-center">
-                  <SidebarTrigger />
                   <span className="whitespace-nowrap text-sm font-semibold group-data-[collapsible=icon]:hidden">내 노트</span>
                   <Button
                     variant="ghost"
@@ -511,7 +510,10 @@ export default function StudentPortfolio() {
               <SidebarRail />
 
               <SidebarInset className="min-w-0">
-                {viewerContent}
+                <div className="flex shrink-0 items-center gap-1 border-b p-2">
+                  <SidebarTrigger />
+                </div>
+                <div className="min-h-0 flex-1">{viewerContent}</div>
               </SidebarInset>
             </SidebarProvider>
           )}

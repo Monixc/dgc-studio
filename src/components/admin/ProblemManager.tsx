@@ -306,7 +306,6 @@ export default function ProblemManager() {
     <SidebarProvider className="h-full min-h-0 items-stretch">
       <Sidebar collapsible="icon" className="border-r">
         <SidebarHeader className="flex-row items-center gap-1 border-b group-data-[collapsible=icon]:justify-center">
-          <SidebarTrigger />
           <span className="whitespace-nowrap text-sm font-semibold group-data-[collapsible=icon]:hidden">폴더</span>
         </SidebarHeader>
         <SidebarContent>
@@ -376,7 +375,10 @@ export default function ProblemManager() {
         <div className="flex-1 overflow-hidden md:hidden">{editorPanel}</div>
 
         {/* 데스크톱: 문제 목록 + 에디터 리사이즈 패널 */}
-        <ResizablePanelGroup direction="horizontal" className="hidden h-full overflow-hidden md:flex">
+        <div className="hidden shrink-0 items-center gap-1 border-b p-2 md:flex">
+          <SidebarTrigger />
+        </div>
+        <ResizablePanelGroup direction="horizontal" className="hidden min-h-0 flex-1 overflow-hidden md:flex">
           <ResizablePanel
             ref={listPanelRef}
             defaultSize={18}

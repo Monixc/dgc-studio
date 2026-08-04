@@ -271,7 +271,6 @@ export default function LessonManager() {
       <Sidebar collapsible="icon" className="border-r">
         <SidebarHeader className="border-b group-data-[collapsible=icon]:items-center">
           <div className="flex items-center gap-1">
-            <SidebarTrigger />
             <span className="text-sm font-semibold group-data-[collapsible=icon]:hidden">교안</span>
           </div>
           <div className="flex flex-wrap gap-1 group-data-[collapsible=icon]:hidden">
@@ -322,15 +321,16 @@ export default function LessonManager() {
       <SidebarRail />
 
       <SidebarInset className="overflow-auto">
+      <div className="flex shrink-0 items-center gap-2 border-b p-2">
+        <SidebarTrigger />
+      </div>
       {/* 편집 */}
       {!selected || !draft ? (
         <div className="flex flex-1 items-center justify-center p-6 text-center text-sm text-muted-foreground">
-          <div className="flex items-center gap-2 md:hidden"><SidebarTrigger /></div>
           왼쪽에서 교안을 선택하거나 새로 만드세요.
         </div>
       ) : (
         <div className="flex min-w-0 flex-1 flex-col overflow-auto p-4">
-          <div className="mb-2 flex items-center gap-2 md:hidden"><SidebarTrigger /></div>
           <div className="mb-3 flex flex-wrap items-center gap-2">
             <Input
               className="h-9 max-w-xs font-semibold"

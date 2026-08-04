@@ -187,7 +187,6 @@ export default function StudentManager() {
       <Sidebar collapsible="icon" className="border-r">
         <SidebarHeader className="border-b">
           <div className="flex items-center gap-1 group-data-[collapsible=icon]:justify-center">
-            <SidebarTrigger />
             <h1 className="text-base font-bold group-data-[collapsible=icon]:hidden">학생 관리</h1>
           </div>
           <div className="relative group-data-[collapsible=icon]:hidden">
@@ -217,12 +216,12 @@ export default function StudentManager() {
       <SidebarRail />
 
       <SidebarInset className="overflow-auto">
-        <div className="flex items-center gap-2 border-b bg-background p-2 md:hidden">
+        <div className="flex items-center gap-2 border-b bg-background p-2">
           <SidebarTrigger />
-          <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold">
+          <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold md:hidden">
             {(selectedStudent?.display_name || "?").slice(0, 1)}
           </span>
-          <span className="min-w-0 flex-1 truncate text-sm font-medium">{selectedStudent?.display_name || "학생 선택"}</span>
+          <span className="min-w-0 flex-1 truncate text-sm font-medium md:hidden">{selectedStudent?.display_name || "학생 선택"}</span>
         </div>
 
       <section className="min-w-0 flex-1 overflow-auto bg-muted/20 p-4 md:p-6">

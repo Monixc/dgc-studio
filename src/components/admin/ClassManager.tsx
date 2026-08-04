@@ -411,7 +411,6 @@ export default function ClassManager() {
     <SidebarProvider className="h-full min-h-0 items-stretch">
       <Sidebar collapsible="icon" className="border-r">
         <SidebarHeader className="flex-row items-center gap-1 border-b group-data-[collapsible=icon]:justify-center">
-          <SidebarTrigger />
           <span className="whitespace-nowrap text-sm font-semibold group-data-[collapsible=icon]:hidden">반 목록</span>
           <Button
             variant="ghost"
@@ -455,15 +454,17 @@ export default function ClassManager() {
       </Sidebar>
       <SidebarRail />
 
-      <SidebarInset className="overflow-auto">
-        {isMobile && (
-          <div className="flex items-center gap-2 border-b bg-muted/20 p-2">
-            <SidebarTrigger />
-            <Users className="size-4 shrink-0 text-muted-foreground" />
-            <span className="truncate text-sm font-medium">{selected ? selected.name || "(이름 없음)" : "반 목록"}</span>
-          </div>
-        )}
-        {detail}
+      <SidebarInset>
+        <div className="flex shrink-0 items-center gap-2 border-b bg-muted/20 p-2">
+          <SidebarTrigger />
+          {isMobile && (
+            <>
+              <Users className="size-4 shrink-0 text-muted-foreground" />
+              <span className="truncate text-sm font-medium">{selected ? selected.name || "(이름 없음)" : "반 목록"}</span>
+            </>
+          )}
+        </div>
+        <div className="min-h-0 flex-1 overflow-auto">{detail}</div>
       </SidebarInset>
     </SidebarProvider>
     {confirmDialog}
