@@ -105,6 +105,7 @@ export interface Lesson {
 export interface LessonFolder {
   id: string;
   name: string;
+  color: string | null;
   created_by: string;
   created_at: string;
 }

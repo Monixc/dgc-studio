@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { Plus, Trash2, Folder, FolderPlus, ChevronRight, ChevronDown, Circle, ClipboardList, FileText, Globe, EyeOff, Send, CheckSquare } from "lucide-react";
@@ -9,6 +9,7 @@ import { useProblemsRealtime } from "@/hooks/useProblemsRealtime";
 import { useFolders, useCreateFolder, useDeleteFolder, useUpdateFolderColor } from "@/hooks/useProblemFolders";
 import { resolveFolderCategory } from "@/lib/problemFolders";
 import ProblemEditor from "@/components/teacher/ProblemEditor";
+import { FolderColorSwatch } from "@/components/admin/FolderColorSwatch";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -158,17 +159,19 @@ export default function ProblemManager() {
       await Promise.all([...bulkSelected].map((id) => deleteProblemMut.mutateAsync(id)));
       if (selectedId && bulkSelected.has(selectedId)) setSelectedId(null);
       toast.success(`${bulkSelected.size}개 삭제됨`);
-      toggleBulkMode();
+      setBulkSelected(new Set());
+      if (bulkMode) setBulkMode(false);
     } catch (e: any) {
       toast.error(e?.message ?? "삭제 실패");
     }
   }
 
   async function handleBulkPublishSelected() {
-    if (bulkSelected.size === 0) return toast.info("선택된 문제가 없습니다.");
+    const ids = bulkSelected.size > 0 ? [...bulkSelected] : selectedId ? [selectedId] : [];
+    if (ids.length === 0) return toast.info("선택된 문제가 없습니다.");
     try {
-      await Promise.all([...bulkSelected].map((id) => updateProblemMut.mutateAsync({ id, patch: { is_published: true } })));
-      toast.success(`${bulkSelected.size}개 발행 완료`);
+      await Promise.all(ids.map((id) => updateProblemMut.mutateAsync({ id, patch: { is_published: true } })));
+      toast.success(`${ids.length}개 발행 완료`);
       setBulkSelected(new Set());
       if (bulkMode) setBulkMode(false);
     } catch (e: any) {
@@ -322,13 +325,23 @@ export default function ProblemManager() {
                   <Plus className="size-4" />
                 </SidebarGroupAction>
                 <SidebarGroupAction
-                  className="right-8 group-data-[collapsible=icon]:hidden"
-                  onClick={() => (bulkSelected.size > 0 ? void handleBulkPublishSelected() : toggleBulkMode())}
+                  className="right-10 group-data-[collapsible=icon]:hidden"
+                  onClick={() => void handleBulkPublishSelected()}
                   disabled={updateProblemMut.isPending}
-                  title={bulkSelected.size > 0 ? "선택 항목 발행" : "일괄 선택"}
+                  title="선택 항목 발행"
                 >
-                  {bulkSelected.size > 0 ? <Globe className="size-4" /> : <CheckSquare className="size-4" />}
+                  <Globe className="size-4" />
                 </SidebarGroupAction>
+                {bulkSelected.size > 0 && (
+                  <SidebarGroupAction
+                    className="right-[68px] group-data-[collapsible=icon]:hidden"
+                    onClick={() => void handleBulkDelete()}
+                    disabled={deleteProblemMut.isPending}
+                    title="선택 항목 삭제"
+                  >
+                    <Trash2 className="size-4" />
+                  </SidebarGroupAction>
+                )}
               </>
             ) : (
               <SidebarGroupAction className="group-data-[collapsible=icon]:hidden" onClick={toggleBulkMode} title="일괄 선택 취소">
@@ -510,19 +523,6 @@ function FolderTreeNode({
     if (name) onAddChild(folder.id, name);
   }
 
-  // 컬러피커 드래그 중 매 픽셀마다 onChange(=input 이벤트)로 뮤테이션이 나가면
-  // 리렌더가 겹쳐 네이티브 팝업이 바로 닫혀버림 → 드래그 종료(change 이벤트)에만 커밋.
-  const colorInputRef = useRef<HTMLInputElement>(null);
-  const [liveColor, setLiveColor] = useState(folder.color ?? "#94a3b8");
-  useEffect(() => setLiveColor(folder.color ?? "#94a3b8"), [folder.color]);
-  useEffect(() => {
-    const el = colorInputRef.current;
-    if (!el) return;
-    const handleCommit = (e: Event) => onColorChange(folder.id, (e.target as HTMLInputElement).value);
-    el.addEventListener("change", handleCommit);
-    return () => el.removeEventListener("change", handleCommit);
-  }, [folder.id, onColorChange]);
-
   return (
     <>
     <SidebarMenuItem>
@@ -548,25 +548,7 @@ function FolderTreeNode({
         ) : depth > 0 ? (
           <span className="w-3.5 shrink-0" />
         ) : null}
-        <label
-          className="flex shrink-0 cursor-pointer items-center justify-center rounded-md p-0.5 hover:bg-accent"
-          onClick={(e) => e.stopPropagation()}
-          onMouseDown={(e) => e.stopPropagation()}
-          onPointerDown={(e) => e.stopPropagation()}
-          onDragStart={(e) => e.preventDefault()}
-          title="폴더 색상"
-        >
-          <Folder className={cn("size-4", !folder.color && "text-muted-foreground")} style={folder.color ? { color: folder.color, fill: folder.color, fillOpacity: 0.2 } : undefined} />
-          <input
-            ref={colorInputRef}
-            type="color"
-            value={liveColor}
-            onChange={(e) => setLiveColor(e.target.value)}
-            onClick={(e) => e.stopPropagation()}
-            onMouseDown={(e) => e.stopPropagation()}
-            className="sr-only"
-          />
-        </label>
+        <FolderColorSwatch color={folder.color} onChange={(color) => onColorChange(folder.id, color)} />
         <span className={cn("flex-1 truncate group-data-[collapsible=icon]:hidden", isDefault && "font-medium")}>{folder.name}</span>
       </div>
       <SidebarMenuAction

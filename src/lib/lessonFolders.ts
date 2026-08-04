@@ -28,6 +28,11 @@ export async function renameLessonFolder(id: string, name: string): Promise<void
   if (error) throw error;
 }
 
+export async function updateLessonFolderColor(id: string, color: string): Promise<void> {
+  const { error } = await supabase.from("lesson_folders").update({ color }).eq("id", id);
+  if (error) throw error;
+}
+
 export async function deleteLessonFolder(id: string): Promise<void> {
   const { error } = await supabase.from("lesson_folders").delete().eq("id", id);
   if (error) throw error;

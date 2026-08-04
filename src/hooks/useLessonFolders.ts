@@ -4,6 +4,7 @@ import {
   listLessonFolders,
   createLessonFolder,
   renameLessonFolder,
+  updateLessonFolderColor,
   deleteLessonFolder,
 } from "@/lib/lessonFolders";
 
@@ -27,6 +28,14 @@ export function useRenameLessonFolder() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, name }: { id: string; name: string }) => renameLessonFolder(id, name),
+    onSuccess: () => qc.invalidateQueries({ queryKey: LESSON_FOLDERS_KEY }),
+  });
+}
+
+export function useUpdateLessonFolderColor() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, color }: { id: string; color: string }) => updateLessonFolderColor(id, color),
     onSuccess: () => qc.invalidateQueries({ queryKey: LESSON_FOLDERS_KEY }),
   });
 }

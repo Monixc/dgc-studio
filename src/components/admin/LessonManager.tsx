@@ -17,8 +17,10 @@ import {
   useLessonFolders,
   useCreateLessonFolder,
   useRenameLessonFolder,
+  useUpdateLessonFolderColor,
   useDeleteLessonFolder,
 } from "@/hooks/useLessonFolders";
+import { FolderColorSwatch } from "@/components/admin/FolderColorSwatch";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -27,12 +29,12 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarGroupAction,
   SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarMenuAction, SidebarInset,
-  SidebarTrigger, SidebarRail, SidebarSeparator, useSidebar,
+  SidebarTrigger, SidebarRail, SidebarSeparator, sidebarMenuButtonVariants, useSidebar,
 } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
 import { Markdown } from "@/components/Markdown";
 import { cn } from "@/lib/utils";
-import type { Lesson } from "@/integrations/supabase/types";
+import type { Lesson, LessonFolder } from "@/integrations/supabase/types";
 
 const ALL = "__all__";
 const NONE = "__none__";
@@ -77,6 +79,7 @@ export default function LessonManager() {
   const deleteMut = useDeleteLesson();
   const createFolderMut = useCreateLessonFolder();
   const renameFolderMut = useRenameLessonFolder();
+  const updateColorMut = useUpdateLessonFolderColor();
   const deleteFolderMut = useDeleteLessonFolder();
   const { data: myProblems = [] } = useMyProblems(userId);
   const setLessonProbsMut = useSetLessonProblems();
@@ -219,13 +222,17 @@ export default function LessonManager() {
   const countIn = (fid: string | null) =>
     fid === null ? lessons.filter((l) => !l.folder_id).length : lessons.filter((l) => l.folder_id === fid).length;
 
-  function folderRow(id: string, label: string, count: number, opts?: { folder?: boolean }) {
+  function folderRow(id: string, label: string, count: number, opts?: { folder?: LessonFolder }) {
     const editing = editingFolderId === id;
     return (
       <SidebarMenuItem key={id}>
         {editing ? (
           <div className="flex items-center gap-2 rounded-md p-2">
-            <Folder className="size-4 shrink-0 text-muted-foreground" />
+            {opts?.folder ? (
+              <FolderColorSwatch color={opts.folder.color} onChange={(color) => updateColorMut.mutate({ id, color })} />
+            ) : (
+              <Folder className="size-4 shrink-0 text-muted-foreground" />
+            )}
             <Input
               autoFocus
               value={folderName}
@@ -237,29 +244,34 @@ export default function LessonManager() {
               <Check className="size-3.5" />
             </Button>
           </div>
-        ) : (
+        ) : opts?.folder ? (
           <>
-            <SidebarMenuButton isActive={activeFolder === id} onClick={() => setActiveFolder(id)} tooltip={label}>
-              <Folder />
-              <span className="flex-1 truncate group-data-[collapsible=icon]:hidden">{label}</span>
+            <div
+              onClick={() => setActiveFolder(id)}
+              className={cn(sidebarMenuButtonVariants({ isActive: activeFolder === id }), "cursor-pointer")}
+            >
+              <FolderColorSwatch color={opts.folder.color} onChange={(color) => updateColorMut.mutate({ id, color })} />
+              <span className="flex-1 truncate font-medium group-data-[collapsible=icon]:hidden">{label}</span>
               <span className="text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">{count}</span>
-            </SidebarMenuButton>
-            {opts?.folder && (
-              <>
-                <SidebarMenuAction
-                  showOnHover
-                  className="right-7"
-                  onClick={() => { setEditingFolderId(id); setFolderName(label); }}
-                  title="이름 수정"
-                >
-                  <Pencil className="size-3.5" />
-                </SidebarMenuAction>
-                <SidebarMenuAction showOnHover onClick={() => removeFolder(id)} title="폴더 삭제">
-                  <Trash2 className="size-3.5" />
-                </SidebarMenuAction>
-              </>
-            )}
+            </div>
+            <SidebarMenuAction
+              showOnHover
+              className="right-7"
+              onClick={() => { setEditingFolderId(id); setFolderName(label); }}
+              title="이름 수정"
+            >
+              <Pencil className="size-3.5" />
+            </SidebarMenuAction>
+            <SidebarMenuAction showOnHover onClick={() => removeFolder(id)} title="폴더 삭제">
+              <Trash2 className="size-3.5" />
+            </SidebarMenuAction>
           </>
+        ) : (
+          <SidebarMenuButton isActive={activeFolder === id} onClick={() => setActiveFolder(id)} tooltip={label}>
+            <Folder />
+            <span className="flex-1 truncate group-data-[collapsible=icon]:hidden">{label}</span>
+            <span className="text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">{count}</span>
+          </SidebarMenuButton>
         )}
       </SidebarMenuItem>
     );
@@ -284,7 +296,7 @@ export default function LessonManager() {
             <SidebarGroupContent>
               <SidebarMenu>
                 {folderRow(ALL, "전체", lessons.length)}
-                {folders.map((f) => folderRow(f.id, f.name || "(이름 없음)", countIn(f.id), { folder: true }))}
+                {folders.map((f) => folderRow(f.id, f.name || "(이름 없음)", countIn(f.id), { folder: f }))}
                 {folderRow(NONE, "미분류", countIn(null))}
               </SidebarMenu>
             </SidebarGroupContent>
@@ -294,6 +306,14 @@ export default function LessonManager() {
 
           <SidebarGroup>
             <SidebarGroupLabel>교안 목록</SidebarGroupLabel>
+            <SidebarGroupAction
+              className="group-data-[collapsible=icon]:hidden"
+              onClick={createMd}
+              disabled={createMut.isPending}
+              title="교안 추가"
+            >
+              <Plus className="size-4" />
+            </SidebarGroupAction>
             <SidebarGroupContent>
               <SidebarMenu>
                 {isLoading ? (
