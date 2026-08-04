@@ -2148,8 +2148,8 @@ function Stat({
           tone === "code" && "text-zinc-500",
         )}>{label}</div>
         <div className={cn(
-          "font-mono text-lg font-bold",
-          tone === "code" && "text-zinc-100",
+          "text-lg font-bold",
+          tone === "code" && "font-mono text-zinc-100",
         )}>{value}</div>
       </div>
     </div>
