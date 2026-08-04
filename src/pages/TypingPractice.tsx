@@ -1767,11 +1767,11 @@ function PracticeMode({
       "min-h-screen",
       codeMode ? "bg-[#080b10] text-zinc-100" : "bg-background text-foreground",
     )}>
-      <div className="mx-auto max-w-6xl space-y-4 px-4 py-4 sm:px-6 lg:px-8">
-        <header className={cn(
-          "flex flex-wrap items-center justify-between gap-3 border-b pb-3",
-          codeMode ? "border-zinc-800" : "border-border",
-        )}>
+      <header className={cn(
+        "border-b",
+        codeMode ? "border-zinc-800" : "border-border",
+      )}>
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
           {codeMode ? (
             <button
               type="button"
@@ -1785,10 +1785,6 @@ function PracticeMode({
               <ArrowLeft className="size-4" /> 연습 선택
             </Button>
           )}
-          <div className="flex items-center gap-2">
-            <ActiveCategoryIcon className="size-5" />
-            <h1 className="text-sm font-bold">{categoryMeta?.label} 타자 연습</h1>
-          </div>
           <div className="flex flex-wrap items-center gap-3">
             {category === "english" && (
               <div className="flex items-center gap-1.5">
@@ -1841,8 +1837,10 @@ function PracticeMode({
               </Button>
             )}
           </div>
-        </header>
+        </div>
+      </header>
 
+      <div className="mx-auto max-w-6xl space-y-4 px-4 py-4 sm:px-6 lg:px-8">
         <div className={cn(
           "overflow-hidden",
           codeMode ? "rounded-xl bg-[#0d1117] shadow-sm" : "rounded-none border bg-muted/30",
