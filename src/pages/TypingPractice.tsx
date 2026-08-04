@@ -1767,75 +1767,79 @@ function PracticeMode({
   return (
     <main className={cn(
       "min-h-screen",
-      codeMode
-        ? "bg-[#080b10] text-zinc-100"
-        : "bg-[#ece5d8] text-amber-950 dark:bg-[#100e0b] dark:text-amber-50",
+      codeMode ? "bg-[#080b10] text-zinc-100" : "bg-background text-foreground",
     )}>
       <div className="mx-auto max-w-6xl space-y-4 px-4 py-4 sm:px-6 lg:px-8">
         <header className={cn(
           "flex flex-wrap items-center justify-between gap-3 border-b pb-3",
-          codeMode ? "border-zinc-800" : "border-amber-900/15 dark:border-amber-100/10",
+          codeMode ? "border-zinc-800" : "border-border",
         )}>
-          <button
-            type="button"
-            onClick={() => setCategory(null)}
-            className={cn(
-              "inline-flex items-center gap-2 text-sm transition",
-              codeMode ? "text-zinc-400 hover:text-white" : "text-amber-900/60 hover:text-amber-950 dark:text-amber-100/50 dark:hover:text-white",
-            )}
-          >
-            <ArrowLeft className="size-4" /> 연습 선택
-          </button>
+          {codeMode ? (
+            <button
+              type="button"
+              onClick={() => setCategory(null)}
+              className="inline-flex items-center gap-2 text-sm text-zinc-400 transition hover:text-white"
+            >
+              <ArrowLeft className="size-4" /> 연습 선택
+            </button>
+          ) : (
+            <Button variant="ghost" size="sm" onClick={() => setCategory(null)} className="gap-2 text-muted-foreground">
+              <ArrowLeft className="size-4" /> 연습 선택
+            </Button>
+          )}
           <div className="flex items-center gap-2">
             <ActiveCategoryIcon className="size-5" />
             <div>
               <h1 className="text-sm font-bold">{categoryMeta?.label} 타자 연습</h1>
-              <p className={cn("text-[10px]", codeMode ? "text-zinc-500" : "text-amber-900/45 dark:text-amber-100/35")}>
+              <p className={cn("text-[10px]", codeMode ? "text-zinc-500" : "text-muted-foreground")}>
                 {poolSize.toLocaleString()}개 연습 데이터
               </p>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={onExit}
-            className={cn(
-              "text-xs transition",
-              codeMode ? "text-zinc-500 hover:text-white" : "text-amber-900/45 hover:text-amber-950 dark:text-amber-100/35 dark:hover:text-white",
-            )}
-          >
-            타자 연습 종료
-          </button>
+          {codeMode ? (
+            <button
+              type="button"
+              onClick={onExit}
+              className="text-xs text-zinc-500 transition hover:text-white"
+            >
+              타자 연습 종료
+            </button>
+          ) : (
+            <Button variant="ghost" size="sm" onClick={onExit} className="text-muted-foreground">
+              타자 연습 종료
+            </Button>
+          )}
         </header>
 
         {category === "english" && (
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-amber-900/50 dark:text-amber-100/40">연습 단위</span>
+            <span className="text-xs text-muted-foreground">연습 단위</span>
             {([
               ["sentence", "문장"],
               ["paragraph", "짧은 문단"],
               ["all", "전체"],
             ] as const).map(([id, label]) => (
-              <button
+              <Button
                 key={id}
                 type="button"
+                variant="ghost"
+                size="sm"
                 disabled={startedAt !== null}
                 onClick={() => setProseUnit(id)}
                 className={cn(
-                  "rounded-full border px-3 py-1 text-xs transition disabled:cursor-not-allowed disabled:opacity-60",
-                  proseUnit === id
-                    ? "border-amber-800/35 bg-amber-900/10 font-semibold text-amber-950 dark:border-amber-100/30 dark:bg-amber-100/10 dark:text-amber-50"
-                    : "border-amber-900/15 text-amber-900/55 hover:border-amber-900/35 dark:border-amber-100/10 dark:text-amber-100/45",
+                  "h-auto rounded-none border px-3 py-1 font-normal",
+                  proseUnit === id ? "bg-accent text-foreground font-medium" : "text-muted-foreground",
                 )}
               >
                 {label}
-              </button>
+              </Button>
             ))}
           </div>
         )}
 
         <div className={cn(
-          "overflow-hidden shadow-sm",
-          codeMode ? "rounded-xl bg-[#0d1117]" : "rounded-2xl bg-[#f6f0e4] dark:bg-[#1a1712]",
+          "overflow-hidden",
+          codeMode ? "rounded-xl bg-[#0d1117] shadow-sm" : "rounded-none border bg-muted/30",
         )}>
           {codeMode && (
             <div className="flex h-8 items-center gap-2 bg-[#161b22] px-3">
@@ -1847,20 +1851,20 @@ function PracticeMode({
           )}
           <section className={cn(
             "grid grid-cols-2 overflow-hidden sm:grid-cols-5",
-            !codeMode && "divide-x divide-amber-900/10 dark:divide-amber-100/10",
+            !codeMode && "divide-x divide-border",
           )}>
-            <Stat tone={codeMode ? "code" : "prose"} icon={Timer} label="남은 시간" value={formatTime(remainingMs)} />
-            <Stat tone={codeMode ? "code" : "prose"} icon={Gauge} label="타수" value={`${stats.taja}타`} />
-            <Stat tone={codeMode ? "code" : "prose"} icon={Target} label="정확도" value={`${stats.accuracy}%`} />
-            <Stat tone={codeMode ? "code" : "prose"} icon={CheckCircle2} label="완료" value={`${completed}개`} />
-            <Stat tone={codeMode ? "code" : "prose"} icon={Trophy} label="최고 기록" value={`${best}타`} className="col-span-2 sm:col-span-1" />
+            <Stat tone={codeMode ? "code" : "default"} icon={Timer} label="남은 시간" value={formatTime(remainingMs)} />
+            <Stat tone={codeMode ? "code" : "default"} icon={Gauge} label="타수" value={`${stats.taja}타`} />
+            <Stat tone={codeMode ? "code" : "default"} icon={Target} label="정확도" value={`${stats.accuracy}%`} />
+            <Stat tone={codeMode ? "code" : "default"} icon={CheckCircle2} label="완료" value={`${completed}개`} />
+            <Stat tone={codeMode ? "code" : "default"} icon={Trophy} label="최고 기록" value={`${best}타`} className="col-span-2 sm:col-span-1" />
           </section>
         </div>
 
         {loadState === "loading" && (
           <div className={cn(
             "flex flex-col items-center justify-center gap-3 border py-16 text-sm",
-            codeMode ? "border-zinc-800 bg-[#0d1117] text-zinc-500" : "border-amber-900/15 bg-[#f6f0e4] text-amber-900/50 dark:border-amber-100/10 dark:bg-[#1a1712]",
+            codeMode ? "border-zinc-800 bg-[#0d1117] text-zinc-500" : "border-border bg-muted/30 text-muted-foreground",
           )}>
             <RefreshCw className="size-6 animate-spin" />
             {categoryMeta?.label} 콘텐츠 불러오는 중…
@@ -1915,12 +1919,7 @@ function PracticeMode({
         <div className="flex flex-wrap justify-end gap-2">
           <Button
             variant="outline"
-            className={cn(
-              "rounded-lg shadow-none",
-              codeMode
-                ? "border-zinc-700 bg-[#161b22] text-zinc-300 hover:border-zinc-600 hover:bg-zinc-800 hover:text-white"
-                : "border-amber-900/15 bg-[#f6f0e4] text-amber-900 hover:bg-amber-900/10 hover:text-amber-950 dark:border-amber-100/15 dark:bg-[#1a1712] dark:text-amber-100 dark:hover:bg-amber-100/10 dark:hover:text-white",
-            )}
+            className={cn(codeMode && "rounded-lg border-zinc-700 bg-[#161b22] text-zinc-300 shadow-none hover:border-zinc-600 hover:bg-zinc-800 hover:text-white")}
             onClick={() => {
               resetSession();
               if (loadState === "ready") drawNext();
@@ -1930,12 +1929,7 @@ function PracticeMode({
           </Button>
           {startedAt !== null && (
             <Button
-              className={cn(
-                "rounded-lg shadow-none",
-                codeMode
-                  ? "bg-sky-600 text-white hover:bg-sky-500"
-                  : "bg-amber-900 text-amber-50 hover:bg-amber-800 dark:bg-amber-200 dark:text-amber-950 dark:hover:bg-amber-100",
-              )}
+              className={cn(codeMode && "rounded-lg bg-sky-600 text-white shadow-none hover:bg-sky-500")}
               onClick={() => finishSession()}
             >
               연습 종료
@@ -2130,32 +2124,28 @@ function Stat({
   label: string;
   value: string | number;
   className?: string;
-  tone?: "default" | "code" | "prose";
+  tone?: "default" | "code";
 }) {
   return (
     <div className={cn(
       "flex items-center gap-3 p-3",
       tone === "code" && "bg-transparent",
-      tone === "prose" && "bg-transparent",
       className,
     )}>
       <Icon className={cn(
         "size-5",
         tone === "default" && "text-primary",
         tone === "code" && "text-sky-400",
-        tone === "prose" && "text-amber-800 dark:text-amber-200",
       )} />
       <div>
         <div className={cn(
           "text-xs",
           tone === "default" && "text-muted-foreground",
           tone === "code" && "text-zinc-500",
-          tone === "prose" && "text-amber-900/50 dark:text-amber-100/40",
         )}>{label}</div>
         <div className={cn(
           "font-mono text-lg font-bold",
           tone === "code" && "text-zinc-100",
-          tone === "prose" && "text-amber-950 dark:text-amber-50",
         )}>{value}</div>
       </div>
     </div>
