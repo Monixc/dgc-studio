@@ -6,6 +6,7 @@ import {
   GitCompare,
   Loader2,
   MessageSquare,
+  PanelLeft,
   Pencil,
   Plus,
   Send,
@@ -494,6 +495,15 @@ export default function StudentPortfolio() {
                 ) : (
                   <>
                     <div className="flex items-center gap-1 border-b px-3 py-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={toggleListPanel}
+                        title="목록 접기"
+                        className="size-7"
+                      >
+                        <PanelLeft className="size-4" />
+                      </Button>
                       <span className="text-sm font-semibold">내 노트</span>
                       <Button
                         variant="ghost"
