@@ -283,7 +283,7 @@ function TypingModeHome({
   onSelect: (mode: Mode) => void;
 }) {
   return (
-    <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(250px,1fr)]">
+    <div className="grid flex-1 items-start gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(250px,1fr)]">
       <section className="grid gap-4 sm:grid-cols-2">
         <button
           type="button"
@@ -316,12 +316,12 @@ function TypingModeHome({
         />
       </section>
 
-      <aside className="rounded-none border bg-card p-5 shadow-sm">
-        <div className="mb-4 flex items-center gap-2">
+      <aside className="flex h-full flex-col self-stretch rounded-none border bg-card p-5 shadow-sm">
+        <div className="mb-4 flex shrink-0 items-center gap-2">
           <Gauge className="size-5 text-primary" />
           <h2 className="font-semibold">타자 속도 랭킹</h2>
         </div>
-        <div className="space-y-2">
+        <div className="min-h-0 flex-1 space-y-2 overflow-y-auto">
           {ranking.map((entry, index) => (
             <div
               key={entry.id}
