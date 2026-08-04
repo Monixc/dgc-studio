@@ -126,7 +126,7 @@ export default function App() {
               }
             />
             <Route
-              path="/myclass"
+              path="/student/myclass"
               element={
                 <RequireRole role="student">
                   <MyClass />

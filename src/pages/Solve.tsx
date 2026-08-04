@@ -181,7 +181,7 @@ export default function Solve({ embedded = false, problemId: problemIdProp }: { 
     <div className={cn("flex flex-col", embedded ? "h-full" : "h-screen")}>
       <header className="flex items-center gap-2 border-b p-3">
         {!embedded && (
-          <Button size="icon" variant="ghost" onClick={() => navigate(lessonScopeId ? `/student/lessons/${lessonScopeId}` : isMyClass ? "/myclass" : `/practice/${problem.category}`)} title="목록으로">
+          <Button size="icon" variant="ghost" onClick={() => navigate(lessonScopeId ? `/student/lessons/${lessonScopeId}` : isMyClass ? "/student/myclass" : `/practice/${problem.category}`)} title="목록으로">
             <ArrowLeft />
           </Button>
         )}

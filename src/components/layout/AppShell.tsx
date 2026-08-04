@@ -19,7 +19,7 @@ const MENU: Item[] = [
 ];
 
 export const STUDENT_MENU: Item[] = [
-  { label: "내 수업", icon: BookOpen, to: "/myclass" },
+  { label: "내 수업", icon: BookOpen, to: "/student/myclass" },
   {
     label: "문제 풀이",
     icon: ClipboardList,
