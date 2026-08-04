@@ -510,9 +510,7 @@ export default function StudentPortfolio() {
               <SidebarRail />
 
               <SidebarInset className="min-w-0">
-                <div className="flex shrink-0 items-center gap-1 border-b p-2">
-                  <SidebarTrigger />
-                </div>
+                <SidebarTrigger className="m-2 shrink-0" />
                 <div className="min-h-0 flex-1">{viewerContent}</div>
               </SidebarInset>
             </SidebarProvider>

@@ -455,15 +455,15 @@ export default function ClassManager() {
       <SidebarRail />
 
       <SidebarInset>
-        <div className="flex shrink-0 items-center gap-2 border-b bg-muted/20 p-2">
-          <SidebarTrigger />
-          {isMobile && (
-            <>
-              <Users className="size-4 shrink-0 text-muted-foreground" />
-              <span className="truncate text-sm font-medium">{selected ? selected.name || "(이름 없음)" : "반 목록"}</span>
-            </>
-          )}
-        </div>
+        {isMobile ? (
+          <div className="flex shrink-0 items-center gap-2 border-b bg-muted/20 p-2">
+            <SidebarTrigger />
+            <Users className="size-4 shrink-0 text-muted-foreground" />
+            <span className="truncate text-sm font-medium">{selected ? selected.name || "(이름 없음)" : "반 목록"}</span>
+          </div>
+        ) : (
+          <SidebarTrigger className="m-2 shrink-0" />
+        )}
         <div className="min-h-0 flex-1 overflow-auto">{detail}</div>
       </SidebarInset>
     </SidebarProvider>

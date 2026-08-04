@@ -375,9 +375,7 @@ export default function ProblemManager() {
         <div className="flex-1 overflow-hidden md:hidden">{editorPanel}</div>
 
         {/* 데스크톱: 문제 목록 + 에디터 리사이즈 패널 */}
-        <div className="hidden shrink-0 items-center gap-1 border-b p-2 md:flex">
-          <SidebarTrigger />
-        </div>
+        <SidebarTrigger className="m-2 hidden shrink-0 md:flex" />
         <ResizablePanelGroup direction="horizontal" className="hidden min-h-0 flex-1 overflow-hidden md:flex">
           <ResizablePanel
             ref={listPanelRef}

@@ -321,9 +321,7 @@ export default function LessonManager() {
       <SidebarRail />
 
       <SidebarInset className="overflow-auto">
-      <div className="flex shrink-0 items-center gap-2 border-b p-2">
-        <SidebarTrigger />
-      </div>
+      <SidebarTrigger className="m-2 shrink-0" />
       {/* 편집 */}
       {!selected || !draft ? (
         <div className="flex flex-1 items-center justify-center p-6 text-center text-sm text-muted-foreground">

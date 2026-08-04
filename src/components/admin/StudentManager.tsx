@@ -216,13 +216,14 @@ export default function StudentManager() {
       <SidebarRail />
 
       <SidebarInset className="overflow-auto">
-        <div className="flex items-center gap-2 border-b bg-background p-2">
+        <div className="flex items-center gap-2 border-b bg-background p-2 md:hidden">
           <SidebarTrigger />
-          <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold md:hidden">
+          <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold">
             {(selectedStudent?.display_name || "?").slice(0, 1)}
           </span>
-          <span className="min-w-0 flex-1 truncate text-sm font-medium md:hidden">{selectedStudent?.display_name || "학생 선택"}</span>
+          <span className="min-w-0 flex-1 truncate text-sm font-medium">{selectedStudent?.display_name || "학생 선택"}</span>
         </div>
+        <SidebarTrigger className="m-2 hidden shrink-0 md:flex" />
 
       <section className="min-w-0 flex-1 overflow-auto bg-muted/20 p-4 md:p-6">
         {!selectedStudent ? <EmptyState /> : <>
