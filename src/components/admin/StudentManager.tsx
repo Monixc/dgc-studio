@@ -258,7 +258,7 @@ export default function StudentManager() {
                     key={latest.problem_id}
                     variant="ghost"
                     onClick={() => navigate(`/students/${selectedStudent.id}/problems/${latest.problem_id}`)}
-                    className="flex w-full items-center gap-3 rounded-none px-5 py-4 text-left font-normal hover:bg-muted/50"
+                    className="flex h-auto w-full items-center gap-3 rounded-none px-5 py-4 text-left font-normal hover:bg-muted/50"
                   >
                     <span className={cn("size-2 rounded-full", latest.total_tests > 0 && latest.passed_tests === latest.total_tests ? "bg-emerald-500" : "bg-amber-500")} />
                     <span className="min-w-0 flex-1">
@@ -292,7 +292,7 @@ export default function StudentManager() {
                     key={latest.document_id}
                     variant="ghost"
                     onClick={() => navigate(`/students/${selectedStudent.id}/portfolio/${latest.id}`)}
-                    className="flex w-full items-center gap-3 rounded-none px-5 py-4 text-left font-normal hover:bg-muted/50"
+                    className="flex h-auto w-full items-center gap-3 rounded-none px-5 py-4 text-left font-normal hover:bg-muted/50"
                   >
                     <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-violet-500/10 text-violet-600">
                       <NotebookPen className="size-4" />
@@ -433,10 +433,7 @@ function StudentMenuItem({
         <Avatar className="size-6 shrink-0 group-data-[collapsible=icon]:size-6">
           <AvatarFallback className="bg-muted text-xs font-bold text-foreground">{student.display_name.slice(0, 1) || "?"}</AvatarFallback>
         </Avatar>
-        <span className="min-w-0 flex-1 group-data-[collapsible=icon]:hidden">
-          <span className="block truncate text-sm font-medium">{student.display_name || "이름 없음"}</span>
-          <span className="block truncate text-[11px] text-muted-foreground">{student.classes.map((c) => c.name).join(", ") || "미배정"}</span>
-        </span>
+        <span className="min-w-0 flex-1 truncate text-sm font-medium group-data-[collapsible=icon]:hidden">{student.display_name || "이름 없음"}</span>
         <ChevronRight className="size-4 shrink-0 opacity-60 group-data-[collapsible=icon]:hidden" />
       </SidebarMenuButton>
     </SidebarMenuItem>
