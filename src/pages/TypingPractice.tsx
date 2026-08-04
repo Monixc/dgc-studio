@@ -416,10 +416,7 @@ function TeacherTypingLogs({ className }: { className?: string }) {
     <section className={cn("flex flex-col rounded-none border bg-card p-5 shadow-sm", className)}>
       <header className="mb-4 flex shrink-0 items-center gap-2">
         <History className="size-5 text-primary" />
-        <div>
-          <h2 className="font-semibold">학생 타자 연습 완료 로그</h2>
-          <p className="text-xs text-muted-foreground">최근 완료 기록 100건</p>
-        </div>
+        <h2 className="font-semibold">학생 타자 연습 완료 로그</h2>
         <Button
           variant="ghost"
           size="icon"

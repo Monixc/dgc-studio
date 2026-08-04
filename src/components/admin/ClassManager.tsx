@@ -428,9 +428,9 @@ export default function ClassManager() {
             <SidebarGroupContent>
               <SidebarMenu>
                 {isLoading ? (
-                  <p className="p-2 text-sm text-muted-foreground">불러오는 중…</p>
+                  <p className="p-2 text-sm text-muted-foreground group-data-[collapsible=icon]:hidden">불러오는 중…</p>
                 ) : classes.length === 0 ? (
-                  <p className="p-2 text-sm text-muted-foreground">“새 반”으로 시작하세요.</p>
+                  <p className="p-2 text-sm text-muted-foreground group-data-[collapsible=icon]:hidden">“새 반”으로 시작하세요.</p>
                 ) : (
                   classes.map((c) => (
                     <ClassMenuItem

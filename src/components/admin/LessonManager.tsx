@@ -305,9 +305,9 @@ export default function LessonManager() {
             <SidebarGroupContent>
               <SidebarMenu>
                 {isLoading ? (
-                  <p className="p-2 text-sm text-muted-foreground">불러오는 중…</p>
+                  <p className="p-2 text-sm text-muted-foreground group-data-[collapsible=icon]:hidden">불러오는 중…</p>
                 ) : filtered.length === 0 ? (
-                  <p className="p-2 text-sm text-muted-foreground">교안이 없습니다.</p>
+                  <p className="p-2 text-sm text-muted-foreground group-data-[collapsible=icon]:hidden">교안이 없습니다.</p>
                 ) : (
                   filtered.map((l) => (
                     <LessonMenuItem key={l.id} lesson={l} isActive={selectedId === l.id} onSelect={setSelectedId} onDelete={remove} />

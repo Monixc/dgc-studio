@@ -199,7 +199,7 @@ export default function StudentManager() {
             <SidebarGroupContent>
               <SidebarMenu>
                 {filteredStudents.length === 0 ? (
-                  <p className="p-3 text-center text-xs text-muted-foreground">등록된 학생이 없습니다.</p>
+                  <p className="p-3 text-center text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">등록된 학생이 없습니다.</p>
                 ) : filteredStudents.map((student) => (
                   <StudentMenuItem
                     key={student.id}
