@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { toast } from "sonner";
-import { Plus, Trash2, Folder, FolderPlus, ChevronRight, ChevronDown, Circle, Globe, EyeOff, Send, CheckSquare } from "lucide-react";
-import type { ImperativePanelHandle } from "react-resizable-panels";
+import { Plus, Trash2, Folder, FolderPlus, ChevronRight, ChevronDown, Circle, ClipboardList, Globe, EyeOff, Send, CheckSquare } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useMyProblems, useCreateProblem, useDeleteProblem, useUpdateProblem } from "@/hooks/useProblems";
@@ -13,12 +12,11 @@ import ProblemEditor from "@/components/teacher/ProblemEditor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import {
-  SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupContent,
-  SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarMenuAction, SidebarInset, SidebarTrigger, SidebarRail,
-  sidebarMenuButtonVariants, useSidebar,
+  SidebarProvider, Sidebar, SidebarHeader, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarGroupAction,
+  SidebarGroupContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarMenuAction, SidebarSeparator,
+  SidebarInset, SidebarTrigger, SidebarRail, sidebarMenuButtonVariants, useSidebar,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import type { ProblemFolder } from "@/integrations/supabase/types";
@@ -53,13 +51,6 @@ export default function ProblemManager() {
     const openId = (location.state as { openProblemId?: string } | null)?.openProblemId;
     if (openId) setSelectedId(openId);
   }, [location.state]);
-
-  const listPanelRef = useRef<ImperativePanelHandle>(null);
-  const [listCollapsed, setListCollapsed] = useState(false);
-  function toggleListPanel() {
-    if (listCollapsed) listPanelRef.current?.expand();
-    else listPanelRef.current?.collapse();
-  }
 
   const filtered = activeFolder === ALL ? problems : problems.filter((p) => p.folder_id === activeFolder);
 
@@ -231,67 +222,6 @@ export default function ProblemManager() {
     );
   }
 
-  const problemListPanel = (
-    <>
-      <div className="flex items-center gap-1 border-b p-2">
-        <SidebarTrigger className="hidden md:flex" />
-        <span className="whitespace-nowrap text-sm font-semibold">문제 목록</span>
-        {!bulkMode ? (
-          <div className="ml-auto flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="size-7 text-muted-foreground hover:text-foreground"
-              onClick={handleCreateProblem}
-              disabled={createProblemMut.isPending}
-              title="문제 추가"
-            >
-              <Plus className="size-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="size-7 text-muted-foreground hover:text-foreground"
-              onClick={toggleBulkMode}
-              title="일괄 선택"
-            >
-              <CheckSquare className="size-4" />
-            </Button>
-          </div>
-        ) : (
-          <span className="ml-auto text-xs text-muted-foreground">{bulkSelected.size}개 선택됨</span>
-        )}
-      </div>
-      <div className="flex-1 overflow-auto p-1">
-        {isLoading ? (
-          <p className="p-2 text-sm text-muted-foreground">불러오는 중…</p>
-        ) : filtered.length === 0 ? (
-          <p className="p-2 text-sm text-muted-foreground">“문제 추가”로 시작하세요.</p>
-        ) : (
-          filtered.map((p) => renderProblemRow(p))
-        )}
-      </div>
-      {bulkMode && (
-        <div className="flex flex-col gap-1 border-t p-2">
-          <Button variant="outline" className="w-full" onClick={toggleSelectAll}>
-            {bulkSelected.size === filtered.length ? "전체 해제" : "전체 선택"}
-          </Button>
-          <div className="flex flex-wrap gap-1">
-            <Button variant="destructive" className="min-w-24 flex-1" onClick={handleBulkDelete} disabled={deleteProblemMut.isPending}>
-              <Trash2 /> 선택 삭제 ({bulkSelected.size})
-            </Button>
-            <Button variant="secondary" className="min-w-24 flex-1" onClick={handleBulkPublishSelected} disabled={updateProblemMut.isPending}>
-              <Send /> 선택 발행
-            </Button>
-          </div>
-          <Button variant="ghost" className="w-full" onClick={toggleBulkMode}>
-            취소
-          </Button>
-        </div>
-      )}
-    </>
-  );
-
   const editorPanel = selectedId ? (
     <ProblemEditor key={selectedId} problemId={selectedId} />
   ) : (
@@ -309,11 +239,13 @@ export default function ProblemManager() {
     <>
     <SidebarProvider className="h-full min-h-0 items-stretch">
       <Sidebar collapsible="icon" className="border-r">
-        <SidebarHeader className="flex-row items-center gap-1 border-b group-data-[collapsible=icon]:justify-center">
-          <span className="whitespace-nowrap text-sm font-semibold group-data-[collapsible=icon]:hidden">폴더</span>
+        <SidebarHeader className="min-h-[45px] flex-row items-center gap-1 border-b group-data-[collapsible=icon]:justify-center">
+          <ClipboardList className="hidden size-4 shrink-0 text-muted-foreground group-data-[collapsible=icon]:block" />
+          <span className="whitespace-nowrap text-sm font-semibold group-data-[collapsible=icon]:hidden">문제</span>
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
+            <SidebarGroupLabel>폴더</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 <FolderItem label="전체" active={activeFolder === ALL} onClick={() => setActiveFolder(ALL)} />
@@ -338,12 +270,72 @@ export default function ProblemManager() {
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
+
+          <SidebarSeparator />
+
+          <SidebarGroup>
+            <SidebarGroupLabel>
+              {bulkMode ? `${bulkSelected.size}개 선택됨` : "문제 목록"}
+            </SidebarGroupLabel>
+            {!bulkMode ? (
+              <>
+                <SidebarGroupAction onClick={handleCreateProblem} disabled={createProblemMut.isPending} title="문제 추가">
+                  <Plus className="size-4" />
+                </SidebarGroupAction>
+                <SidebarGroupAction className="right-8" onClick={toggleBulkMode} title="일괄 선택">
+                  <CheckSquare className="size-4" />
+                </SidebarGroupAction>
+              </>
+            ) : (
+              <SidebarGroupAction onClick={toggleBulkMode} title="일괄 선택 취소">
+                <CheckSquare className="size-4" />
+              </SidebarGroupAction>
+            )}
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {isLoading ? (
+                  <p className="p-2 text-sm text-muted-foreground group-data-[collapsible=icon]:hidden">불러오는 중…</p>
+                ) : filtered.length === 0 ? (
+                  <p className="p-2 text-sm text-muted-foreground group-data-[collapsible=icon]:hidden">“문제 추가”로 시작하세요.</p>
+                ) : (
+                  filtered.map((p) => (
+                    <ProblemMenuItem
+                      key={p.id}
+                      problem={p}
+                      isActive={selectedId === p.id}
+                      bulkMode={bulkMode}
+                      bulkSelected={bulkSelected.has(p.id)}
+                      onSelect={setSelectedId}
+                      onToggleBulk={toggleBulkSelect}
+                      onTogglePublish={togglePublish}
+                      onDelete={handleDeleteProblem}
+                    />
+                  ))
+                )}
+              </SidebarMenu>
+              {bulkMode && (
+                <div className="flex flex-col gap-1 p-2">
+                  <Button variant="outline" size="sm" className="w-full" onClick={toggleSelectAll}>
+                    {bulkSelected.size === filtered.length ? "전체 해제" : "전체 선택"}
+                  </Button>
+                  <div className="flex flex-wrap gap-1">
+                    <Button variant="destructive" size="sm" className="min-w-24 flex-1" onClick={handleBulkDelete} disabled={deleteProblemMut.isPending}>
+                      <Trash2 /> 삭제 ({bulkSelected.size})
+                    </Button>
+                    <Button variant="secondary" size="sm" className="min-w-24 flex-1" onClick={handleBulkPublishSelected} disabled={updateProblemMut.isPending}>
+                      <Send /> 발행
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </SidebarGroupContent>
+          </SidebarGroup>
         </SidebarContent>
       </Sidebar>
       <SidebarRail />
 
       <SidebarInset className="overflow-hidden">
-        {/* 모바일: 폴더는 사이드바 시트로, 문제 목록은 드롭다운으로 */}
+        {/* 모바일: 폴더/문제 목록은 사이드바 시트, 문제 상세는 드롭다운으로 선택 */}
         <div className="flex items-center gap-1 border-b bg-muted/20 p-2 md:hidden">
           <SidebarTrigger />
           <Popover open={mobileListOpen} onOpenChange={setMobileListOpen}>
@@ -378,49 +370,64 @@ export default function ProblemManager() {
         </div>
         <div className="flex-1 overflow-hidden md:hidden">{editorPanel}</div>
 
-        {/* 데스크톱: 문제 목록 + 에디터 리사이즈 패널 */}
-        <ResizablePanelGroup direction="horizontal" className="hidden min-h-0 flex-1 overflow-hidden md:flex">
-          <ResizablePanel
-            ref={listPanelRef}
-            defaultSize={18}
-            minSize={14}
-            maxSize={40}
-            collapsible
-            collapsedSize={5}
-            onCollapse={() => setListCollapsed(true)}
-            onExpand={() => setListCollapsed(false)}
-            className="flex h-full flex-col bg-muted/20"
-          >
-            {listCollapsed ? (
-              <div className="flex flex-col items-center gap-2 py-2">
-                {filtered.map((p) => (
-                  <Button
-                    key={p.id}
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setSelectedId(p.id)}
-                    title={p.title || "(제목 없음)"}
-                    className={cn("size-8", selectedId === p.id && "bg-accent")}
-                  >
-                    <Circle className={cn("size-2.5", p.is_published ? "fill-emerald-500 text-emerald-500" : "fill-muted-foreground/40 text-muted-foreground/40")} />
-                  </Button>
-                ))}
-              </div>
-            ) : (
-              problemListPanel
-            )}
-          </ResizablePanel>
-
-          <ResizableHandle onToggle={toggleListPanel} collapsed={listCollapsed} />
-
-          <ResizablePanel defaultSize={82} className="overflow-hidden">
-            {editorPanel}
-          </ResizablePanel>
-        </ResizablePanelGroup>
+        {/* 데스크톱: 에디터 */}
+        <SidebarTrigger className="m-2 hidden shrink-0 md:flex" />
+        <div className="hidden min-h-0 flex-1 overflow-hidden md:flex">{editorPanel}</div>
       </SidebarInset>
     </SidebarProvider>
     {confirmDialog}
     </>
+  );
+}
+
+function ProblemMenuItem({
+  problem, isActive, bulkMode, bulkSelected, onSelect, onToggleBulk, onTogglePublish, onDelete,
+}: {
+  problem: { id: string; title: string; is_published: boolean };
+  isActive: boolean;
+  bulkMode: boolean;
+  bulkSelected: boolean;
+  onSelect: (id: string) => void;
+  onToggleBulk: (id: string) => void;
+  onTogglePublish: (id: string, next: boolean, e: React.MouseEvent) => void;
+  onDelete: (id: string, e: React.MouseEvent) => void;
+}) {
+  const { isMobile, setOpenMobile } = useSidebar();
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        isActive={isActive || bulkSelected}
+        tooltip={problem.title || "(제목 없음)"}
+        draggable={!bulkMode}
+        onDragStart={(e) => e.dataTransfer.setData(PROBLEM_DND_TYPE, problem.id)}
+        onClick={() => {
+          if (bulkMode) { onToggleBulk(problem.id); return; }
+          onSelect(problem.id);
+          if (isMobile) setOpenMobile(false);
+        }}
+      >
+        {bulkMode && (
+          <Checkbox
+            checked={bulkSelected}
+            onChange={() => onToggleBulk(problem.id)}
+            onClick={(e) => e.stopPropagation()}
+            className="size-3.5 shrink-0"
+          />
+        )}
+        <Circle className={cn("size-2 shrink-0", problem.is_published ? "fill-emerald-500 text-emerald-500" : "fill-muted-foreground/40 text-muted-foreground/40")} />
+        <span className="flex-1 truncate">{problem.title || "(제목 없음)"}</span>
+      </SidebarMenuButton>
+      {!bulkMode && (
+        <>
+          <SidebarMenuAction showOnHover className="right-7" onClick={(e) => onTogglePublish(problem.id, !problem.is_published, e)} title="발행 전환">
+            {problem.is_published ? <EyeOff className="size-3.5" /> : <Globe className="size-3.5" />}
+          </SidebarMenuAction>
+          <SidebarMenuAction showOnHover onClick={(e) => onDelete(problem.id, e)} title="삭제">
+            <Trash2 className="size-3.5" />
+          </SidebarMenuAction>
+        </>
+      )}
+    </SidebarMenuItem>
   );
 }
 

@@ -269,8 +269,9 @@ export default function LessonManager() {
     <>
     <SidebarProvider className="h-full min-h-0 items-stretch">
       <Sidebar collapsible="icon" className="border-r">
-        <SidebarHeader className="border-b group-data-[collapsible=icon]:items-center">
-          <div className="flex items-center gap-1">
+        <SidebarHeader className="min-h-[45px] border-b group-data-[collapsible=icon]:items-center">
+          <div className="flex items-center gap-1 group-data-[collapsible=icon]:justify-center">
+            <FileText className="hidden size-4 shrink-0 text-muted-foreground group-data-[collapsible=icon]:block" />
             <span className="text-sm font-semibold group-data-[collapsible=icon]:hidden">교안</span>
           </div>
           <Input ref={fileRef} type="file" accept=".html,.htm,text/html" className="hidden" onChange={onFilePicked} />
