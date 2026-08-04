@@ -213,7 +213,14 @@ export default function ProblemManager() {
       return;
     }
     if (e.ctrlKey || e.metaKey) {
-      toggleBulkSelect(id);
+      // 아직 다중 선택이 없을 땐 현재 단일 선택(selectedId)을 기준점으로 포함시켜야
+      // 하이라이트된 항목과 실제 bulkSelected가 어긋나지 않음.
+      setBulkSelected((prev) => {
+        const next = new Set(prev.size > 0 ? prev : selectedId ? [selectedId] : []);
+        if (next.has(id)) next.delete(id);
+        else next.add(id);
+        return next;
+      });
       setLastClickedIndex(index);
       return;
     }
