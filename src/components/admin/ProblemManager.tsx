@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { Plus, Trash2, Folder, FolderPlus, ChevronRight, ChevronDown, Circle, ClipboardList, Globe, EyeOff, Send, CheckSquare } from "lucide-react";
@@ -45,6 +45,7 @@ export default function ProblemManager() {
   const { confirm, dialog: confirmDialog } = useConfirm();
   const [bulkMode, setBulkMode] = useState(false);
   const [bulkSelected, setBulkSelected] = useState<Set<string>>(new Set());
+  const [lastClickedIndex, setLastClickedIndex] = useState<number | null>(null);
   const [mobileListOpen, setMobileListOpen] = useState(false);
 
   useEffect(() => {
@@ -52,9 +53,15 @@ export default function ProblemManager() {
     if (openId) setSelectedId(openId);
   }, [location.state]);
 
-  const filtered = activeFolder === ALL ? problems : problems.filter((p) => p.folder_id === activeFolder);
-
   const childrenOf = (parentId: string | null) => folders.filter((f) => f.parent_id === parentId);
+  const rootFolders = useMemo(() => folders.filter((f) => f.parent_id === null), [folders]);
+
+  // 문제는 항상 순서도/파이썬/블럭코딩 중 하나에 속함 — "전체" 필터 없이 첫 대분류를 기본 선택.
+  useEffect(() => {
+    if (activeFolder === ALL && rootFolders[0]) setActiveFolder(rootFolders[0].id);
+  }, [activeFolder, rootFolders]);
+
+  const filtered = activeFolder === ALL ? problems : problems.filter((p) => p.folder_id === activeFolder);
 
   function toggleExpand(id: string) {
     setExpanded((prev) => {
@@ -86,8 +93,11 @@ export default function ProblemManager() {
   async function handleDeleteFolder(id: string) {
     if (!(await confirm({ description: "이 폴더를 삭제할까요? 하위 폴더도 함께 삭제됩니다.", destructive: true }))) return;
     try {
+      const folder = folders.find((f) => f.id === id);
       await deleteFolderMut.mutateAsync(id);
-      if (activeFolder === id) setActiveFolder(ALL);
+      if (activeFolder === id) {
+        setActiveFolder(folder?.parent_id ?? childrenOf(null).find((f) => f.id !== id)?.id ?? ALL);
+      }
     } catch (e: any) {
       toast.error(e?.message ?? "삭제 실패");
     }
@@ -159,7 +169,8 @@ export default function ProblemManager() {
     try {
       await Promise.all([...bulkSelected].map((id) => updateProblemMut.mutateAsync({ id, patch: { is_published: true } })));
       toast.success(`${bulkSelected.size}개 발행 완료`);
-      toggleBulkMode();
+      setBulkSelected(new Set());
+      if (bulkMode) setBulkMode(false);
     } catch (e: any) {
       toast.error(e?.message ?? "일괄 발행 실패");
     }
@@ -172,16 +183,40 @@ export default function ProblemManager() {
   async function handleDropOnFolder(folderId: string, e: React.DragEvent) {
     e.preventDefault();
     setDragOverId(null);
-    const problemId = e.dataTransfer.getData(PROBLEM_DND_TYPE);
-    if (!problemId) return;
+    const raw = e.dataTransfer.getData(PROBLEM_DND_TYPE);
+    if (!raw) return;
+    let ids: string[];
+    try { ids = JSON.parse(raw); } catch { ids = [raw]; }
     try {
-      await updateProblemMut.mutateAsync({
-        id: problemId,
-        patch: { folder_id: folderId, category: resolveFolderCategory(folderId, folders) },
-      });
+      await Promise.all(
+        ids.map((id) =>
+          updateProblemMut.mutateAsync({ id, patch: { folder_id: folderId, category: resolveFolderCategory(folderId, folders) } })
+        )
+      );
+      if (ids.length > 1) setBulkSelected(new Set());
     } catch (e: any) {
       toast.error(e?.message ?? "이동 실패");
     }
+  }
+
+  function handleProblemClick(id: string, index: number, e: React.MouseEvent) {
+    if (bulkMode) {
+      toggleBulkSelect(id);
+      return;
+    }
+    if (e.shiftKey && lastClickedIndex !== null) {
+      const [start, end] = [lastClickedIndex, index].sort((a, b) => a - b);
+      setBulkSelected(new Set(filtered.slice(start, end + 1).map((p) => p.id)));
+      return;
+    }
+    if (e.ctrlKey || e.metaKey) {
+      toggleBulkSelect(id);
+      setLastClickedIndex(index);
+      return;
+    }
+    setBulkSelected(new Set());
+    setLastClickedIndex(index);
+    setSelectedId(id);
   }
 
   function renderProblemRow(p: (typeof filtered)[number], opts?: { alwaysShowActions?: boolean; onAfterSelect?: () => void }) {
@@ -248,7 +283,6 @@ export default function ProblemManager() {
             <SidebarGroupLabel>폴더</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                <FolderItem label="전체" active={activeFolder === ALL} onClick={() => setActiveFolder(ALL)} />
                 {childrenOf(null).map((f) => (
                   <FolderTreeNode
                     key={f.id}
@@ -275,19 +309,29 @@ export default function ProblemManager() {
 
           <SidebarGroup>
             <SidebarGroupLabel>
-              {bulkMode ? `${bulkSelected.size}개 선택됨` : "문제 목록"}
+              {bulkSelected.size > 0 ? `${bulkSelected.size}개 선택됨` : "문제 목록"}
             </SidebarGroupLabel>
             {!bulkMode ? (
               <>
-                <SidebarGroupAction onClick={handleCreateProblem} disabled={createProblemMut.isPending} title="문제 추가">
+                <SidebarGroupAction
+                  className="group-data-[collapsible=icon]:hidden"
+                  onClick={handleCreateProblem}
+                  disabled={createProblemMut.isPending}
+                  title="문제 추가"
+                >
                   <Plus className="size-4" />
                 </SidebarGroupAction>
-                <SidebarGroupAction className="right-8" onClick={toggleBulkMode} title="일괄 선택">
-                  <CheckSquare className="size-4" />
+                <SidebarGroupAction
+                  className="right-8 group-data-[collapsible=icon]:hidden"
+                  onClick={() => (bulkSelected.size > 0 ? void handleBulkPublishSelected() : toggleBulkMode())}
+                  disabled={updateProblemMut.isPending}
+                  title={bulkSelected.size > 0 ? "선택 항목 발행" : "일괄 선택"}
+                >
+                  {bulkSelected.size > 0 ? <Globe className="size-4" /> : <CheckSquare className="size-4" />}
                 </SidebarGroupAction>
               </>
             ) : (
-              <SidebarGroupAction onClick={toggleBulkMode} title="일괄 선택 취소">
+              <SidebarGroupAction className="group-data-[collapsible=icon]:hidden" onClick={toggleBulkMode} title="일괄 선택 취소">
                 <CheckSquare className="size-4" />
               </SidebarGroupAction>
             )}
@@ -298,14 +342,15 @@ export default function ProblemManager() {
                 ) : filtered.length === 0 ? (
                   <p className="p-2 text-sm text-muted-foreground group-data-[collapsible=icon]:hidden">“문제 추가”로 시작하세요.</p>
                 ) : (
-                  filtered.map((p) => (
+                  filtered.map((p, index) => (
                     <ProblemMenuItem
                       key={p.id}
                       problem={p}
                       isActive={selectedId === p.id}
                       bulkMode={bulkMode}
                       bulkSelected={bulkSelected.has(p.id)}
-                      onSelect={setSelectedId}
+                      dragIds={bulkSelected.has(p.id) && bulkSelected.size > 1 ? [...bulkSelected] : [p.id]}
+                      onClick={(e) => handleProblemClick(p.id, index, e)}
                       onToggleBulk={toggleBulkSelect}
                       onTogglePublish={togglePublish}
                       onDelete={handleDeleteProblem}
@@ -381,13 +426,14 @@ export default function ProblemManager() {
 }
 
 function ProblemMenuItem({
-  problem, isActive, bulkMode, bulkSelected, onSelect, onToggleBulk, onTogglePublish, onDelete,
+  problem, isActive, bulkMode, bulkSelected, dragIds, onClick, onToggleBulk, onTogglePublish, onDelete,
 }: {
   problem: { id: string; title: string; is_published: boolean };
   isActive: boolean;
   bulkMode: boolean;
   bulkSelected: boolean;
-  onSelect: (id: string) => void;
+  dragIds: string[];
+  onClick: (e: React.MouseEvent) => void;
   onToggleBulk: (id: string) => void;
   onTogglePublish: (id: string, next: boolean, e: React.MouseEvent) => void;
   onDelete: (id: string, e: React.MouseEvent) => void;
@@ -398,11 +444,10 @@ function ProblemMenuItem({
       <SidebarMenuButton
         isActive={isActive || bulkSelected}
         tooltip={problem.title || "(제목 없음)"}
-        draggable={!bulkMode}
-        onDragStart={(e) => e.dataTransfer.setData(PROBLEM_DND_TYPE, problem.id)}
-        onClick={() => {
-          if (bulkMode) { onToggleBulk(problem.id); return; }
-          onSelect(problem.id);
+        draggable
+        onDragStart={(e) => e.dataTransfer.setData(PROBLEM_DND_TYPE, JSON.stringify(dragIds))}
+        onClick={(e) => {
+          onClick(e);
           if (isMobile) setOpenMobile(false);
         }}
       >
@@ -427,25 +472,6 @@ function ProblemMenuItem({
           </SidebarMenuAction>
         </>
       )}
-    </SidebarMenuItem>
-  );
-}
-
-function FolderItem({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
-  const { isMobile, setOpenMobile } = useSidebar();
-  return (
-    <SidebarMenuItem>
-      <SidebarMenuButton
-        isActive={active}
-        tooltip={label}
-        onClick={() => {
-          onClick();
-          if (isMobile) setOpenMobile(false);
-        }}
-      >
-        <Folder />
-        <span className="flex-1 truncate">{label}</span>
-      </SidebarMenuButton>
     </SidebarMenuItem>
   );
 }
@@ -518,9 +544,9 @@ function FolderTreeNode({
           <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); onToggleExpand(folder.id); }} className="size-5 shrink-0 text-muted-foreground">
             {isExpanded ? <ChevronDown className="size-3.5" /> : <ChevronRight className="size-3.5" />}
           </Button>
-        ) : (
+        ) : depth > 0 ? (
           <span className="w-3.5 shrink-0" />
-        )}
+        ) : null}
         <label
           className="flex shrink-0 cursor-pointer items-center justify-center rounded-md p-0.5 hover:bg-accent"
           onClick={(e) => e.stopPropagation()}

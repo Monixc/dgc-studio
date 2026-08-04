@@ -14,7 +14,7 @@ export async function listFolders(userId: string): Promise<ProblemFolder[]> {
     .from("problem_folders")
     .select("*")
     .eq("created_by", userId)
-    .order("created_at", { ascending: true });
+    .order("name", { ascending: true });
   if (error) throw error;
   return (data ?? []) as ProblemFolder[];
 }
