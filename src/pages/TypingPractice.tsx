@@ -267,9 +267,9 @@ export default function TypingPractice() {
 
   return (
     <AppShell menu={menu} homePath={homePath}>
-      <div className="space-y-5 p-4 md:p-6">
+      <div className="flex min-h-full flex-col space-y-5 p-4 md:p-6">
         <TypingModeHome ranking={ranking} onSelect={setMode} />
-        {role === "teacher" && <TeacherTypingLogs />}
+        {role === "teacher" && <TeacherTypingLogs className="flex-1" />}
       </div>
     </AppShell>
   );
@@ -389,7 +389,7 @@ function ModeCard({
   );
 }
 
-function TeacherTypingLogs() {
+function TeacherTypingLogs({ className }: { className?: string }) {
   const [logs, setLogs] = useState<TypingPracticeLogView[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -413,8 +413,8 @@ function TeacherTypingLogs() {
   }, [load]);
 
   return (
-    <section className="mt-5 rounded-none border bg-card p-5 shadow-sm">
-      <header className="mb-4 flex items-center gap-2">
+    <section className={cn("flex flex-col rounded-none border bg-card p-5 shadow-sm", className)}>
+      <header className="mb-4 flex shrink-0 items-center gap-2">
         <History className="size-5 text-primary" />
         <div>
           <h2 className="font-semibold">학생 타자 연습 완료 로그</h2>
@@ -441,7 +441,7 @@ function TeacherTypingLogs() {
       ) : logs.length === 0 ? (
         <p className="py-6 text-center text-sm text-muted-foreground">아직 완료 기록이 없습니다.</p>
       ) : (
-        <div className="max-h-96 space-y-2 overflow-y-auto pr-1">
+        <div className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1">
           {logs.map((log) => (
             <div
               key={log.id}
