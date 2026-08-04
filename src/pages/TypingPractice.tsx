@@ -1796,19 +1796,33 @@ function PracticeMode({
               </p>
             </div>
           </div>
-          {codeMode ? (
-            <button
+          <div className="flex items-center gap-3">
+            <Button
               type="button"
-              onClick={onExit}
-              className="text-xs text-zinc-500 transition hover:text-white"
+              variant="ghost"
+              size="sm"
+              className={cn(codeMode ? "gap-1.5 text-xs text-zinc-500 hover:bg-transparent hover:text-white" : "gap-1.5 text-muted-foreground")}
+              onClick={() => {
+                resetSession();
+                if (loadState === "ready") drawNext();
+              }}
             >
-              타자 연습 종료
-            </button>
-          ) : (
-            <Button variant="ghost" size="sm" onClick={onExit} className="text-muted-foreground">
-              타자 연습 종료
+              <RotateCcw className="size-3.5" /> 처음부터
             </Button>
-          )}
+            {codeMode ? (
+              <button
+                type="button"
+                onClick={onExit}
+                className="text-xs text-zinc-500 transition hover:text-white"
+              >
+                타자 연습 종료
+              </button>
+            ) : (
+              <Button variant="ghost" size="sm" onClick={onExit} className="text-muted-foreground">
+                타자 연습 종료
+              </Button>
+            )}
+          </div>
         </header>
 
         {category === "english" && (
@@ -1917,16 +1931,6 @@ function PracticeMode({
         )}
 
         <div className="flex flex-wrap justify-end gap-2">
-          <Button
-            variant="outline"
-            className={cn(codeMode && "rounded-lg border-zinc-700 bg-[#161b22] text-zinc-300 shadow-none hover:border-zinc-600 hover:bg-zinc-800 hover:text-white")}
-            onClick={() => {
-              resetSession();
-              if (loadState === "ready") drawNext();
-            }}
-          >
-            <RotateCcw /> 처음부터
-          </Button>
           {startedAt !== null && (
             <Button
               className={cn(codeMode && "rounded-lg bg-sky-600 text-white shadow-none hover:bg-sky-500")}
