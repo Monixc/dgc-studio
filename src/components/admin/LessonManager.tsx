@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Plus, Upload, Trash2, FileText, FileCode, Code2, Eye, Pencil, Folder, FolderPlus, Check, ClipboardList, X, ChevronRight } from "lucide-react";
+import { Plus, Upload, Trash2, FileText, FileCode, Code2, Eye, Pencil, Folder, FolderPlus, Check, ClipboardList, X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useConfirm } from "@/hooks/use-confirm";
 import {
@@ -38,6 +38,7 @@ import type { Lesson, LessonFolder } from "@/integrations/supabase/types";
 
 const ALL = "__all__";
 const NONE = "__none__";
+const LESSON_DND_TYPE = "text/flowpy-lesson-id";
 
 interface Draft {
   title: string;
@@ -90,6 +91,9 @@ export default function LessonManager() {
   const [preview, setPreview] = useState(false);
   const [editingFolderId, setEditingFolderId] = useState<string | null>(null);
   const [folderName, setFolderName] = useState("");
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
+  const [bulkSelected, setBulkSelected] = useState<Set<string>>(new Set());
+  const [lastClickedIndex, setLastClickedIndex] = useState<number | null>(null);
   const { confirm, dialog: confirmDialog } = useConfirm();
   const [attachOpen, setAttachOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -188,6 +192,40 @@ export default function LessonManager() {
     }
   }
 
+  async function handleBulkDelete() {
+    if (bulkSelected.size === 0) return toast.info("선택된 교안이 없습니다.");
+    if (!(await confirm({ description: `선택한 교안 ${bulkSelected.size}개를 삭제할까요? 반 배정도 함께 해제됩니다.`, destructive: true }))) return;
+    try {
+      await Promise.all([...bulkSelected].map((id) => deleteMut.mutateAsync(id)));
+      if (selectedId && bulkSelected.has(selectedId)) setSelectedId(null);
+      toast.success(`${bulkSelected.size}개 삭제됨`);
+      setBulkSelected(new Set());
+    } catch (e: any) {
+      toast.error(e?.message ?? "삭제 실패");
+    }
+  }
+
+  function handleLessonClick(id: string, index: number, e: React.MouseEvent) {
+    if (e.shiftKey && lastClickedIndex !== null) {
+      const [start, end] = [lastClickedIndex, index].sort((a, b) => a - b);
+      setBulkSelected(new Set(filtered.slice(start, end + 1).map((l) => l.id)));
+      return;
+    }
+    if (e.ctrlKey || e.metaKey) {
+      setBulkSelected((prev) => {
+        const next = new Set(prev.size > 0 ? prev : selectedId ? [selectedId] : []);
+        if (next.has(id)) next.delete(id);
+        else next.add(id);
+        return next;
+      });
+      setLastClickedIndex(index);
+      return;
+    }
+    setBulkSelected(new Set());
+    setLastClickedIndex(index);
+    setSelectedId(id);
+  }
+
   async function addFolder() {
     try {
       const f = await createFolderMut.mutateAsync({ userId, name: "새 폴더" });
@@ -222,8 +260,31 @@ export default function LessonManager() {
   const countIn = (fid: string | null) =>
     fid === null ? lessons.filter((l) => !l.folder_id).length : lessons.filter((l) => l.folder_id === fid).length;
 
-  function folderRow(id: string, label: string, count: number, opts?: { folder?: LessonFolder }) {
+  async function handleDropOnFolder(folderId: string | null, e: React.DragEvent) {
+    e.preventDefault();
+    setDragOverId(null);
+    const raw = e.dataTransfer.getData(LESSON_DND_TYPE);
+    if (!raw) return;
+    let ids: string[];
+    try { ids = JSON.parse(raw); } catch { ids = [raw]; }
+    try {
+      await Promise.all(ids.map((id) => updateMut.mutateAsync({ id, patch: { folder_id: folderId } })));
+      if (ids.length > 1) setBulkSelected(new Set());
+    } catch (e: any) {
+      toast.error(e?.message ?? "이동 실패");
+    }
+  }
+
+  function folderRow(id: string, label: string, count: number, opts?: { folder?: LessonFolder; dropTarget?: string | null }) {
     const editing = editingFolderId === id;
+    const dragProps =
+      opts && "dropTarget" in opts
+        ? {
+            onDragOver: (e: React.DragEvent) => { e.preventDefault(); setDragOverId(id); },
+            onDragLeave: () => setDragOverId((prev) => (prev === id ? null : prev)),
+            onDrop: (e: React.DragEvent) => void handleDropOnFolder(opts.dropTarget!, e),
+          }
+        : {};
     return (
       <SidebarMenuItem key={id}>
         {editing ? (
@@ -248,7 +309,12 @@ export default function LessonManager() {
           <>
             <div
               onClick={() => setActiveFolder(id)}
-              className={cn(sidebarMenuButtonVariants({ isActive: activeFolder === id }), "cursor-pointer")}
+              {...dragProps}
+              className={cn(
+                sidebarMenuButtonVariants({ isActive: activeFolder === id }),
+                "cursor-pointer",
+                dragOverId === id && "ring-2 ring-primary"
+              )}
             >
               <FolderColorSwatch color={opts.folder.color} onChange={(color) => updateColorMut.mutate({ id, color })} />
               <span className="flex-1 truncate font-medium group-data-[collapsible=icon]:hidden">{label}</span>
@@ -267,7 +333,13 @@ export default function LessonManager() {
             </SidebarMenuAction>
           </>
         ) : (
-          <SidebarMenuButton isActive={activeFolder === id} onClick={() => setActiveFolder(id)} tooltip={label}>
+          <SidebarMenuButton
+            isActive={activeFolder === id}
+            onClick={() => setActiveFolder(id)}
+            tooltip={label}
+            {...dragProps}
+            className={cn(dragOverId === id && "ring-2 ring-primary")}
+          >
             <Folder />
             <span className="flex-1 truncate group-data-[collapsible=icon]:hidden">{label}</span>
             <span className="text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">{count}</span>
@@ -296,8 +368,8 @@ export default function LessonManager() {
             <SidebarGroupContent>
               <SidebarMenu>
                 {folderRow(ALL, "전체", lessons.length)}
-                {folders.map((f) => folderRow(f.id, f.name || "(이름 없음)", countIn(f.id), { folder: f }))}
-                {folderRow(NONE, "미분류", countIn(null))}
+                {folders.map((f) => folderRow(f.id, f.name || "(이름 없음)", countIn(f.id), { folder: f, dropTarget: f.id }))}
+                {folderRow(NONE, "미분류", countIn(null), { dropTarget: null })}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
@@ -306,17 +378,15 @@ export default function LessonManager() {
 
           <SidebarGroup>
             <SidebarGroupLabel>
-              <span className="flex min-w-0 items-center gap-1 truncate">
-                <span className="truncate">교안</span>
-                {activeFolder !== ALL && (
-                  <>
-                    <ChevronRight className="size-3 shrink-0" />
-                    <span className="truncate">
-                      {activeFolder === NONE ? "미분류" : folders.find((f) => f.id === activeFolder)?.name || "(이름 없음)"}
-                    </span>
-                  </>
-                )}
-              </span>
+              {bulkSelected.size > 0 ? (
+                `${bulkSelected.size}개 선택됨`
+              ) : activeFolder === ALL ? (
+                "전체"
+              ) : activeFolder === NONE ? (
+                "미분류"
+              ) : (
+                folders.find((f) => f.id === activeFolder)?.name || "(이름 없음)"
+              )}
             </SidebarGroupLabel>
             <SidebarGroupAction
               className="group-data-[collapsible=icon]:hidden"
@@ -326,6 +396,16 @@ export default function LessonManager() {
             >
               <Plus className="size-4" />
             </SidebarGroupAction>
+            {bulkSelected.size > 0 && (
+              <SidebarGroupAction
+                className="right-10 group-data-[collapsible=icon]:hidden"
+                onClick={() => void handleBulkDelete()}
+                disabled={deleteMut.isPending}
+                title="선택 항목 삭제"
+              >
+                <Trash2 className="size-4" />
+              </SidebarGroupAction>
+            )}
             <SidebarGroupContent>
               <SidebarMenu>
                 {isLoading ? (
@@ -333,8 +413,16 @@ export default function LessonManager() {
                 ) : filtered.length === 0 ? (
                   <p className="p-2 text-sm text-muted-foreground group-data-[collapsible=icon]:hidden">교안이 없습니다.</p>
                 ) : (
-                  filtered.map((l) => (
-                    <LessonMenuItem key={l.id} lesson={l} isActive={selectedId === l.id} onSelect={setSelectedId} onDelete={remove} />
+                  filtered.map((l, index) => (
+                    <LessonMenuItem
+                      key={l.id}
+                      lesson={l}
+                      isActive={selectedId === l.id}
+                      bulkSelected={bulkSelected.has(l.id)}
+                      dragIds={bulkSelected.has(l.id) && bulkSelected.size > 1 ? [...bulkSelected] : [l.id]}
+                      onClick={(e) => handleLessonClick(l.id, index, e)}
+                      onDelete={remove}
+                    />
                   ))
                 )}
               </SidebarMenu>
@@ -500,21 +588,25 @@ export default function LessonManager() {
 }
 
 function LessonMenuItem({
-  lesson, isActive, onSelect, onDelete,
+  lesson, isActive, bulkSelected, dragIds, onClick, onDelete,
 }: {
   lesson: Lesson;
   isActive: boolean;
-  onSelect: (id: string) => void;
+  bulkSelected: boolean;
+  dragIds: string[];
+  onClick: (e: React.MouseEvent) => void;
   onDelete: (id: string) => void;
 }) {
   const { isMobile, setOpenMobile } = useSidebar();
   return (
     <SidebarMenuItem>
       <SidebarMenuButton
-        isActive={isActive}
+        isActive={isActive || bulkSelected}
         tooltip={lesson.title || "(제목 없음)"}
-        onClick={() => {
-          onSelect(lesson.id);
+        draggable
+        onDragStart={(e) => e.dataTransfer.setData(LESSON_DND_TYPE, JSON.stringify(dragIds))}
+        onClick={(e) => {
+          onClick(e);
           if (isMobile) setOpenMobile(false);
         }}
       >

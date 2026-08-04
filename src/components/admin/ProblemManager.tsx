@@ -56,6 +56,7 @@ export default function ProblemManager() {
 
   const childrenOf = (parentId: string | null) => folders.filter((f) => f.parent_id === parentId);
   const rootFolders = useMemo(() => folders.filter((f) => f.parent_id === null), [folders]);
+  const countIn = (folderId: string) => problems.filter((p) => p.folder_id === folderId).length;
 
   function folderPath(id: string): ProblemFolder[] {
     const path: ProblemFolder[] = [];
@@ -316,6 +317,7 @@ export default function ProblemManager() {
                     onAddChild={handleAddChild}
                     onDelete={handleDeleteFolder}
                     onColorChange={handleColorChange}
+                    countIn={countIn}
                     dragOverId={dragOverId}
                     setDragOverId={setDragOverId}
                     onDrop={handleDropOnFolder}
@@ -520,7 +522,7 @@ function ProblemMenuItem({
 
 function FolderTreeNode({
   folder, depth, childrenOf, expanded, onToggleExpand, activeFolder, onSelect, onAddChild, onDelete, onColorChange,
-  dragOverId, setDragOverId, onDrop,
+  countIn, dragOverId, setDragOverId, onDrop,
 }: {
   folder: ProblemFolder;
   depth: number;
@@ -532,6 +534,7 @@ function FolderTreeNode({
   onAddChild: (parentId: string, name: string) => void;
   onDelete: (id: string) => void;
   onColorChange: (id: string, color: string) => void;
+  countIn: (folderId: string) => number;
   dragOverId: string | null;
   setDragOverId: (v: string | null | ((prev: string | null) => string | null)) => void;
   onDrop: (folderId: string, e: React.DragEvent) => void;
@@ -578,6 +581,7 @@ function FolderTreeNode({
         ) : null}
         <FolderColorSwatch color={folder.color} onChange={(color) => onColorChange(folder.id, color)} />
         <span className={cn("flex-1 truncate group-data-[collapsible=icon]:hidden", isDefault && "font-medium")}>{folder.name}</span>
+        <span className="text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">{countIn(folder.id)}</span>
       </div>
       <SidebarMenuAction
         showOnHover
@@ -627,6 +631,7 @@ function FolderTreeNode({
         onAddChild={onAddChild}
         onDelete={onDelete}
         onColorChange={onColorChange}
+        countIn={countIn}
         dragOverId={dragOverId}
         setDragOverId={setDragOverId}
         onDrop={onDrop}
