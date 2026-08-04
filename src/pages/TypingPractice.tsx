@@ -283,7 +283,7 @@ function TypingModeHome({
   onSelect: (mode: Mode) => void;
 }) {
   return (
-    <div className="grid flex-1 items-start gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(250px,1fr)]">
+    <div className="grid flex-1 gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(250px,1fr)]">
       <section className="grid gap-4 sm:grid-cols-2">
         <button
           type="button"
