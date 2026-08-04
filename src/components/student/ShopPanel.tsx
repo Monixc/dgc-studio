@@ -32,8 +32,7 @@ export default function ShopPanel() {
 
   return (
     <div className="p-6">
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">포인트 상점</h1>
+      <div className="mb-4 flex justify-end">
         <div className="inline-flex items-center gap-2 rounded-full border bg-background px-3 py-1 text-sm font-medium shadow-sm">
           <Coins className="size-4 text-primary" />
           <span>{balance}P</span>

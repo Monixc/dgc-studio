@@ -96,8 +96,7 @@ export default function ShopManager() {
 
   return (
     <div className="p-6">
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">포인트 상점</h1>
+      <div className="mb-4 flex justify-end">
         <Button onClick={openCreate}>
           <Plus /> 상품 등록
         </Button>

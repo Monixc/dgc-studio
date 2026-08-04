@@ -268,14 +268,6 @@ export default function TypingPractice() {
   return (
     <AppShell menu={menu} homePath={homePath}>
       <div className="mx-auto max-w-5xl space-y-5 p-4 md:p-6">
-        <header>
-          <div className="flex items-center gap-2">
-            <Keyboard className="size-6 text-primary" />
-            <h1 className="text-2xl font-bold">타자 연습</h1>
-          </div>
-          <p className="mt-1 text-sm text-muted-foreground">레이싱으로 겨루거나, 연습으로 타수를 키워 보세요.</p>
-        </header>
-
         <TypingModeHome ranking={ranking} onSelect={setMode} />
         {role === "teacher" && <TeacherTypingLogs />}
       </div>
