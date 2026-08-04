@@ -269,11 +269,9 @@ export default function LessonManager() {
     <>
     <SidebarProvider className="h-full min-h-0 items-stretch">
       <Sidebar collapsible="icon" className="border-r">
-        <SidebarHeader className="min-h-[45px] border-b group-data-[collapsible=icon]:items-center">
-          <div className="flex items-center gap-1 group-data-[collapsible=icon]:justify-center">
-            <FileText className="hidden size-4 shrink-0 text-muted-foreground group-data-[collapsible=icon]:block" />
-            <span className="text-sm font-semibold group-data-[collapsible=icon]:hidden">교안</span>
-          </div>
+        <SidebarHeader className="min-h-[45px] flex-row items-center gap-1 border-b group-data-[collapsible=icon]:justify-center">
+          <FileText className="hidden size-4 shrink-0 text-muted-foreground group-data-[collapsible=icon]:block" />
+          <span className="whitespace-nowrap text-sm font-semibold group-data-[collapsible=icon]:hidden">교안</span>
           <Input ref={fileRef} type="file" accept=".html,.htm,text/html" className="hidden" onChange={onFilePicked} />
         </SidebarHeader>
 
@@ -281,7 +279,7 @@ export default function LessonManager() {
           <SidebarGroup>
             <SidebarGroupLabel>폴더</SidebarGroupLabel>
             <SidebarGroupAction onClick={addFolder} title="새 폴더">
-              <FolderPlus />
+              <FolderPlus className="size-4" />
             </SidebarGroupAction>
             <SidebarGroupContent>
               <SidebarMenu>
@@ -295,6 +293,7 @@ export default function LessonManager() {
           <SidebarSeparator />
 
           <SidebarGroup>
+            <SidebarGroupLabel>교안 목록</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {isLoading ? (

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { toast } from "sonner";
-import { Plus, Trash2, Folder, FolderPlus, ChevronRight, ChevronDown, Circle, ClipboardList, Globe, EyeOff, Send, CheckSquare } from "lucide-react";
+import { Plus, Trash2, Folder, FolderPlus, ChevronRight, ChevronDown, Circle, ClipboardList, FileText, Globe, EyeOff, Send, CheckSquare } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useMyProblems, useCreateProblem, useDeleteProblem, useUpdateProblem } from "@/hooks/useProblems";
@@ -459,7 +459,8 @@ function ProblemMenuItem({
             className="size-3.5 shrink-0"
           />
         )}
-        <Circle strokeWidth={0} className={cn("!size-2 shrink-0", problem.is_published ? "fill-emerald-500" : "fill-muted-foreground/40")} />
+        <FileText className={cn("hidden size-4 shrink-0 group-data-[collapsible=icon]:block", problem.is_published ? "text-emerald-500" : "text-muted-foreground")} />
+        <Circle strokeWidth={0} className={cn("!size-2 shrink-0 group-data-[collapsible=icon]:hidden", problem.is_published ? "fill-emerald-500" : "fill-muted-foreground/40")} />
         <span className="flex-1 truncate">{problem.title || "(제목 없음)"}</span>
       </SidebarMenuButton>
       {!bulkMode && (
@@ -533,7 +534,7 @@ function FolderTreeNode({
         onDragOver={(e) => { e.preventDefault(); setDragOverId(folder.id); }}
         onDragLeave={() => setDragOverId((id) => (id === folder.id ? null : id))}
         onDrop={(e) => onDrop(folder.id, e)}
-        style={{ paddingLeft: depth * 14 }}
+        style={depth > 0 ? { paddingLeft: depth * 14 } : undefined}
         className={cn(
           sidebarMenuButtonVariants({ isActive: activeFolder === folder.id }),
           "group cursor-pointer",
