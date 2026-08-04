@@ -1479,7 +1479,7 @@ function PracticeCategoryMenu({
           <span className="text-xs text-muted-foreground">언어별 300개 이상 스니펫</span>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-3 sm:auto-rows-[9rem]">
           {code.map((item) => {
             return (
               <button
@@ -1489,6 +1489,7 @@ function PracticeCategoryMenu({
                 className={cn(
                   "group relative flex min-h-32 flex-col justify-between overflow-hidden rounded-none p-4 text-left transition hover:-translate-y-0.5 hover:shadow-lg",
                   cardTone[item.id],
+                  item.id === "python" && "col-span-2 sm:col-span-1 sm:row-span-2",
                 )}
               >
                 <CategoryLogoWatermark category={item.id} />
