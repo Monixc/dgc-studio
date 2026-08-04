@@ -510,8 +510,8 @@ export default function StudentPortfolio() {
                       {documents.length ? (
                         documents.map((item) => renderDocumentRow(item))
                       ) : (
-                        <p className="p-4 text-center text-sm text-muted-foreground">
-                          새 포트폴리오를 만들어 보세요.
+                        <p className="p-2 text-sm text-muted-foreground">
+                          "문서 작성"으로 시작하세요.
                         </p>
                       )}
                     </div>
