@@ -272,24 +272,6 @@ export default function LessonManager() {
         <SidebarHeader className="border-b group-data-[collapsible=icon]:items-center">
           <div className="flex items-center gap-1">
             <span className="text-sm font-semibold group-data-[collapsible=icon]:hidden">교안</span>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="ml-auto size-7 group-data-[collapsible=icon]:ml-0"
-              onClick={createMd}
-              disabled={createMut.isPending}
-              title="MD 교안 추가"
-            >
-              <Plus className="size-4" />
-            </Button>
-          </div>
-          <div className="flex flex-wrap gap-1 group-data-[collapsible=icon]:hidden">
-            <Button size="sm" variant="outline" onClick={createMd} disabled={createMut.isPending}>
-              <Plus className="size-4" /> MD
-            </Button>
-            <Button size="sm" variant="outline" onClick={() => { replaceRef.current = false; fileRef.current?.click(); }} disabled={createMut.isPending}>
-              <Upload className="size-4" /> HTML
-            </Button>
           </div>
           <Input ref={fileRef} type="file" accept=".html,.htm,text/html" className="hidden" onChange={onFilePicked} />
         </SidebarHeader>
@@ -334,8 +316,16 @@ export default function LessonManager() {
       <SidebarTrigger className="m-2 shrink-0" />
       {/* 편집 */}
       {!selected || !draft ? (
-        <div className="flex flex-1 items-center justify-center p-6 text-center text-sm text-muted-foreground">
-          왼쪽에서 교안을 선택하거나 새로 만드세요.
+        <div className="flex flex-1 flex-col items-center justify-center gap-3 p-6 text-center text-sm text-muted-foreground">
+          <p>왼쪽에서 교안을 선택하거나 새로 만드세요.</p>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={createMd} disabled={createMut.isPending}>
+              <Plus className="size-4" /> MD로 만들기
+            </Button>
+            <Button variant="outline" onClick={() => { replaceRef.current = false; fileRef.current?.click(); }} disabled={createMut.isPending}>
+              <Upload className="size-4" /> HTML 업로드
+            </Button>
+          </div>
         </div>
       ) : (
         <div className="flex min-w-0 flex-1 flex-col overflow-auto p-4">

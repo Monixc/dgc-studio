@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
-import { ArrowLeft, MessageSquare, Send, X } from "lucide-react";
+import { ArrowLeft, MessageSquare, Plus, Send, X } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import type { Profile } from "@/integrations/supabase/types";
 import type { useChat } from "@/hooks/useChat";
 import { cn } from "@/lib/utils";
@@ -55,6 +56,8 @@ export default function ChatPanel({
     return map;
   }, [messages, userId]);
 
+  const withHistory = recipients.filter((r) => lastWith.has(r.id));
+
   const openThread = (id: string) => {
     setActiveId(id);
     if ((unreadFrom.get(id) ?? 0) > 0) void markRead.mutate(id);
@@ -89,6 +92,22 @@ export default function ChatPanel({
             <MessageSquare className="size-5 text-primary" />
           )}
           <span className="flex-1 truncate font-semibold">{active ? active.display_name || "상대" : "채팅"}</span>
+          {!active && recipients.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" title="새 대화">
+                  <Plus className="size-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {recipients.map((r) => (
+                  <DropdownMenuItem key={r.id} onClick={() => openThread(r.id)}>
+                    {r.display_name || "(이름 없음)"}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
           <Button variant="ghost" size="icon" onClick={onClose} title="닫기">
             <X className="size-5" />
           </Button>
@@ -96,10 +115,10 @@ export default function ChatPanel({
 
         {!active ? (
           <div className="flex-1 overflow-y-auto p-2">
-            {recipients.length === 0 ? (
-              <p className="p-4 text-center text-sm text-muted-foreground">대화 상대가 없습니다.</p>
+            {withHistory.length === 0 ? (
+              <p className="p-4 text-center text-sm text-muted-foreground">대화가 없습니다.</p>
             ) : (
-              recipients.map((r) => {
+              withHistory.map((r) => {
                 const unread = unreadFrom.get(r.id) ?? 0;
                 return (
                   <Button
@@ -115,7 +134,7 @@ export default function ChatPanel({
                           <Badge className="px-1.5 text-[10px]">{unread}</Badge>
                         )}
                       </span>
-                      <span className="block truncate text-xs text-muted-foreground">{lastWith.get(r.id) ?? "대화를 시작해 보세요."}</span>
+                      <span className="block truncate text-xs text-muted-foreground">{lastWith.get(r.id)}</span>
                     </span>
                   </Button>
                 );
