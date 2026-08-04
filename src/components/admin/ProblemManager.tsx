@@ -206,7 +206,7 @@ export default function ProblemManager() {
             className="size-3.5 shrink-0"
           />
         )}
-        <Circle className={cn("size-2 shrink-0", p.is_published ? "fill-emerald-500 text-emerald-500" : "fill-muted-foreground/40 text-muted-foreground/40")} />
+        <Circle strokeWidth={0} className={cn("!size-2 shrink-0", p.is_published ? "fill-emerald-500" : "fill-muted-foreground/40")} />
         <span className="flex-1 truncate">{p.title || "(제목 없음)"}</span>
         {!bulkMode && (
           <>
@@ -225,7 +225,7 @@ export default function ProblemManager() {
   const editorPanel = selectedId ? (
     <ProblemEditor key={selectedId} problemId={selectedId} />
   ) : (
-    <div className="flex h-full flex-col items-center justify-center gap-3 p-6 text-center text-muted-foreground">
+    <div className="flex h-full flex-1 flex-col items-center justify-center gap-3 p-6 text-center text-muted-foreground">
       <p>왼쪽에서 문제를 선택하거나 새로 만드세요.</p>
       <Button variant="outline" onClick={handleCreateProblem} disabled={createProblemMut.isPending}>
         <Plus className="size-4" /> 새 문제 만들기
@@ -414,7 +414,7 @@ function ProblemMenuItem({
             className="size-3.5 shrink-0"
           />
         )}
-        <Circle className={cn("size-2 shrink-0", problem.is_published ? "fill-emerald-500 text-emerald-500" : "fill-muted-foreground/40 text-muted-foreground/40")} />
+        <Circle strokeWidth={0} className={cn("!size-2 shrink-0", problem.is_published ? "fill-emerald-500" : "fill-muted-foreground/40")} />
         <span className="flex-1 truncate">{problem.title || "(제목 없음)"}</span>
       </SidebarMenuButton>
       {!bulkMode && (
