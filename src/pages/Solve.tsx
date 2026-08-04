@@ -8,7 +8,6 @@ import { listMySubmissionFeedback } from "@/lib/studentManagement";
 import { useSubmissionFeedbackRealtime } from "@/hooks/useSubmissionFeedbackRealtime";
 import { useProblem, usePublishedProblems } from "@/hooks/useProblems";
 import { useAssignedProblems } from "@/hooks/useClasses";
-import { getAssignedClassNames } from "@/lib/classes";
 import type { Problem } from "@/integrations/supabase/types";
 import { usePyodide } from "@/hooks/usePyodide";
 import { buildGradingSummary, type GradingSummary } from "@/lib/grading";
@@ -39,11 +38,6 @@ export default function Solve({ embedded = false, problemId: problemIdProp }: { 
   const { data: published = [] } = usePublishedProblems(!isMyClass);
   const { data: assigned = [] } = useAssignedProblems(isMyClass ? user?.id : undefined);
   const problems = isMyClass ? assigned : published;
-  const { data: classNames = [] } = useQuery({
-    queryKey: ["assigned-class-names", user?.id, problemId],
-    queryFn: () => getAssignedClassNames(user!.id, problemId!),
-    enabled: isMyClass && !!user && !!problemId,
-  });
   const { run, running, stop } = usePyodide();
 
   const { data: submissions = [], refetch: refetchSubmissions } = useQuery({
@@ -184,11 +178,6 @@ export default function Solve({ embedded = false, problemId: problemIdProp }: { 
           <Button size="icon" variant="ghost" onClick={() => navigate(lessonScopeId ? `/student/lessons/${lessonScopeId}` : isMyClass ? "/student/myclass" : `/practice/${problem.category}`)} title="목록으로">
             <ArrowLeft />
           </Button>
-        )}
-        {!embedded && (
-          <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold uppercase text-primary-foreground">
-            {isMyClass && classNames.length > 0 ? classNames.join(", ") : problem.category}
-          </span>
         )}
         <h1 className="text-lg font-semibold">{problem.title}</h1>
         <Button
