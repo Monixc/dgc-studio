@@ -1413,10 +1413,7 @@ function PracticeCategoryMenu({
   onExit: () => void;
 }) {
   const prose = CATEGORIES.find((item) => item.id === "english")!;
-  const codeOrder: Category[] = [
-    "python", "javascript", "typescript", "react", "html",
-    "css", "sql", "lua", "shell",
-  ];
+  const codeOrder: Category[] = ["python", "javascript", "lua"];
   const code = codeOrder.map((id) => CATEGORIES.find((item) => item.id === id)!);
   const cardTone: Record<Category, string> = {
     english: "bg-[#f4c95d] text-[#342500] hover:bg-[#ffd86b]",
@@ -1430,115 +1427,82 @@ function PracticeCategoryMenu({
     css: "bg-[#264de4] text-white hover:bg-[#345bed]",
     shell: "bg-[#4eaa25] text-white hover:bg-[#5ab932]",
   };
-  const cardLayout: Partial<Record<Category, string>> = {
-    python: "sm:col-span-3 sm:row-span-2",
-    javascript: "sm:col-span-3",
-    typescript: "sm:col-span-3",
-    react: "sm:col-span-2 sm:row-span-2",
-    html: "sm:col-span-2",
-    css: "sm:col-span-2",
-    sql: "sm:col-span-2",
-    lua: "sm:col-span-2",
-    shell: "sm:col-span-6",
-  };
   const cardGroup: Partial<Record<Category, string>> = {
     python: "GENERAL PURPOSE",
     lua: "SCRIPTING",
     javascript: "WEB CORE",
-    html: "WEB STRUCTURE",
-    typescript: "TYPED WEB",
-    sql: "DATA",
-    react: "UI COMPONENT",
-    css: "UI STYLE",
-    shell: "AUTOMATION & CLI",
   };
 
   return (
-    <main className="min-h-screen bg-[#090d14] px-3 py-4 font-sans text-zinc-100 sm:px-6 sm:py-6 lg:px-8">
-      <div className="mx-auto max-w-6xl overflow-hidden rounded-2xl border border-zinc-700/80 bg-[#0d1117] shadow-[0_24px_80px_rgba(0,0,0,.4)]">
-        <div className="flex h-11 items-center gap-3 border-b border-zinc-800 bg-[#161b22] px-4">
-          <div className="flex gap-1.5" aria-hidden>
-            <span className="size-3 rounded-full bg-[#ff5f56]" />
-            <span className="size-3 rounded-full bg-[#ffbd2e]" />
-            <span className="size-3 rounded-full bg-[#27c93f]" />
+    <main className="min-h-screen bg-background px-3 py-4 sm:px-6 sm:py-6 lg:px-8">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <p className="text-[10px] font-bold tracking-[0.24em] text-primary">TYPING PRACTICE</p>
+            <h1 className="mt-1 text-2xl font-black tracking-tight sm:text-3xl">연습할 콘텐츠를 선택하세요</h1>
           </div>
-          <span className="rounded-t-md border border-b-0 border-zinc-700/80 bg-[#0d1117] px-4 py-2 text-xs text-zinc-400">
-            typing-practice.menu
-          </span>
-          <button
-            type="button"
-            onClick={onExit}
-            className="ml-auto inline-flex items-center gap-2 text-xs text-zinc-500 transition hover:text-white"
-          >
+          <Button variant="ghost" onClick={onExit} className="gap-2 text-muted-foreground">
             <ArrowLeft className="size-4" /> 돌아가기
-          </button>
+          </Button>
         </div>
 
-        <div className="p-4 sm:p-6 lg:p-8">
-          <header className="mb-6">
-            <p className="text-[10px] font-bold tracking-[0.24em] text-sky-400">TYPING PRACTICE</p>
-            <h1 className="mt-1 text-2xl font-black tracking-tight sm:text-3xl">연습할 콘텐츠를 선택하세요</h1>
-          </header>
-
-          <button
-            type="button"
-            onClick={() => onSelect(prose.id)}
-            className={cn(
-              "group relative flex min-h-44 w-full overflow-hidden rounded-2xl p-6 text-left transition sm:min-h-52 sm:p-8",
-              cardTone.english,
-            )}
+        <button
+          type="button"
+          onClick={() => onSelect(prose.id)}
+          className={cn(
+            "group relative flex min-h-44 w-full overflow-hidden rounded-none p-6 text-left transition sm:min-h-52 sm:p-8",
+            cardTone.english,
+          )}
+        >
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,.35),transparent_42%)]" />
+          <span
+            aria-hidden
+            className="pointer-events-none absolute -right-3 top-1/2 -translate-y-1/2 text-[7rem] font-black leading-none tracking-[-0.08em] text-white/20 transition group-hover:scale-105 sm:right-5 sm:text-[10rem]"
           >
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,255,255,.35),transparent_42%)]" />
-            <span
-              aria-hidden
-              className="pointer-events-none absolute -right-3 top-1/2 -translate-y-1/2 text-[7rem] font-black leading-none tracking-[-0.08em] text-white/20 transition group-hover:scale-105 sm:right-5 sm:text-[10rem]"
-            >
-              ABC
-            </span>
-            <div className="relative flex w-full items-end justify-between gap-6">
-              <div>
-                <p className="text-[10px] font-bold tracking-[0.22em] opacity-55">PUBLIC DOMAIN LITERATURE</p>
-                <h2 className="mt-1 text-3xl font-black sm:text-4xl">영문 타자</h2>
-                <p className="mt-2 max-w-xl text-sm opacity-60">고전 문학 11,000여 문장과 문단으로 자연스럽게 영문 타자를 연습합니다.</p>
-              </div>
-              <ChevronRight className="size-7 shrink-0 opacity-35 transition group-hover:translate-x-1 group-hover:opacity-80" />
-            </div>
-          </button>
-
-          <div className="mb-3 mt-7 flex items-end justify-between">
+            ABC
+          </span>
+          <div className="relative flex w-full items-end justify-between gap-6">
             <div>
-              <p className="text-[10px] font-bold tracking-[0.22em] text-sky-400/60">CODE TRAINING</p>
-              <h2 className="mt-1 text-lg font-bold">코드 타자</h2>
+              <p className="text-[10px] font-bold tracking-[0.22em] opacity-55">PUBLIC DOMAIN LITERATURE</p>
+              <h2 className="mt-1 text-3xl font-black sm:text-4xl">영문 타자</h2>
+              <p className="mt-2 max-w-xl text-sm opacity-60">고전 문학 11,000여 문장과 문단으로 자연스럽게 영문 타자를 연습합니다.</p>
             </div>
-            <span className="text-xs text-zinc-600">언어별 300개 이상 스니펫</span>
+            <ChevronRight className="size-7 shrink-0 opacity-35 transition group-hover:translate-x-1 group-hover:opacity-80" />
           </div>
+        </button>
 
-          <div className="grid grid-flow-row-dense grid-cols-2 gap-3 sm:auto-rows-[8rem] sm:grid-cols-6">
-            {code.map((item) => {
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => onSelect(item.id)}
-                  className={cn(
-                    "group relative flex min-h-32 flex-col justify-between overflow-hidden rounded-xl p-4 text-left transition hover:-translate-y-0.5 hover:shadow-lg",
-                    cardTone[item.id],
-                    cardLayout[item.id],
-                  )}
-                >
-                  <CategoryLogoWatermark category={item.id} />
-                  <div className="relative z-10 flex items-start justify-between">
-                    <span className="text-[9px] font-bold tracking-[0.16em] opacity-60">{cardGroup[item.id]}</span>
-                    <span className="text-[9px] font-bold uppercase tracking-wider opacity-50">{item.extension}</span>
-                  </div>
-                  <div className="relative z-10">
-                    <h3 className="text-sm font-black">{item.label}</h3>
-                    <p className="mt-1 text-xs opacity-70">{item.description}</p>
-                  </div>
-                </button>
-              );
-            })}
+        <div className="mb-3 mt-7 flex items-end justify-between">
+          <div>
+            <p className="text-[10px] font-bold tracking-[0.22em] text-primary/60">CODE TRAINING</p>
+            <h2 className="mt-1 text-lg font-bold">코드 타자</h2>
           </div>
+          <span className="text-xs text-muted-foreground">언어별 300개 이상 스니펫</span>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {code.map((item) => {
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => onSelect(item.id)}
+                className={cn(
+                  "group relative flex min-h-32 flex-col justify-between overflow-hidden rounded-none p-4 text-left transition hover:-translate-y-0.5 hover:shadow-lg",
+                  cardTone[item.id],
+                )}
+              >
+                <CategoryLogoWatermark category={item.id} />
+                <div className="relative z-10 flex items-start justify-between">
+                  <span className="text-[9px] font-bold tracking-[0.16em] opacity-60">{cardGroup[item.id]}</span>
+                  <span className="text-[9px] font-bold uppercase tracking-wider opacity-50">{item.extension}</span>
+                </div>
+                <div className="relative z-10">
+                  <h3 className="text-sm font-black">{item.label}</h3>
+                  <p className="mt-1 text-xs opacity-70">{item.description}</p>
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
     </main>
