@@ -97,6 +97,7 @@ export interface Lesson {
   code_practice: boolean;
   starter_code: string;
   folder_id: string | null;
+  attachments: AnnouncementAttachment[];
   created_by: string;
   created_at: string;
   updated_at: string;

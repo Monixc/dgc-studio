@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { cn, uuid } from "@/lib/utils";
 
 // ponytail: 수업 일정 localStorage 저장. 멀티기기/학생 공유 필요하면 classes 테이블로 이관.
 interface CalEvent {
@@ -72,7 +72,7 @@ export default function ScheduleCalendar({ className }: { className?: string }) 
     if (!draft || !draft.title.trim()) return;
     const next = draft.id
       ? events.map((e) => (e.id === draft.id ? draft : e))
-      : [...events, { ...draft, id: crypto.randomUUID() }];
+      : [...events, { ...draft, id: uuid() }];
     persist(next);
     setDraft(null);
   };

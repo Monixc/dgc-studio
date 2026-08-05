@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { uuid } from "@/lib/utils";
 
 /** 교사 문제 첨삭(submission_comments)을 학생 화면에 실시간 반영. RLS로 본인 관련 행만 수신. */
 export function useSubmissionFeedbackRealtime(enabled = true) {
@@ -8,7 +9,7 @@ export function useSubmissionFeedbackRealtime(enabled = true) {
   useEffect(() => {
     if (!enabled) return;
     const ch = supabase
-      .channel(`submission-comments:${crypto.randomUUID()}`)
+      .channel(`submission-comments:${uuid()}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "submission_comments" },

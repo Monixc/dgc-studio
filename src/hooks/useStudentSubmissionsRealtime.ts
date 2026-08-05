@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { uuid } from "@/lib/utils";
 
 /**
  * 문제 제출 실시간 반영. 학생이 답안을 제출하면 교사 학생관리/검토 목록이
@@ -11,7 +12,7 @@ export function useStudentSubmissionsRealtime(enabled = true) {
   useEffect(() => {
     if (!enabled) return;
     const ch = supabase
-      .channel(`submissions-changes:${crypto.randomUUID()}`)
+      .channel(`submissions-changes:${uuid()}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "submissions" },

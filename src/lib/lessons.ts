@@ -1,12 +1,23 @@
 import { supabase } from "@/integrations/supabase/client";
-import type { Lesson, Problem } from "@/integrations/supabase/types";
+import type { Lesson, Problem, AnnouncementAttachment } from "@/integrations/supabase/types";
+import { uuid } from "@/lib/utils";
 
 export const LESSONS_KEY = ["lessons"] as const;
+const LESSON_ASSETS_BUCKET = "lesson-assets";
 
 export type NewLesson = Pick<
   Lesson,
-  "title" | "content_type" | "content" | "code_practice" | "starter_code" | "folder_id"
+  "title" | "content_type" | "content" | "code_practice" | "starter_code" | "folder_id" | "attachments"
 >;
+
+export async function uploadLessonAsset(file: File): Promise<AnnouncementAttachment> {
+  const ext = file.name.split(".").pop();
+  const path = `${uuid()}${ext ? `.${ext}` : ""}`;
+  const { error } = await supabase.storage.from(LESSON_ASSETS_BUCKET).upload(path, file);
+  if (error) throw error;
+  const url = supabase.storage.from(LESSON_ASSETS_BUCKET).getPublicUrl(path).data.publicUrl;
+  return { url, name: file.name, mimeType: file.type || "application/octet-stream", kind: file.type.startsWith("image/") ? "image" : "file" };
+}
 
 export async function listLessons(userId: string): Promise<Lesson[]> {
   const { data, error } = await supabase
@@ -34,6 +45,7 @@ export async function createLesson(userId: string, input: Partial<NewLesson>): P
       code_practice: input.code_practice ?? false,
       starter_code: input.starter_code ?? "",
       folder_id: input.folder_id ?? null,
+      attachments: input.attachments ?? [],
       created_by: userId,
     })
     .select()

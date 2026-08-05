@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 import type { ProblemFolder } from "@/integrations/supabase/types";
 
 const ALL = "__all__";
+const UNASSIGNED = "__unassigned__";
 const PROBLEM_DND_TYPE = "text/flowpy-problem-id";
 
 export default function ProblemManager() {
@@ -73,7 +74,13 @@ export default function ProblemManager() {
     if (activeFolder === ALL && rootFolders[0]) setActiveFolder(rootFolders[0].id);
   }, [activeFolder, rootFolders]);
 
-  const filtered = activeFolder === ALL ? problems : problems.filter((p) => p.folder_id === activeFolder);
+  const unassignedCount = problems.filter((p) => !p.folder_id).length;
+  const filtered =
+    activeFolder === ALL
+      ? problems
+      : activeFolder === UNASSIGNED
+        ? problems.filter((p) => !p.folder_id)
+        : problems.filter((p) => p.folder_id === activeFolder);
 
   function toggleExpand(id: string) {
     setExpanded((prev) => {
@@ -120,9 +127,9 @@ export default function ProblemManager() {
 
   async function handleCreateProblem() {
     try {
-      // "전체"에서 추가하면 기본 대분류(순서도)로 들어감 — 미분류 상태를 만들지 않음.
+      // "전체"/"미분류"에서 추가하면 기본 대분류(순서도)로 들어감 — 새로 미분류 문제를 만들진 않음.
       const defaultFolder = folders.find((f) => f.category === "flowchart" && f.parent_id === null);
-      const folderId = activeFolder !== ALL ? activeFolder : defaultFolder?.id ?? null;
+      const folderId = activeFolder !== ALL && activeFolder !== UNASSIGNED ? activeFolder : defaultFolder?.id ?? null;
       const category = resolveFolderCategory(folderId, folders);
       const p = await createProblemMut.mutateAsync({ userId, category, folderId });
       setSelectedId(p.id);
@@ -210,6 +217,21 @@ export default function ProblemManager() {
           updateProblemMut.mutateAsync({ id, patch: { folder_id: folderId, category: resolveFolderCategory(folderId, folders) } })
         )
       );
+      if (ids.length > 1) setBulkSelected(new Set());
+    } catch (e: any) {
+      toast.error(e?.message ?? "이동 실패");
+    }
+  }
+
+  async function handleDropOnUnassigned(e: React.DragEvent) {
+    e.preventDefault();
+    setDragOverId(null);
+    const raw = e.dataTransfer.getData(PROBLEM_DND_TYPE);
+    if (!raw) return;
+    let ids: string[];
+    try { ids = JSON.parse(raw); } catch { ids = [raw]; }
+    try {
+      await Promise.all(ids.map((id) => updateProblemMut.mutateAsync({ id, patch: { folder_id: null } })));
       if (ids.length > 1) setBulkSelected(new Set());
     } catch (e: any) {
       toast.error(e?.message ?? "이동 실패");
@@ -307,6 +329,23 @@ export default function ProblemManager() {
             <SidebarGroupLabel>폴더</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
+                <SidebarMenuItem>
+                  <div
+                    onClick={() => setActiveFolder(UNASSIGNED)}
+                    onDragOver={(e) => { e.preventDefault(); setDragOverId(UNASSIGNED); }}
+                    onDragLeave={() => setDragOverId((id) => (id === UNASSIGNED ? null : id))}
+                    onDrop={(e) => void handleDropOnUnassigned(e)}
+                    className={cn(
+                      sidebarMenuButtonVariants({ isActive: activeFolder === UNASSIGNED }),
+                      "cursor-pointer",
+                      dragOverId === UNASSIGNED && "ring-2 ring-primary"
+                    )}
+                  >
+                    <Folder className="size-4 shrink-0 text-muted-foreground" />
+                    <span className="flex-1 truncate font-medium group-data-[collapsible=icon]:hidden">미분류</span>
+                    <span className="text-xs text-muted-foreground group-data-[collapsible=icon]:hidden">{unassignedCount}</span>
+                  </div>
+                </SidebarMenuItem>
                 {childrenOf(null).map((f) => (
                   <FolderTreeNode
                     key={f.id}
@@ -336,6 +375,8 @@ export default function ProblemManager() {
             <SidebarGroupLabel>
               {bulkSelected.size > 0 ? (
                 `${bulkSelected.size}개 선택됨`
+              ) : activeFolder === UNASSIGNED ? (
+                "미분류"
               ) : (
                 <span className="flex min-w-0 items-center gap-1 truncate">
                   {folderPath(activeFolder).map((f, i) => (

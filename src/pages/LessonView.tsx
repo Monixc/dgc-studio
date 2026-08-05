@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Paperclip, ImagePlus } from "lucide-react";
 import { useLesson } from "@/hooks/useLessons";
 import { usePyodide } from "@/hooks/usePyodide";
 import EditorPanel from "@/components/editor/EditorPanel";
@@ -8,6 +9,26 @@ import { CourseShell } from "@/components/student/StudentCourseNav";
 import Solve from "@/pages/Solve";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import type { Lesson } from "@/integrations/supabase/types";
+
+function LessonAttachments({ lesson }: { lesson: Lesson }) {
+  if (lesson.attachments.length === 0) return null;
+  return (
+    <div className="flex flex-wrap gap-2 border-t bg-background px-5 py-3">
+      {lesson.attachments.map((att, index) => (
+        <a
+          key={index}
+          href={att.url}
+          download={att.name}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-1.5 rounded-md border bg-muted/50 px-2 py-1 text-xs hover:bg-accent"
+        >
+          {att.kind === "image" ? <ImagePlus className="size-3.5" /> : <Paperclip className="size-3.5" />} {att.name}
+        </a>
+      ))}
+    </div>
+  );
+}
 
 /** HTML 교안: blob URL로 로드해 iframe 자체를 base로 삼음(목차 #앵커·상대경로가 앱 라우터로 새지 않도록). */
 function LessonHtml({ lesson }: { lesson: Lesson }) {
@@ -72,6 +93,7 @@ export default function LessonView() {
             <LessonContent lesson={lesson} />
           )}
         </div>
+        <LessonAttachments lesson={lesson} />
       </div>
     );
   }

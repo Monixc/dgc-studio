@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PORTFOLIO_SUBMISSIONS_KEY } from "@/hooks/usePortfolio";
+import { uuid } from "@/lib/utils";
 
 /**
  * 포트폴리오 제출/피드백 실시간 반영. 학생 제출 → 교사, 교사 피드백 → 학생 방향 모두
@@ -12,7 +13,7 @@ export function usePortfolioRealtime(enabled = true) {
   useEffect(() => {
     if (!enabled) return;
     const ch = supabase
-      .channel(`portfolio-changes:${crypto.randomUUID()}`)
+      .channel(`portfolio-changes:${uuid()}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "portfolio_submissions" },

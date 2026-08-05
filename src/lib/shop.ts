@@ -1,12 +1,13 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { ShopItem, ShopOrder } from "@/integrations/supabase/types";
+import { uuid } from "@/lib/utils";
 
 export const SHOP_ITEMS_KEY = ["shop-items"] as const;
 export const SHOP_ORDERS_KEY = ["shop-orders"] as const;
 
 export async function uploadShopImage(file: File): Promise<string> {
   const ext = file.name.split(".").pop();
-  const path = `${crypto.randomUUID()}.${ext}`;
+  const path = `${uuid()}.${ext}`;
   const { error } = await supabase.storage.from("shop-items").upload(path, file);
   if (error) throw error;
   return supabase.storage.from("shop-items").getPublicUrl(path).data.publicUrl;

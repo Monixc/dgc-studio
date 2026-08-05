@@ -1,4 +1,5 @@
 import type { GradingTest, GradingDetail } from "@/integrations/supabase/types";
+import { uuid } from "@/lib/utils";
 
 /** 출력 비교용 정규화: CRLF 통일, 각 줄 우측 공백 제거, 전체 트림. */
 export function normalizeOutput(text: string): string {
@@ -12,7 +13,7 @@ export function normalizeOutput(text: string): string {
 
 export function makeEmptyTest(): GradingTest {
   return {
-    id: crypto.randomUUID(),
+    id: uuid(),
     title: "새 테스트",
     input: "",
     expectedOutput: "",

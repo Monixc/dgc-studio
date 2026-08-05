@@ -7,6 +7,7 @@ import type {
   PortfolioDocument,
   PortfolioSubmission,
 } from "@/integrations/supabase/types";
+import { uuid } from "@/lib/utils";
 
 export const PORTFOLIO_ASSETS_BUCKET = "portfolio-assets";
 
@@ -238,7 +239,7 @@ export async function listPortfolioSubmissionAssets(submissionId: string): Promi
 
 export async function uploadPortfolioAsset(documentId: string, file: File): Promise<PortfolioAsset> {
   const studentId = await requireUserId();
-  const assetId = crypto.randomUUID();
+  const assetId = uuid();
   const storagePath = `${studentId}/${documentId}/${assetId}`;
   const { error: uploadError } = await supabase.storage
     .from(PORTFOLIO_ASSETS_BUCKET)

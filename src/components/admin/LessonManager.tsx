@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Plus, Upload, Trash2, FileText, FileCode, Code2, Eye, Pencil, Folder, FolderPlus, Check, ClipboardList, X, ChevronRight, ChevronDown } from "lucide-react";
+import { Plus, Upload, Trash2, FileText, FileCode, Code2, Eye, Pencil, Folder, FolderPlus, Check, ClipboardList, X, ChevronRight, ChevronDown, Paperclip, ImagePlus, Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useConfirm } from "@/hooks/use-confirm";
 import {
@@ -11,7 +11,8 @@ import {
   useLessonProblemIds,
   useSetLessonProblems,
 } from "@/hooks/useLessons";
-import { useMyProblems } from "@/hooks/useProblems";
+import { uploadLessonAsset } from "@/lib/lessons";
+import { useMyProblems, useUpdateProblem } from "@/hooks/useProblems";
 import AssignProblemsDialog from "@/components/admin/AssignProblemsDialog";
 import {
   useLessonFolders,
@@ -34,7 +35,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Markdown } from "@/components/Markdown";
 import { cn } from "@/lib/utils";
-import type { Lesson, LessonFolder } from "@/integrations/supabase/types";
+import type { Lesson, LessonFolder, AnnouncementAttachment } from "@/integrations/supabase/types";
 
 const NONE = "__none__";
 const LESSON_DND_TYPE = "text/flowpy-lesson-id";
@@ -45,6 +46,7 @@ interface Draft {
   code_practice: boolean;
   starter_code: string;
   folder_id: string | null;
+  attachments: AnnouncementAttachment[];
 }
 
 /** HTML 미리보기 — blob URL 로드로 목차 링크가 앱 라우터로 새지 않게. */
@@ -66,6 +68,7 @@ function toDraft(l: Lesson): Draft {
     code_practice: l.code_practice,
     starter_code: l.starter_code,
     folder_id: l.folder_id,
+    attachments: l.attachments,
   };
 }
 
@@ -83,6 +86,7 @@ export default function LessonManager() {
   const deleteFolderMut = useDeleteLessonFolder();
   const { data: myProblems = [] } = useMyProblems(userId);
   const setLessonProbsMut = useSetLessonProblems();
+  const updateProblemMut = useUpdateProblem();
 
   const [activeFolder, setActiveFolder] = useState<string>(NONE);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
@@ -99,12 +103,24 @@ export default function LessonManager() {
   const fileRef = useRef<HTMLInputElement>(null);
   // true면 현재 교안의 파일 교체, false면 새 교안 생성
   const replaceRef = useRef(false);
+  const [assetUploading, setAssetUploading] = useState(false);
+  const assetImageRef = useRef<HTMLInputElement>(null);
+  const assetFileRef = useRef<HTMLInputElement>(null);
 
   const selected = lessons.find((l) => l.id === selectedId) ?? null;
   const { data: attachedIds = [] } = useLessonProblemIds(selected?.id);
   const attachedProblems = attachedIds
     .map((id) => myProblems.find((p) => p.id === id))
     .filter(Boolean) as typeof myProblems;
+
+  async function publishProblem(id: string) {
+    try {
+      await updateProblemMut.mutateAsync({ id, patch: { is_published: true } });
+      toast.success("발행됨");
+    } catch (e: any) {
+      toast.error(e?.message ?? "발행 실패");
+    }
+  }
 
   async function detachProblem(id: string) {
     if (!selected) return;
@@ -127,7 +143,8 @@ export default function LessonManager() {
       draft.content !== selected.content ||
       draft.code_practice !== selected.code_practice ||
       draft.starter_code !== selected.starter_code ||
-      (draft.folder_id ?? null) !== (selected.folder_id ?? null));
+      (draft.folder_id ?? null) !== (selected.folder_id ?? null) ||
+      JSON.stringify(draft.attachments) !== JSON.stringify(selected.attachments));
 
   const newFolderId = activeFolder === NONE ? null : activeFolder;
   const filtered = lessons.filter((l) =>
@@ -191,6 +208,25 @@ export default function LessonManager() {
     } catch (err: any) {
       toast.error(err?.message ?? "업로드 실패");
     }
+  }
+
+  async function addAssets(files: FileList | null) {
+    if (!files?.length || !draft) return;
+    setAssetUploading(true);
+    try {
+      for (const file of Array.from(files)) {
+        const attachment = await uploadLessonAsset(file);
+        setDraft((prev) => (prev ? { ...prev, attachments: [...prev.attachments, attachment] } : prev));
+      }
+    } catch (e: any) {
+      toast.error(e?.message ?? "첨부 업로드 실패");
+    } finally {
+      setAssetUploading(false);
+    }
+  }
+
+  function removeAsset(index: number) {
+    setDraft((prev) => (prev ? { ...prev, attachments: prev.attachments.filter((_, i) => i !== index) } : prev));
   }
 
   async function save() {
@@ -592,6 +628,57 @@ export default function LessonManager() {
             </div>
           )}
 
+          {/* 학습 자료 첨부 (학생이 교안에서 다운로드) */}
+          <div className="mt-4">
+            <div className="mb-2 flex items-center justify-between">
+              <p className="flex items-center gap-1.5 text-sm font-semibold">
+                <Paperclip className="size-4 text-muted-foreground" /> 학습 자료 ({draft.attachments.length})
+              </p>
+              <div className="flex gap-2">
+                <input
+                  ref={assetImageRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  hidden
+                  onChange={(e) => { void addAssets(e.target.files); e.target.value = ""; }}
+                />
+                <input
+                  ref={assetFileRef}
+                  type="file"
+                  multiple
+                  hidden
+                  onChange={(e) => { void addAssets(e.target.files); e.target.value = ""; }}
+                />
+                <Button size="sm" variant="outline" disabled={assetUploading} onClick={() => assetImageRef.current?.click()}>
+                  {assetUploading ? <Loader2 className="size-4 animate-spin" /> : <ImagePlus className="size-4" />} 이미지
+                </Button>
+                <Button size="sm" variant="outline" disabled={assetUploading} onClick={() => assetFileRef.current?.click()}>
+                  <Paperclip className="size-4" /> 파일
+                </Button>
+              </div>
+            </div>
+            {draft.attachments.length === 0 ? (
+              <div className="rounded-lg bg-muted/40 p-3 text-xs text-muted-foreground">
+                첨부된 학습 자료가 없습니다.
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {draft.attachments.map((att, index) => (
+                  <span key={index} className="flex items-center gap-1.5 rounded-md border bg-muted/50 px-2 py-1 text-xs">
+                    {att.kind === "image" ? <ImagePlus className="size-3.5" /> : <Paperclip className="size-3.5" />}
+                    <a href={att.url} target="_blank" rel="noopener noreferrer" className="max-w-40 truncate hover:underline">
+                      {att.name}
+                    </a>
+                    <Button variant="ghost" size="icon" className="size-5" onClick={() => removeAsset(index)} title="제거">
+                      <X className="size-3" />
+                    </Button>
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+
           {/* 이 교안에 붙는 문제 (학생은 교안 열면 콘텐츠 → 이 문제들 순서대로 풂) */}
           <div className="mt-4">
             <div className="mb-2 flex items-center justify-between">
@@ -613,9 +700,15 @@ export default function LessonManager() {
                     <span className="w-5 shrink-0 text-center text-xs text-muted-foreground">{i + 1}</span>
                     <span className="min-w-0 flex-1 truncate">{p.title || "(제목 없음)"}</span>
                     {!p.is_published && (
-                      <span className="shrink-0 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] text-amber-700">
-                        미발행 — 학생이 못 봄
-                      </span>
+                      <button
+                        type="button"
+                        onClick={() => publishProblem(p.id)}
+                        disabled={updateProblemMut.isPending}
+                        className="shrink-0 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] text-amber-700 hover:bg-amber-200"
+                        title="클릭해서 바로 발행"
+                      >
+                        미발행 — 클릭해서 발행
+                      </button>
                     )}
                     <Button variant="ghost" size="icon" className="size-6 text-muted-foreground hover:text-foreground" onClick={() => detachProblem(p.id)} title="떼기">
                       <X className="size-3.5" />
