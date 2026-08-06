@@ -87,6 +87,7 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
   useEffect(() => {
     const PAD = 20;
     const HEADER = 30;
+    const BOTTOM_PAD = 40; // 마지막 노드 ~ 하단 리턴점 여유(위/옆 PAD보다 넉넉하게)
     const byId = new Map(nodes.map((n) => [n.id, n]));
     const childrenOf = new Map<string, Node[]>();
     for (const n of nodes) {
@@ -102,7 +103,7 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
       const base = isFor ? actual : NODE_SIZE[nd.nodeType];
       return { actual, base };
     };
-    const fixes = new Map<string, { dx: number; dy: number; w: number; h: number }>();
+    const fixes = new Map<string, { dx: number; dy: number; w: number; h: number; curH: number }>();
     for (const [parentId, kids] of childrenOf) {
       const parent = byId.get(parentId)!;
       let left = Infinity, right = -Infinity, top = Infinity, bottom = -Infinity;
@@ -115,27 +116,46 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
         top = Math.min(top, cy - actual.h / 2);
         bottom = Math.max(bottom, cy + actual.h / 2);
       }
-      const dx = Math.max(0, PAD - left);
-      const dy = Math.max(0, HEADER + PAD - top);
+      // 폭은 항상 현재 중심 기준 좌우 대칭으로만 키움(한쪽만 늘어나 중심이 밀리지 않게)
       const curW = (parent.style?.width as number) ?? 260;
       const curH = (parent.style?.height as number) ?? 160;
-      const w = Math.max(curW, right + dx + PAD);
-      const h = Math.max(curH, bottom + dy + PAD);
-      if (dx > 0 || dy > 0 || w > curW || h > curH) fixes.set(parentId, { dx, dy, w, h });
+      const center = curW / 2;
+      const halfW = Math.max(center - left, right - center) + PAD;
+      const w = Math.max(curW, halfW * 2);
+      const dx = w / 2 - center;
+      const dy = Math.max(0, HEADER + PAD - top);
+      const h = Math.max(curH, bottom + dy + BOTTOM_PAD);
+      if (dx > 0 || dy > 0 || w > curW || h > curH) fixes.set(parentId, { dx, dy, w, h, curH });
     }
     if (fixes.size === 0) return;
+    // 컨테이너 높이가 늘어나면, 같은 스코프에서 그 아래(더 낮은 y)에 있는 형제 노드들도 늘어난 만큼 같이 내림
+    const belowShiftY = new Map<string, number>();
+    for (const [parentId, f] of fixes) {
+      const dh = f.h - f.curH;
+      if (dh <= 0) continue;
+      const container = byId.get(parentId)!;
+      const containerBottom = container.position.y + f.curH;
+      for (const n of nodes) {
+        if (n.id === parentId || n.parentId !== container.parentId) continue;
+        if (n.position.y >= containerBottom) belowShiftY.set(n.id, (belowShiftY.get(n.id) ?? 0) + dh);
+      }
+    }
     setNodes((ns) => ns.map((n) => {
       const asChild = n.parentId ? fixes.get(n.parentId) : undefined;
+      const extraDy = belowShiftY.get(n.id) ?? 0;
       if (asChild && (asChild.dx || asChild.dy)) {
         return { ...n, position: { x: n.position.x + asChild.dx, y: n.position.y + asChild.dy } };
       }
       const asParent = fixes.get(n.id);
-      if (!asParent) return n;
+      if (!asParent) {
+        return extraDy ? { ...n, position: { x: n.position.x, y: n.position.y + extraDy } } : n;
+      }
       return {
         ...n,
-        position: (asParent.dx || asParent.dy)
-          ? { x: n.position.x - asParent.dx, y: n.position.y - asParent.dy }
-          : n.position,
+        position: {
+          x: n.position.x - (asParent.dx || 0),
+          y: n.position.y - (asParent.dy || 0) + extraDy,
+        },
         style: { ...n.style, width: asParent.w, height: asParent.h },
       };
     }));
@@ -147,6 +167,7 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
         for (const k of kids) updateNodeInternals(k.id);
       }
     }
+    for (const id of belowShiftY.keys()) updateNodeInternals(id);
   }, [nodes, setNodes, updateNodeInternals]);
 
   // 연결 안 된 서브그래프(주로 def 함수, 혹은 예전에 저장된 낡은 좌표)가 메인 흐름과 겹쳐 보이면 오른쪽으로 떼어냄.
@@ -233,34 +254,6 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
       for (const id of moves.keys()) updateNodeInternals(id);
     }
   }, [nodes, edges, setNodes, updateNodeInternals]);
-
-  // if/while 분기선 좌/우 방향은 DSL 임포트 시 한 번 정해져 저장되는데, 타입별 기본 크기 차이 때문에
-  // 실제로는 같은 중심선(단일 진행)인데도 좌우로 꺾여 저장된 경우가 있음. 라이브 중심 좌표로 다시 판단해
-  // 정렬돼 있으면 곧게(bottom) 내려가게, 진짜 갈라지는 경우만 좌/우 유지.
-  useEffect(() => {
-    const byId = new Map(nodes.map((n) => [n.id, n]));
-    const centerX = (n: Node) => {
-      const nd = n.data as FlowNodeData;
-      const w = nd.nodeType === "for" ? (n.style?.width as number) ?? 260 : NODE_SIZE[nd.nodeType].w;
-      return n.position.x + w / 2;
-    };
-    let changed = false;
-    const next = edges.map((e) => {
-      if (e.sourceHandle !== "left" && e.sourceHandle !== "right") return e;
-      const s = byId.get(e.source);
-      const t = byId.get(e.target);
-      if (!s || !t) return e;
-      const sd = s.data as FlowNodeData;
-      const td = t.data as FlowNodeData;
-      if ((sd.nodeType !== "if" && sd.nodeType !== "while") || td.nodeType === "for") return e;
-      const dx = centerX(t) - centerX(s);
-      const wanted: "bottom" | "left" | "right" = Math.abs(dx) < 4 ? "bottom" : dx < 0 ? "left" : "right";
-      if (wanted === e.sourceHandle) return e;
-      changed = true;
-      return { ...e, sourceHandle: wanted, targetHandle: wanted === "bottom" ? "top" : e.targetHandle };
-    });
-    if (changed) setEdges(next);
-  }, [nodes, edges, setEdges]);
 
   // for 컨테이너의 진입점(forEntryX)은 로드 시 한 번만 계산돼 저장되는데, 위의 다른 보정들이
   // 자식 위치를 옮기면 낡은 값이 남아 진입 화살표가 실제 첫 자식 중심과 어긋나 보일 수 있음.

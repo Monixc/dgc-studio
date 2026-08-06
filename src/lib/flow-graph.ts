@@ -11,17 +11,9 @@ function baseDim(type: NodeType): { w: number; h: number } {
   return NODE_SIZE[type];
 }
 
-/** if/while 분기선 방향. 타입별 기본 크기가 달라도 실제 중심이 같으면(단일 진행) 좌우로 안 꺾이고 곧게 내려가게. */
-function branchHandle(
-  s: { type: NodeType; position?: { x: number; y: number } },
-  t: { type: NodeType; position?: { x: number; y: number } },
-  label?: string
-): "left" | "right" | "bottom" {
-  if (!s.position || !t.position) return label === "참" || label === "반복" ? "left" : "right";
-  const centerOf = (n: { type: NodeType; position: { x: number; y: number } }) => n.position.x + baseDim(n.type).w / 2;
-  const dx = centerOf({ ...t, position: t.position }) - centerOf({ ...s, position: s.position });
-  if (Math.abs(dx) < 4) return "bottom";
-  return dx < 0 ? "left" : "right";
+/** if/while 분기선 방향. 실제 좌표 상관없이 참=왼쪽/거짓=오른쪽으로 항상 고정(예외 없이 좌우 분기). */
+function branchHandle(label?: string): "left" | "right" {
+  return label === "참" || label === "반복" ? "left" : "right";
 }
 
 export function emptyGraph(): FlowGraph {
@@ -85,7 +77,7 @@ export function autoLayout(graph: FlowGraph): FlowGraph {
       const s = nodesById.get(e.source);
       const t = nodesById.get(e.target);
       if (s && t && (s.type === "if" || s.type === "while")) {
-        return { ...e, sourceHandle: branchHandle(s, t, e.label), targetHandle: "top" };
+        return { ...e, sourceHandle: branchHandle(e.label), targetHandle: "top" };
       }
       const back = (order.get(e.source) ?? 0) > (order.get(e.target) ?? 0);
       return { ...e, sourceHandle: back ? "right" : "bottom", targetHandle: back ? "left" : "top" };
@@ -106,6 +98,7 @@ export function dslToGraph(dsl: string): FlowGraph {
 
   const PAD = 20;
   const HEADER = 30;
+  const BOTTOM_PAD = 40; // 컨테이너 마지막 노드 ~ 하단 리턴점 사이 여유(위/옆 PAD보다 넉넉하게)
   const GAP = 36;
 
   // 컨테이너 소속(scope=for id) → parentId
@@ -139,7 +132,7 @@ export function dslToGraph(dsl: string): FlowGraph {
 
     // 2. dagre 그래프 구성
     const g = new dagre.graphlib.Graph();
-    g.setGraph({ rankdir: "TB", nodesep: 44, ranksep: 40, marginx: PAD, marginy: PAD });
+    g.setGraph({ rankdir: "TB", nodesep: 70, ranksep: 56, marginx: PAD, marginy: PAD });
     g.setDefaultEdgeLabel(() => ({}));
 
     // 자식 노드 추가
@@ -150,19 +143,9 @@ export function dslToGraph(dsl: string): FlowGraph {
       g.setNode(k.id, { width: w, height: h });
     }
 
-    // 자식 간의 간선 추가. else 없는 if/while이 "참" 갈래를 거쳐 바로 다음 문장으로 되돌아오는
-    // "거짓"(그대로 통과) 간선만 dagre 랭킹에서 제외 — 참 갈래가 곁가지처럼 별도 칸으로 밀려나
-    // 본선과 중심이 어긋나는 것을 막는다. elif 처럼 거짓 쪽이 서로 다른 새 분기로 이어지는
-    // 경우(대상 노드에 다른 진입 간선이 없음)는 그대로 둬 좌우로 갈라지게 한다.
-    // (제외해도 간선 자체는 edges 배열에 남아 시각적으로는 계속 그려짐)
+    // 자식 간의 간선 추가. if/while 조건은 항상 참/거짓 좌우로 갈라지게 모든 간선을 그대로 dagre에 반영.
     for (const e of data.edges) {
-      if (!kidsSet.has(e.source) || !kidsSet.has(e.target)) continue;
-      const s = byId.get(e.source);
-      if (e.label === "거짓" && (s?.type === "if" || s?.type === "while")) {
-        const mergesBack = data.edges.some((o) => o.target === e.target && o.source !== e.source && kidsSet.has(o.source));
-        if (mergesBack) continue;
-      }
-      g.setEdge(e.source, e.target);
+      if (kidsSet.has(e.source) && kidsSet.has(e.target)) g.setEdge(e.source, e.target);
     }
 
     // dagre 레이아웃 실행
@@ -213,7 +196,7 @@ export function dslToGraph(dsl: string): FlowGraph {
     }
 
     const w = Math.max(180, contentW + 2 * PAD);
-    const h = Math.max(110, contentH + HEADER + 2 * PAD);
+    const h = Math.max(110, contentH + HEADER + PAD + BOTTOM_PAD);
     const f = byId.get(forId)!;
     f.width = w;
     f.height = h;
@@ -324,7 +307,7 @@ export function dslToGraph(dsl: string): FlowGraph {
     if (t.type === "for") return { ...base, pathType: "straight" as const, sourceHandle: "bottom", targetHandle: "top" };
     // if 또는 while 분기 처리: 좌우로 분기하도록 설정
     if (s.type === "if" || s.type === "while") {
-      return { ...base, label: e.label, sourceHandle: branchHandle(s, t, e.label), targetHandle: "top" };
+      return { ...base, label: e.label, sourceHandle: branchHandle(e.label), targetHandle: "top" };
     }
 
     // 일반: 되돌아가기면 우측, 아니면 하단→상단
