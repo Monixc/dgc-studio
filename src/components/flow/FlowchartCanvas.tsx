@@ -79,44 +79,64 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resetKey]);
 
-  // for 컨테이너 안 자식 라벨이 길어져 커지면(nodeDims), 저장된 컨테이너 크기가 낡아 자식을 못 감쌀 수 있음
-  // → 편집/열람 모두에서 자식 크기 기준으로 부족하면 자동으로 키움(줄이지는 않음)
+  // for 컨테이너 안 자식 라벨이 길어져 커지면(nodeDims), 저장된 컨테이너 크기가 낡아 자식을 못 감쌀 수 있음.
+  // 다이아몬드(if/while)처럼 중심 기준 양옆으로 커지는 도형은 왼쪽/위로도 삐져나갈 수 있어
+  // 필요하면 컨테이너를 그쪽으로 밀고(자식은 반대로 밀어 화면상 위치 유지) 크기도 함께 키움.
   useEffect(() => {
     const PAD = 20;
+    const HEADER = 30;
     const byId = new Map(nodes.map((n) => [n.id, n]));
-    const need = new Map<string, { w: number; h: number }>();
+    const childrenOf = new Map<string, Node[]>();
     for (const n of nodes) {
       if (!n.parentId) continue;
       const parent = byId.get(n.parentId);
       if (!parent || (parent.data as FlowNodeData).nodeType !== "for") continue;
+      (childrenOf.get(n.parentId) ?? childrenOf.set(n.parentId, []).get(n.parentId)!).push(n);
+    }
+    const dimOf = (n: Node) => {
       const nd = n.data as FlowNodeData;
       const isFor = nd.nodeType === "for";
-      // 실제 렌더 크기(nodeDims)는 기본 크기 중심으로 대칭 확장되므로(FlowNode transform),
-      // 오른쪽/아래 끝은 position+기본크기/2 를 중심으로 실제 크기 절반을 더해야 정확하다.
       const actual = isFor ? { w: (n.style?.width as number) ?? 260, h: (n.style?.height as number) ?? 160 } : nodeDims(nd.nodeType, nd.label);
       const base = isFor ? actual : NODE_SIZE[nd.nodeType];
-      const right = n.position.x + base.w / 2 + actual.w / 2;
-      const bottom = n.position.y + base.h / 2 + actual.h / 2;
-      const cur = need.get(n.parentId) ?? { w: 0, h: 0 };
-      need.set(n.parentId, {
-        w: Math.max(cur.w, right + PAD),
-        h: Math.max(cur.h, bottom + PAD),
-      });
+      return { actual, base };
+    };
+    const fixes = new Map<string, { dx: number; dy: number; w: number; h: number }>();
+    for (const [parentId, kids] of childrenOf) {
+      const parent = byId.get(parentId)!;
+      let left = Infinity, right = -Infinity, top = Infinity, bottom = -Infinity;
+      for (const k of kids) {
+        const { actual, base } = dimOf(k);
+        const cx = k.position.x + base.w / 2;
+        const cy = k.position.y + base.h / 2;
+        left = Math.min(left, cx - actual.w / 2);
+        right = Math.max(right, cx + actual.w / 2);
+        top = Math.min(top, cy - actual.h / 2);
+        bottom = Math.max(bottom, cy + actual.h / 2);
+      }
+      const dx = Math.max(0, PAD - left);
+      const dy = Math.max(0, HEADER + PAD - top);
+      const curW = (parent.style?.width as number) ?? 260;
+      const curH = (parent.style?.height as number) ?? 160;
+      const w = Math.max(curW, right + dx + PAD);
+      const h = Math.max(curH, bottom + dy + PAD);
+      if (dx > 0 || dy > 0 || w > curW || h > curH) fixes.set(parentId, { dx, dy, w, h });
     }
-    let changed = false;
-    const next = nodes.map((n) => {
-      if ((n.data as FlowNodeData).nodeType !== "for") return n;
-      const req = need.get(n.id);
-      if (!req) return n;
-      const curW = (n.style?.width as number) ?? 260;
-      const curH = (n.style?.height as number) ?? 160;
-      const w = Math.max(curW, req.w);
-      const h = Math.max(curH, req.h);
-      if (w === curW && h === curH) return n;
-      changed = true;
-      return { ...n, style: { ...n.style, width: w, height: h } };
-    });
-    if (changed) setNodes(next);
+    if (fixes.size === 0) return;
+    setNodes((ns) => ns.map((n) => {
+      const asChild = n.parentId ? fixes.get(n.parentId) : undefined;
+      if (asChild && (asChild.dx || asChild.dy)) {
+        return { ...n, position: { x: n.position.x + asChild.dx, y: n.position.y + asChild.dy } };
+      }
+      const asParent = fixes.get(n.id);
+      if (!asParent) return n;
+      return {
+        ...n,
+        position: (asParent.dx || asParent.dy)
+          ? { x: n.position.x - asParent.dx, y: n.position.y - asParent.dy }
+          : n.position,
+        style: { ...n.style, width: asParent.w, height: asParent.h },
+      };
+    }));
   }, [nodes, setNodes]);
 
   // 연결 안 된 서브그래프(주로 def 함수, 혹은 예전에 저장된 낡은 좌표)가 메인 흐름과 겹쳐 보이면 오른쪽으로 떼어냄.
