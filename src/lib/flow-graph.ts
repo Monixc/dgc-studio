@@ -4,7 +4,7 @@ import type { FlowGraph, FlowNode, FlowEdge, NodeType } from "@/types/flowchart"
 import type { FlowchartPayload } from "@/integrations/supabase/types";
 import { parseDsl } from "@/lib/dsl-parser";
 import type { FlowNodeData } from "@/lib/flow-layout";
-import { NODE_SIZE } from "@/components/flow/FlowNode";
+import { nodeDims } from "@/components/flow/FlowNode";
 
 export function emptyGraph(): FlowGraph {
   return { nodes: [], edges: [] };
@@ -26,8 +26,8 @@ export function orderParentsFirst<T extends { id: string; parentId?: string }>(n
   return out;
 }
 
-export function sizeFor(type: NodeType): { w: number; h: number } {
-  return NODE_SIZE[type];
+export function sizeFor(type: NodeType, label = ""): { w: number; h: number } {
+  return nodeDims(type, label);
 }
 
 /** dagre 로 좌표를 (재)계산한 새 그래프 반환. 간선이 없으면 세로로 나란히 쌓는다. */
@@ -36,7 +36,7 @@ export function autoLayout(graph: FlowGraph): FlowGraph {
     let y = 20;
     return {
       nodes: graph.nodes.map((n) => {
-        const s = sizeFor(n.type);
+        const s = sizeFor(n.type, n.label);
         const node = { ...n, position: { x: 40, y } };
         y += s.h + 40;
         return node;
@@ -48,7 +48,7 @@ export function autoLayout(graph: FlowGraph): FlowGraph {
   g.setGraph({ rankdir: "TB", nodesep: 44, ranksep: 60, marginx: 20, marginy: 20 });
   g.setDefaultEdgeLabel(() => ({}));
   for (const n of graph.nodes) {
-    const s = sizeFor(n.type);
+    const s = sizeFor(n.type, n.label);
     g.setNode(n.id, { width: s.w, height: s.h });
   }
   for (const e of graph.edges) g.setEdge(e.source, e.target);
@@ -56,7 +56,7 @@ export function autoLayout(graph: FlowGraph): FlowGraph {
   const order = new Map(graph.nodes.map((n, i) => [n.id, i]));
   const nodes = graph.nodes.map((n) => {
     const p = g.node(n.id);
-    const s = sizeFor(n.type);
+    const s = sizeFor(n.type, n.label);
     return { ...n, position: { x: (p?.x ?? 0) - s.w / 2, y: (p?.y ?? 0) - s.h / 2 } };
   });
   const nodesById = new Map(nodes.map((n) => [n.id, n]));
@@ -128,8 +128,8 @@ export function dslToGraph(dsl: string): FlowGraph {
     // 자식 노드 추가
     const kidsSet = new Set(kids.map((k) => k.id));
     for (const k of kids) {
-      const w = k.type === "for" ? (k.width ?? 200) : NODE_SIZE[k.type].w;
-      const h = k.type === "for" ? (k.height ?? 60) : NODE_SIZE[k.type].h;
+      const w = k.type === "for" ? (k.width ?? 200) : nodeDims(k.type, k.label).w;
+      const h = k.type === "for" ? (k.height ?? 60) : nodeDims(k.type, k.label).h;
       g.setNode(k.id, { width: w, height: h });
     }
 
@@ -152,8 +152,8 @@ export function dslToGraph(dsl: string): FlowGraph {
     for (const k of kids) {
       const p = g.node(k.id);
       if (!p) continue;
-      const w = k.type === "for" ? (k.width ?? 200) : NODE_SIZE[k.type].w;
-      const h = k.type === "for" ? (k.height ?? 60) : NODE_SIZE[k.type].h;
+      const w = k.type === "for" ? (k.width ?? 200) : nodeDims(k.type, k.label).w;
+      const h = k.type === "for" ? (k.height ?? 60) : nodeDims(k.type, k.label).h;
       const x = p.x - w / 2;
       const y = p.y - h / 2;
 
@@ -172,8 +172,8 @@ export function dslToGraph(dsl: string): FlowGraph {
     for (const k of kids) {
       const p = g.node(k.id);
       if (p) {
-        const w = k.type === "for" ? (k.width ?? 200) : NODE_SIZE[k.type].w;
-        const h = k.type === "for" ? (k.height ?? 60) : NODE_SIZE[k.type].h;
+        const w = k.type === "for" ? (k.width ?? 200) : nodeDims(k.type, k.label).w;
+        const h = k.type === "for" ? (k.height ?? 60) : nodeDims(k.type, k.label).h;
         k.position = {
           x: p.x - w / 2 + offsetX,
           y: p.y - h / 2 + offsetY,
@@ -194,7 +194,7 @@ export function dslToGraph(dsl: string): FlowGraph {
   for (const id of forIds) if (byId.get(id)!.width == null) sizeContainer(id);
 
   // 최상위 노드 dagre 배치(컨테이너는 계산된 크기로)
-  const dimOf = (n: FlowNode) => (n.type === "for" ? { w: n.width ?? 260, h: n.height ?? 160 } : NODE_SIZE[n.type]);
+  const dimOf = (n: FlowNode) => (n.type === "for" ? { w: n.width ?? 260, h: n.height ?? 160 } : nodeDims(n.type, n.label));
   const g = new dagre.graphlib.Graph();
   g.setGraph({ rankdir: "TB", nodesep: 44, ranksep: 60, marginx: 20, marginy: 20 });
   g.setDefaultEdgeLabel(() => ({}));
@@ -281,7 +281,7 @@ export function toRFNodes(
 
   return ordered.map((n) => {
     const entryChild = n.type === "for" ? entryChildByForId.get(n.id) : undefined;
-    const entryWidth = entryChild ? (entryChild.type === "for" ? entryChild.width ?? 260 : NODE_SIZE[entryChild.type].w) : 0;
+    const entryWidth = entryChild ? (entryChild.type === "for" ? entryChild.width ?? 260 : nodeDims(entryChild.type, entryChild.label).w) : 0;
     const forEntryX = entryChild?.position ? entryChild.position.x + entryWidth / 2 : undefined;
     const node: Node = {
       id: n.id,

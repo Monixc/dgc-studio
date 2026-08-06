@@ -17,6 +17,25 @@ export const NODE_SIZE: Record<NodeType, { w: number; h: number }> = {
   call: { w: 180, h: 56 },
 };
 
+const CHAR_W = 6.5;
+const LINE_H = 16;
+const MAX_W = 320;
+const BASE_LINES = 2;
+
+/** 라벨 길이에 맞춰 노드 크기 계산(기본 크기 안엔 그대로, 넘치면 폭→그래도 넘치면 높이로 확장). */
+export function nodeDims(type: NodeType, label: string): { w: number; h: number } {
+  const base = NODE_SIZE[type];
+  if (type === "for") return base;
+  const padX = type === "if" || type === "while" ? 56 : 32;
+  const len = label.trim().length || 1;
+  const naturalW = len * CHAR_W + padX;
+  const w = Math.max(base.w, Math.min(naturalW, MAX_W));
+  const charsPerLine = Math.max(4, Math.floor((w - padX) / CHAR_W));
+  const lines = Math.max(1, Math.ceil(len / charsPerLine));
+  const h = base.h + Math.max(0, lines - BASE_LINES) * LINE_H;
+  return { w, h };
+}
+
 const DEFAULT_BG = "#ffffff";
 const DEFAULT_BORDER = "#111827";
 const DEFAULT_TEXT = "#111827";
@@ -73,7 +92,7 @@ const HANDLE_BASE =
 function FlowNodeInner({ id, data, selected }: NodeProps) {
   const d = data as FlowNodeData;
   const type = d.nodeType;
-  const { w, h } = NODE_SIZE[type];
+  const { w, h } = nodeDims(type, d.label);
   const diamond = type === "if" || type === "while";
   const editable = !!d.onLabelChange;
   const bg = d.style?.bg || DEFAULT_BG;
@@ -182,7 +201,7 @@ function FlowNodeInner({ id, data, selected }: NodeProps) {
             style={{ color: text }}
           />
         ) : (
-          <span className="line-clamp-2 break-words text-xs font-medium" style={{ color: text }}>
+          <span className="break-words text-xs font-medium" style={{ color: text }}>
             {d.label}
           </span>
         )}
