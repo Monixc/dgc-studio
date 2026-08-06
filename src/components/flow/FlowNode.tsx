@@ -137,14 +137,7 @@ function FlowNodeInner({ id, data, selected }: NodeProps) {
   const HANDLE_FOR = "!h-2.5 !w-2.5 !border !border-white !bg-gray-400";
   const handles = (
     <>
-      <Handle
-        id="top"
-        type="source"
-        position={Position.Top}
-        className={HANDLE_FOR}
-        style={d.forEntryX != null ? { left: d.forEntryX } : undefined}
-        isConnectable={editable}
-      />
+      <Handle id="top" type="source" position={Position.Top} className={HANDLE_FOR} isConnectable={editable} />
       {d.forEntryX != null && (
         <Handle
           id="top-entry"
