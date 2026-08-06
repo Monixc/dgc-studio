@@ -787,30 +787,6 @@ export function mountBlockWorkspace(
     return gap;
   };
 
-  const fillVarSelect = (sel: HTMLSelectElement, current: string) => {
-    sel.innerHTML = "";
-    if (!current) {
-      const opt = document.createElement("option");
-      opt.value = "";
-      opt.textContent = "변수 만들기…";
-      sel.appendChild(opt);
-    }
-    for (const v of variables) {
-      const opt = document.createElement("option");
-      opt.value = v;
-      opt.textContent = v;
-      sel.appendChild(opt);
-    }
-    if (current && !variables.includes(current)) {
-      const opt = document.createElement("option");
-      opt.value = current;
-      opt.textContent = current;
-      sel.appendChild(opt);
-    }
-    // 슬롯을 직접 고르지 않았으면 다른 변수로 몰래 채우지 않고 빈 채로 둔다
-    sel.value = current || "";
-  };
-
   const fillFuncSelect = (sel: HTMLSelectElement, current: string) => {
     sel.innerHTML = "";
     if (!definedFunctions.length) {
@@ -1023,19 +999,6 @@ export function mountBlockWorkspace(
       hint.className = "var-slot-empty";
       hint.textContent = "변수";
       wrap.appendChild(hint);
-      if (block.id !== "var_set" || slot.name !== "name") {
-        const sel = document.createElement("select");
-        sel.className = "block-slot block-var-select var-slot-select-fallback";
-        sel.style.width = `${width ?? slot.width ?? 88}px`;
-        fillVarSelect(sel, current);
-        sel.addEventListener("change", () => {
-          block.slots[slot.name] = sel.value;
-          fullRender();
-          notify();
-        });
-        sel.addEventListener("pointerdown", (e) => e.stopPropagation());
-        wrap.appendChild(sel);
-      }
       return wrap;
     }
 

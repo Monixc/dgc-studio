@@ -2,6 +2,7 @@
  * 블록 코딩 기본 튜토리얼 데이터.
  * 설명부터 하지 않고 "문제 → 학생 행동 → 실행 결과 → 개념 설명" 순서로 구성한다.
  * 튜토리얼 하나는 하나의 Python 개념을 담당하되, 그 개념을 여러 미션(스텝)에 걸쳐 단계적으로 익힌다.
+ * 전체 튜토리얼은 유령 캐릭터가 몬스터와 싸우는 하나의 배틀 스토리로 이어진다.
  * 교사가 문제 관리에서 직접 추가하는 문제 리스트와 달리, 이 콘텐츠는 코드로 고정 관리한다.
  */
 
@@ -43,13 +44,13 @@ function nonEmptyLines(output: string): string[] {
 export const BLOCK_TUTORIALS: Tutorial[] = [
   {
     id: "print",
-    title: "고양이를 말하게 하기",
+    title: "유령을 말하게 하기",
     concept: "print",
     summary: "print() 로 화면에 글자를 출력하는 법을 배웁니다.",
     missions: [
       {
         id: "print-1",
-        story: "고양이가 말을 하지 않습니다. 말하게 만들어주세요.",
+        story: "유령이 말을 하지 않습니다. 말하게 만들어주세요.",
         objective: '"말하기" 블록을 작업 영역에 놓고, 하고 싶은 말을 적어보세요.',
         tip: QUOTE_TIP,
         starterCode: "",
@@ -64,7 +65,7 @@ export const BLOCK_TUTORIALS: Tutorial[] = [
       },
       {
         id: "print-2",
-        story: "이번엔 고양이가 인사도 하고 이름도 말했으면 좋겠어요.",
+        story: "이번엔 유령이 인사도 하고 이름도 말했으면 좋겠어요.",
         objective: '"말하기" 블록을 두 개 놓고, 위에는 인사말을, 아래에는 이름을 순서대로 말하게 하세요.',
         tip: QUOTE_TIP,
         starterCode: "",
@@ -81,17 +82,17 @@ export const BLOCK_TUTORIALS: Tutorial[] = [
       },
       {
         id: "print-3",
-        story: '고양이가 신나서 "안녕하세요!"를 세 번 외치고 싶어합니다.',
-        objective: '"말하기" 블록을 세 개 놓고 모두 "안녕하세요!"라고 적어보세요.',
+        story: '유령이 신나서 전투 기합 "얍!"을 세 번 외치고 싶어합니다.',
+        objective: '"말하기" 블록을 세 개 놓고 모두 "얍!"이라고 적어보세요.',
         tip: QUOTE_TIP,
         starterCode: "",
         allowedBlockIds: ["print"],
         hints: [
           '"말하기" 블록을 세 번 끌어다 놓아보세요.',
-          '세 블록 모두 "안녕하세요!" 를 큰따옴표로 감싸서 적어보세요.',
-          "블록 세 개를 일일이 놓는 게 좀 번거롭죠? 이런 반복은 다음 튜토리얼에서 훨씬 짧게 만드는 법을 배워요.",
+          '세 블록 모두 "얍!" 을 큰따옴표로 감싸서 적어보세요.',
+          "블록 세 개를 일일이 놓는 게 좀 번거롭죠? 이런 반복은 나중에 반복문으로 훨씬 짧게 만드는 법을 배워요.",
         ],
-        explanation: "지금처럼 같은 걸 여러 번 반복해서 만드는 건 번거롭습니다. 이 불편함, 곧 반복문으로 해결해요!",
+        explanation: "지금처럼 같은 걸 여러 번 반복해서 만드는 건 번거롭습니다. 이 불편함, 나중에 반복문으로 해결해요!",
         validate: ({ code, output }) => {
           const printCount = (code.match(/print\(/g) ?? []).length;
           return printCount >= 3 && nonEmptyLines(output).length >= 3;
@@ -101,13 +102,13 @@ export const BLOCK_TUTORIALS: Tutorial[] = [
   },
   {
     id: "input",
-    title: "이름을 물어보기",
+    title: "용사 이름 물어보기",
     concept: "input",
     summary: "input() 으로 값을 입력받아 화면에 보여주는 법을 배웁니다.",
     missions: [
       {
         id: "input-1",
-        story: "고양이가 학생 이름이 궁금합니다. 이름을 물어보고 그대로 말하게 해주세요.",
+        story: "유령이 함께 모험할 용사의 이름이 궁금합니다. 이름을 물어보고 그대로 말하게 해주세요.",
         objective: '"입력받기" 블록으로 이름을 받고, "말하기" 블록으로 그 이름을 출력하세요.',
         starterCode: "",
         allowedBlockIds: ["input_stmt", "print", "variable"],
@@ -118,7 +119,7 @@ export const BLOCK_TUTORIALS: Tutorial[] = [
           '그 아래 "말하기" 블록을 놓고, 안에 그 상자를 넣어보세요. (따옴표 없이 상자 이름만 적으면 돼요)',
         ],
         explanation:
-          '"입력받기"는 파이썬의 input() 입니다. 학생이 답한 값을 상자(변수)에 기억해뒀다가 다시 쓸 수 있어요.',
+          '"입력받기"는 파이썬의 input() 입니다. 용사가 답한 값을 상자(변수)에 기억해뒀다가 다시 쓸 수 있어요.',
         validate: ({ code, output }) => code.includes("input(") && output.includes("테스트"),
       },
       {
@@ -141,103 +142,53 @@ export const BLOCK_TUTORIALS: Tutorial[] = [
   },
   {
     id: "variable",
-    title: "점수 저장하기",
+    title: "공격력 저장하기",
     concept: "variable",
     summary: "값을 변수에 저장하고 계산해서 다시 출력하는 법을 배웁니다.",
     missions: [
       {
         id: "variable-1",
-        story: "게임을 시작하면 점수는 0점부터 시작합니다. 점수를 상자에 저장해주세요.",
-        objective: "score 라는 상자를 만들어 0을 넣고, 화면에 출력하세요.",
+        story: "전투가 시작되면 공격력은 10부터 시작합니다. 공격력을 상자에 저장해주세요.",
+        objective: "power 라는 상자를 만들어 10을 넣고, 화면에 출력하세요.",
         starterCode: "",
         allowedBlockIds: ["var_set", "print", "variable"],
         hints: [
-          '"변수" 탭에서 "+ 변수 만들기"로 score 라는 상자를 만드세요.',
-          '"변수 = 값" 블록으로 score 를 0으로 만들어보세요.',
-          '"말하기" 블록으로 score 를 출력해보세요. (따옴표 없이 score 라고만 적으면 상자 안의 값이 나와요)',
+          '"변수" 탭에서 "+ 변수 만들기"로 power 라는 상자를 만드세요.',
+          '"변수 = 값" 블록으로 power 를 10으로 만들어보세요.',
+          '"말하기" 블록으로 power 를 출력해보세요. (따옴표 없이 power 라고만 적으면 상자 안의 값이 나와요)',
         ],
         explanation: "상자(변수)는 값을 기억해뒀다가 나중에 다시 쓸 수 있게 해줍니다. 파이썬에서는 이걸 변수라고 불러요.",
-        validate: ({ code, output }) => code.includes("=") && output.trim() === "0",
+        validate: ({ code, output }) => code.includes("=") && output.trim() === "10",
       },
       {
         id: "variable-2",
-        story: "점수를 얻었습니다! 상자 안의 값을 바꿔봅시다.",
-        objective: "score 에 5점을 더한 다음, 바뀐 점수를 출력하세요.",
-        starterCode: "score = 0\n",
+        story: "훈련으로 공격력이 강화됐습니다! 상자 안의 값을 바꿔봅시다.",
+        objective: "power 에 5를 더한 다음, 바뀐 공격력을 출력하세요.",
+        starterCode: "power = 10\n",
         allowedBlockIds: ["var_set", "operator_add", "print", "variable"],
         hints: [
-          '"+" 블록으로 score 에 5를 더해서 다시 score 에 저장해보세요.',
-          '마지막에 "말하기" 블록으로 score 를 출력해보세요.',
+          '"+" 블록으로 power 에 5를 더해서 다시 power 에 저장해보세요.',
+          '마지막에 "말하기" 블록으로 power 를 출력해보세요.',
         ],
         explanation: "변수는 이름 그대로 '변하는 값'이에요. 같은 상자에 새 값을 다시 저장하면 이전 값은 사라지고 새 값으로 바뀝니다.",
-        validate: ({ code, output }) => code.includes("=") && output.trim() === "5",
-      },
-    ],
-  },
-  {
-    id: "compare",
-    title: "합격인지 확인하기",
-    concept: "if",
-    summary: "조건이 맞을 때만 코드를 실행하는 if 문을 배웁니다.",
-    missions: [
-      {
-        id: "compare-1",
-        story: "점수가 60점보다 큰지 아닌지, 컴퓨터한테 직접 물어봅시다.",
-        objective: "score 가 60보다 큰지 비교한 결과를 그대로 출력하세요. (지금 score 는 75점이에요)",
-        starterCode: "score = 75\n",
-        allowedBlockIds: ["compare_gt", "print", "variable"],
-        hints: [
-          '"말하기" 블록을 놓고, 안에 score > 60 이라고 적어보세요. (연산 탭의 ">" 블록을 끼워도 돼요)',
-          "따옴표 없이 적어야 해요 — 지금은 글자가 아니라 '참인지 거짓인지' 그 자체를 물어보는 거예요.",
-        ],
-        explanation:
-          "score > 60 처럼 비교를 하면 파이썬은 True(참) 또는 False(거짓) 라는 값을 만들어냅니다. if 문은 바로 이 값을 보고 움직여요.",
-        validate: ({ code, output }) => !code.includes("if") && output.trim() === "True",
-      },
-      {
-        id: "compare-2",
-        story: "이번엔 점수가 낮은 학생도 확인해봅시다.",
-        objective: "score 가 60보다 큰지 비교한 결과를 그대로 출력하세요. (지금 score 는 40점이에요)",
-        starterCode: "score = 40\n",
-        allowedBlockIds: ["compare_gt", "print", "variable"],
-        hints: ['이전과 똑같이 score > 60 을 "말하기" 블록에 적어보세요.'],
-        explanation:
-          "같은 코드인데 score 값이 다르니 결과도 True에서 False로 바뀌었죠? 이제 이 True/False 에 따라 다른 행동을 하게 만들어봅시다 — 그게 if 입니다.",
-        validate: ({ code, output }) => !code.includes("if") && output.trim() === "False",
-      },
-      {
-        id: "compare-3",
-        story: "이제 진짜 채점기를 만들어봅시다. 합격이면 합격을, 아니면 재도전을 알려주세요.",
-        objective:
-          'if를 쓰면 조건이 True 냐 False 냐에 따라 서로 다른 코드를 실행할 수 있어요. score 가 60보다 크면 "합격", 아니면 "재도전" 을 출력해보세요. (지금 score 는 75점이에요)',
-        tip: QUOTE_TIP,
-        starterCode: "score = 75\n",
-        allowedBlockIds: ["if_else", "compare_gt", "print", "variable"],
-        hints: [
-          '"제어" 탭의 "if / else" 블록을 작업 영역에 놓으세요.',
-          "if 옆 조건 칸에 score > 60 이라고 적어보세요. (지난 미션과 똑같아요)",
-          'if 블록 안쪽엔 "말하기"로 "합격" 을, else 안쪽엔 "말하기"로 "재도전" 을 놓아보세요.',
-        ],
-        explanation:
-          "if 는 조건이 True 일 때만, else 는 조건이 False 일 때만 안쪽 블록을 실행합니다. 방금 두 미션에서 본 True/False 가 바로 이 갈림길을 정하는 거예요.",
-        validate: ({ code, output }) => code.includes("if") && output.trim() === "합격",
+        validate: ({ code, output }) => code.includes("=") && output.trim() === "15",
       },
     ],
   },
   {
     id: "loop",
-    title: "인사 5번 외치기",
+    title: "전투 시작! 기합 외치기",
     concept: "for",
     summary: "같은 동작을 여러 번 반복하는 for 문을 배웁니다.",
     missions: [
       {
         id: "loop-1",
-        story: '고양이가 응원 구호로 "안녕하세요!"를 5번 외치고 싶어합니다.',
-        objective: '"말하기" 블록을 5개 놓아서 "안녕하세요!"를 5번 출력하세요.',
+        story: '전투에 나서기 전, 기합으로 "파이팅!"을 5번 외치고 싶어합니다.',
+        objective: '"말하기" 블록을 5개 놓아서 "파이팅!"을 5번 출력하세요.',
         tip: QUOTE_TIP,
         starterCode: "",
         allowedBlockIds: ["print"],
-        hints: ['"말하기" 블록을 다섯 번 끌어다 놓고, 모두 "안녕하세요!" 라고 적어보세요.'],
+        hints: ['"말하기" 블록을 다섯 번 끌어다 놓고, 모두 "파이팅!" 이라고 적어보세요.'],
         explanation:
           '블록 5개를 일일이 놓느라 좀 힘들었죠? 100번 외쳐야 한다면 블록을 100개 놓아야 할까요? 이렇게 "정해진 횟수만큼 반복"해야 할 때 쓰는 도구가 있어요 — 바로 반복문입니다.',
         validate: ({ code, output }) => {
@@ -263,14 +214,14 @@ export const BLOCK_TUTORIALS: Tutorial[] = [
       },
       {
         id: "loop-3",
-        story: '아까 블록 5개를 직접 놓아서 만들었던 "안녕하세요!" 5번을, 이번엔 for 문 하나로 끝내봅시다.',
-        objective: '"안녕하세요!" 를 5번 반복해서 출력하세요. (이번엔 블록 2개면 충분해요)',
+        story: '아까 블록 5개를 직접 놓아서 만들었던 "파이팅!" 5번을, 이번엔 for 문 하나로 끝내봅시다.',
+        objective: '"파이팅!" 를 5번 반복해서 출력하세요. (이번엔 블록 2개면 충분해요)',
         tip: QUOTE_TIP,
         starterCode: "",
         allowedBlockIds: ["for_range", "print", "variable"],
         hints: [
           '이전 미션처럼 "변수" 탭에서 i 상자를 만들고, "for range" 블록에 i와 5를 넣으세요.',
-          '이번엔 안쪽 "말하기" 블록에 i 대신 "안녕하세요!" 를 큰따옴표로 감싸서 적어보세요.',
+          '이번엔 안쪽 "말하기" 블록에 i 대신 "파이팅!" 을 큰따옴표로 감싸서 적어보세요.',
         ],
         explanation: "아까는 블록 5개, 이번엔 for + 말하기 블록 2개로 끝났죠? 반복 횟수가 100번이어도 코드 길이는 그대로예요 — 이게 반복문의 힘입니다.",
         validate: ({ code, output }) => code.includes("for ") && nonEmptyLines(output).length >= 5,
@@ -342,14 +293,319 @@ export const BLOCK_TUTORIALS: Tutorial[] = [
     ],
   },
   {
+    id: "compare",
+    title: "승패 판정하기",
+    concept: "if",
+    summary: "조건이 맞을 때만 코드를 실행하는 if 문을 배웁니다.",
+    missions: [
+      {
+        id: "compare-1",
+        story: "몬스터의 HP가 정말 0이 됐는지, 컴퓨터한테 직접 물어봅시다.",
+        objective: "hp 가 0인지 비교한 결과를 그대로 출력하세요. (지금 hp는 0이에요)",
+        starterCode: "hp = 0\n",
+        allowedBlockIds: ["compare_eq", "print", "variable"],
+        hints: [
+          '"말하기" 블록을 놓고, 안에 hp == 0 이라고 적어보세요. (연산 탭의 "==" 블록을 끼워도 돼요)',
+          "따옴표 없이 적어야 해요 — 지금은 글자가 아니라 '참인지 거짓인지' 그 자체를 물어보는 거예요.",
+        ],
+        explanation:
+          "hp == 0 처럼 비교를 하면 파이썬은 True(참) 또는 False(거짓) 라는 값을 만들어냅니다. if 문은 바로 이 값을 보고 움직여요.",
+        validate: ({ code, output }) => !code.includes("if") && output.trim() === "True",
+      },
+      {
+        id: "compare-2",
+        story: "이번엔 몬스터가 아직 쓰러지지 않은 상황도 확인해봅시다.",
+        objective: "hp 가 0인지 비교한 결과를 그대로 출력하세요. (지금 hp는 3이에요)",
+        starterCode: "hp = 3\n",
+        allowedBlockIds: ["compare_eq", "print", "variable"],
+        hints: ['이전과 똑같이 hp == 0 을 "말하기" 블록에 적어보세요.'],
+        explanation:
+          "같은 코드인데 hp 값이 다르니 결과도 True에서 False로 바뀌었죠? 이제 이 True/False 에 따라 다른 행동을 하게 만들어봅시다 — 그게 if 입니다.",
+        validate: ({ code, output }) => !code.includes("if") && output.trim() === "False",
+      },
+      {
+        id: "compare-3",
+        story: "이제 진짜 승패 판정기를 만들어봅시다. 몬스터를 쓰러뜨렸으면 승리를, 아니면 아직임을 알려주세요.",
+        objective:
+          'if를 쓰면 조건이 True 냐 False 냐에 따라 서로 다른 코드를 실행할 수 있어요. hp 가 0 이면 "승리!", 아니면 "아직이에요" 를 출력해보세요. (지금 hp는 0이에요)',
+        tip: QUOTE_TIP,
+        starterCode: "hp = 0\n",
+        allowedBlockIds: ["if_else", "compare_eq", "print", "variable"],
+        hints: [
+          '"제어" 탭의 "if / else" 블록을 작업 영역에 놓으세요.',
+          "if 옆 조건 칸에 hp == 0 이라고 적어보세요. (지난 미션과 똑같아요)",
+          'if 블록 안쪽엔 "말하기"로 "승리!" 를, else 안쪽엔 "말하기"로 "아직이에요" 를 놓아보세요.',
+        ],
+        explanation:
+          "if 는 조건이 True 일 때만, else 는 조건이 False 일 때만 안쪽 블록을 실행합니다. 방금 두 미션에서 본 True/False 가 바로 승패를 가르는 갈림길이에요.",
+        validate: ({ code, output }) => code.includes("if") && output.trim() === "승리!",
+      },
+    ],
+  },
+  {
+    id: "random",
+    title: "공격력 랜덤 뽑기",
+    concept: "random",
+    summary: "random 모듈을 불러와 무작위 값을 만드는 법을 배웁니다.",
+    missions: [
+      {
+        id: "random-1",
+        story: "공격력이 매번 똑같이 5로 나가서 전투가 뻔하고 재미없어요.",
+        objective: "attack 상자를 만들어 5를 넣고 출력하세요.",
+        starterCode: "",
+        allowedBlockIds: ["var_set", "print", "variable"],
+        hints: [
+          '"변수" 탭에서 attack 상자를 만드세요.',
+          '"변수 = 값" 블록으로 attack 을 5로 만들어보세요.',
+          '"말하기" 블록으로 attack 을 출력해보세요.',
+        ],
+        explanation:
+          "매번 값이 똑같으니 다음 공격력도 미리 다 보이죠? 예측 불가능한 무작위 값을 뽑는 방법을 배워봅시다 — random 모듈입니다.",
+        validate: ({ code, output }) => !code.includes("randint") && output.trim() === "5",
+      },
+      {
+        id: "random-2",
+        story: "이번엔 공격력을 1~10 사이 무작위 값으로 뽑아봅시다.",
+        objective:
+          "random 모듈을 불러오면 random.randint(a, b) 로 a부터 b 사이의 무작위 정수를 뽑을 수 있어요. random 모듈을 불러온 다음, attack 상자에 random.randint(1, 10) 결과를 저장하고 출력해보세요.",
+        starterCode: "",
+        allowedBlockIds: ["ext_import_random", "ext_random_randint", "print", "variable"],
+        hints: [
+          '"import random" 블록을 가장 위에 놓으세요.',
+          '"random.randint(a,b)" 블록으로 attack = random.randint(1, 10) 을 만드세요.',
+          '"말하기" 블록으로 attack 을 출력하세요.',
+        ],
+        explanation:
+          "import random 은 파이썬에게 무작위 기능이 담긴 도구 모음(random 모듈)을 가져오라는 뜻이에요. randint(1, 10) 은 1부터 10 사이 정수 중 하나를 무작위로 뽑아줍니다. 실행할 때마다 값이 달라져요.",
+        validate: ({ code, output }) => {
+          const lines = nonEmptyLines(output);
+          const last = lines[lines.length - 1] ?? "";
+          return code.includes("import random") && code.includes("randint(") && /^\d+$/.test(last);
+        },
+      },
+    ],
+  },
+  {
+    id: "list",
+    title: "몬스터 처치 후 아이템 획득하기",
+    concept: "list",
+    summary: "여러 값을 순서대로 한 상자에 담는 리스트와, 인덱스·반복문으로 다루는 법을 배웁니다.",
+    missions: [
+      {
+        id: "list-1",
+        story: "몬스터를 물리치고 아이템을 3개 얻었어요! 포션, 방패, 두루마리예요.",
+        objective: "item1, item2, item3 이라는 상자 3개를 각각 만들어서 포션, 방패, 두루마리를 담고, 순서대로 출력해보세요.",
+        tip: QUOTE_TIP,
+        starterCode: "",
+        allowedBlockIds: ["var_set", "print", "variable"],
+        hints: [
+          '"변수" 탭에서 item1, item2, item3 상자를 각각 만드세요.',
+          '"변수 = 값" 블록 3개로 각각 "포션", "방패", "두루마리" 를 넣으세요.',
+          '"말하기" 블록 3개로 순서대로 출력하세요.',
+        ],
+        explanation: "아이템이 100개면 상자를 100개 만들어야 할까요? 값 여러 개를 상자 하나에 순서대로 담는 방법이 있어요 — 바로 리스트입니다.",
+        validate: ({ code, output }) => {
+          const lines = nonEmptyLines(output);
+          return !code.includes("[") && lines.includes("포션") && lines.includes("방패") && lines.includes("두루마리");
+        },
+      },
+      {
+        id: "list-2",
+        story: "이번엔 세 아이템을 가방(상자) 하나에 담아봅시다.",
+        objective:
+          '리스트를 쓰면 여러 값을 상자 하나에 순서대로 담을 수 있어요. bag 이라는 상자를 만들고 ["포션", "방패", "두루마리"] 를 통째로 담은 다음, bag 을 그대로 출력해보세요.',
+        tip: QUOTE_TIP,
+        starterCode: "",
+        allowedBlockIds: ["list_empty", "print", "variable"],
+        hints: [
+          '"리스트" 탭의 "[ ... ]" 블록을 놓고, 왼쪽 상자 이름엔 bag, 오른쪽 칸엔 대괄호를 포함해서 ["포션", "방패", "두루마리"] 라고 통째로 적어보세요.',
+          '"말하기" 블록에 bag 을 따옴표 없이 적어서 출력해보세요.',
+        ],
+        explanation: "리스트 하나에 여러 값이 순서대로 들어갔죠? 출력해보면 대괄호와 함께 안의 값들이 전부 보여요.",
+        validate: ({ code, output }) => code.includes("[") && output.includes("포션") && output.includes("방패") && output.includes("두루마리"),
+      },
+      {
+        id: "list-3",
+        story: "이번엔 가방에서 아이템 하나만 콕 집어서 확인해봅시다.",
+        objective:
+          "리스트의 각 값은 0번부터 시작하는 번호(인덱스)로 꺼낼 수 있어요. bag 리스트에서 인덱스 1번(두 번째 아이템)을 꺼내서 출력해보세요.",
+        starterCode: 'bag = ["포션", "방패", "두루마리"]\n',
+        allowedBlockIds: ["subscript_get", "print", "variable"],
+        hints: [
+          '"리스트" 탭의 "[i] 읽기" 블록을 놓으세요.',
+          "상자 이름 칸엔 bag, 번호 칸엔 1 을 적어보세요. (첫 번째는 0번이에요)",
+          '결과를 담을 상자 이름(예: picked)을 하나 만들고, "말하기"로 출력해보세요.',
+        ],
+        explanation: "인덱스는 0부터 시작해서 bag[0]은 포션, bag[1]은 방패예요. 순서만 알면 원하는 값을 바로 꺼낼 수 있어요.",
+        validate: ({ code, output }) => /\[\s*1\s*\]/.test(code) && output.trim() === "방패",
+      },
+      {
+        id: "list-4",
+        story: "이번엔 하나씩 꺼내지 말고, 가방 전체를 한 번에 확인해봅시다.",
+        objective:
+          "for와 len()을 함께 쓰면 리스트 안 모든 값을 자동으로 꺼내서 쓸 수 있어요. len()으로 bag의 아이템 수를 구하고, 그 수만큼 for로 반복하면서 각 인덱스의 아이템을 하나씩 출력해보세요.",
+        starterCode: 'bag = ["포션", "방패", "두루마리"]\n',
+        allowedBlockIds: ["builtin_len", "for_range", "subscript_get", "print", "variable"],
+        hints: [
+          '"내장" 탭의 "len()" 블록으로 bag의 길이를 count 같은 상자에 저장하세요.',
+          '"for range" 블록에 반복 변수 i, 반복 횟수엔 방금 만든 count 를 넣으세요.',
+          'for 안쪽에 "[i] 읽기" 블록으로 bag[i] 를 꺼내서 상자에 담고, "말하기"로 출력하세요.',
+        ],
+        explanation: "가방이 3개든 300개든, len()과 for를 함께 쓰면 코드를 바꾸지 않고도 전부 처리할 수 있어요.",
+        validate: ({ code, output }) => code.includes("for ") && code.includes("len(") && nonEmptyLines(output).length >= 3,
+      },
+      {
+        id: "list-5",
+        story: "새 아이템을 주웠어요! 가방에 추가해봅시다.",
+        objective: 'append를 쓰면 리스트 맨 뒤에 새 값을 추가할 수 있어요. bag 리스트에 "장검" 을 추가한 다음, bag 전체를 출력해보세요.',
+        tip: QUOTE_TIP,
+        starterCode: 'bag = ["포션", "방패", "두루마리"]\n',
+        allowedBlockIds: ["list_append", "print", "variable"],
+        hints: [
+          '"리스트" 탭의 ".append()" 블록에 bag 와 "장검" 을 넣어보세요.',
+          '그 아래 "말하기" 블록으로 bag 을 통째로 출력해보세요.',
+        ],
+        explanation: "append는 리스트 끝에 값 하나를 새로 붙여줘요. 원래 있던 값은 그대로 두고 새 값만 추가됩니다.",
+        validate: ({ code, output }) => code.includes(".append(") && output.includes("장검") && output.includes("포션"),
+      },
+    ],
+  },
+  {
+    id: "dict",
+    title: "장비 인벤토리 만들기",
+    concept: "dict",
+    summary: "이름=값 짝을 하나로 묶어 관리하는 딕셔너리를 배웁니다.",
+    missions: [
+      {
+        id: "dict-1",
+        story: "무기와 방어구를 각각 따로 관리해야 합니다.",
+        objective:
+          'weapons 리스트에 "낡은 검", "긴 창" 을, armors 리스트에 "가죽 갑옷", "강철 갑옷" 을 순서를 맞춰서 각각 만들고, 첫 번째 무기와 방어구를 인덱스로 꺼내서 출력해보세요.',
+        tip: QUOTE_TIP,
+        starterCode: "",
+        allowedBlockIds: ["list_empty", "subscript_get", "print", "variable"],
+        hints: [
+          '"[ ... ]" 블록으로 weapons = ["낡은 검", "긴 창"], armors = ["가죽 갑옷", "강철 갑옷"] 을 각각 만드세요.',
+          '"[i] 읽기" 블록으로 weapons[0] 과 armors[0] 을 각각 꺼내서 상자에 담고 출력하세요.',
+        ],
+        explanation:
+          "리스트 두 개를 순서 맞춰 관리하는 건 번거롭고, 순서가 하나라도 어긋나면 무기와 방어구가 뒤바뀌는 실수가 생겨요. 이름=값 짝을 하나로 묶어서 관리하는 방법이 있어요 — 바로 딕셔너리입니다.",
+        validate: ({ code, output }) => !code.includes("{") && output.includes("낡은 검") && output.includes("가죽 갑옷"),
+      },
+      {
+        id: "dict-2",
+        story: "이제 착용 중인 장비를 딕셔너리 하나에 묶어봅시다.",
+        objective:
+          '딕셔너리를 쓰면 "키": 값 짝을 하나의 상자에 저장할 수 있어요. equipment 라는 상자를 만들고 {"weapon": "낡은 검", "armor": "가죽 갑옷"} 을 통째로 담은 다음, equipment 를 그대로 출력해보세요.',
+        tip: QUOTE_TIP,
+        starterCode: "",
+        allowedBlockIds: ["dict_empty", "print", "variable"],
+        hints: [
+          '"딕셔너리" 탭의 "{ ... }" 블록을 놓고, 왼쪽 상자 이름엔 equipment, 오른쪽 칸엔 중괄호를 포함해서 {"weapon": "낡은 검", "armor": "가죽 갑옷"} 이라고 통째로 적어보세요.',
+          '"말하기" 블록으로 equipment 를 출력해보세요.',
+        ],
+        explanation: "딕셔너리는 이름표(키)가 붙은 값들을 하나의 상자에 담아요. 출력해보면 중괄호 안에 키와 값이 짝지어 나와요.",
+        validate: ({ code, output }) => code.includes("{") && output.includes("낡은 검") && output.includes("가죽 갑옷"),
+      },
+      {
+        id: "dict-3",
+        story: "이번엔 착용 중인 무기만 콕 집어서 확인해봅시다.",
+        objective: '딕셔너리는 키로 값을 꺼낼 수 있어요. equipment 딕셔너리에서 "weapon" 키의 값을 꺼내서 출력해보세요.',
+        tip: QUOTE_TIP,
+        starterCode: 'equipment = {"weapon": "낡은 검", "armor": "가죽 갑옷"}\n',
+        allowedBlockIds: ["subscript_get", "print", "variable"],
+        hints: [
+          '"[i] 읽기" 블록에 상자 이름 equipment, 번호 칸엔 "weapon" 을 큰따옴표로 감싸서 적어보세요. (리스트의 번호 대신 딕셔너리는 키를 넣어요)',
+          '결과를 담을 상자를 만들고 "말하기"로 출력하세요.',
+        ],
+        explanation: '리스트는 순서(인덱스)로, 딕셔너리는 이름(키)로 값을 꺼내요. equipment["weapon"] 은 "낡은 검"을 돌려줍니다.',
+        validate: ({ code, output }) => /\[\s*"weapon"\s*\]/.test(code) && output.trim() === "낡은 검",
+      },
+      {
+        id: "dict-4",
+        story: "무기를 강철 검으로 교체해봅시다.",
+        objective:
+          '[키] = 값 을 쓰면 딕셔너리에 있던 값을 바꿀 수 있어요. equipment 딕셔너리의 "weapon" 값을 "강철 검" 으로 바꾼 다음, equipment 전체를 출력해보세요.',
+        tip: QUOTE_TIP,
+        starterCode: 'equipment = {"weapon": "낡은 검", "armor": "가죽 갑옷"}\n',
+        allowedBlockIds: ["dict_set_item", "print", "variable"],
+        hints: [
+          '"[key] =" 블록에 equipment, 키 칸엔 "weapon", 값 칸엔 "강철 검" 을 큰따옴표로 감싸서 적어보세요.',
+          '"말하기" 블록으로 equipment 를 통째로 출력해보세요.',
+        ],
+        explanation: 'equipment["weapon"] = "강철 검" 처럼 쓰면 딕셔너리에 있던 키 값이 새 값으로 바뀝니다.',
+        validate: ({ code, output }) => /\[\s*"weapon"\s*\]\s*=/.test(code) && output.includes("weapon") && output.includes("강철 검"),
+      },
+    ],
+  },
+  {
+    id: "tuple",
+    title: "몬스터 고정 보상 받기",
+    concept: "tuple",
+    summary: "순서와 구성이 절대 바뀌면 안 되는 값을 담는 튜플을 배웁니다.",
+    missions: [
+      {
+        id: "tuple-1",
+        story: "몬스터를 처치하면 항상 같은 보상(아이템, 골드)을 줍니다. 이번 몬스터는 포션과 골드 10을 줘요.",
+        objective: "item, gold 라는 상자를 각각 만들어서 포션, 10을 담고 출력하세요.",
+        tip: QUOTE_TIP,
+        starterCode: "",
+        allowedBlockIds: ["var_set", "print", "variable"],
+        hints: [
+          '"변수" 탭에서 item, gold 상자를 각각 만드세요.',
+          '"변수 = 값" 블록으로 item 엔 "포션", gold 엔 10 을 넣으세요.',
+          '"말하기" 블록 2개로 각각 출력하세요.',
+        ],
+        explanation:
+          "item, gold 를 상자 두 개로 따로 관리하면 어딘가로 넘길 때 두 개를 늘 같이 챙겨야 해서 번거로워요. 이렇게 절대 바뀌면 안 되는 값 묶음을 위한 도구가 있어요 — 바로 튜플입니다.",
+        validate: ({ code, output }) => {
+          const lines = nonEmptyLines(output);
+          return code.includes("=") && lines.includes("포션") && lines.includes("10");
+        },
+      },
+      {
+        id: "tuple-2",
+        story: "이번엔 보상을 튜플 하나로 묶어봅시다.",
+        objective:
+          '튜플을 쓰면 여러 값을 순서대로 묶어서 저장할 수 있어요. 리스트와 달리 한 번 만들면 안의 값을 바꿀 수 없어요. reward 라는 상자를 만들고 ("포션", 10) 을 통째로 담은 다음, reward 를 그대로 출력해보세요.',
+        tip: QUOTE_TIP,
+        starterCode: "",
+        allowedBlockIds: ["tuple_init", "print", "variable"],
+        hints: [
+          '"( ... )" 블록을 놓고, 왼쪽 상자 이름엔 reward, 오른쪽 칸엔 괄호를 포함해서 ("포션", 10) 이라고 통째로 적어보세요.',
+          '"말하기" 블록으로 reward 를 출력해보세요.',
+        ],
+        explanation:
+          "튜플은 리스트와 비슷하게 여러 값을 순서대로 담지만, 한 번 만들면 안의 값을 바꿀 수 없어요. 몬스터가 주는 고정 보상처럼 '절대 바뀌면 안 되는 값'을 담을 때 딱이에요.",
+        validate: ({ code, output }) => /\(\s*"포션"\s*,\s*10\s*\)/.test(code) && output.includes("포션") && output.includes("10"),
+      },
+      {
+        id: "tuple-3",
+        story: "이번엔 보상에서 아이템과 골드를 각각 꺼내봅시다.",
+        objective: "reward[0]은 아이템 이름, reward[1]은 골드예요. 각각 상자에 꺼내 담아서 순서대로 출력해보세요.",
+        starterCode: 'reward = ("포션", 10)\n',
+        allowedBlockIds: ["subscript_get", "print", "variable"],
+        hints: [
+          '"[i] 읽기" 블록으로 reward[0] 을 꺼내서 상자에 담고 출력하세요.',
+          '"[i] 읽기" 블록을 하나 더 놓고 reward[1] 을 꺼내서 상자에 담고 출력하세요.',
+        ],
+        explanation: "리스트처럼 튜플도 인덱스로 값을 꺼낼 수 있어요. reward[0]은 포션, reward[1]은 10입니다.",
+        validate: ({ code, output }) => {
+          const lines = nonEmptyLines(output);
+          return /\[\s*0\s*\]/.test(code) && /\[\s*1\s*\]/.test(code) && lines.includes("포션") && lines.includes("10");
+        },
+      },
+    ],
+  },
+  {
     id: "function",
-    title: "공격 세 번 외치기",
+    title: "공격/방어/스킬 함수 만들기",
     concept: "함수",
     summary: "함수 정의·재사용부터 매개변수, 반환값, 가변 매개변수까지 배웁니다.",
     missions: [
       {
         id: "function-1",
-        story: '고양이가 전투 중에 "공격!"을 세 번 연달아 외쳐야 합니다.',
+        story: '유령이 전투 중에 "공격!"을 세 번 연달아 외쳐야 합니다.',
         objective: '"말하기" 블록을 세 개 놓아서 "공격!"을 세 번 출력하세요.',
         tip: QUOTE_TIP,
         starterCode: "",
@@ -411,26 +667,26 @@ export const BLOCK_TUTORIALS: Tutorial[] = [
       },
       {
         id: "function-5",
-        story: "이번엔 공격력을 2배로 계산해서 알려주는 함수를 만들어봅시다.",
+        story: "이번엔 필살기로, 공격력을 2배로 계산해서 알려주는 스킬 함수를 만들어봅시다.",
         objective:
-          'return을 쓰면 함수가 계산한 결과를 밖으로 돌려줄 수 있어요. power 를 매개변수로 받아 2배로 계산해서 돌려주는 함수를 만들고, 그 결과를 출력해보세요. (power 는 5로 불러보세요)',
+          'return을 쓰면 함수가 계산한 결과를 밖으로 돌려줄 수 있어요. power 를 매개변수로 받아 2배로 계산해서 돌려주는 skillAttack 함수를 만들고, 그 결과를 출력해보세요. (power 는 5로 불러보세요)',
         starterCode: "",
         allowedBlockIds: ["def_func", "func_call", "func_return", "operator_mul", "print", "variable", "my_blocks"],
         hints: [
-          '"+ 함수 만들기"로 이름은 doubleAttack, 매개변수는 power 로 만들어보세요.',
+          '"+ 함수 만들기"로 이름은 skillAttack, 매개변수는 power 로 만들어보세요.',
           '함수 안에서 "변수" 탭의 "+ 변수 만들기"로 doubled 상자를 만들고, "연산" 탭의 "×" 블록으로 doubled = power * 2 를 만들어보세요.',
           '"함수" 탭의 "return" 블록으로 doubled 를 돌려주세요.',
-          '작업 영역에 "말하기" 블록을 새로 놓고, 안에 doubleAttack(5) 라고 직접 적어보세요. 함수가 돌려준 값이 그대로 출력돼요.',
+          '작업 영역에 "말하기" 블록을 새로 놓고, 안에 skillAttack(5) 라고 직접 적어보세요. 함수가 돌려준 값이 그대로 출력돼요.',
         ],
         explanation:
-          "return 은 함수가 계산한 값을 밖으로 돌려줍니다. 그래서 doubleAttack(5) 를 print() 안에 바로 넣어서 쓸 수 있어요 — 함수 호출 자체가 마치 값처럼 동작하는 거예요.",
+          "return 은 함수가 계산한 값을 밖으로 돌려줍니다. 그래서 skillAttack(5) 를 print() 안에 바로 넣어서 쓸 수 있어요 — 함수 호출 자체가 마치 값처럼 동작하는 거예요.",
         validate: ({ code, output }) => code.includes("return") && output.trim() === "10",
       },
       {
         id: "function-6",
-        story: "이번엔 한 번에 여러 명을 공격하고 싶어요. 근데 몇 명을 공격할지는 매번 다릅니다.",
+        story: "이번엔 스킬로 한 번에 여러 몬스터를 공격하고 싶어요. 근데 몇 마리를 공격할지는 매번 다릅니다.",
         objective:
-          '가변 매개변수(*가 붙은 매개변수)를 쓰면 함수를 부를 때 값을 몇 개든 원하는 만큼 넘길 수 있어요. attackAll 함수를 만들 때 매개변수 칸에 *targets 라고 적고, 안에서 "공격!" 을 출력하게 한 다음, 대상을 3명 넣어서 한 번, 1명만 넣어서 또 한 번 불러보세요.',
+          '가변 매개변수(*가 붙은 매개변수)를 쓰면 함수를 부를 때 값을 몇 개든 원하는 만큼 넘길 수 있어요. attackAll 함수를 만들 때 매개변수 칸에 *targets 라고 적고, 안에서 "공격!" 을 출력하게 한 다음, 대상을 3마리 넣어서 한 번, 1마리만 넣어서 또 한 번 불러보세요.',
         starterCode: "",
         allowedBlockIds: ["def_func", "func_call", "print", "my_blocks"],
         hints: [
@@ -442,158 +698,22 @@ export const BLOCK_TUTORIALS: Tutorial[] = [
           "가변 매개변수는 값을 몇 개 보내든 다 받아줍니다. 매개변수 하나는 정확히 값 하나만 받지만, *가 붙으면 0개든 10개든 전부 받아서 하나로 묶어줘요.",
         validate: ({ code, output }) => /def\s+\w+\([^)]*\*/.test(code) && nonEmptyLines(output).length >= 2,
       },
-    ],
-  },
-  {
-    id: "list",
-    title: "학생 명단 관리하기",
-    concept: "list",
-    summary: "여러 값을 순서대로 한 상자에 담는 리스트와, 인덱스·반복문으로 다루는 법을 배웁니다.",
-    missions: [
       {
-        id: "list-1",
-        story: "우리 반 학생 이름을 저장해봅시다. 학생은 철수, 영희, 민수 이렇게 3명이에요.",
-        objective: "student1, student2, student3 이라는 상자 3개를 각각 만들어서 철수, 영희, 민수를 담고, 순서대로 출력해보세요.",
-        tip: QUOTE_TIP,
+        id: "function-7",
+        story: "이번엔 몬스터의 공격을 막아내는 방어 함수를 만들어봅시다.",
+        objective:
+          'defend 함수를 만들 때 매개변수 칸에 power 라고 적고, 안에서 power 에서 5를 뺀 값(실제로 받는 피해)을 계산해서 return 한 다음, defend(20) 을 호출한 결과를 출력해보세요.',
         starterCode: "",
-        allowedBlockIds: ["var_set", "print", "variable"],
+        allowedBlockIds: ["def_func", "func_call", "func_return", "operator_sub", "print", "variable", "my_blocks"],
         hints: [
-          '"변수" 탭에서 student1, student2, student3 상자를 각각 만드세요.',
-          '"변수 = 값" 블록 3개로 각각 "철수", "영희", "민수" 를 넣으세요.',
-          '"말하기" 블록 3개로 순서대로 출력하세요.',
-        ],
-        explanation: "학생이 100명이면 상자를 100개 만들어야 할까요? 값 여러 개를 상자 하나에 순서대로 담는 방법이 있어요 — 바로 리스트입니다.",
-        validate: ({ code, output }) => {
-          const lines = nonEmptyLines(output);
-          return !code.includes("[") && lines.includes("철수") && lines.includes("영희") && lines.includes("민수");
-        },
-      },
-      {
-        id: "list-2",
-        story: "이번엔 세 이름을 상자 하나에 담아봅시다.",
-        objective:
-          '리스트를 쓰면 여러 값을 상자 하나에 순서대로 담을 수 있어요. students 라는 상자를 만들고 ["철수", "영희", "민수"] 를 통째로 담은 다음, students 를 그대로 출력해보세요.',
-        tip: QUOTE_TIP,
-        starterCode: "",
-        allowedBlockIds: ["list_empty", "print", "variable"],
-        hints: [
-          '"리스트" 탭의 "[ ... ]" 블록을 놓고, 왼쪽 상자 이름엔 students, 오른쪽 칸엔 대괄호를 포함해서 ["철수", "영희", "민수"] 라고 통째로 적어보세요.',
-          '"말하기" 블록에 students 를 따옴표 없이 적어서 출력해보세요.',
-        ],
-        explanation: "리스트 하나에 여러 값이 순서대로 들어갔죠? 출력해보면 대괄호와 함께 안의 값들이 전부 보여요.",
-        validate: ({ code, output }) => code.includes("[") && output.includes("철수") && output.includes("영희") && output.includes("민수"),
-      },
-      {
-        id: "list-3",
-        story: "이번엔 학생 한 명만 콕 집어서 불러봅시다.",
-        objective:
-          "리스트의 각 값은 0번부터 시작하는 번호(인덱스)로 꺼낼 수 있어요. students 리스트에서 인덱스 1번(두 번째 사람)을 꺼내서 출력해보세요.",
-        starterCode: 'students = ["철수", "영희", "민수"]\n',
-        allowedBlockIds: ["subscript_get", "print", "variable"],
-        hints: [
-          '"리스트" 탭의 "[i] 읽기" 블록을 놓으세요.',
-          "상자 이름 칸엔 students, 번호 칸엔 1 을 적어보세요. (첫 번째는 0번이에요)",
-          '결과를 담을 상자 이름(예: picked)을 하나 만들고, "말하기"로 출력해보세요.',
-        ],
-        explanation: "인덱스는 0부터 시작해서 students[0]은 철수, students[1]은 영희예요. 순서만 알면 원하는 값을 바로 꺼낼 수 있어요.",
-        validate: ({ code, output }) => /\[\s*1\s*\]/.test(code) && output.trim() === "영희",
-      },
-      {
-        id: "list-4",
-        story: "이번엔 한 명씩 콕 집지 말고, 전체 명단을 한 번에 출력해봅시다.",
-        objective:
-          "for와 len()을 함께 쓰면 리스트 안 모든 값을 자동으로 꺼내서 쓸 수 있어요. len()으로 students의 인원 수를 구하고, 그 수만큼 for로 반복하면서 각 인덱스의 이름을 하나씩 출력해보세요.",
-        starterCode: 'students = ["철수", "영희", "민수"]\n',
-        allowedBlockIds: ["builtin_len", "for_range", "subscript_get", "print", "variable"],
-        hints: [
-          '"내장" 탭의 "len()" 블록으로 students의 길이를 count 같은 상자에 저장하세요.',
-          '"for range" 블록에 반복 변수 i, 반복 횟수엔 방금 만든 count 를 넣으세요.',
-          'for 안쪽에 "[i] 읽기" 블록으로 students[i] 를 꺼내서 상자에 담고, "말하기"로 출력하세요.',
-        ],
-        explanation: "리스트가 3명이든 300명이든, len()과 for를 함께 쓰면 코드를 바꾸지 않고도 전부 처리할 수 있어요.",
-        validate: ({ code, output }) => code.includes("for ") && code.includes("len(") && nonEmptyLines(output).length >= 3,
-      },
-      {
-        id: "list-5",
-        story: "새 학생이 전학을 왔어요! 리스트에 이름을 추가해봅시다.",
-        objective: 'append를 쓰면 리스트 맨 뒤에 새 값을 추가할 수 있어요. students 리스트에 "지훈" 을 추가한 다음, students 전체를 출력해보세요.',
-        tip: QUOTE_TIP,
-        starterCode: 'students = ["철수", "영희", "민수"]\n',
-        allowedBlockIds: ["list_append", "print", "variable"],
-        hints: [
-          '"리스트" 탭의 ".append()" 블록에 students 와 "지훈" 을 넣어보세요.',
-          '그 아래 "말하기" 블록으로 students 를 통째로 출력해보세요.',
-        ],
-        explanation: "append는 리스트 끝에 값 하나를 새로 붙여줘요. 원래 있던 값은 그대로 두고 새 값만 추가됩니다.",
-        validate: ({ code, output }) => code.includes(".append(") && output.includes("지훈") && output.includes("철수"),
-      },
-    ],
-  },
-  {
-    id: "dict",
-    title: "학생 성적표 만들기",
-    concept: "dict",
-    summary: "이름=값 짝을 하나로 묶어 관리하는 딕셔너리를 배웁니다.",
-    missions: [
-      {
-        id: "dict-1",
-        story: "학생 이름과 점수를 함께 관리해야 합니다.",
-        objective:
-          'names 리스트에 "철수", "영희" 를, scores 리스트에 90, 80 을 순서를 맞춰서 각각 만들고, 첫 번째 학생의 이름과 점수를 인덱스로 꺼내서 출력해보세요.',
-        tip: QUOTE_TIP,
-        starterCode: "",
-        allowedBlockIds: ["list_empty", "subscript_get", "print", "variable"],
-        hints: [
-          '"[ ... ]" 블록으로 names = ["철수", "영희"], scores = [90, 80] 을 각각 만드세요.',
-          '"[i] 읽기" 블록으로 names[0] 과 scores[0] 을 각각 꺼내서 상자에 담고 출력하세요.',
+          '"+ 함수 만들기"로 이름은 defend, 매개변수는 power 로 만들어보세요.',
+          '함수 안에서 "변수" 탭의 "+ 변수 만들기"로 reduced 상자를 만들고, "연산" 탭의 "-" 블록으로 reduced = power - 5 를 만들어보세요.',
+          '"함수" 탭의 "return" 블록으로 reduced 를 돌려주세요.',
+          '작업 영역에 "말하기" 블록을 새로 놓고, 안에 defend(20) 이라고 직접 적어보세요.',
         ],
         explanation:
-          "리스트 두 개를 순서 맞춰 관리하는 건 번거롭고, 순서가 하나라도 어긋나면 이름과 점수가 뒤바뀌는 실수가 생겨요. 이름=값 짝을 하나로 묶어서 관리하는 방법이 있어요 — 바로 딕셔너리입니다.",
-        validate: ({ code, output }) => !code.includes("{") && output.includes("철수") && output.includes("90"),
-      },
-      {
-        id: "dict-2",
-        story: "이제 철수의 정보를 딕셔너리 하나에 묶어봅시다.",
-        objective:
-          '딕셔너리를 쓰면 "키": 값 짝을 하나의 상자에 저장할 수 있어요. student 라는 상자를 만들고 {"name": "철수", "score": 90} 을 통째로 담은 다음, student 를 그대로 출력해보세요.',
-        tip: QUOTE_TIP,
-        starterCode: "",
-        allowedBlockIds: ["dict_empty", "print", "variable"],
-        hints: [
-          '"딕셔너리" 탭의 "{ ... }" 블록을 놓고, 왼쪽 상자 이름엔 student, 오른쪽 칸엔 중괄호를 포함해서 {"name": "철수", "score": 90} 이라고 통째로 적어보세요.',
-          '"말하기" 블록으로 student 를 출력해보세요.',
-        ],
-        explanation: "딕셔너리는 이름표(키)가 붙은 값들을 하나의 상자에 담아요. 출력해보면 중괄호 안에 키와 값이 짝지어 나와요.",
-        validate: ({ code, output }) => code.includes("{") && output.includes("철수") && output.includes("90"),
-      },
-      {
-        id: "dict-3",
-        story: "이번엔 점수만 콕 집어서 확인해봅시다.",
-        objective: '딕셔너리는 키로 값을 꺼낼 수 있어요. student 딕셔너리에서 "score" 키의 값을 꺼내서 출력해보세요.',
-        tip: QUOTE_TIP,
-        starterCode: 'student = {"name": "철수", "score": 90}\n',
-        allowedBlockIds: ["subscript_get", "print", "variable"],
-        hints: [
-          '"[i] 읽기" 블록에 상자 이름 student, 번호 칸엔 "score" 를 큰따옴표로 감싸서 적어보세요. (리스트의 번호 대신 딕셔너리는 키를 넣어요)',
-          '결과를 담을 상자를 만들고 "말하기"로 출력하세요.',
-        ],
-        explanation: '리스트는 순서(인덱스)로, 딕셔너리는 이름(키)로 값을 꺼내요. student["score"] 는 90을 돌려줍니다.',
-        validate: ({ code, output }) => /\[\s*"score"\s*\]/.test(code) && output.trim() === "90",
-      },
-      {
-        id: "dict-4",
-        story: "철수의 성적표에 학년 정보도 추가해봅시다.",
-        objective:
-          '[키] = 값 을 쓰면 딕셔너리에 새 값을 추가하거나 바꿀 수 있어요. student 딕셔너리에 "grade": "A" 를 추가한 다음, student 전체를 출력해보세요.',
-        tip: QUOTE_TIP,
-        starterCode: 'student = {"name": "철수", "score": 90}\n',
-        allowedBlockIds: ["dict_set_item", "print", "variable"],
-        hints: [
-          '"[key] =" 블록에 student, 키 칸엔 "grade", 값 칸엔 "A" 를 큰따옴표로 감싸서 적어보세요.',
-          '"말하기" 블록으로 student 를 통째로 출력해보세요.',
-        ],
-        explanation: 'student["grade"] = "A" 처럼 쓰면 딕셔너리에 없던 키는 새로 추가되고, 있던 키는 값이 바뀝니다.',
-        validate: ({ code, output }) => /\[\s*"grade"\s*\]\s*=/.test(code) && output.includes("grade") && output.includes("A"),
+          "defend 함수는 받은 피해(power)에서 방어력만큼을 미리 깎아서 돌려줘요. 공격(attack), 방어(defend), 스킬(skillAttack)처럼 역할별로 함수를 나눠두면 필요할 때마다 골라 쓸 수 있어요.",
+        validate: ({ code, output }) => code.includes("return") && output.trim() === "15",
       },
     ],
   },

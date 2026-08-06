@@ -1,6 +1,6 @@
 import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/hooks/useAuth";
 import { RequireAuth, RequireRole, Home } from "@/components/RouteGuards";
@@ -24,6 +24,9 @@ import Lessons from "@/pages/Lessons";
 import LessonView from "@/pages/LessonView";
 import StudentSubmissionReview from "@/pages/StudentSubmissionReview";
 import NotFound from "@/pages/NotFound";
+
+// ponytail: 블록 코딩 임시 비활성화. 재오픈 시 true로.
+const BLOCK_CODING_ENABLED = false;
 
 const StudentPortfolio = lazy(() => import("@/pages/StudentPortfolio"));
 const StudentPortfolioEditor = lazy(() => import("@/pages/StudentPortfolioEditor"));
@@ -169,17 +172,25 @@ export default function App() {
             <Route
               path="/practice/block"
               element={
-                <RequireRole role="student">
-                  <BlockPractice />
-                </RequireRole>
+                BLOCK_CODING_ENABLED ? (
+                  <RequireRole role="student">
+                    <BlockPractice />
+                  </RequireRole>
+                ) : (
+                  <Navigate to="/student" replace />
+                )
               }
             />
             <Route
               path="/practice/block/tutorial/:tutorialId"
               element={
-                <RequireRole role="student">
-                  <BlockTutorial />
-                </RequireRole>
+                BLOCK_CODING_ENABLED ? (
+                  <RequireRole role="student">
+                    <BlockTutorial />
+                  </RequireRole>
+                ) : (
+                  <Navigate to="/student" replace />
+                )
               }
             />
             <Route

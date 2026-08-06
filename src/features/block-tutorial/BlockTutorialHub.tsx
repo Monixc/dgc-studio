@@ -5,7 +5,7 @@ import { useCompletedMissionIds } from "@/hooks/useBlockTutorialProgress";
 import { BLOCK_TUTORIALS } from "@/features/block-tutorial/tutorials";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import CatMascot from "@/features/block-tutorial/assets/CatMascot";
+import GhostMascot from "@/features/block-tutorial/assets/GhostMascot";
 
 export default function BlockTutorialHub() {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ export default function BlockTutorialHub() {
   return (
     <div className="p-6">
       <div className="mb-5 flex items-center gap-3">
-        <CatMascot mood="happy" />
+        <GhostMascot mood="happy" />
         <div>
           <h2 className="font-bold">기본 튜토리얼</h2>
           <p className="text-sm text-muted-foreground">블록을 만지며 파이썬 개념을 하나씩 배워봅니다.</p>

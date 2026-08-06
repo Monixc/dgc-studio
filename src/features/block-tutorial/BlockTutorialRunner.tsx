@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { usePyodide } from "@/hooks/usePyodide";
 import { useCompletedMissionIds, useMarkMissionComplete } from "@/hooks/useBlockTutorialProgress";
 import { findTutorial } from "@/features/block-tutorial/tutorials";
-import CatMascot from "@/features/block-tutorial/assets/CatMascot";
+import GhostMascot from "@/features/block-tutorial/assets/GhostMascot";
 import BlockWorkspacePanel from "@/features/block-coding/BlockWorkspacePanel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -103,7 +103,7 @@ export default function BlockTutorialRunner() {
 
       <div className="grid min-h-0 flex-1 grid-cols-1 gap-3 overflow-auto p-3 lg:grid-cols-[280px_1fr] lg:overflow-hidden">
         <div className="flex flex-col gap-3 lg:overflow-auto">
-          <CatMascot mood={success ? "happy" : "idle"} speech={mission.story} />
+          <GhostMascot mood={success ? "happy" : "idle"} speech={mission.story} />
 
           <Card>
             <CardContent className="space-y-2 p-3 text-sm">
