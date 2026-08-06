@@ -10,6 +10,7 @@ import {
   useNodesState,
   useEdgesState,
   useReactFlow,
+  useUpdateNodeInternals,
   MarkerType,
   type Connection,
   type Edge,
@@ -57,6 +58,7 @@ interface Props {
 
 function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
   const rf = useReactFlow();
+  const updateNodeInternals = useUpdateNodeInternals();
   const wrapRef = useRef<HTMLDivElement>(null);
   const [paletteOpen, setPaletteOpen] = useState(true);
   const setNodesRef = useRef<ReturnType<typeof useNodesState>[1] | null>(null);
@@ -137,7 +139,15 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
         style: { ...n.style, width: asParent.w, height: asParent.h },
       };
     }));
-  }, [nodes, setNodes]);
+    // 위치만 바뀌고 크기는 그대로인 자식은 ResizeObserver가 안 잡아 핸들/간선 좌표가 안 따라옴 → 강제 갱신
+    for (const [parentId, kids] of childrenOf) {
+      const f = fixes.get(parentId);
+      if (f && (f.dx || f.dy)) {
+        updateNodeInternals(parentId);
+        for (const k of kids) updateNodeInternals(k.id);
+      }
+    }
+  }, [nodes, setNodes, updateNodeInternals]);
 
   // 연결 안 된 서브그래프(주로 def 함수, 혹은 예전에 저장된 낡은 좌표)가 메인 흐름과 겹쳐 보이면 오른쪽으로 떼어냄.
   // dslToGraph의 새 임포트에만 적용되던 로직을 이미 저장된 그래프를 열람할 때도 동일하게 적용.
@@ -219,8 +229,10 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
         const m = moves.get(n.id);
         return m ? { ...n, position: { x: n.position.x + m.dx, y: n.position.y + m.dy } } : n;
       }));
+      // 위치만 옮기고 크기는 그대로라 ResizeObserver가 안 잡음 → 강제 갱신
+      for (const id of moves.keys()) updateNodeInternals(id);
     }
-  }, [nodes, edges, setNodes]);
+  }, [nodes, edges, setNodes, updateNodeInternals]);
 
   // if/while 분기선 좌/우 방향은 DSL 임포트 시 한 번 정해져 저장되는데, 타입별 기본 크기 차이 때문에
   // 실제로는 같은 중심선(단일 진행)인데도 좌우로 꺾여 저장된 경우가 있음. 라이브 중심 좌표로 다시 판단해
@@ -255,7 +267,7 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
   // 매번 첫 자식의 실제 중심으로 다시 계산해 항상 맞춤.
   useEffect(() => {
     const byId = new Map(nodes.map((n) => [n.id, n]));
-    let changed = false;
+    const touched: string[] = [];
     const next = nodes.map((n) => {
       const nd = n.data as FlowNodeData;
       if (nd.nodeType !== "for") return n;
@@ -266,11 +278,15 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
       const entryW = ed.nodeType === "for" ? (entryChild.style?.width as number) ?? 260 : NODE_SIZE[ed.nodeType].w;
       const forEntryX = entryChild.position.x + entryW / 2;
       if (nd.forEntryX === forEntryX) return n;
-      changed = true;
+      touched.push(n.id);
       return { ...n, data: { ...nd, forEntryX } };
     });
-    if (changed) setNodes(next);
-  }, [nodes, edges, setNodes]);
+    if (touched.length) {
+      setNodes(next);
+      // left 스타일만 바뀌고 크기는 그대로라 ResizeObserver가 안 잡음 → 강제 갱신
+      for (const id of touched) updateNodeInternals(id);
+    }
+  }, [nodes, edges, setNodes, updateNodeInternals]);
 
   // 변경 디바운스 후 상위로 전파
   const firstRun = useRef(true);
