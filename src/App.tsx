@@ -14,6 +14,7 @@ import MyClass from "@/pages/MyClass";
 import FlowchartPractice from "@/pages/FlowchartPractice";
 import PythonPractice from "@/pages/PythonPractice";
 import BlockPractice from "@/pages/BlockPractice";
+import BlockTutorial from "@/pages/BlockTutorial";
 import TypingPractice from "@/pages/TypingPractice";
 import Solve from "@/pages/Solve";
 import TeacherShop from "@/pages/TeacherShop";
@@ -170,6 +171,14 @@ export default function App() {
               element={
                 <RequireRole role="student">
                   <BlockPractice />
+                </RequireRole>
+              }
+            />
+            <Route
+              path="/practice/block/tutorial/:tutorialId"
+              element={
+                <RequireRole role="student">
+                  <BlockTutorial />
                 </RequireRole>
               }
             />

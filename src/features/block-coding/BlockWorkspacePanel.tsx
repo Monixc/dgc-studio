@@ -38,11 +38,13 @@ interface Props {
   /** 작업대를 처음 그릴 때 불러올 코드(임시저장 또는 시작 코드) */
   initialCode: string;
   onCodeChange: (code: string) => void;
+  /** 지정 시 팔레트를 이 블록 id들로만 제한(튜토리얼 워크스페이스 락) */
+  allowedBlockIds?: string[];
 }
 
 /** pokepy 블록 작업대(mountBlockWorkspace) 를 그대로 감싸는 React 래퍼 */
 const BlockWorkspacePanel = forwardRef<BlockWorkspacePanelHandle, Props>(function BlockWorkspacePanel(
-  { starterCode, initialCode, onCodeChange },
+  { starterCode, initialCode, onCodeChange, allowedBlockIds },
   ref,
 ) {
   const paletteRef = useRef<HTMLDivElement>(null);
@@ -54,11 +56,17 @@ const BlockWorkspacePanel = forwardRef<BlockWorkspacePanelHandle, Props>(functio
     if (!paletteRef.current || !workspaceRef.current) return;
     const blocks = parseToBlocks(initialCode);
     resetBlockUids(maxUid(blocks) + 1);
-    const handle = mountBlockWorkspace(workspaceRef.current, paletteRef.current, blocks, () => {
-      const code = blocksToCode({ blocks: handle.getBlocks() });
-      if (previewRef.current) previewRef.current.textContent = code;
-      onCodeChange(code);
-    });
+    const handle = mountBlockWorkspace(
+      workspaceRef.current,
+      paletteRef.current,
+      blocks,
+      () => {
+        const code = blocksToCode({ blocks: handle.getBlocks() });
+        if (previewRef.current) previewRef.current.textContent = code;
+        onCodeChange(code);
+      },
+      { allowedBlockIds },
+    );
     handleRef.current = handle;
     if (previewRef.current) previewRef.current.textContent = blocksToCode({ blocks: handle.getBlocks() });
     // 문제 전환 시 컴포넌트를 key로 언마운트/재마운트하므로 최초 1회만 실행

@@ -119,6 +119,12 @@ export interface LessonProblem {
   created_at: string;
 }
 
+export interface BlockTutorialProgress {
+  student_id: string;
+  mission_id: string;
+  completed_at: string;
+}
+
 export interface ClassLesson {
   class_id: string;
   lesson_id: string;

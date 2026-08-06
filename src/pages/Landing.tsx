@@ -57,7 +57,7 @@ export default function Landing() {
 
       <header className="flex items-center gap-2 border-b bg-background px-6 py-3">
         <GraduationCap className="text-primary" />
-        <span className="text-lg font-black tracking-tight">디랩과천</span>
+        <span className="text-lg font-black tracking-tight">RoOS</span>
         <div className="ml-auto">
           <AuthDropdown openState={authState} onOpenStateChange={setAuthState} />
         </div>
@@ -66,7 +66,7 @@ export default function Landing() {
       <main className="flex-1">
         {/* 1. 서비스 개요 */}
         <section className="mx-auto max-w-3xl px-6 py-20 text-center sm:py-28">
-          <p className="font-mono text-xs tracking-widest text-muted-foreground">디랩과천 · 올인원 파이썬 학습</p>
+          <p className="font-mono text-xs tracking-widest text-muted-foreground">RoOS · 올인원 파이썬 학습</p>
           <h1 className="mx-auto mt-3 max-w-2xl text-balance text-4xl font-black leading-[1.15] tracking-tight [word-break:keep-all] sm:text-5xl">
             코드부터 상점까지, 배움의 모든 순간을 한 곳에서
           </h1>
@@ -174,7 +174,7 @@ export default function Landing() {
       </main>
 
       <footer className="border-t bg-background py-4 text-center text-xs text-muted-foreground">
-        디랩과천 · 올인원 파이썬 학습
+        RoOS · 올인원 파이썬 학습
       </footer>
     </div>
   );

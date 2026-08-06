@@ -46,6 +46,8 @@ export function specsToBlocks(specs: BlockSpec[]): WorkspaceBlock[] {
 export interface BlockWorkspaceOptions {
   initialVariables?: string[];
   starterSpecs?: BlockSpec[];
+  /** 지정 시 팔레트를 이 블록 id들로만 제한(튜토리얼 미션의 "워크스페이스 락"). "variable"/"my_blocks" 를 포함하면 해당 사이드바 탭도 노출. */
+  allowedBlockIds?: string[];
 }
 
 export interface BlockWorkspaceHandle {
@@ -84,7 +86,22 @@ export function mountBlockWorkspace(
   let definedFunctions: DefinedFunction[] = [];
   const starterSpecs = options.starterSpecs ?? [];
   const showVariables = true;
-  let activePaletteCategory = "print";
+  const allowedBlockIds = options.allowedBlockIds ? new Set(options.allowedBlockIds) : null;
+  const paletteCategories = () => {
+    const cats = paletteByCategory();
+    if (!allowedBlockIds) return cats;
+    return cats
+      .map((c) => ({ ...c, ids: c.ids.filter((id) => allowedBlockIds.has(id)) }))
+      .filter((c) => c.ids.length > 0);
+  };
+  const sidebarItems = () => [
+    ...(!allowedBlockIds || allowedBlockIds.has("my_blocks") ? [{ id: "my_blocks", label: "내 블록", color: "#c850c8" }] : []),
+    ...(!allowedBlockIds || allowedBlockIds.has("variable") ? [{ id: "variable", label: "변수", color: VAR_COLOR }] : []),
+    ...paletteCategories()
+      .filter((c) => c.id !== "variable" && c.id !== "my_blocks")
+      .map((c) => ({ id: c.id, label: c.label, color: c.color })),
+  ];
+  let activePaletteCategory = sidebarItems()[0]?.id ?? "print";
 
   const listRegistry = new Map<ListKey, WorkspaceBlock[]>();
   let drag: DragState | null = null;
@@ -1204,7 +1221,7 @@ export function mountBlockWorkspace(
   const paletteCategoryLabel = (): string => {
     if (activePaletteCategory === "variable") return "변수";
     if (activePaletteCategory === "my_blocks") return "내 블록";
-    return paletteByCategory().find((c) => c.id === activePaletteCategory)?.label ?? "블록";
+    return paletteCategories().find((c) => c.id === activePaletteCategory)?.label ?? "블록";
   };
 
   const renderMyBlocksPanel = (container: HTMLElement) => {
@@ -1398,13 +1415,7 @@ export function mountBlockWorkspace(
     const sidebar = paletteEl.closest(".poke-palette-dock")?.querySelector<HTMLElement>("#palette-sidebar");
     if (!sidebar) return;
 
-    const items = [
-      { id: "my_blocks", label: "내 블록", color: "#c850c8" },
-      { id: "variable", label: "변수", color: VAR_COLOR },
-      ...paletteByCategory()
-        .filter((c) => c.id !== "variable" && c.id !== "my_blocks")
-        .map((c) => ({ id: c.id, label: c.label, color: c.color })),
-    ];
+    const items = sidebarItems();
 
     sidebar.innerHTML = "";
     for (const item of items) {
@@ -1694,9 +1705,11 @@ export function mountBlockWorkspace(
       return;
     }
 
-    const cat = paletteByCategory().find((c) => c.id === activePaletteCategory);
+    const cat = paletteCategories().find((c) => c.id === activePaletteCategory);
     if (!cat) {
-      activePaletteCategory = "print";
+      const fallback = sidebarItems()[0]?.id;
+      if (!fallback || fallback === activePaletteCategory) return;
+      activePaletteCategory = fallback;
       return renderPalette();
     }
 
