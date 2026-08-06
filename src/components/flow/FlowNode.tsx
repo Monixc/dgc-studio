@@ -139,14 +139,7 @@ function FlowNodeInner({ id, data, selected }: NodeProps) {
     <>
       <Handle id="top" type="source" position={Position.Top} className={HANDLE_FOR} isConnectable={editable} />
       {d.forEntryX != null && (
-        <Handle
-          id="top-entry"
-          type="source"
-          position={Position.Top}
-          className={HANDLE_FOR}
-          style={{ left: d.forEntryX }}
-          isConnectable={editable}
-        />
+        <Handle id="top-entry" type="source" position={Position.Top} className={HANDLE_FOR} isConnectable={editable} />
       )}
       <Handle id="left" type="source" position={Position.Left} className={HANDLE_FOR} isConnectable={editable} />
       <Handle id="bottom" type="source" position={Position.Bottom} className={HANDLE_FOR} isConnectable={editable} />
