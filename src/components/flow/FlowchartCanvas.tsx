@@ -82,8 +82,8 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
   }, [resetKey]);
 
   // for 컨테이너 안 자식 라벨이 길어져 커지면(nodeDims), 저장된 컨테이너 크기가 낡아 자식을 못 감쌀 수 있음.
-  // 컨테이너 자체의 위치는 절대 안 건드림(바깥 체인과의 연결점이 어긋나 버림) — 넘치는 자식만 안쪽으로
-  // 밀고, 컨테이너는 필요한 만큼 오른쪽/아래로만 커짐.
+  // 다이아몬드(if/while)처럼 중심 기준 양옆으로 커지는 도형은 왼쪽/위로도 삐져나갈 수 있어
+  // 필요하면 컨테이너를 그쪽으로 밀고(자식은 반대로 밀어 화면상 위치 유지) 크기도 함께 키움.
   useEffect(() => {
     const PAD = 20;
     const HEADER = 30;
@@ -102,44 +102,51 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
       const base = isFor ? actual : NODE_SIZE[nd.nodeType];
       return { actual, base };
     };
-    const childShift = new Map<string, { dx: number; dy: number }>();
-    const sizeFix = new Map<string, { w: number; h: number }>();
+    const fixes = new Map<string, { dx: number; dy: number; w: number; h: number }>();
     for (const [parentId, kids] of childrenOf) {
       const parent = byId.get(parentId)!;
-      let right = -Infinity, bottom = -Infinity;
+      let left = Infinity, right = -Infinity, top = Infinity, bottom = -Infinity;
       for (const k of kids) {
         const { actual, base } = dimOf(k);
-        let cx = k.position.x + base.w / 2;
-        let cy = k.position.y + base.h / 2;
-        const dx = Math.max(0, PAD - (cx - actual.w / 2));
-        const dy = Math.max(0, HEADER + PAD - (cy - actual.h / 2));
-        if (dx > 0 || dy > 0) {
-          childShift.set(k.id, { dx, dy });
-          cx += dx;
-          cy += dy;
-        }
+        const cx = k.position.x + base.w / 2;
+        const cy = k.position.y + base.h / 2;
+        left = Math.min(left, cx - actual.w / 2);
         right = Math.max(right, cx + actual.w / 2);
+        top = Math.min(top, cy - actual.h / 2);
         bottom = Math.max(bottom, cy + actual.h / 2);
       }
+      const dx = Math.max(0, PAD - left);
+      const dy = Math.max(0, HEADER + PAD - top);
       const curW = (parent.style?.width as number) ?? 260;
       const curH = (parent.style?.height as number) ?? 160;
-      const w = Math.max(curW, right + PAD);
-      const h = Math.max(curH, bottom + PAD);
-      if (w > curW || h > curH) sizeFix.set(parentId, { w, h });
+      const w = Math.max(curW, right + dx + PAD);
+      const h = Math.max(curH, bottom + dy + PAD);
+      if (dx > 0 || dy > 0 || w > curW || h > curH) fixes.set(parentId, { dx, dy, w, h });
     }
-    if (childShift.size === 0 && sizeFix.size === 0) return;
+    if (fixes.size === 0) return;
     setNodes((ns) => ns.map((n) => {
-      const shift = childShift.get(n.id);
-      const size = sizeFix.get(n.id);
-      if (!shift && !size) return n;
+      const asChild = n.parentId ? fixes.get(n.parentId) : undefined;
+      if (asChild && (asChild.dx || asChild.dy)) {
+        return { ...n, position: { x: n.position.x + asChild.dx, y: n.position.y + asChild.dy } };
+      }
+      const asParent = fixes.get(n.id);
+      if (!asParent) return n;
       return {
         ...n,
-        position: shift ? { x: n.position.x + shift.dx, y: n.position.y + shift.dy } : n.position,
-        style: size ? { ...n.style, width: size.w, height: size.h } : n.style,
+        position: (asParent.dx || asParent.dy)
+          ? { x: n.position.x - asParent.dx, y: n.position.y - asParent.dy }
+          : n.position,
+        style: { ...n.style, width: asParent.w, height: asParent.h },
       };
     }));
     // 위치만 바뀌고 크기는 그대로인 자식은 ResizeObserver가 안 잡아 핸들/간선 좌표가 안 따라옴 → 강제 갱신
-    for (const id of childShift.keys()) updateNodeInternals(id);
+    for (const [parentId, kids] of childrenOf) {
+      const f = fixes.get(parentId);
+      if (f && (f.dx || f.dy)) {
+        updateNodeInternals(parentId);
+        for (const k of kids) updateNodeInternals(k.id);
+      }
+    }
   }, [nodes, setNodes, updateNodeInternals]);
 
   // 연결 안 된 서브그래프(주로 def 함수, 혹은 예전에 저장된 낡은 좌표)가 메인 흐름과 겹쳐 보이면 오른쪽으로 떼어냄.
