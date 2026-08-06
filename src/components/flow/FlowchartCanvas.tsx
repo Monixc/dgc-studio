@@ -250,6 +250,28 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
     if (changed) setEdges(next);
   }, [nodes, edges, setEdges]);
 
+  // for 컨테이너의 진입점(forEntryX)은 로드 시 한 번만 계산돼 저장되는데, 위의 다른 보정들이
+  // 자식 위치를 옮기면 낡은 값이 남아 진입 화살표가 실제 첫 자식 중심과 어긋나 보일 수 있음.
+  // 매번 첫 자식의 실제 중심으로 다시 계산해 항상 맞춤.
+  useEffect(() => {
+    const byId = new Map(nodes.map((n) => [n.id, n]));
+    let changed = false;
+    const next = nodes.map((n) => {
+      const nd = n.data as FlowNodeData;
+      if (nd.nodeType !== "for") return n;
+      const entryEdge = edges.find((e) => e.source === n.id && e.sourceHandle === "top-entry");
+      const entryChild = entryEdge ? byId.get(entryEdge.target) : undefined;
+      if (!entryChild) return n;
+      const ed = entryChild.data as FlowNodeData;
+      const entryW = ed.nodeType === "for" ? (entryChild.style?.width as number) ?? 260 : NODE_SIZE[ed.nodeType].w;
+      const forEntryX = entryChild.position.x + entryW / 2;
+      if (nd.forEntryX === forEntryX) return n;
+      changed = true;
+      return { ...n, data: { ...nd, forEntryX } };
+    });
+    if (changed) setNodes(next);
+  }, [nodes, edges, setNodes]);
+
   // 변경 디바운스 후 상위로 전파
   const firstRun = useRef(true);
   useEffect(() => {
