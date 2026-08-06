@@ -255,14 +255,19 @@ export function dslToGraph(dsl: string): FlowGraph {
         return b.length - a.length;
       });
       const COMP_GAP = 60;
+      // 실제 렌더 크기(nodeDims)는 기본 크기 중심으로 좌우/상하 대칭 확장되므로(FlowNode transform),
+      // 경계는 position+기본크기/2 를 중심 삼아 실제 크기의 절반만큼 계산해야 정확하다.
       const bboxOf = (comp: FlowNode[]) => {
         let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
         for (const nd of comp) {
-          const d = posDimOf(nd);
-          minX = Math.min(minX, nd.position!.x);
-          maxX = Math.max(maxX, nd.position!.x + d.w);
-          minY = Math.min(minY, nd.position!.y);
-          maxY = Math.max(maxY, nd.position!.y + d.h);
+          const base = posDimOf(nd);
+          const actual = spacingDimOf(nd);
+          const cx = nd.position!.x + base.w / 2;
+          const cy = nd.position!.y + base.h / 2;
+          minX = Math.min(minX, cx - actual.w / 2);
+          maxX = Math.max(maxX, cx + actual.w / 2);
+          minY = Math.min(minY, cy - actual.h / 2);
+          maxY = Math.max(maxY, cy + actual.h / 2);
         }
         return { minX, maxX, minY, maxY };
       };

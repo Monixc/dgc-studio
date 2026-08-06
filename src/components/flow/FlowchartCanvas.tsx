@@ -15,7 +15,7 @@ import {
   type Edge,
   type Node,
 } from "@xyflow/react";
-import { nodeTypes, nodeDims } from "./FlowNode";
+import { nodeTypes, nodeDims, NODE_SIZE } from "./FlowNode";
 import { ForReturnEdge } from "./ForReturnEdge";
 import type { FlowGraph, NodeType } from "@/types/flowchart";
 import type { FlowNodeData } from "@/lib/flow-layout";
@@ -90,13 +90,17 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
       const parent = byId.get(n.parentId);
       if (!parent || (parent.data as FlowNodeData).nodeType !== "for") continue;
       const nd = n.data as FlowNodeData;
-      const d = nd.nodeType === "for"
-        ? { w: (n.style?.width as number) ?? 260, h: (n.style?.height as number) ?? 160 }
-        : nodeDims(nd.nodeType, nd.label);
+      const isFor = nd.nodeType === "for";
+      // 실제 렌더 크기(nodeDims)는 기본 크기 중심으로 대칭 확장되므로(FlowNode transform),
+      // 오른쪽/아래 끝은 position+기본크기/2 를 중심으로 실제 크기 절반을 더해야 정확하다.
+      const actual = isFor ? { w: (n.style?.width as number) ?? 260, h: (n.style?.height as number) ?? 160 } : nodeDims(nd.nodeType, nd.label);
+      const base = isFor ? actual : NODE_SIZE[nd.nodeType];
+      const right = n.position.x + base.w / 2 + actual.w / 2;
+      const bottom = n.position.y + base.h / 2 + actual.h / 2;
       const cur = need.get(n.parentId) ?? { w: 0, h: 0 };
       need.set(n.parentId, {
-        w: Math.max(cur.w, n.position.x + d.w + PAD),
-        h: Math.max(cur.h, n.position.y + d.h + PAD),
+        w: Math.max(cur.w, right + PAD),
+        h: Math.max(cur.h, bottom + PAD),
       });
     }
     let changed = false;
