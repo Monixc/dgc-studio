@@ -297,6 +297,7 @@ export default function Solve({ embedded = false, problemId: problemIdProp }: { 
             run={run}
             stop={stop}
             onResult={setRunResult}
+            testInput={problem.grading_tests?.[0]?.input}
             editor={
               problem.category === "block" && codeReady ? (
                 <BlockWorkspacePanel

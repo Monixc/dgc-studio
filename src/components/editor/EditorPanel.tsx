@@ -30,6 +30,8 @@ interface Props {
   onSelectionChange?: (sel: { startLine: number; endLine: number; text: string } | null) => void;
   /** 코멘트가 달린 줄 범위 배경 강조 */
   highlightRanges?: { startLine: number; endLine: number }[];
+  /** 테스트케이스 1번 입력값. 실행용 stdin 칸에 자동 채움(사용자가 직접 수정하면 더는 덮어쓰지 않음) */
+  testInput?: string;
 }
 
 export default function EditorPanel({
@@ -44,8 +46,10 @@ export default function EditorPanel({
   editor,
   onSelectionChange,
   highlightRanges,
+  testInput,
 }: Props) {
-  const [stdin, setStdin] = useState("");
+  const [stdin, setStdin] = useState(testInput ?? "");
+  const seededTestInput = useRef(testInput);
   const [lines, setLines] = useState<ConsoleLine[]>([]);
   const editorRef = useRef<MonacoEditorNS.IStandaloneCodeEditor | null>(null);
   const monacoRef = useRef<Monaco | null>(null);
@@ -80,6 +84,12 @@ export default function EditorPanel({
       })),
     );
   }, [highlightRanges]);
+
+  useEffect(() => {
+    if (testInput === undefined || testInput === seededTestInput.current) return;
+    setStdin((cur) => (cur === seededTestInput.current ? testInput : cur));
+    seededTestInput.current = testInput;
+  }, [testInput]);
 
   async function handleRun() {
     // input() 호출이 있는데 stdin 이 비면 파이썬 오류 대신 안내

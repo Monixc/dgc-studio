@@ -157,7 +157,7 @@ export default function ProblemEditor({ problemId, onSaved }: { problemId: strin
               </TabsList>
               {!isMobile && (
                 <TabsContent value="starter" className="flex-1 overflow-hidden data-[state=inactive]:hidden">
-                  <EditorPanel code={starter} onCodeChange={setStarter} running={running} run={run} stop={stop} />
+                  <EditorPanel code={starter} onCodeChange={setStarter} running={running} run={run} stop={stop} testInput={tests[0]?.input} />
                 </TabsContent>
               )}
               <TabsContent value="desc" className="flex flex-1 flex-col overflow-hidden p-3 data-[state=inactive]:hidden">
@@ -230,7 +230,7 @@ export default function ProblemEditor({ problemId, onSaved }: { problemId: strin
           </div>
           {!isMobile && (
             <div className="overflow-hidden">
-              <EditorPanel code={starter} onCodeChange={setStarter} running={running} run={run} stop={stop} />
+              <EditorPanel code={starter} onCodeChange={setStarter} running={running} run={run} stop={stop} testInput={tests[0]?.input} />
             </div>
           )}
         </div>
