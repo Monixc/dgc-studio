@@ -25,19 +25,23 @@ function DescriptionField({
   onChange,
   fill,
   showLabel = true,
+  label = "문제 설명",
+  placeholder = "문제 설명을 학생에게 보여줍니다. (Markdown 지원)",
 }: {
   value: string;
   onChange: (v: string) => void;
   /** true면 부모 높이를 그대로 채움(순서도 탭), false면 고정 높이(h-40) */
   fill?: boolean;
   showLabel?: boolean;
+  label?: string;
+  placeholder?: string;
 }) {
   const [preview, setPreview] = useState(false);
   const bodyClassName = fill ? "mt-1 flex-1 min-h-0" : "mt-1 h-40";
   return (
     <div className={cn(fill && "flex h-full min-h-0 flex-col")}>
       <div className="flex items-center justify-between">
-        {showLabel ? <Label>문제 설명</Label> : <span />}
+        {showLabel ? <Label>{label}</Label> : <span />}
         <Button
           type="button"
           variant="link"
@@ -56,14 +60,14 @@ function DescriptionField({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className={cn("resize-none", bodyClassName)}
-          placeholder="문제 설명을 학생에게 보여줍니다. (Markdown 지원)"
+          placeholder={placeholder}
         />
       )}
     </div>
   );
 }
 
-export default function ProblemEditor({ problemId }: { problemId: string }) {
+export default function ProblemEditor({ problemId, onSaved }: { problemId: string; onSaved?: () => void }) {
   const { data: problem, isLoading } = useProblem(problemId);
   const updateMut = useUpdateProblem();
   const { run, running, stop } = usePyodide();
@@ -76,6 +80,7 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
   const [graph, setGraph] = useState<FlowGraph>(emptyGraph());
   const [starter, setStarter] = useState("");
   const [tests, setTests] = useState<GradingTest[]>([]);
+  const [commentary, setCommentary] = useState("");
   const [loaded, setLoaded] = useState(false);
   const seeded = useRef(false);
 
@@ -90,6 +95,7 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
     setGraph(normalizeStored(problem.flowchart));
     setStarter(problem.teacher_code);
     setTests(problem.grading_tests ?? []);
+    setCommentary(problem.commentary ?? "");
     setLoaded(true);
   }, [problem]);
 
@@ -104,10 +110,12 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
           points,
           teacher_code: starter,
           grading_tests: tests,
+          commentary,
           flowchart: { nodes: graph.nodes, edges: graph.edges },
         },
       });
       toast.success("저장됨");
+      onSaved?.();
     } catch (e: any) {
       toast.error(e?.message ?? "저장 실패");
     }
@@ -168,8 +176,14 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
                     placeholder="포인트"
                   />
                 </div>
-                <div className="p-3">
+                <div className="space-y-4 p-3">
                   <GradingTestsEditor tests={tests} onChange={setTests} />
+                  <DescriptionField
+                    value={commentary}
+                    onChange={setCommentary}
+                    label="해설 (선생님 전용, 라이브 뷰에서만 표시)"
+                    placeholder="학생에겐 보이지 않습니다. 수업 중 라이브 뷰에서 참고할 해설을 적어주세요. (Markdown 지원)"
+                  />
                 </div>
               </TabsContent>
             </Tabs>
@@ -177,24 +191,42 @@ export default function ProblemEditor({ problemId }: { problemId: string }) {
         </div>
       ) : (
         <div className={cn("flex flex-1 overflow-hidden", isMobile ? "flex-col" : "grid grid-cols-2")}>
-          <div className={cn("flex flex-col gap-4 overflow-auto p-3", isMobile ? "flex-1" : "h-full border-r")}>
-            <DescriptionField value={description} onChange={setDescription} />
-            <div>
-              <Label>채점 ({tests.length})</Label>
-              <div className="mb-3 mt-1 space-y-1">
-                <Label htmlFor="points-alt" className="font-normal text-muted-foreground">만점 시 지급 포인트</Label>
-                <Input
-                  id="points-alt"
-                  type="number"
-                  min={0}
-                  value={points || ""}
-                  onChange={(e) => setPoints(Number(e.target.value) || 0)}
-                  className="w-full"
-                  placeholder="포인트"
+          <div className={cn("flex flex-col overflow-hidden", isMobile ? "flex-1" : "h-full border-r")}>
+            <Tabs defaultValue="desc" className="flex flex-1 flex-col overflow-hidden">
+              <TabsList className="m-2 self-start">
+                <TabsTrigger value="desc">문제 설명</TabsTrigger>
+                <TabsTrigger value="grading">채점 ({tests.length})</TabsTrigger>
+                <TabsTrigger value="commentary">해설</TabsTrigger>
+              </TabsList>
+              <TabsContent value="desc" className="flex-1 overflow-auto p-3 data-[state=inactive]:hidden">
+                <DescriptionField value={description} onChange={setDescription} showLabel={false} />
+              </TabsContent>
+              <TabsContent value="grading" className="flex-1 overflow-auto data-[state=inactive]:hidden">
+                <div className="space-y-1 border-b p-3">
+                  <Label htmlFor="points-alt" className="font-normal text-muted-foreground">만점 시 지급 포인트</Label>
+                  <Input
+                    id="points-alt"
+                    type="number"
+                    min={0}
+                    value={points || ""}
+                    onChange={(e) => setPoints(Number(e.target.value) || 0)}
+                    className="w-full"
+                    placeholder="포인트"
+                  />
+                </div>
+                <div className="p-3">
+                  <GradingTestsEditor tests={tests} onChange={setTests} />
+                </div>
+              </TabsContent>
+              <TabsContent value="commentary" className="flex-1 overflow-auto p-3 data-[state=inactive]:hidden">
+                <DescriptionField
+                  value={commentary}
+                  onChange={setCommentary}
+                  showLabel={false}
+                  placeholder="학생에겐 보이지 않습니다. 수업 중 라이브 뷰에서 참고할 해설을 적어주세요. (Markdown 지원)"
                 />
-              </div>
-              <GradingTestsEditor tests={tests} onChange={setTests} />
-            </div>
+              </TabsContent>
+            </Tabs>
           </div>
           {!isMobile && (
             <div className="overflow-hidden">

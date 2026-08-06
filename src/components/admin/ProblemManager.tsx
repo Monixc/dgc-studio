@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { Plus, Trash2, Folder, FolderPlus, ChevronRight, ChevronDown, Circle, ClipboardList, FileText, Globe, EyeOff, Send, CheckSquare } from "lucide-react";
@@ -30,7 +30,7 @@ export default function ProblemManager() {
   const location = useLocation();
   const { user } = useAuth();
   const userId = user!.id;
-  const { data: problems = [], isLoading } = useMyProblems(userId);
+  const { data: rawProblems = [], isLoading } = useMyProblems(userId);
   useProblemsRealtime();
   const { data: folders = [] } = useFolders(userId);
   const createFolderMut = useCreateFolder();
@@ -43,6 +43,19 @@ export default function ProblemManager() {
   const [activeFolder, setActiveFolder] = useState<string>(ALL);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  // 저장 전까지 목록에 안 보이는 임시 새 문제. 저장하면 null로 clear, 저장 안하고 벗어나면 삭제.
+  const [draftId, setDraftId] = useState<string | null>(null);
+  const draftIdRef = useRef<string | null>(null);
+  useEffect(() => { draftIdRef.current = draftId; }, [draftId]);
+  useEffect(() => {
+    return () => {
+      if (draftIdRef.current && draftIdRef.current === selectedId) {
+        void deleteProblemMut.mutateAsync(draftIdRef.current);
+        draftIdRef.current = null;
+      }
+    };
+  }, [selectedId]);
+  const problems = draftId ? rawProblems.filter((p) => p.id !== draftId) : rawProblems;
   const [dragOverId, setDragOverId] = useState<string | null>(null);
   const { confirm, dialog: confirmDialog } = useConfirm();
   const [bulkMode, setBulkMode] = useState(false);
@@ -57,7 +70,11 @@ export default function ProblemManager() {
 
   const childrenOf = (parentId: string | null) => folders.filter((f) => f.parent_id === parentId);
   const rootFolders = useMemo(() => folders.filter((f) => f.parent_id === null), [folders]);
-  const countIn = (folderId: string) => problems.filter((p) => p.folder_id === folderId).length;
+  function countIn(folderId: string): number {
+    const direct = problems.filter((p) => p.folder_id === folderId).length;
+    const kidsSum = childrenOf(folderId).reduce((sum, k) => sum + countIn(k.id), 0);
+    return direct + kidsSum;
+  }
 
   function folderPath(id: string): ProblemFolder[] {
     const path: ProblemFolder[] = [];
@@ -132,6 +149,7 @@ export default function ProblemManager() {
       const folderId = activeFolder !== ALL && activeFolder !== UNASSIGNED ? activeFolder : defaultFolder?.id ?? null;
       const category = resolveFolderCategory(folderId, folders);
       const p = await createProblemMut.mutateAsync({ userId, category, folderId });
+      setDraftId(p.id);
       setSelectedId(p.id);
     } catch (e: any) {
       toast.error(e?.message ?? "생성 실패");
@@ -304,7 +322,7 @@ export default function ProblemManager() {
   }
 
   const editorPanel = selectedId ? (
-    <ProblemEditor key={selectedId} problemId={selectedId} />
+    <ProblemEditor key={selectedId} problemId={selectedId} onSaved={() => setDraftId(null)} />
   ) : (
     <div className="flex h-full flex-1 flex-col items-center justify-center gap-3 p-6 text-center text-muted-foreground">
       <p>왼쪽에서 문제를 선택하거나 새로 만드세요.</p>

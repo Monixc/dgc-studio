@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, PanelLeftOpen, PanelLeftClose, Circle, Pencil } from "lucide-react";
+import { ArrowLeft, PanelLeftOpen, PanelLeftClose, Circle, Pencil, BookOpen } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useClasses } from "@/hooks/useClasses";
 import { useAllStudents, useClassStudentIds } from "@/hooks/useClassStudents";
@@ -15,6 +15,7 @@ import { normalizeStored } from "@/lib/flow-graph";
 import EditorPanel from "@/components/editor/EditorPanel";
 import { Markdown } from "@/components/Markdown";
 import { Button } from "@/components/ui/button";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
 const MAX_WATCH = 4;
@@ -74,7 +75,7 @@ export default function LiveClass() {
                     isWatching && "bg-accent"
                   )}
                 >
-                  <Circle className={cn("size-2 shrink-0", isOnline ? "fill-emerald-500 text-emerald-500" : "fill-muted text-muted")} />
+                  <Circle className={cn("size-1.5 shrink-0", isOnline ? "fill-emerald-500 text-emerald-500" : "fill-muted text-muted")} />
                   <span className="truncate">{s.display_name || "(이름 없음)"}</span>
                 </Button>
               );
@@ -151,6 +152,8 @@ function StudentTile({
   const display = feed ? { ...feed, isLive: true as const } : fallback;
   const isFlowchart = display?.category === "flowchart";
   const canAnnotate = !!display?.isLive;
+  const { data: currentProblem } = useProblem(display?.problemId);
+  const [showCommentary, setShowCommentary] = useState(false);
 
   function toggleAnnotate() {
     if (annotating) {
@@ -233,6 +236,27 @@ function StudentTile({
           </span>
         )}
         <div className="ml-auto flex items-center gap-1">
+          {display && (
+            <Popover open={showCommentary} onOpenChange={setShowCommentary}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  title="해설보기 (선생님 전용)"
+                  className="size-6 text-muted-foreground hover:text-foreground"
+                >
+                  <BookOpen className="size-3.5" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="max-h-80 w-80 overflow-auto text-sm" align="end">
+                {currentProblem?.commentary ? (
+                  <Markdown>{currentProblem.commentary}</Markdown>
+                ) : (
+                  <p className="text-xs text-muted-foreground">등록된 해설이 없습니다.</p>
+                )}
+              </PopoverContent>
+            </Popover>
+          )}
           {canAnnotate && (
             <Button
               variant="ghost"

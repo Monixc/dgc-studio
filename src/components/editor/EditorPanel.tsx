@@ -1,6 +1,7 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { toast } from "sonner";
-import Editor from "@monaco-editor/react";
+import Editor, { type OnMount, type Monaco } from "@monaco-editor/react";
+import type { editor as MonacoEditorNS } from "monaco-editor";
 import { Play, Square } from "lucide-react";
 import type { RunOptions, RunResult } from "@/hooks/usePyodide";
 import { Button } from "@/components/ui/button";
@@ -25,11 +26,60 @@ interface Props {
   onResult?: (lines: ConsoleLine[]) => void;
   /** 기본 Monaco 에디터 대신 렌더할 커스텀 에디터(블록 코딩 작업대 등) */
   editor?: ReactNode;
+  /** 드래그로 줄 선택 시 호출(교사 코멘트 앵커용). 선택 해제되면 null */
+  onSelectionChange?: (sel: { startLine: number; endLine: number; text: string } | null) => void;
+  /** 코멘트가 달린 줄 범위 배경 강조 */
+  highlightRanges?: { startLine: number; endLine: number }[];
 }
 
-export default function EditorPanel({ code, onCodeChange, readOnly, running, run, stop, footer, onResult, editor }: Props) {
+export default function EditorPanel({
+  code,
+  onCodeChange,
+  readOnly,
+  running,
+  run,
+  stop,
+  footer,
+  onResult,
+  editor,
+  onSelectionChange,
+  highlightRanges,
+}: Props) {
   const [stdin, setStdin] = useState("");
   const [lines, setLines] = useState<ConsoleLine[]>([]);
+  const editorRef = useRef<MonacoEditorNS.IStandaloneCodeEditor | null>(null);
+  const monacoRef = useRef<Monaco | null>(null);
+  const decorationsRef = useRef<MonacoEditorNS.IEditorDecorationsCollection | null>(null);
+
+  const handleMount: OnMount = (ed, monaco) => {
+    editorRef.current = ed;
+    monacoRef.current = monaco;
+    if (onSelectionChange) {
+      ed.onDidChangeCursorSelection((e) => {
+        const { startLineNumber, endLineNumber } = e.selection;
+        if (e.selection.isEmpty()) {
+          onSelectionChange(null);
+          return;
+        }
+        const text = ed.getModel()?.getValueInRange(e.selection) ?? "";
+        onSelectionChange({ startLine: startLineNumber, endLine: endLineNumber, text });
+      });
+    }
+  };
+
+  useEffect(() => {
+    const ed = editorRef.current;
+    if (!ed) return;
+    decorationsRef.current?.clear();
+    const monaco = monacoRef.current;
+    if (!highlightRanges?.length || !monaco) return;
+    decorationsRef.current = ed.createDecorationsCollection(
+      highlightRanges.map((r) => ({
+        range: new monaco.Range(r.startLine, 1, r.endLine, 1),
+        options: { isWholeLine: true, className: "bg-amber-200/40 dark:bg-amber-400/20" },
+      })),
+    );
+  }, [highlightRanges]);
 
   async function handleRun() {
     // input() 호출이 있는데 stdin 이 비면 파이썬 오류 대신 안내
@@ -80,6 +130,7 @@ export default function EditorPanel({ code, onCodeChange, readOnly, running, run
             language="python"
             value={code}
             onChange={(v) => onCodeChange(v ?? "")}
+            onMount={handleMount}
             options={{ readOnly, minimap: { enabled: false }, fontSize: 14, scrollBeyondLastLine: false, padding: { top: 8 } }}
           />
         )}

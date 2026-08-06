@@ -52,6 +52,7 @@ export interface Problem {
   starter_code: string;
   teacher_code: string;
   grading_tests: GradingTest[];
+  commentary: string;
   is_published: boolean;
   created_by: string;
   folder_id: string | null;
@@ -152,6 +153,9 @@ export interface SubmissionComment {
   submission_id: string;
   author_id: string;
   body: string;
+  start_line: number | null;
+  end_line: number | null;
+  quoted_text: string | null;
   created_at: string;
   updated_at: string;
 }

@@ -130,7 +130,12 @@ export async function listSubmissionComments(submissionId: string): Promise<Subm
   return (data ?? []) as SubmissionComment[];
 }
 
-export async function createSubmissionComment(params: { submissionId: string; authorId: string; body: string }): Promise<string | null> {
+export async function createSubmissionComment(params: {
+  submissionId: string;
+  authorId: string;
+  body: string;
+  anchor?: { startLine: number; endLine: number; quotedText: string };
+}): Promise<string | null> {
   const body = params.body.trim();
   if (!body) return null;
   const { data, error } = await supabase
@@ -139,6 +144,9 @@ export async function createSubmissionComment(params: { submissionId: string; au
       submission_id: params.submissionId,
       author_id: params.authorId,
       body,
+      start_line: params.anchor?.startLine ?? null,
+      end_line: params.anchor?.endLine ?? null,
+      quoted_text: params.anchor?.quotedText ?? null,
     })
     .select("id")
     .single();
