@@ -221,6 +221,62 @@ export function dslToGraph(dsl: string): FlowGraph {
     n.position = { x: (p?.x ?? 0) - d.w / 2, y: (p?.y ?? 0) - d.h / 2 };
   }
 
+  // def(함수)는 메인 흐름과 이어지지 않은 독립 서브그래프라 dagre가 같은 자리에 겹쳐 배치할 수 있다 →
+  // 연결 성분별로 나눠, 메인(=start 포함) 흐름 오른쪽에 나란히 재배치.
+  {
+    const topIds = new Set(top.map((n) => n.id));
+    const adj = new Map<string, string[]>(top.map((n) => [n.id, [] as string[]]));
+    for (const e of data.edges) {
+      if (topIds.has(e.source) && topIds.has(e.target)) {
+        adj.get(e.source)!.push(e.target);
+        adj.get(e.target)!.push(e.source);
+      }
+    }
+    const topById = new Map(top.map((n) => [n.id, n]));
+    const seen = new Set<string>();
+    const components: FlowNode[][] = [];
+    for (const n of top) {
+      if (seen.has(n.id)) continue;
+      const comp: FlowNode[] = [];
+      const stack = [n.id];
+      seen.add(n.id);
+      while (stack.length) {
+        const cur = stack.pop()!;
+        comp.push(topById.get(cur)!);
+        for (const nb of adj.get(cur) ?? []) if (!seen.has(nb)) { seen.add(nb); stack.push(nb); }
+      }
+      components.push(comp);
+    }
+    if (components.length > 1) {
+      components.sort((a, b) => {
+        const aMain = a.some((x) => x.type === "start") ? 1 : 0;
+        const bMain = b.some((x) => x.type === "start") ? 1 : 0;
+        if (aMain !== bMain) return bMain - aMain;
+        return b.length - a.length;
+      });
+      const COMP_GAP = 60;
+      const bboxOf = (comp: FlowNode[]) => {
+        let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+        for (const nd of comp) {
+          const d = posDimOf(nd);
+          minX = Math.min(minX, nd.position!.x);
+          maxX = Math.max(maxX, nd.position!.x + d.w);
+          minY = Math.min(minY, nd.position!.y);
+          maxY = Math.max(maxY, nd.position!.y + d.h);
+        }
+        return { minX, maxX, minY, maxY };
+      };
+      let cursorX = bboxOf(components[0]).maxX + COMP_GAP;
+      for (let i = 1; i < components.length; i++) {
+        const box = bboxOf(components[i]);
+        const dx = cursorX - box.minX;
+        const dy = 20 - box.minY;
+        for (const nd of components[i]) nd.position = { x: nd.position!.x + dx, y: nd.position!.y + dy };
+        cursorX += box.maxX - box.minX + COMP_GAP;
+      }
+    }
+  }
+
   // 간선: for 진입은 수직, 본문 복귀는 전용 직각 경로, 나머지는 smoothstep
   const edges: FlowEdge[] = data.edges.map((e) => {
     const s = byId.get(e.source)!;
