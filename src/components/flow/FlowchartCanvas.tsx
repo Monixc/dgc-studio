@@ -119,6 +119,89 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
     if (changed) setNodes(next);
   }, [nodes, setNodes]);
 
+  // 연결 안 된 서브그래프(주로 def 함수, 혹은 예전에 저장된 낡은 좌표)가 메인 흐름과 겹쳐 보이면 오른쪽으로 떼어냄.
+  // dslToGraph의 새 임포트에만 적용되던 로직을 이미 저장된 그래프를 열람할 때도 동일하게 적용.
+  useEffect(() => {
+    if (nodes.some((n) => n.dragging)) return; // 드래그 중엔 건드리지 않음
+    const top = nodes.filter((n) => !n.parentId);
+    if (top.length < 2) return;
+    const topIds = new Set(top.map((n) => n.id));
+    const adj = new Map<string, string[]>(top.map((n) => [n.id, [] as string[]]));
+    for (const e of edges) {
+      if (topIds.has(e.source) && topIds.has(e.target)) {
+        adj.get(e.source)?.push(e.target);
+        adj.get(e.target)?.push(e.source);
+      }
+    }
+    const byId = new Map(top.map((n) => [n.id, n]));
+    const seen = new Set<string>();
+    const components: Node[][] = [];
+    for (const n of top) {
+      if (seen.has(n.id)) continue;
+      const comp: Node[] = [];
+      const stack = [n.id];
+      seen.add(n.id);
+      while (stack.length) {
+        const cur = stack.pop()!;
+        comp.push(byId.get(cur)!);
+        for (const nb of adj.get(cur) ?? []) if (!seen.has(nb)) { seen.add(nb); stack.push(nb); }
+      }
+      components.push(comp);
+    }
+    if (components.length < 2) return;
+
+    const dimOf = (n: Node) => {
+      const nd = n.data as FlowNodeData;
+      const isFor = nd.nodeType === "for";
+      const actual = isFor ? { w: (n.style?.width as number) ?? 260, h: (n.style?.height as number) ?? 160 } : nodeDims(nd.nodeType, nd.label);
+      const base = isFor ? actual : NODE_SIZE[nd.nodeType];
+      return { actual, base };
+    };
+    const bboxOf = (comp: Node[]) => {
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      for (const n of comp) {
+        const { actual, base } = dimOf(n);
+        const cx = n.position.x + base.w / 2;
+        const cy = n.position.y + base.h / 2;
+        minX = Math.min(minX, cx - actual.w / 2);
+        maxX = Math.max(maxX, cx + actual.w / 2);
+        minY = Math.min(minY, cy - actual.h / 2);
+        maxY = Math.max(maxY, cy + actual.h / 2);
+      }
+      return { minX, maxX, minY, maxY };
+    };
+    const intersects = (a: { minX: number; maxX: number; minY: number; maxY: number }, b: typeof a) =>
+      a.minX < b.maxX && a.maxX > b.minX && a.minY < b.maxY && a.maxY > b.minY;
+
+    components.sort((a, b) => {
+      const aMain = a.some((x) => (x.data as FlowNodeData).nodeType === "start") ? 1 : 0;
+      const bMain = b.some((x) => (x.data as FlowNodeData).nodeType === "start") ? 1 : 0;
+      if (aMain !== bMain) return bMain - aMain;
+      return b.length - a.length;
+    });
+    const GAP = 60;
+    const placed = [bboxOf(components[0])];
+    const moves = new Map<string, { dx: number; dy: number }>();
+    for (let i = 1; i < components.length; i++) {
+      const box = bboxOf(components[i]);
+      if (!placed.some((p) => intersects(p, box))) {
+        placed.push(box);
+        continue;
+      }
+      const rightMost = Math.max(...placed.map((p) => p.maxX));
+      const dx = rightMost + GAP - box.minX;
+      const dy = placed[0].minY - box.minY;
+      for (const n of components[i]) moves.set(n.id, { dx, dy });
+      placed.push({ minX: box.minX + dx, maxX: box.maxX + dx, minY: box.minY + dy, maxY: box.maxY + dy });
+    }
+    if (moves.size) {
+      setNodes((ns) => ns.map((n) => {
+        const m = moves.get(n.id);
+        return m ? { ...n, position: { x: n.position.x + m.dx, y: n.position.y + m.dy } } : n;
+      }));
+    }
+  }, [nodes, edges, setNodes]);
+
   // 변경 디바운스 후 상위로 전파
   const firstRun = useRef(true);
   useEffect(() => {
