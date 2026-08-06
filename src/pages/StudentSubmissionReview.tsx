@@ -94,22 +94,21 @@ export default function StudentSubmissionReview() {
       </header>
 
       <div className="flex min-h-0 flex-1 overflow-hidden">
-        <aside className="flex w-36 shrink-0 flex-col border-r">
+        <aside className="flex w-40 shrink-0 flex-col border-r">
           <div className="border-b px-3 py-2 text-xs font-semibold text-muted-foreground">제출 버전</div>
           <div className="flex-1 overflow-auto p-2">
-            {versions.map((version, index) => (
+            {versions.map((version) => (
               <Button
                 key={version.id}
                 variant="ghost"
                 onClick={() => setSelectedId(version.id)}
                 className={cn(
                   "mb-1 h-auto w-full justify-start rounded-md p-2 text-left text-xs",
-                  selected.id === version.id ? "bg-primary text-primary-foreground hover:bg-primary/90" : "",
+                  selected.id === version.id ? "bg-accent font-medium text-accent-foreground" : "",
                 )}
               >
                 <span className="flex flex-col">
-                  <span className="block font-semibold">v{versions.length - index}</span>
-                  <span className="block opacity-75">{new Date(version.submitted_at).toLocaleString("ko-KR")}</span>
+                  <span className="block">{new Date(version.submitted_at).toLocaleString("ko-KR")}</span>
                   <span className="block opacity-75">{version.score}/{version.max_score}점</span>
                 </span>
               </Button>

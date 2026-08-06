@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Plus, Trash2, Pencil, Check, Users, UserPlus, X, Coins, MonitorPlay, Bell, Circle, NotebookPen, Code2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { listStudentSubmissions } from "@/lib/studentManagement";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -45,6 +47,7 @@ export default function ClassManager() {
   const scheduleMut = useUpdateClassSchedule();
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [nameInput, setNameInput] = useState("");
   const [assignOpen, setAssignOpen] = useState(false);
@@ -74,9 +77,19 @@ export default function ClassManager() {
     try {
       const c = await createMut.mutateAsync({ userId, name: `새 반 ${classes.length + 1}` });
       setSelectedId(c.id);
+      setSelectedStudentId(null);
     } catch (e: any) {
       toast.error(e?.message ?? "생성 실패");
     }
+  }
+
+  function selectClass(id: string) {
+    setSelectedId(id);
+    setSelectedStudentId(null);
+  }
+
+  function toggleStudent(id: string) {
+    setSelectedStudentId((cur) => (cur === id ? null : id));
   }
 
   function startEdit(id: string, current: string) {
@@ -108,6 +121,21 @@ export default function ClassManager() {
   const assignedProblems = problems.filter((p) => assignedIds.includes(p.id));
   const assignedLessons = lessons.filter((l) => assignedLessonIds.includes(l.id));
   const enrolledStudents = students.filter((s) => enrolledIds.includes(s.id));
+  const selectedStudent = enrolledStudents.find((s) => s.id === selectedStudentId) ?? null;
+
+  const { data: studentSubmissions = [] } = useQuery({
+    queryKey: ["class-manager", "student-submissions", selectedStudentId],
+    queryFn: () => listStudentSubmissions(selectedStudentId!),
+    enabled: !!selectedStudentId,
+  });
+  const latestSubmissionByProblem = new Map<string, (typeof studentSubmissions)[number]>();
+  for (const sub of studentSubmissions) {
+    if (!latestSubmissionByProblem.has(sub.problem_id)) latestSubmissionByProblem.set(sub.problem_id, sub);
+  }
+  function isSolved(problemId: string) {
+    const sub = latestSubmissionByProblem.get(problemId);
+    return !!sub && sub.total_tests > 0 && sub.passed_tests === sub.total_tests;
+  }
 
   async function setSchedule(dayOfWeek: number | null, time: string | null) {
     if (!selected) return;
@@ -256,7 +284,14 @@ export default function ClassManager() {
               ) : (
                 <div className="flex flex-wrap gap-2 rounded-lg border p-3">
                   {enrolledStudents.map((s) => (
-                    <span key={s.id} className="flex items-center gap-1.5 rounded-full border bg-background px-3 py-1 text-sm">
+                    <span
+                      key={s.id}
+                      onClick={() => toggleStudent(s.id)}
+                      className={cn(
+                        "flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-1 text-sm",
+                        selectedStudentId === s.id ? "border-primary bg-primary/10" : "bg-background hover:bg-accent"
+                      )}
+                    >
                       {onlineIds.has(s.id) && (
                         <span title="접속중" className="flex">
                           <Circle className="size-2 shrink-0 fill-emerald-500 text-emerald-500" />
@@ -267,7 +302,7 @@ export default function ClassManager() {
                         variant="ghost"
                         size="icon"
                         className="size-5 text-muted-foreground hover:text-foreground"
-                        onClick={() => setAwardTarget({ id: s.id, name: s.display_name || "(이름 없음)" })}
+                        onClick={(e) => { e.stopPropagation(); setAwardTarget({ id: s.id, name: s.display_name || "(이름 없음)" }); }}
                         title="포인트 부여"
                       >
                         <Coins className="size-3.5" />
@@ -276,7 +311,7 @@ export default function ClassManager() {
                         variant="ghost"
                         size="icon"
                         className="size-5 text-muted-foreground hover:text-foreground"
-                        onClick={() => removeStudent(s.id)}
+                        onClick={(e) => { e.stopPropagation(); removeStudent(s.id); }}
                         title="등록 해제"
                       >
                         <X className="size-3.5" />
@@ -288,7 +323,12 @@ export default function ClassManager() {
             </div>
 
             <div className="mb-2 flex items-center justify-between">
-              <h3 className="text-sm font-semibold">할당된 문제 ({assignedProblems.length})</h3>
+              <h3 className="text-sm font-semibold">
+                할당된 문제 ({assignedProblems.length})
+                {selectedStudent && (
+                  <span className="ml-2 font-normal text-muted-foreground">— {selectedStudent.display_name || "(이름 없음)"} 진행 현황</span>
+                )}
+              </h3>
               <div className="flex items-center gap-2">
                 <Button size="sm" onClick={() => setAssignOpen(true)}>
                   <Plus /> 문제 할당
@@ -303,15 +343,24 @@ export default function ClassManager() {
                 아직 할당된 문제가 없습니다.
               </div>
             ) : (
-              <div className="space-y-2 rounded-lg border p-3">
+              <div className="max-h-[52rem] space-y-2 overflow-y-auto rounded-lg border p-3">
                 {assignedProblems.map((p) => (
                   <div
                     key={p.id}
-                    onClick={() => navigate("/problems", { state: { openProblemId: p.id } })}
+                    onClick={() =>
+                      selectedStudent
+                        ? navigate(`/students/${selectedStudent.id}/problems/${p.id}`)
+                        : navigate("/problems", { state: { openProblemId: p.id } })
+                    }
                     className="flex cursor-pointer items-center justify-between rounded-lg border p-3 text-sm hover:bg-accent"
                   >
                     <span className="truncate">{p.title || "(제목 없음)"}</span>
                     <div className="flex items-center gap-2">
+                      {selectedStudent && (
+                        <span className={cn("text-xs font-medium", isSolved(p.id) ? "text-emerald-600" : "text-muted-foreground")}>
+                          {isSolved(p.id) ? "완료" : "미완"}
+                        </span>
+                      )}
                       <span className={cn("text-xs", p.is_published ? "text-emerald-600" : "text-muted-foreground")}>
                         {p.is_published ? "발행됨" : "미발행"}
                       </span>
@@ -467,7 +516,7 @@ export default function ClassManager() {
                       isEditing={editingId === c.id}
                       nameInput={nameInput}
                       onNameInputChange={setNameInput}
-                      onSelect={setSelectedId}
+                      onSelect={selectClass}
                       onSaveEdit={saveEdit}
                       onStartEdit={startEdit}
                       onDelete={handleDelete}
