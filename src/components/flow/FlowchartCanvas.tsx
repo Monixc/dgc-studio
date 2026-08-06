@@ -15,7 +15,7 @@ import {
   type Edge,
   type Node,
 } from "@xyflow/react";
-import { nodeTypes } from "./FlowNode";
+import { nodeTypes, nodeDims } from "./FlowNode";
 import { ForReturnEdge } from "./ForReturnEdge";
 import type { FlowGraph, NodeType } from "@/types/flowchart";
 import type { FlowNodeData } from "@/lib/flow-layout";
@@ -78,6 +78,42 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
     setEdges(toRFEdges(graph));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resetKey]);
+
+  // for 컨테이너 안 자식 라벨이 길어져 커지면(nodeDims), 저장된 컨테이너 크기가 낡아 자식을 못 감쌀 수 있음
+  // → 편집/열람 모두에서 자식 크기 기준으로 부족하면 자동으로 키움(줄이지는 않음)
+  useEffect(() => {
+    const PAD = 20;
+    const byId = new Map(nodes.map((n) => [n.id, n]));
+    const need = new Map<string, { w: number; h: number }>();
+    for (const n of nodes) {
+      if (!n.parentId) continue;
+      const parent = byId.get(n.parentId);
+      if (!parent || (parent.data as FlowNodeData).nodeType !== "for") continue;
+      const nd = n.data as FlowNodeData;
+      const d = nd.nodeType === "for"
+        ? { w: (n.style?.width as number) ?? 260, h: (n.style?.height as number) ?? 160 }
+        : nodeDims(nd.nodeType, nd.label);
+      const cur = need.get(n.parentId) ?? { w: 0, h: 0 };
+      need.set(n.parentId, {
+        w: Math.max(cur.w, n.position.x + d.w + PAD),
+        h: Math.max(cur.h, n.position.y + d.h + PAD),
+      });
+    }
+    let changed = false;
+    const next = nodes.map((n) => {
+      if ((n.data as FlowNodeData).nodeType !== "for") return n;
+      const req = need.get(n.id);
+      if (!req) return n;
+      const curW = (n.style?.width as number) ?? 260;
+      const curH = (n.style?.height as number) ?? 160;
+      const w = Math.max(curW, req.w);
+      const h = Math.max(curH, req.h);
+      if (w === curW && h === curH) return n;
+      changed = true;
+      return { ...n, style: { ...n.style, width: w, height: h } };
+    });
+    if (changed) setNodes(next);
+  }, [nodes, setNodes]);
 
   // 변경 디바운스 후 상위로 전파
   const firstRun = useRef(true);
