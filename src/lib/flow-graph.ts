@@ -4,7 +4,12 @@ import type { FlowGraph, FlowNode, FlowEdge, NodeType } from "@/types/flowchart"
 import type { FlowchartPayload } from "@/integrations/supabase/types";
 import { parseDsl } from "@/lib/dsl-parser";
 import type { FlowNodeData } from "@/lib/flow-layout";
-import { nodeDims } from "@/components/flow/FlowNode";
+import { NODE_SIZE, nodeDims } from "@/components/flow/FlowNode";
+
+/** 라벨이 길어 실제 렌더 크기가 커져도, 위치는 항상 기본 크기 기준 중심으로 고정(FlowNode의 중앙 정렬 렌더링과 짝을 이룸). */
+function baseDim(type: NodeType): { w: number; h: number } {
+  return NODE_SIZE[type];
+}
 
 export function emptyGraph(): FlowGraph {
   return { nodes: [], edges: [] };
@@ -56,8 +61,8 @@ export function autoLayout(graph: FlowGraph): FlowGraph {
   const order = new Map(graph.nodes.map((n, i) => [n.id, i]));
   const nodes = graph.nodes.map((n) => {
     const p = g.node(n.id);
-    const s = sizeFor(n.type, n.label);
-    return { ...n, position: { x: (p?.x ?? 0) - s.w / 2, y: (p?.y ?? 0) - s.h / 2 } };
+    const b = baseDim(n.type);
+    return { ...n, position: { x: (p?.x ?? 0) - b.w / 2, y: (p?.y ?? 0) - b.h / 2 } };
   });
   const nodesById = new Map(nodes.map((n) => [n.id, n]));
 
@@ -172,8 +177,8 @@ export function dslToGraph(dsl: string): FlowGraph {
     for (const k of kids) {
       const p = g.node(k.id);
       if (p) {
-        const w = k.type === "for" ? (k.width ?? 200) : nodeDims(k.type, k.label).w;
-        const h = k.type === "for" ? (k.height ?? 60) : nodeDims(k.type, k.label).h;
+        const w = k.type === "for" ? (k.width ?? 200) : baseDim(k.type).w;
+        const h = k.type === "for" ? (k.height ?? 60) : baseDim(k.type).h;
         k.position = {
           x: p.x - w / 2 + offsetX,
           y: p.y - h / 2 + offsetY,
@@ -193,14 +198,15 @@ export function dslToGraph(dsl: string): FlowGraph {
   for (const id of forIds) if (!byId.get(id)!.parentId) sizeContainer(id);
   for (const id of forIds) if (byId.get(id)!.width == null) sizeContainer(id);
 
-  // 최상위 노드 dagre 배치(컨테이너는 계산된 크기로)
-  const dimOf = (n: FlowNode) => (n.type === "for" ? { w: n.width ?? 260, h: n.height ?? 160 } : nodeDims(n.type, n.label));
+  // 최상위 노드 dagre 배치(컨테이너는 계산된 크기로). 간격 계산엔 실제(라벨 반영) 크기, 위치 중심엔 기본 크기 사용.
+  const spacingDimOf = (n: FlowNode) => (n.type === "for" ? { w: n.width ?? 260, h: n.height ?? 160 } : nodeDims(n.type, n.label));
+  const posDimOf = (n: FlowNode) => (n.type === "for" ? { w: n.width ?? 260, h: n.height ?? 160 } : baseDim(n.type));
   const g = new dagre.graphlib.Graph();
   g.setGraph({ rankdir: "TB", nodesep: 44, ranksep: 60, marginx: 20, marginy: 20 });
   g.setDefaultEdgeLabel(() => ({}));
   const top = nodes.filter((n) => !n.parentId);
   for (const n of top) {
-    const d = dimOf(n);
+    const d = spacingDimOf(n);
     g.setNode(n.id, { width: d.w, height: d.h });
   }
   for (const e of data.edges) {
@@ -211,7 +217,7 @@ export function dslToGraph(dsl: string): FlowGraph {
   dagre.layout(g);
   for (const n of top) {
     const p = g.node(n.id);
-    const d = dimOf(n);
+    const d = posDimOf(n);
     n.position = { x: (p?.x ?? 0) - d.w / 2, y: (p?.y ?? 0) - d.h / 2 };
   }
 
@@ -281,7 +287,7 @@ export function toRFNodes(
 
   return ordered.map((n) => {
     const entryChild = n.type === "for" ? entryChildByForId.get(n.id) : undefined;
-    const entryWidth = entryChild ? (entryChild.type === "for" ? entryChild.width ?? 260 : nodeDims(entryChild.type, entryChild.label).w) : 0;
+    const entryWidth = entryChild ? (entryChild.type === "for" ? entryChild.width ?? 260 : baseDim(entryChild.type).w) : 0;
     const forEntryX = entryChild?.position ? entryChild.position.x + entryWidth / 2 : undefined;
     const node: Node = {
       id: n.id,

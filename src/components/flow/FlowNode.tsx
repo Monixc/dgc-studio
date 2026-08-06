@@ -93,6 +93,7 @@ function FlowNodeInner({ id, data, selected }: NodeProps) {
   const d = data as FlowNodeData;
   const type = d.nodeType;
   const { w, h } = nodeDims(type, d.label);
+  const base = NODE_SIZE[type];
   const diamond = type === "if" || type === "while";
   const editable = !!d.onLabelChange;
   const bg = d.style?.bg || DEFAULT_BG;
@@ -173,7 +174,7 @@ function FlowNodeInner({ id, data, selected }: NodeProps) {
   return (
     <div
       className="group relative"
-      style={{ width: w, height: h }}
+      style={{ width: w, height: h, transform: `translate(${-(w - base.w) / 2}px, ${-(h - base.h) / 2}px)` }}
       title={d.label}
       onDoubleClick={editable ? () => setEditing(true) : undefined}
     >
