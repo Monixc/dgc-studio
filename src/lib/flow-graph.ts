@@ -150,11 +150,19 @@ export function dslToGraph(dsl: string): FlowGraph {
       g.setNode(k.id, { width: w, height: h });
     }
 
-    // 자식 간의 간선 추가
+    // 자식 간의 간선 추가. else 없는 if/while이 "참" 갈래를 거쳐 바로 다음 문장으로 되돌아오는
+    // "거짓"(그대로 통과) 간선만 dagre 랭킹에서 제외 — 참 갈래가 곁가지처럼 별도 칸으로 밀려나
+    // 본선과 중심이 어긋나는 것을 막는다. elif 처럼 거짓 쪽이 서로 다른 새 분기로 이어지는
+    // 경우(대상 노드에 다른 진입 간선이 없음)는 그대로 둬 좌우로 갈라지게 한다.
+    // (제외해도 간선 자체는 edges 배열에 남아 시각적으로는 계속 그려짐)
     for (const e of data.edges) {
-      if (kidsSet.has(e.source) && kidsSet.has(e.target)) {
-        g.setEdge(e.source, e.target);
+      if (!kidsSet.has(e.source) || !kidsSet.has(e.target)) continue;
+      const s = byId.get(e.source);
+      if (e.label === "거짓" && (s?.type === "if" || s?.type === "while")) {
+        const mergesBack = data.edges.some((o) => o.target === e.target && o.source !== e.source && kidsSet.has(o.source));
+        if (mergesBack) continue;
       }
+      g.setEdge(e.source, e.target);
     }
 
     // dagre 레이아웃 실행
@@ -180,10 +188,14 @@ export function dslToGraph(dsl: string): FlowGraph {
       maxY = Math.max(maxY, y + h);
     }
 
-    const contentW = maxX - minX;
     const contentH = maxY - minY;
 
-    const offsetX = PAD - minX;
+    // 본선(첫 자식) 중심을 컨테이너 가운데에 오도록 좌우 대칭 폭 계산. 가지(elif 등)가 한쪽으로만
+    // 뻗어도 본선은 항상 정중앙 — 진입선이 사선으로 안 꺾이게 하는 게 핵심.
+    const mainX = g.node(kids[0].id)?.x ?? (minX + maxX) / 2;
+    const halfW = Math.max(mainX - minX, maxX - mainX, 0);
+    const contentW = halfW * 2;
+    const offsetX = PAD + halfW - mainX;
     const offsetY = HEADER + PAD - minY;
 
     for (const k of kids) {
