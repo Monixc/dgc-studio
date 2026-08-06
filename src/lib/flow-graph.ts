@@ -150,17 +150,11 @@ export function dslToGraph(dsl: string): FlowGraph {
       g.setNode(k.id, { width: w, height: h });
     }
 
-    // 자식 간의 간선 추가. else 없는 if/while의 "거짓"(그대로 통과) 간선은 dagre 랭킹에서 제외 —
-    // "참" 갈래가 곁가지처럼 별도 칸으로 밀려나 본선(if→다음)과 중심이 어긋나는 것을 막는다.
-    // (간선 자체는 edges 배열에 그대로 남아 시각적으로는 계속 그려짐)
+    // 자식 간의 간선 추가
     for (const e of data.edges) {
-      if (!kidsSet.has(e.source) || !kidsSet.has(e.target)) continue;
-      const s = byId.get(e.source);
-      if (e.label === "거짓" && (s?.type === "if" || s?.type === "while")) {
-        const hasTrueBranch = data.edges.some((o) => o.source === e.source && o.label === "참");
-        if (hasTrueBranch) continue;
+      if (kidsSet.has(e.source) && kidsSet.has(e.target)) {
+        g.setEdge(e.source, e.target);
       }
-      g.setEdge(e.source, e.target);
     }
 
     // dagre 레이아웃 실행
