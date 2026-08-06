@@ -222,6 +222,34 @@ function CanvasInner({ graph, editable = false, resetKey, onChange }: Props) {
     }
   }, [nodes, edges, setNodes]);
 
+  // if/while 분기선 좌/우 방향은 DSL 임포트 시 한 번 정해져 저장되는데, 타입별 기본 크기 차이 때문에
+  // 실제로는 같은 중심선(단일 진행)인데도 좌우로 꺾여 저장된 경우가 있음. 라이브 중심 좌표로 다시 판단해
+  // 정렬돼 있으면 곧게(bottom) 내려가게, 진짜 갈라지는 경우만 좌/우 유지.
+  useEffect(() => {
+    const byId = new Map(nodes.map((n) => [n.id, n]));
+    const centerX = (n: Node) => {
+      const nd = n.data as FlowNodeData;
+      const w = nd.nodeType === "for" ? (n.style?.width as number) ?? 260 : NODE_SIZE[nd.nodeType].w;
+      return n.position.x + w / 2;
+    };
+    let changed = false;
+    const next = edges.map((e) => {
+      if (e.sourceHandle !== "left" && e.sourceHandle !== "right") return e;
+      const s = byId.get(e.source);
+      const t = byId.get(e.target);
+      if (!s || !t) return e;
+      const sd = s.data as FlowNodeData;
+      const td = t.data as FlowNodeData;
+      if ((sd.nodeType !== "if" && sd.nodeType !== "while") || td.nodeType === "for") return e;
+      const dx = centerX(t) - centerX(s);
+      const wanted: "bottom" | "left" | "right" = Math.abs(dx) < 4 ? "bottom" : dx < 0 ? "left" : "right";
+      if (wanted === e.sourceHandle) return e;
+      changed = true;
+      return { ...e, sourceHandle: wanted, targetHandle: wanted === "bottom" ? "top" : e.targetHandle };
+    });
+    if (changed) setEdges(next);
+  }, [nodes, edges, setEdges]);
+
   // 변경 디바운스 후 상위로 전파
   const firstRun = useRef(true);
   useEffect(() => {

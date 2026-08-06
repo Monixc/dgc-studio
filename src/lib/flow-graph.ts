@@ -11,6 +11,19 @@ function baseDim(type: NodeType): { w: number; h: number } {
   return NODE_SIZE[type];
 }
 
+/** if/while 분기선 방향. 타입별 기본 크기가 달라도 실제 중심이 같으면(단일 진행) 좌우로 안 꺾이고 곧게 내려가게. */
+function branchHandle(
+  s: { type: NodeType; position?: { x: number; y: number } },
+  t: { type: NodeType; position?: { x: number; y: number } },
+  label?: string
+): "left" | "right" | "bottom" {
+  if (!s.position || !t.position) return label === "참" || label === "반복" ? "left" : "right";
+  const centerOf = (n: { type: NodeType; position: { x: number; y: number } }) => n.position.x + baseDim(n.type).w / 2;
+  const dx = centerOf({ ...t, position: t.position }) - centerOf({ ...s, position: s.position });
+  if (Math.abs(dx) < 4) return "bottom";
+  return dx < 0 ? "left" : "right";
+}
+
 export function emptyGraph(): FlowGraph {
   return { nodes: [], edges: [] };
 }
@@ -72,8 +85,7 @@ export function autoLayout(graph: FlowGraph): FlowGraph {
       const s = nodesById.get(e.source);
       const t = nodesById.get(e.target);
       if (s && t && (s.type === "if" || s.type === "while")) {
-        const sourceHandle = (s.position && t.position) ? (t.position.x < s.position.x ? "left" : "right") : (e.label === "참" || e.label === "반복" ? "left" : "right");
-        return { ...e, sourceHandle, targetHandle: "top" };
+        return { ...e, sourceHandle: branchHandle(s, t, e.label), targetHandle: "top" };
       }
       const back = (order.get(e.source) ?? 0) > (order.get(e.target) ?? 0);
       return { ...e, sourceHandle: back ? "right" : "bottom", targetHandle: back ? "left" : "top" };
@@ -300,8 +312,7 @@ export function dslToGraph(dsl: string): FlowGraph {
     if (t.type === "for") return { ...base, pathType: "straight" as const, sourceHandle: "bottom", targetHandle: "top" };
     // if 또는 while 분기 처리: 좌우로 분기하도록 설정
     if (s.type === "if" || s.type === "while") {
-      const sourceHandle = (s.position && t.position) ? (t.position.x < s.position.x ? "left" : "right") : (e.label === "참" || e.label === "반복" ? "left" : "right");
-      return { ...base, label: e.label, sourceHandle, targetHandle: "top" };
+      return { ...base, label: e.label, sourceHandle: branchHandle(s, t, e.label), targetHandle: "top" };
     }
 
     // 일반: 되돌아가기면 우측, 아니면 하단→상단
