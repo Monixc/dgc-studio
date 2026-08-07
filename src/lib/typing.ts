@@ -37,6 +37,11 @@ export function mergeTypingRanking(entries: TypingRankingEntry[]): TypingRanking
   return [...best.values()].sort((a, b) => b.taja - a.taja);
 }
 
+/** 이 미만 경과 시간에선 분모가 0에 가까워 타수가 폭증하므로 신뢰하지 않는다. */
+const MIN_RELIABLE_MS = 2_000;
+/** 사람이 낼 수 있는 상한(약 300WPM)을 넘는 값은 조작/버그로 간주해 자른다. */
+export const MAX_TAJA = 1500;
+
 export function calculateTypingResult(
   correct: number,
   total: number,
@@ -44,8 +49,9 @@ export function calculateTypingResult(
   completed: number,
 ): TypingResult {
   const minutes = elapsedMs / 60_000;
+  const taja = elapsedMs >= MIN_RELIABLE_MS ? Math.round(correct / minutes) : 0;
   return {
-    taja: minutes > 0 ? Math.round(correct / minutes) : 0,
+    taja: Math.min(taja, MAX_TAJA),
     accuracy: total > 0 ? Math.round((correct / total) * 100) : 100,
     completed,
   };

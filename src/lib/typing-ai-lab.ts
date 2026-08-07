@@ -171,6 +171,11 @@ export async function finishMatch(
     totalScore: number;
     grade: string;
     datasetSize: number;
+    accuracyScore: number;
+    datasetScore: number;
+    densityScore: number;
+    coverageScore: number;
+    inferenceScore: number;
     resultId?: string | null;
     forfeit?: boolean;
   },
@@ -180,6 +185,11 @@ export async function finishMatch(
     p_total_score: args.totalScore,
     p_grade: args.grade,
     p_dataset_size: args.datasetSize,
+    p_accuracy_score: args.accuracyScore,
+    p_dataset_score: args.datasetScore,
+    p_density_score: args.densityScore,
+    p_coverage_score: args.coverageScore,
+    p_inference_score: args.inferenceScore,
     p_result_id: args.resultId ?? null,
     p_forfeit: args.forfeit ?? false,
   });

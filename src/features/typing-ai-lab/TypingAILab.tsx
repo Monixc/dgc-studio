@@ -403,6 +403,11 @@ export default function TypingAILab({
             totalScore: result.score.total,
             grade: result.score.grade,
             datasetSize: result.dataset.length,
+            accuracyScore: result.score.accuracy,
+            datasetScore: result.score.dataset,
+            densityScore: result.score.density,
+            coverageScore: result.score.coverage,
+            inferenceScore: result.score.inference,
           });
           setSaveError("saved");
           return;
@@ -426,6 +431,11 @@ export default function TypingAILab({
               totalScore: result.score.total,
               grade: result.score.grade,
               datasetSize: result.dataset.length,
+              accuracyScore: result.score.accuracy,
+              datasetScore: result.score.dataset,
+              densityScore: result.score.density,
+              coverageScore: result.score.coverage,
+              inferenceScore: result.score.inference,
               resultId: saved.id,
             });
           }

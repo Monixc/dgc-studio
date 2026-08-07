@@ -362,6 +362,11 @@ export function useTypingAiCompetition(args: {
       totalScore: number;
       grade: string;
       datasetSize: number;
+      accuracyScore: number;
+      datasetScore: number;
+      densityScore: number;
+      coverageScore: number;
+      inferenceScore: number;
       resultId?: string | null;
     }) => {
       if (!match) return;

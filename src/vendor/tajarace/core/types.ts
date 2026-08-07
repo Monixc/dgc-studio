@@ -34,17 +34,22 @@ export interface TypingSessionOptions {
   charsPerWord?: number;
 }
 
+/** 이 미만 경과 시간에선 분모가 0에 가까워 WPM이 폭증하므로 신뢰하지 않는다. */
+const MIN_RELIABLE_MS = 2_000;
+/** 사람이 낼 수 있는 상한(약 300WPM)을 넘는 값은 조작/버그로 간주해 자른다. */
+const MAX_WPM = 300;
+
 /** WPM/정확도 계산 유틸 */
 export function calculateWpm(correctChars: number, elapsedMs: number, charsPerWord = 5): number {
-  if (elapsedMs <= 0) return 0;
+  if (elapsedMs < MIN_RELIABLE_MS) return 0;
   const minutes = elapsedMs / 60000;
-  return Math.round((correctChars / charsPerWord) / minutes);
+  return Math.min(MAX_WPM, Math.round((correctChars / charsPerWord) / minutes));
 }
 
 export function calculateRawWpm(totalTyped: number, elapsedMs: number, charsPerWord = 5): number {
-  if (elapsedMs <= 0) return 0;
+  if (elapsedMs < MIN_RELIABLE_MS) return 0;
   const minutes = elapsedMs / 60000;
-  return Math.round((totalTyped / charsPerWord) / minutes);
+  return Math.min(MAX_WPM, Math.round((totalTyped / charsPerWord) / minutes));
 }
 
 export function calculateAccuracy(correct: number, total: number): number {

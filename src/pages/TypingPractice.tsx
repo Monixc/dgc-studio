@@ -1524,8 +1524,11 @@ function PracticeMode({
     });
   }, [snippet, typed]);
   const currentCorrect = statuses.filter((s) => s === "correct").length;
-  const stats = calculateTypingResult(correctBefore + currentCorrect, totalBefore + typed.length, elapsedMs, completed);
-  const remainingMs = Math.max(0, SESSION_MS - elapsedMs);
+  // 연타/키 반복 중엔 렌더가 몰려 setInterval 틱이 밀려 elapsedMs state가 뒤처진다.
+  // 키다운마다 다시 계산되는 이 값은 항상 실제 벽시계 기준이라 밀림이 없다.
+  const liveElapsedMs = startedAt !== null ? Math.min(Date.now() - startedAt, SESSION_MS) : elapsedMs;
+  const stats = calculateTypingResult(correctBefore + currentCorrect, totalBefore + typed.length, liveElapsedMs, completed);
+  const remainingMs = Math.max(0, SESSION_MS - liveElapsedMs);
   const bestKey = category ? `flowpy:typing-best-taja:${userId}:${category}` : "";
   const best = bestKey ? Number(localStorage.getItem(bestKey) ?? 0) : 0;
   const categoryMeta = CATEGORIES.find((c) => c.id === category) ?? null;
@@ -1562,9 +1565,10 @@ function PracticeMode({
     void loadPool(category, proseUnit, force);
   }, [category, proseUnit, retryTick, loadPool]);
 
-  const finishSession = (finalElapsedMs = elapsedMs) => {
-    const finalResult = calculateTypingResult(correctBefore + currentCorrect, totalBefore + typed.length, finalElapsedMs, completed);
-    setElapsedMs(finalElapsedMs);
+  const finishSession = (finalElapsedMs?: number) => {
+    const elapsed = finalElapsedMs ?? (startedAt !== null ? Math.min(Date.now() - startedAt, SESSION_MS) : elapsedMs);
+    const finalResult = calculateTypingResult(correctBefore + currentCorrect, totalBefore + typed.length, elapsed, completed);
+    setElapsedMs(elapsed);
     setResult(finalResult);
     setStartedAt(null);
     if (finalResult.taja > best) localStorage.setItem(bestKey, String(finalResult.taja));
@@ -1646,32 +1650,26 @@ function PracticeMode({
     return (
       <main className={cn(
         "flex min-h-screen items-center justify-center p-4",
-        codeMode
-          ? "bg-[#080b10] text-zinc-100"
-          : "bg-[#ece5d8] text-amber-950 dark:bg-[#100e0b] dark:text-amber-50",
+        codeMode ? "bg-[#080b10] text-zinc-100" : "bg-background",
       )}>
         <section className={cn(
-          "w-full max-w-2xl overflow-hidden shadow-[0_24px_80px_rgba(0,0,0,.25)]",
-          codeMode
-            ? "rounded-xl bg-[#0d1117]"
-            : "relative border border-amber-950/20 bg-[radial-gradient(circle_at_top,#fffaf0_0%,#f4ead7_68%,#eadbc2_100%)] font-serif shadow-[0_24px_80px_rgba(69,26,3,.2)] dark:border-amber-100/15 dark:bg-[radial-gradient(circle_at_top,#211c14_0%,#17130e_72%)]",
+          "w-full max-w-md overflow-hidden rounded-none border bg-card shadow-sm",
+          codeMode && "max-w-2xl bg-[#0d1117]",
         )}>
-          {!codeMode && (
-            <div className="pointer-events-none absolute inset-3 border border-amber-950/10 dark:border-amber-100/10" aria-hidden />
-          )}
-          {codeMode && (
-            <div className="relative flex h-9 items-center bg-[#161b22] px-3">
-              <div className="flex gap-1.5" aria-hidden>
-                <span className="size-2.5 rounded-full bg-[#ff5f56]" />
-                <span className="size-2.5 rounded-full bg-[#ffbd2e]" />
-                <span className="size-2.5 rounded-full bg-[#27c93f]" />
-              </div>
+          <div className={cn(
+            "relative flex h-9 items-center gap-1.5 px-3",
+            codeMode ? "bg-[#161b22]" : "bg-zinc-900",
+          )}>
+            <span className="size-2.5 rounded-full bg-[#ff5f56]" />
+            <span className="size-2.5 rounded-full bg-[#ffbd2e]" />
+            <span className="size-2.5 rounded-full bg-[#27c93f]" />
+            {codeMode && (
               <span className="pointer-events-none absolute inset-x-24 text-center text-[11px] text-zinc-500">
                 flow-typing — report
               </span>
-            </div>
-          )}
-          <div className={cn("p-6 sm:p-8", codeMode ? "font-mono" : "text-center")}>
+            )}
+          </div>
+          <div className={cn("p-6", codeMode ? "font-mono" : "text-center")}>
             {codeMode ? (
               <div className="text-left text-sm">
                 <p className="text-zinc-300">
@@ -1688,25 +1686,17 @@ function PracticeMode({
               </div>
             ) : (
               <>
-                <p className="text-[9px] font-bold tracking-[0.32em] text-amber-900/45 dark:text-amber-100/35">
-                  TYPEWRITER&apos;S PRACTICE RECORD
-                </p>
-                <div className="mx-auto mt-4 flex max-w-sm items-center gap-4 text-amber-900/45 dark:text-amber-100/40">
-                  <span className="h-px flex-1 bg-current" />
-                  <ActiveCategoryIcon className="size-6" />
-                  <span className="h-px flex-1 bg-current" />
-                </div>
-                <h2 className="mt-3 text-3xl font-bold tracking-tight">연습 완료</h2>
-                <p className="mt-2 text-xs italic text-amber-900/50 dark:text-amber-100/40">
-                  {categoryMeta?.label} 연습 기록을 한 장의 문서로 남겼습니다.
+                <ActiveCategoryIcon className="mx-auto size-8 text-primary" />
+                <h2 className="mt-3 text-2xl font-bold tracking-tight">연습 완료</h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {categoryMeta?.label} 연습 기록이에요.
                 </p>
               </>
             )}
             <div className={cn(
-              "mx-auto max-w-2xl",
               codeMode
-                ? "mt-5 divide-y divide-zinc-800 border-y border-zinc-800"
-                : "mt-7 grid grid-cols-3 divide-x divide-amber-950/15 border-y border-amber-950/20 dark:divide-amber-100/15 dark:border-amber-100/20",
+                ? "mx-auto mt-5 max-w-2xl divide-y divide-zinc-800 border-y border-zinc-800"
+                : "mt-6 grid grid-cols-3 divide-x rounded-lg border",
             )}>
               <ResultStat tone={codeMode ? "code" : "prose"} label={codeMode ? "average_taja" : "평균 타수"} value={`${result.taja}타`} />
               <ResultStat tone={codeMode ? "code" : "prose"} label={codeMode ? "accuracy" : "정확도"} value={`${result.accuracy}%`} />
@@ -1716,24 +1706,14 @@ function PracticeMode({
               <Button
                 type="button"
                 variant="outline"
-                className={cn(
-                  "rounded-lg",
-                  codeMode
-                    ? "border-zinc-700 bg-[#161b22] text-zinc-300 hover:bg-zinc-800 hover:text-white"
-                    : "rounded-none border-amber-950/20 bg-transparent font-sans text-amber-950 shadow-none hover:bg-amber-950/10 hover:text-amber-950 dark:border-amber-100/20 dark:text-amber-50 dark:hover:bg-amber-100/10 dark:hover:text-white",
-                )}
+                className={cn(codeMode && "rounded-lg border-zinc-700 bg-[#161b22] text-zinc-300 hover:bg-zinc-800 hover:text-white")}
                 onClick={() => setCategory(null)}
               >
                 <ArrowLeft /> 연습 선택
               </Button>
               <Button
                 type="button"
-                className={cn(
-                  "rounded-lg",
-                  codeMode
-                    ? "bg-sky-600 text-white hover:bg-sky-500"
-                    : "rounded-none bg-amber-950 font-sans text-amber-50 shadow-none hover:bg-amber-900 dark:bg-amber-100 dark:text-amber-950 dark:hover:bg-white",
-                )}
+                className={cn(codeMode && "rounded-lg bg-sky-600 text-white hover:bg-sky-500")}
                 onClick={() => resetSession()}
               >
                 <RotateCcw /> 다시 연습
@@ -2153,14 +2133,14 @@ function ResultStat({
     )}>
       <div className={cn(
         "text-xs",
-        tone === "code" ? "text-zinc-500" : "text-amber-900/45 dark:text-amber-100/35",
+        tone === "code" ? "text-zinc-500" : "text-muted-foreground",
       )}>
         {tone === "code" && <span className="mr-2 text-sky-500">&gt;</span>}
         {label}
       </div>
       <div className={cn(
-        "font-mono text-2xl font-bold",
-        tone === "code" ? "text-emerald-400" : "mt-1 text-amber-950 dark:text-amber-50",
+        "text-2xl font-bold",
+        tone === "code" ? "font-mono text-emerald-400" : "mt-1 text-foreground",
       )}>{value}</div>
     </div>
   );
