@@ -25,8 +25,7 @@ import LessonView from "@/pages/LessonView";
 import StudentSubmissionReview from "@/pages/StudentSubmissionReview";
 import NotFound from "@/pages/NotFound";
 
-// ponytail: 블록 코딩 임시 비활성화. 재오픈 시 true로.
-const BLOCK_CODING_ENABLED = false;
+const BLOCK_CODING_ENABLED = true;
 
 const StudentPortfolio = lazy(() => import("@/pages/StudentPortfolio"));
 const StudentPortfolioEditor = lazy(() => import("@/pages/StudentPortfolioEditor"));
